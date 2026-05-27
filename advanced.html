@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>芦苇音乐 · 综合闯关</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%); font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui; padding: 20px; }
+        .home-btn { position: fixed; bottom: 20px; left: 20px; background: #E69A2E; border: none; border-radius: 40px; padding: 8px 16px; z-index: 1000; cursor: pointer; font-weight: bold; color: #2D1E0C; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .home-btn:active { transform: scale(0.96); }
+        .back-to-top { position: fixed; bottom: 20px; right: 20px; background: #E69A2E; border: none; border-radius: 40px; padding: 8px 12px; z-index: 1000; cursor: pointer; font-weight: bold; color: #2D1E0C; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .user-bar { background: #0f281dcc; border-radius: 60px; padding: 6px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(4px); border: 1px solid #F2C94C; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 32px; height: 32px; background: #E69A2E; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .user-name { color: #FFD966; font-size: 0.8rem; font-weight: bold; }
+        .user-score { background: #2a4a3a; padding: 3px 10px; border-radius: 40px; font-size: 0.65rem; color: #FFD966; }
+        .login-btn { background: #E69A2E; border: none; padding: 5px 14px; border-radius: 40px; color: #2D1E0C; font-weight: bold; cursor: pointer; font-size: 0.7rem; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 24px; }
+        .header h1 { color: #FFD966; font-size: 1.8rem; margin-bottom: 8px; }
+        .header p { color: #AAD4B0; font-size: 0.8rem; }
+        .section { background: #0f281dcc; border-radius: 28px; padding: 20px; margin-bottom: 20px; border: 1px solid #F2C94C; }
+        .section-title { color: #FFD966; font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-left: 3px solid #E69A2E; padding-left: 12px; cursor: pointer; }
+        .section-title:active { opacity: 0.7; }
+        .category-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .cat-btn { background: #3C6E4A; border: none; border-radius: 40px; padding: 8px 16px; color: white; font-size: 0.75rem; cursor: pointer; transition: all 0.1s ease; }
+        .cat-btn:active { transform: scale(0.95); background: #E69A2E; color: #2D1E0C; }
+        .quiz-panel { background: #1f3e2e; border-radius: 20px; padding: 16px; margin-top: 12px; display: none; }
+        .quiz-panel.active { display: block; }
+        .lyric-question { font-size: 0.85rem; font-weight: bold; margin: 12px 0; color: #F5ECD7; line-height: 1.4; }
+        .lyric-options { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0; }
+        .lyric-opt-btn { background: #3C6E4A; padding: 6px 14px; border-radius: 40px; border: none; color: white; cursor: pointer; font-size: 0.7rem; transition: all 0.1s ease; }
+        .lyric-opt-btn:active { transform: scale(0.95); }
+        .feedback { color: #C8E6C9; font-size: 0.7rem; text-align: center; margin-top: 8px; }
+        @media (max-width: 768px) {
+            .section-title { font-size: 1rem; }
+            .cat-btn { padding: 6px 12px; font-size: 0.7rem; }
+        }
+    </style>
+    <!-- ========== 引入用户系统 ========== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+    <script src="api.js"></script>
+    <script src="sync.js"></script>
+</head>
+<body>
+<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
+<div class="container">
+    <!-- 用户信息栏 -->
+    <div class="user-bar" id="userBar">
+        <div class="user-info">
+            <div class="user-avatar"></div>
+            <div>
+                <div class="user-name" id="userName">加载中...</div>
+                <div class="user-score" id="userScore">积分 0</div>
+            </div>
+        </div>
+        <button class="login-btn" id="loginBtn" style="display:none;"> 登录</button>
+        <button class="login-btn" id="logoutBtn" style="display:none;"> 退出</button>
+    </div>
+    <div class="header">
+        <h1> 综合闯关</h1>
+        <p>音程 · 节奏 · 旋律 · 调式 · 和声 · 配器 · 声乐 · 爵士</p>
+    </div>
+    <!-- 音程闯关 -->
+    <div class="section">
+        <div class="section-title" data-panel="intervalPanel"> 音程闯关 (20关) ▼</div>
+        <div id="intervalPanel" class="quiz-panel">
+            <div class="category-grid" id="intervalList"></div>
+            <div id="intervalQuizPanel"></div>
+        </div>
+    </div>
+    <!-- 节奏型闯关 -->
+    <div class="section">
+        <div class="section-title" data-panel="rhythmPanel">🥁 节奏型闯关 (20关) ▼</div>
+        <div id="rhythmPanel" class="quiz-panel">
+            <div class="category-grid" id="rhythmList"></div>
+            <div id="rhythmQuizPanel"></div>
+        </div>
+    </div>
+    <!-- 旋律闯关 -->
+    <div class="section">
+        <div class="section-title" data-panel="melodyPanel"> 旋律闯关 (20关) ▼</div>
+        <div id="melodyPanel" class="quiz-panel">
+            <div class="category-grid" id="melodyList"></div>
+            <div id="melodyQuizPanel"></div>
+        </div>
+    </div>
+    <!-- 调式调性闯关 -->
+    <div class="section">
+        <div class="section-title" data-panel="modePanel"> 调式调性闯关 (20关) ▼</div>
+        <div id="modePanel" class="quiz-panel">
+            <div class="category-grid" id="modeList"></div>
+            <div id="modeQuizPanel"></div>
+        </div>
+    </div>
+    <!-- 和声织体闯关 -->
+    <div class="section">
+        <div class="section-title" data-panel="texturePanel"> 和声织体闯关 (20关) ▼</div>
+        <div id="texturePanel" class="quiz-panel">
+            <div class="category-grid" id="textureList"></div>
+            <div id="textureQuizPanel"></div>
+        </div>
+    </div>
+    <!-- 配器闯关 -->
+    <div class="section">
+        <div class="section-title" data-panel="orchestrationPanel"> 配器闯关 (20关) ▼</div>
+        <div id="orchestrationPanel" class="quiz-panel">
+            <div class="category-grid" id="orchestrationList"></div>
+            <div id="orchestrationQuizPanel"></div>
+        </div>
+    </div>
+    <!-- 声乐闯关 -->
+    <div class="section">
+        <div class="section-title" data-panel="vocalPanel"> 声乐闯关 (20关) ▼</div>
+        <div id="vocalPanel" class="quiz-panel">
+            <div class="category-grid" id="vocalList"></div>
+            <div id="vocalQuizPanel"></div>
+        </div>
+    </div>
+    <!-- 爵士和声闯关 -->
+    <div class="section">
+        <div class="section-title" data-panel="jazzPanel"> 爵士和声闯关 (15关) ▼</div>
+        <div id="jazzPanel" class="quiz-panel">
+            <div class="category-grid" id="jazzList"></div>
+            <div id="jazzQuizPanel"></div>
+        </div>
+    </div>
+    <!-- 和弦进行闯关 -->
+    <div class="section">
+        <div class="section-title" data-panel="chordProgPanel"> 和弦进行闯关 (20关) ▼</div>
+        <div id="chordProgPanel" class="quiz-panel">
+            <div class="category-grid" id="chordProgList"></div>
+            <div id="chordProgQuizPanel"></div>
+        </div>
+    </div>
+    <!-- 高叠置和弦闯关 -->
+    <div class="section">
+        <div class="section-title" data-panel="highExtPanel"> 高叠置和弦闯关 (6关) ▼</div>
+        <div id="highExtPanel" class="quiz-panel">
+            <div class="category-grid" id="highExtensionList"></div>
+            <div id="highExtensionQuizPanel"></div>
+        </div>
+    </div>
+</div>
+<script>
+// ==================== 用户界面 ====================
+function updateUserUI() {
+    const user = getCurrentUser();
+    const userNameSpan = document.getElementById('userName');
+    const userScoreSpan = document.getElementById('userScore');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (user) {
+        userNameSpan.innerText = user.nickname || '芦苇同学';
+        userScoreSpan.innerText = `积分 ${user.score || 0}`;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'block';
+    } else {
+        userNameSpan.innerText = '未登录';
+        userScoreSpan.innerText = '积分 0';
+        loginBtn.style.display = 'block';
+        logoutBtn.style.display = 'none';
+    }
+}
+// 登录/退出
+document.getElementById('loginBtn')?.addEventListener('click', () => { showLoginModal(); });
+document.getElementById('logoutBtn')?.addEventListener('click', () => { logout(); location.reload(); });
+// 登录成功回调
+window.onLoginSuccess = function(user) {
+    updateUserUI();
+};
+// ==================== 折叠面板功能 ====================
+document.querySelectorAll('.section-title').forEach(title => {
+    title.addEventListener('click', () => {
+        const panelId = title.dataset.panel;
+        const panel = document.getElementById(panelId);
+        if (panel) {
+            if (panel.classList.contains('active')) {
+                panel.classList.remove('active');
+                title.innerHTML = title.innerHTML.replace('▲', '▼');
+            } else {
+                panel.classList.add('active');
+                title.innerHTML = title.innerHTML.replace('▼', '▲');
+            }
+        }
+    });
+});
+// ==================== 音程闯关题库 ====================
+const intervalBank = {
+    1: [
+        { q: "音程指的是什么？", opts: ["两个音之间的距离", "三个音的组合", "和弦的排列", "节奏的类型"], ans: 0, exp: "音程是音与音之间的高低距离。" },
+        { q: "小二度包含几个半音？", opts: ["1", "2", "3", "4"], ans: 0, exp: "小二度 = 1个半音。" },
+        { q: "大二度包含几个半音？", opts: ["1", "2", "3", "4"], ans: 1, exp: "大二度 = 2个半音。" },
+        { q: "小三度包含几个半音？", opts: ["2", "3", "4", "5"], ans: 1, exp: "小三度 = 3个半音。" },
+        { q: "大三度包含几个半音？", opts: ["2", "3", "4", "5"], ans: 2, exp: "大三度 = 4个半音。" },
+        { q: "纯五度包含几个半音？", opts: ["5", "6", "7", "8"], ans: 2, exp: "纯五度 = 7个半音。" },
+        { q: "C到E是几度？", opts: ["三度", "四度", "五度", "六度"], ans: 0, exp: "C-D-E是大三度。" },
+        { q: "C到G是几度？", opts: ["三度", "四度", "五度", "六度"], ans: 2, exp: "C-G是纯五度。" }
+    ],
+    2: [
+        { q: "小二度听起来像什么？", opts: ["叹息", "走路", "跳跃", "空旷"], ans: 0, exp: "小二度像半音叹息。" },
+        { q: "大三度听起来像什么？", opts: ["明亮", "暗淡", "紧张", "空洞"], ans: 0, exp: "大三度明亮跳跃。" },
+        { q: "小三度听起来像什么？", opts: ["忧伤", "明亮", "紧张", "空旷"], ans: 0, exp: "小三度柔和暗淡。" },
+        { q: "纯四度听起来像什么？", opts: ["开阔", "紧张", "悲伤", "空洞"], ans: 0, exp: "纯四度有开阔感。" },
+        { q: "增四度听起来像什么？", opts: ["紧张", "开阔", "柔和", "空洞"], ans: 0, exp: "增四度很紧张。" }
+    ]
+};
+// 节奏闯关题库
+const rhythmBank = {
+    1: [
+        { q: "四分音符的时值是多少？", opts: ["1拍", "2拍", "半拍", "4拍"], ans: 0, exp: "四分音符是基础拍单位。" },
+        { q: "八分音符的时值是多少？", opts: ["半拍", "1拍", "2拍", "4拍"], ans: 0, exp: "八分音符等于半拍。" },
+        { q: "三连音是将一拍分成几个等份？", opts: ["3份", "2份", "4份", "5份"], ans: 0, exp: "三连音是三等分。" },
+        { q: "切分音的特征是？", opts: ["强弱位颠倒", "重音在正拍", "附点节奏", "三连音"], ans: 0, exp: "切分制造意外感。" },
+        { q: "4/4拍中，强拍是？", opts: ["第1拍", "第2拍", "第3拍", "第4拍"], ans: 0, exp: "4/4拍第一拍最强。" }
+    ]
+};
+// 旋律闯关题库
+const melodyBank = {
+    1: [
+        { q: "旋律的轮廓指的是？", opts: ["音高的走向", "节奏的快慢", "音量的强弱", "音色的明暗"], ans: 0, exp: "旋律的上行、下行、波浪等形状。" },
+        { q: "级进是指？", opts: ["相邻音高", "跳进", "重复音", "上行"], ans: 0, exp: "级进是二度进行。" },
+        { q: "跳进是指？", opts: ["三度及以上", "二度", "同音", "下行"], ans: 0, exp: "跳进让旋律更有张力。" },
+        { q: "上行旋律通常带来什么感觉？", opts: ["情绪上升", "情绪下降", "平静", "紧张"], ans: 0, exp: "上行像爬升。" },
+        { q: "下行旋律通常带来什么感觉？", opts: ["情绪下降", "情绪上升", "平静", "紧张"], ans: 0, exp: "下行像叹息。" }
+    ]
+};
+// 调式调性题库
+const modeBank = {
+    1: [
+        { q: "调式指的是什么？", opts: ["音的组织方式", "音的高低", "音的强弱", "音的长短"], ans: 0, exp: "调式是音阶的组织方式。" },
+        { q: "C大调的主音是什么？", opts: ["C", "D", "E", "G"], ans: 0, exp: "C大调以C为主音。" },
+        { q: "自然小调的特征是？", opts: ["全半全全半全全", "全全半全全全半", "全半全半全全全", "半全全半全全全"], ans: 0, exp: "自然小调：全-半-全-全-半-全-全。" },
+        { q: "G大调有几个升号？", opts: ["1个", "0个", "2个", "3个"], ans: 0, exp: "G大调有一个升号（F#）。" },
+        { q: "a小调的关系大调是？", opts: ["C大调", "G大调", "F大调", "D大调"], ans: 0, exp: "a小调的关系大调是C大调。" }
+    ]
+};
+// ==================== 闯关通用逻辑 ====================
+function createQuizSystem(bank, containerId, quizPanelId, levelCount, levelName) {
+    let currentLevel = 1;
+    let streak = 0;
+    let completed = false;
+    let currentQuestions = [];
+    let currentIndex = 0;
+    // 从本地恢复进度
+    function loadSavedProgress() {
+        const user = getCurrentUser();
+        if (!user) return;
+        const userId = user.user_id;
+        const saved = localStorage.getItem(`${levelName}_level_${userId}`);
+        if (saved) currentLevel = parseInt(saved);
+    }
+    function saveProgress() {
+        const user = getCurrentUser();
+        if (!user) return;
+        const userId = user.user_id;
+        localStorage.setItem(`${levelName}_level_${userId}`, currentLevel);
+    }
+    function loadLevel() {
+        if (currentLevel > levelCount) {
+            const panel = document.getElementById(quizPanelId);
+            if (panel) panel.innerHTML = `<div class="feedback"> 恭喜完成所有${levelName}！</div>`;
+            return;
+        }
+        streak = 0;
+        completed = false;
+        let bankData = bank[currentLevel];
+        if (!bankData || bankData.length === 0) {
+            const panel = document.getElementById(quizPanelId);
+            if (panel) panel.innerHTML = `<div class="feedback">⚠️ 第${currentLevel}关题库完善中～</div>`;
+            return;
+        }
+        currentQuestions = [...bankData].sort(() => Math.random() - 0.5);
+        currentIndex = 0;
+        const panel = document.getElementById(quizPanelId);
+        if (panel) {
+            panel.innerHTML = `
+                <div style="color:#F2C94C; margin-bottom:8px"> ${levelName} · 第${currentLevel}/${levelCount}关 · 连续答对8题过关</div>
+                <div id="${containerId}_Q"></div>
+                <div id="${containerId}_Feed" class="feedback"></div>
+            `;
+        }
+        nextQuestion();
+    }
+    function nextQuestion() {
+        if (completed) return;
+        if (streak >= 8) {
+            const feed = document.getElementById(`${containerId}_Feed`);
+            if (feed) feed.innerHTML = `✅ 恭喜通过第${currentLevel}关！进入下一关 ➡️`;
+            completed = true;
+            currentLevel++;
+            saveProgress();
+            setTimeout(() => loadLevel(), 1500);
+            return;
+        }
+        if (currentIndex >= currentQuestions.length) {
+            currentQuestions = [...currentQuestions].sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+        }
+        const q = currentQuestions[currentIndex++];
+        const qDiv = document.getElementById(`${containerId}_Q`);
+        if (qDiv) {
+            qDiv.innerHTML = `
+                <div class="lyric-question">${q.q}</div>
+                <div class="lyric-options" id="${containerId}_Opts"></div>
+            `;
+        }
+        const optsDiv = document.getElementById(`${containerId}_Opts`);
+        if (optsDiv) {
+            optsDiv.innerHTML = "";
+            q.opts.forEach((opt, i) => {
+                const btn = document.createElement("button");
+                btn.className = "lyric-opt-btn";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (i === q.ans) {
+                        streak++;
+                        const feed = document.getElementById(`${containerId}_Feed`);
+                        if (feed) feed.innerHTML = `✅ 正确！ ${streak}/8`;
+                        nextQuestion();
+                    } else {
+                        streak = 0;
+                        const feed = document.getElementById(`${containerId}_Feed`);
+                        if (feed) feed.innerHTML = `❌ 错误！正确答案：${q.opts[q.ans]}。 ${q.exp}`;
+                        nextQuestion();
+                    }
+                };
+                optsDiv.appendChild(btn);
+            });
+        }
+    }
+    function buildUI() {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = "";
+        const btn = document.createElement("button");
+        btn.className = "cat-btn";
+        btn.innerText = ` ${levelName}（${levelCount}关）`;
+        btn.onclick = () => { 
+            loadSavedProgress();
+            loadLevel(); 
+        };
+        container.appendChild(btn);
+    }
+    buildUI();
+}
+// ==================== 初始化各个闯关模块 ====================
+createQuizSystem(intervalBank, "intervalList", "intervalQuizPanel", 2, "音程闯关");
+createQuizSystem(rhythmBank, "rhythmList", "rhythmQuizPanel", 1, "节奏型闯关");
+createQuizSystem(melodyBank, "melodyList", "melodyQuizPanel", 1, "旋律闯关");
+createQuizSystem(modeBank, "modeList", "modeQuizPanel", 1, "调式调性闯关");
+// 简单的面板初始化（题库待完善）
+function initSimplePanel(containerId, quizPanelId, name, levelCount) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = "";
+    const btn = document.createElement("button");
+    btn.className = "cat-btn";
+    btn.innerText = ` ${name}（${levelCount}关）`;
+    btn.onclick = () => {
+        const panel = document.getElementById(quizPanelId);
+        if (panel) panel.innerHTML = `<div class="feedback">✨ ${name}题库正在完善中，敬请期待～</div>`;
+    };
+    container.appendChild(btn);
+}
+initSimplePanel("textureList", "textureQuizPanel", "和声织体闯关", 20);
+initSimplePanel("orchestrationList", "orchestrationQuizPanel", "配器闯关", 20);
+initSimplePanel("vocalList", "vocalQuizPanel", "声乐闯关", 20);
+initSimplePanel("jazzList", "jazzQuizPanel", "爵士和声闯关", 15);
+initSimplePanel("chordProgList", "chordProgQuizPanel", "和弦进行闯关", 20);
+initSimplePanel("highExtensionList", "highExtensionQuizPanel", "高叠置和弦闯关", 6);
+// 默认展开第一个面板
+document.getElementById("intervalPanel")?.classList.add("active");
+// 初始化用户界面
+updateUserUI();
+</script>
+</body>
+</html>
+

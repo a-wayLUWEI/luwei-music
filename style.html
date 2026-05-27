@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>芦苇音乐 · 风格与鉴赏</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%); font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui; padding: 20px; }
+        .home-btn { position: fixed; bottom: 20px; left: 20px; background: #E69A2E; border: none; border-radius: 40px; padding: 8px 16px; z-index: 1000; cursor: pointer; font-weight: bold; color: #2D1E0C; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .home-btn:active { transform: scale(0.96); }
+        .back-to-top { position: fixed; bottom: 20px; right: 20px; background: #E69A2E; border: none; border-radius: 40px; padding: 8px 12px; z-index: 1000; cursor: pointer; font-weight: bold; color: #2D1E0C; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .user-bar { background: #0f281dcc; border-radius: 60px; padding: 6px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(4px); border: 1px solid #F2C94C; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 32px; height: 32px; background: #E69A2E; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .user-name { color: #FFD966; font-size: 0.8rem; font-weight: bold; }
+        .user-score { background: #2a4a3a; padding: 3px 10px; border-radius: 40px; font-size: 0.65rem; color: #FFD966; }
+        .login-btn { background: #E69A2E; border: none; padding: 5px 14px; border-radius: 40px; color: #2D1E0C; font-weight: bold; cursor: pointer; font-size: 0.7rem; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 24px; }
+        .header h1 { color: #FFD966; font-size: 1.8rem; margin-bottom: 8px; }
+        .header p { color: #AAD4B0; font-size: 0.8rem; }
+        .section { background: #0f281dcc; border-radius: 32px; padding: 20px; margin-bottom: 20px; border: 1px solid #F2C94C; }
+        .section-title { color: #FFD966; font-size: 1.2rem; font-weight: bold; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-left: 4px solid #E69A2E; padding-left: 12px; }
+        .category-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .category-btn { background: #3C6E4A; border: none; border-radius: 40px; padding: 8px 16px; color: white; font-size: 0.8rem; cursor: pointer; transition: all 0.1s ease; }
+        .category-btn:active { transform: scale(0.95); background: #E69A2E; color: #2D1E0C; }
+        .quiz-panel { background: #1f3e2e; border-radius: 20px; padding: 16px; margin-top: 12px; }
+        .lyric-question { font-size: 0.9rem; font-weight: bold; margin: 12px 0; color: #F5ECD7; line-height: 1.4; }
+        .lyric-options { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0; }
+        .lyric-opt-btn { background: #3C6E4A; padding: 8px 16px; border-radius: 40px; border: none; color: white; cursor: pointer; font-size: 0.75rem; transition: all 0.1s ease; }
+        .lyric-opt-btn:active { transform: scale(0.95); }
+        .feedback { color: #C8E6C9; font-size: 0.75rem; text-align: center; margin-top: 8px; }
+        .badge { display: inline-block; background: #E69A2E; color: #2D1E0C; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; margin-top: 8px; }
+        .artist-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 16px; max-height: 200px; overflow-y: auto; padding: 8px; }
+        .artist-btn { background: #3C6E4A; border: none; border-radius: 30px; padding: 6px 12px; color: white; font-size: 0.7rem; cursor: pointer; transition: all 0.1s ease; }
+        .artist-btn:active { transform: scale(0.95); background: #E69A2E; }
+        .master-quiz { margin-top: 12px; }
+        @media (max-width: 768px) {
+            .category-btn, .artist-btn { padding: 6px 12px; font-size: 0.7rem; }
+            .section-title { font-size: 1rem; }
+        }
+    </style>
+    <!-- ========== 引入用户系统 ========== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+    <script src="api.js"></script>
+    <script src="sync.js"></script>
+</head>
+<body>
+<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
+<div class="container">
+    <!-- 用户信息栏 -->
+    <div class="user-bar" id="userBar">
+        <div class="user-info">
+            <div class="user-avatar"></div>
+            <div>
+                <div class="user-name" id="userName">加载中...</div>
+                <div class="user-score" id="userScore">积分 0</div>
+            </div>
+        </div>
+        <button class="login-btn" id="loginBtn" style="display:none;"> 登录</button>
+        <button class="login-btn" id="logoutBtn" style="display:none;"> 退出</button>
+    </div>
+    <div class="header">
+        <h1> 风格与鉴赏</h1>
+        <p>探索音乐风格 · 聆听大师经典</p>
+    </div>
+    <!-- 风格闯关 -->
+    <div class="section">
+        <div class="section-title"> 风格闯关</div>
+        <div class="category-grid" id="styleList"></div>
+        <div id="styleQuizPanel" class="quiz-panel">
+            <div class="feedback">点击上方风格开始闯关～</div>
+        </div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题通关 ✨</div>
+    </div>
+    <!-- 大师鉴赏 -->
+    <div class="section">
+        <div class="section-title"> 大师鉴赏 · 华语流行音乐</div>
+        <div class="artist-grid" id="masterList"></div>
+        <div id="masterQuizPanel" class="quiz-panel">
+            <div class="feedback">点击歌手开始鉴赏闯关～</div>
+        </div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对6题得勋章 ✨</div>
+    </div>
+    <!-- 民歌闯关 -->
+    <div class="section">
+        <div class="section-title"> 中国民族歌曲 · 芦苇通关</div>
+        <div class="category-grid" id="folkList"></div>
+        <div id="folkQuizPanel" class="quiz-panel">
+            <div class="feedback">点击上方单元开始闯关～</div>
+        </div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题通关 ✨</div>
+    </div>
+    <!-- 古风鉴赏 -->
+    <div class="section">
+        <div class="section-title"> 流行性古风抒情歌 · 芦苇鉴赏</div>
+        <div class="category-grid" id="gufengList"></div>
+        <div id="gufengQuizPanel" class="quiz-panel">
+            <div class="feedback">点击歌曲开始鉴赏闯关～</div>
+        </div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题通关 ✨</div>
+    </div>
+</div>
+<script>
+// ==================== 用户界面 ====================
+function updateUserUI() {
+    const user = getCurrentUser();
+    const userNameSpan = document.getElementById('userName');
+    const userScoreSpan = document.getElementById('userScore');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (user) {
+        userNameSpan.innerText = user.nickname || '芦苇同学';
+        userScoreSpan.innerText = `积分 ${user.score || 0}`;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'block';
+    } else {
+        userNameSpan.innerText = '未登录';
+        userScoreSpan.innerText = '积分 0';
+        loginBtn.style.display = 'block';
+        logoutBtn.style.display = 'none';
+    }
+}
+// 登录/退出
+document.getElementById('loginBtn')?.addEventListener('click', () => { showLoginModal(); });
+document.getElementById('logoutBtn')?.addEventListener('click', () => { logout(); location.reload(); });
+// 登录成功回调
+window.onLoginSuccess = function(user) {
+    updateUserUI();
+};
+// 保存风格通关状态
+function saveStyleComplete(style) {
+    const user = getCurrentUser();
+    if (!user) return;
+    const userId = user.user_id;
+    localStorage.setItem(`style_${style}_${userId}`, "true");
+    // 同步到云端（可选）
+    syncToCloud();
+}
+// 检查风格是否已通关
+function isStyleComplete(style) {
+    const user = getCurrentUser();
+    if (!user) return false;
+    const userId = user.user_id;
+    return localStorage.getItem(`style_${style}_${userId}`) === "true";
+}
+// 保存大师通关状态
+function saveMasterComplete(artist) {
+    const user = getCurrentUser();
+    if (!user) return;
+    const userId = user.user_id;
+    localStorage.setItem(`master_${artist}_${userId}`, "true");
+    syncToCloud();
+}
+// ==================== 风格题库 ====================
+const styleBank = {
+    "摇滚": [
+        { q: "摇滚乐的核心电吉他音色通常使用什么效果？", opts: ["失真", "合唱", "延迟", "混响"], ans: 0, exp: "失真效果是摇滚的标志性音色。" },
+        { q: "以下哪位歌手被誉为“中国摇滚教父”？", opts: ["崔健", "汪峰", "许巍", "郑钧"], ans: 0, exp: "崔健《一无所有》开启中国摇滚时代。" },
+        { q: "摇滚乐通常以哪几件乐器为核心？", opts: ["电吉他、贝斯、鼓", "钢琴、小提琴", "口琴、吉他", "萨克斯、小号"], ans: 0, exp: "电吉他、贝斯、鼓是摇滚三大件。" },
+        { q: "以下哪首歌是五月天的摇滚代表作？", opts: ["《倔强》", "《小幸运》", "《泡沫》", "《红豆》"], ans: 0, exp: "《倔强》是五月天热血摇滚的代表。" },
+        { q: "摇滚乐常见的节奏型特征是什么？", opts: ["军鼓在2、4拍", "底鼓每拍都响", "三连音为主", "附点节奏"], ans: 0, exp: "反拍是摇滚的核心节奏。" }
+    ],
+    "R&B": [
+        { q: "R&B 的全称是什么？", opts: ["Rhythm & Blues", "Rock & Ballad", "Rap & Bass", "Reggae & Blues"], ans: 0, exp: "R&B 是 Rhythm & Blues 的缩写。" },
+        { q: "R&B 通常强调哪种节奏？", opts: ["切分音", "正拍", "三连音", "附点"], ans: 0, exp: "切分音是 R&B 的标志性节奏。" },
+        { q: "以下哪位歌手是华语 R&B 的代表人物？", opts: ["陶喆", "崔健", "周深", "腾格尔"], ans: 0, exp: "陶喆被称为“华语 R&B 教父”。" },
+        { q: "R&B 中常用的演唱技巧是什么？", opts: ["转音", "嘶吼", "哭腔", "喊麦"], ans: 0, exp: "转音是 R&B 的标志性唱法。" },
+        { q: "以下哪首歌是陶喆的 R&B 代表作？", opts: ["《爱很简单》", "《一无所有》", "《海阔天空》", "《小幸运》"], ans: 0, exp: "《爱很简单》是华语 R&B 经典。" }
+    ],
+    "爵士": [
+        { q: "爵士乐的核心特征是什么？", opts: ["即兴演奏", "电子合成", "说唱", "重金属"], ans: 0, exp: "即兴是爵士的灵魂。" },
+        { q: "以下哪个和弦在爵士中非常常见？", opts: ["七和弦", "三和弦", "五和弦", "挂留和弦"], ans: 0, exp: "七和弦是爵士的基础和声。" },
+        { q: "爵士乐中经常使用的节奏风格是？", opts: ["Swing", "直拍", "三连音", "切分"], ans: 0, exp: "Swing 是爵士最经典的节奏感。" },
+        { q: "以下哪位是爵士乐的代表人物？", opts: ["路易斯·阿姆斯特朗", "猫王", "迈克尔·杰克逊", "周杰伦"], ans: 0, exp: "路易斯·阿姆斯特朗是爵士乐奠基人之一。" },
+        { q: "以下哪首歌有浓厚的爵士味道？", opts: ["《Fly Me To The Moon》", "《稻香》", "《泡沫》", "《十年》"], ans: 0, exp: "《Fly Me To The Moon》是爵士标准曲。" }
+    ],
+    "民谣": [
+        { q: "民谣乐的核心乐器是什么？", opts: ["木吉他", "电吉他", "合成器", "萨克斯"], ans: 0, exp: "木吉他是民谣的灵魂乐器。" },
+        { q: "民谣歌词通常侧重什么？", opts: ["叙事、生活感", "华丽辞藻", "抽象隐喻", "政治批判"], ans: 0, exp: "民谣像在讲故事，贴近生活。" },
+        { q: "以下哪位是华语民谣的代表人物？", opts: ["陈绮贞", "邓紫棋", "张惠妹", "蔡依林"], ans: 0, exp: "陈绮贞是独立民谣的代表。" },
+        { q: "以下哪首歌是陈绮贞的民谣代表作？", opts: ["《旅行的意义》", "《泡沫》", "《倒带》", "《听海》"], ans: 0, exp: "《旅行的意义》是民谣经典。" },
+        { q: "民谣的演唱方式通常偏向？", opts: ["自然、像说话", "高音爆发", "花腔", "说唱"], ans: 0, exp: "民谣追求真诚、自然的表达。" }
+    ],
+    "蓝调": [
+        { q: "蓝调音阶中最重要的特征音是什么？", opts: ["降三音、降七音", "升四音", "降六音", "升五音"], ans: 0, exp: "蓝调音阶中的降三音和降七音是核心。" },
+        { q: "12 小节蓝调的和声结构是？", opts: ["I-I-I-I | IV-IV-I-I | V-IV-I-I", "I-IV-V-I", "I-V-vi-IV", "I-vi-IV-V"], ans: 0, exp: "这是最标准的12小节蓝调进行。" },
+        { q: "以下哪位是蓝调吉他大师？", opts: ["B.B. King", "Jimi Hendrix", "Eric Clapton", "Jimmy Page"], ans: 0, exp: "B.B. King 是蓝调吉他标志性人物。" },
+        { q: "蓝调音乐起源于哪里？", opts: ["美国黑人社区", "英国", "非洲", "加勒比海"], ans: 0, exp: "蓝调起源于美国南方的黑人劳动号子。" },
+        { q: "蓝调最常见的主题是什么？", opts: ["生活的苦难", "爱情的甜蜜", "政治的批判", "科幻的幻想"], ans: 0, exp: "蓝调常常诉说生活中的艰辛与忧伤。" }
+    ],
+    "放克": [
+        { q: "放克音乐最强调什么乐器？", opts: ["贝斯", "吉他", "鼓", "键盘"], ans: 0, exp: "放克的核心是贝斯的律动。" },
+        { q: "放克节奏的典型特征是？", opts: ["十六分音符切分", "三连音", "附点", "正拍"], ans: 0, exp: "放克强调十六分音符的切分律动。" },
+        { q: "以下哪位是放克音乐的代表人物？", opts: ["James Brown", "Miles Davis", "Bob Dylan", "Elvis Presley"], ans: 0, exp: "James Brown 是放克之父。" },
+        { q: "放克吉他的演奏风格通常是？", opts: ["闷音、切音", "大段独奏", "强力扫弦", "古典指弹"], ans: 0, exp: "放克吉他强调闷音和切音。" },
+        { q: "以下哪首歌是放克经典？", opts: ["《Super Bad》", "《Hey Jude》", "《Like a Rolling Stone》", "《Bohemian Rhapsody》"], ans: 0, exp: "James Brown 的《Super Bad》是放克标杆。" }
+    ],
+    "电子": [
+        { q: "电子音乐的核心特征是什么？", opts: ["合成器、鼓机、采样", "真乐器录音", "人声为主", "即兴演奏"], ans: 0, exp: "电子音乐以电子设备为主要创作工具。" },
+        { q: "以下哪个是电子音乐的子风格？", opts: ["House", "蓝调", "爵士", "乡村"], ans: 0, exp: "House 是电子音乐的重要分支。" },
+        { q: "以下哪位是电子音乐的代表人物？", opts: ["Daft Punk", "Bob Dylan", "Eric Clapton", "B.B. King"], ans: 0, exp: "Daft Punk 是电子音乐传奇组合。" },
+        { q: "电子音乐中“DJ”的主要工作是什么？", opts: ["混音、接歌", "演奏乐器", "写歌词", "设计封面"], ans: 0, exp: "DJ 通过混音和接歌创造连续的听觉体验。" },
+        { q: "以下哪种节奏型在电子音乐中常见？", opts: ["Four on the floor", "三连音", "附点", "反拍"], ans: 0, exp: "Four on the floor（每拍底鼓）是电子舞曲基础。" }
+    ],
+    "嘻哈": [
+        { q: "嘻哈音乐的四大元素不包括？", opts: ["摇滚吉他", "DJ", "MC", "街舞"], ans: 0, exp: "嘻哈包含 DJ、MC、街舞和涂鸦。" },
+        { q: "嘻哈中的“MC”指什么？", opts: ["说唱歌手", "主持人", "制作人", "舞者"], ans: 0, exp: "MC 是说唱歌手。" },
+        { q: "以下哪位是嘻哈音乐的代表人物？", opts: ["Tupac", "Miles Davis", "Bob Dylan", "Elvis Presley"], ans: 0, exp: "Tupac 是嘻哈传奇。" },
+        { q: "嘻哈音乐起源于哪里？", opts: ["美国布朗克斯区", "英国伦敦", "法国巴黎", "日本东京"], ans: 0, exp: "嘻哈 1970 年代起源于纽约布朗克斯。" },
+        { q: "以下哪首歌是华语嘻哈代表作？", opts: ["《差不多先生》", "《小幸运》", "《泡沫》", "《红豆》"], ans: 0, exp: "MC HotDog 的《差不多先生》是华语嘻哈经典。" }
+    ]
+};
+// ==================== 大师题库 ====================
+const masterBank = {
+    "周杰伦": [
+        { q: "《安静》前奏 C–G–Am–F 为什么适合“安静地讲述”？", opts: ["速度快", "下行循环，温柔不逼迫", "全是白键", "有转调"], ans: 1, exp: "下行循环像叹气，不煽情却动人。" },
+        { q: "《青花瓷》副歌“天青色等烟雨”中，旋律使用了哪种调式？", opts: ["大调", "小调", "五声调式", "全音阶"], ans: 2, exp: "五声调式让旋律有中国风韵味。" },
+        { q: "《稻香》前奏的蝉鸣声属于什么创作手法？", opts: ["环境音采样", "电子合成", "说唱", "管弦乐"], ans: 0, exp: "采样蝉鸣声让人立刻回到童年。" },
+        { q: "《七里香》前奏的风铃声营造了什么氛围？", opts: ["夏天与青春", "悲伤", "紧张", "科幻"], ans: 0, exp: "风铃声让人联想到夏日午后。" },
+        { q: "周杰伦《双截棍》中“哼哼哈兮”属于哪种歌词手法？", opts: ["拟声词入歌", "对仗", "排比", "隐喻"], ans: 0, exp: "拟声词增强节奏感。" },
+        { q: "《晴天》前奏用了什么和弦走向？", opts: ["C-G-Am-F", "C-Am-F-G", "G-Em-C-D", "F-C-G-Am"], ans: 0, exp: "C-G-Am-F 是经典1564进行。" }
+    ],
+    "邓紫棋": [
+        { q: "《光年之外》中“缘分让我们相遇乱世以外”的“乱世以外”属于什么修辞？", opts: ["比喻", "夸张", "对比", "对仗"], ans: 1, exp: "夸张增强宿命感和宏大感。" },
+        { q: "《泡沫》主歌很低、副歌突然很高，这种手法叫什么？", opts: ["安静爆发", "突然转调", "模进", "卡农"], ans: 0, exp: "安静到爆发的对比是邓紫棋擅长的情绪设计。" },
+        { q: "《来自天堂的魔鬼》前奏的节奏型特点是什么？", opts: ["大量切分音", "三连音", "附点", "十六分音符"], ans: 0, exp: "切分音带来律动感。" },
+        { q: "《句号》这首歌主要讲述什么主题？", opts: ["爱情", "告别过去、成长", "友情", "梦想"], ans: 1, exp: "句号象征结束与重新开始。" },
+        { q: "邓紫棋《倒数》副歌的和弦进行更接近哪种情绪？", opts: ["绝望", "希望与紧迫", "平静", "愤怒"], ans: 1, exp: "上行和弦带来向上和紧迫的感觉。" },
+        { q: "《画》中“我把你画成花”属于什么修辞？", opts: ["比喻", "夸张", "排比", "对仗"], ans: 0, exp: "把你比喻成花，温柔又浪漫。" }
+    ],
+    "林俊杰": [
+        { q: "林俊杰《修炼爱情》副歌第一个和弦是什么？", opts: ["C", "G", "Am", "F"], ans: 0, exp: "C大三，温暖直接。" },
+        { q: "《不为谁而作的歌》前奏用了什么节奏型？", opts: ["三连音", "切分", "附点", "十六分"], ans: 1, exp: "切分节奏制造推动感。" },
+        { q: "《她说》副歌最高音落在哪个字？", opts: ["她", "说", "我", "你"], ans: 0, exp: "“她”字高音，像在强调那个重要的人。" },
+        { q: "《可惜没如果》副歌用了哪种情绪递进方式？", opts: ["安静爆发", "逐步升高", "突然转调", "节奏加快"], ans: 1, exp: "逐步升高，后悔感层层加重。" },
+        { q: "《江南》前奏的笛声营造了什么氛围？", opts: ["古典", "现代", "忧伤", "欢乐"], ans: 0, exp: "笛声带出东方韵味，像在烟雨中。" },
+        { q: "林俊杰的嗓音被形容为？", opts: ["沙哑", "温柔清澈", "高亢", "低沉"], ans: 1, exp: "温柔清澈，有“行走的CD”之称。" }
+    ],
+    "陈奕迅": [
+        { q: "陈奕迅《好久不见》前奏的旋律走向是什么？", opts: ["上行", "下行", "波浪", "平行"], ans: 1, exp: "下行旋律像低头走路，遗憾感强。" },
+        { q: "《富士山下》歌词“谁能凭爱意要富士山私有”用了什么修辞？", opts: ["比喻", "夸张", "对比", "反问"], ans: 3, exp: "反问句让道理更像叹息。" },
+        { q: "《十年》副歌第一个和弦是什么？", opts: ["C", "G", "Am", "F"], ans: 0, exp: "C大三，开门见山的遗憾。" },
+        { q: "《浮夸》副歌最高音表现什么情绪？", opts: ["愤怒", "绝望", "呐喊", "释怀"], ans: 2, exp: "高音像对世界的呐喊。" },
+        { q: "《陪你度过漫长岁月》前奏用什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 1, exp: "木吉他温暖，像朋友陪伴。" },
+        { q: "陈奕迅的嗓音特质是什么？", opts: ["高亢", "沙哑沧桑", "清澈", "甜美"], ans: 1, exp: "沙哑沧桑，辨识度极高。" }
+    ]
+};
+// ==================== 民歌题库 ====================
+const folkUnit1 = [
+    { q: "“好一朵美丽的茉莉花”是哪里的民歌？", opts: ["江苏", "云南", "四川", "陕西"], ans: 0, exp: "《茉莉花》是江苏民歌的代表。" },
+    { q: "“小河淌水”描绘的是哪里的意境？", opts: ["云南", "江南", "陕北", "西藏"], ans: 0, exp: "《小河淌水》源自云南，充满山野气息。" },
+    { q: "“走西口”反映的是哪个地区的生存迁徙？", opts: ["陕西", "山西", "甘肃", "宁夏"], ans: 1, exp: "《走西口》是晋陕民歌，讲述离别与希望。" },
+    { q: "“在那遥远的地方”是哪位音乐家创作的？", opts: ["王洛宾", "雷振邦", "赵季平", "贺绿汀"], ans: 0, exp: "王洛宾改编自青海民歌，传唱全国。" },
+    { q: "“康定情歌”中的“康定”位于哪个省？", opts: ["四川", "云南", "西藏", "甘肃"], ans: 0, exp: "康定是四川甘孜州的一个市。" }
+];
+const folkUnit2 = [
+    { q: "《茉莉花》更适合以下哪种情绪？", opts: ["温柔婉约", "豪放粗犷", "悲伤压抑", "神秘诡异"], ans: 0, exp: "旋律优美，气质温婉。" },
+    { q: "《走西口》更适合哪个场景？", opts: ["离别", "喜庆", "劳动", "战争"], ans: 0, exp: "西口是离别与希望交织的地方。" },
+    { q: "《小河淌水》更像在描述什么？", opts: ["思念", "丰收", "过年", "放牧"], ans: 0, exp: "月光下，思念随河水流淌。" },
+    { q: "《康定情歌》更适合表达什么？", opts: ["爱情", "亲情", "友情", "乡愁"], ans: 0, exp: "跑马溜溜的山上，一朵溜溜的云。" },
+    { q: "《沂蒙山小调》更接近哪种气质？", opts: ["开阔明亮", "低沉忧郁", "紧张悬疑", "诡异神秘"], ans: 0, exp: "描绘沂蒙风光，开阔明亮。" }
+];
+const folkUnit3 = [
+    { q: "以下哪首流行歌明显融合了民歌旋律？", opts: ["《月亮代表我的心》", "《茉莉花》", "《双截棍》", "《爱情转移》"], ans: 0, exp: "《月亮代表我的心》的旋律有民歌底色。" },
+    { q: "周杰伦《青花瓷》的旋律与哪类民歌气质最接近？", opts: ["江南小调", "陕北信天游", "蒙古长调", "西藏山歌"], ans: 0, exp: "婉转、细腻，有江南韵味。" },
+    { q: "《小河淌水》被哪位流行歌手翻唱过？", opts: ["龚琳娜", "周杰伦", "邓紫棋", "林俊杰"], ans: 0, exp: "龚琳娜的版本极具艺术张力。" },
+    { q: "《阿里山的姑娘》曾被改编成什么风格的流行歌？", opts: ["摇滚", "电子", "民谣", "说唱"], ans: 0, exp: "很多摇滚乐队改编过《阿里山的姑娘》。" },
+    { q: "民歌《茉莉花》和哪首流行歌意境最接近？", opts: ["《小幸运》", "《泡沫》", "《红豆》", "《十年》"], ans: 0, exp: "《小幸运》的温柔感与《茉莉花》有相似的气质。" }
+];
+// ==================== 古风题库 ====================
+const gufengSongs = [
+    {
+        name: "《凉凉》",
+        artist: "张碧晨、杨宗纬",
+        questions: [
+            { q: "《凉凉》前奏使用了哪种民族乐器？", opts: ["古筝", "二胡", "琵琶", "笛子"], ans: 0, exp: "古筝音色奠定了古风基调。" },
+            { q: "以下哪个词最符合《凉凉》的歌词风格？", opts: ["白话直抒", "古风意象", "抽象隐喻", "口语对话"], ans: 1, exp: "“凉凉夜色为你思念成河”有明显古风感。" },
+            { q: "《凉凉》的旋律更接近哪种风格？", opts: ["纯五声音阶", "流行和声", "爵士", "摇滚"], ans: 1, exp: "虽然是古风题材，但旋律是流行写法。" },
+            { q: "《凉凉》是哪部剧的主题曲？", opts: ["《三生三世十里桃花》", "《花千骨》", "《香蜜沉沉烬如霜》", "《陈情令》"], ans: 0, exp: "《凉凉》是《三生三世十里桃花》片尾曲。" },
+            { q: "这首歌让人感觉“古风”最主要的原因是？", opts: ["歌词意象", "摇滚节奏", "电子音色", "说唱段落"], ans: 0, exp: "歌词中的“凉凉夜色”“思念成河”是古风感的核心。" }
+        ]
+    },
+    {
+        name: "《青花瓷》",
+        artist: "周杰伦",
+        questions: [
+            { q: "《青花瓷》的旋律主要使用了哪种音阶？", opts: ["五声音阶", "布鲁斯音阶", "全音阶", "半音阶"], ans: 0, exp: "五声音阶是中国风的核心。" },
+            { q: "以下哪句歌词最体现“古风意象”？", opts: ["天青色等烟雨", "你发如雪", "菊花台", "东风破"], ans: 0, exp: "“天青色等烟雨”极具画面感。" },
+            { q: "《青花瓷》的编曲中没有突出哪种乐器？", opts: ["电吉他", "古筝", "笛子", "琵琶"], ans: 0, exp: "电吉他不是这首歌的古风来源。" },
+            { q: "方文山在这首歌中用了什么修辞手法？", opts: ["拟人", "排比", "顶针", "夸张"], ans: 0, exp: "“天青色等烟雨”把颜色拟人化。" },
+            { q: "《青花瓷》属于以下哪种风格类型？", opts: ["中国风流行歌", "摇滚", "R&B", "电子"], ans: 0, exp: "它是中国风流行歌的代表作。" }
+        ]
+    },
+    {
+        name: "《桃花诺》",
+        artist: "邓紫棋",
+        questions: [
+            { q: "《桃花诺》前奏使用了什么乐器？", opts: ["古筝", "钢琴", "小提琴", "口琴"], ans: 0, exp: "古筝带出古风氛围。" },
+            { q: "邓紫棋在这首歌中的唱法和她平时的区别是？", opts: ["更含蓄内敛", "更高亢", "更快", "更摇滚"], ans: 0, exp: "《桃花诺》比她平时更柔、更收。" },
+            { q: "《桃花诺》是哪部剧的主题曲？", opts: ["《上古情歌》", "《花千骨》", "《三生三世》", "《香蜜》"], ans: 0, exp: "《桃花诺》是《上古情歌》片尾曲。" },
+            { q: "这首歌的歌词更偏向？", opts: ["叙事", "抒情", "说理", "对话"], ans: 1, exp: "全篇以抒情为主。" },
+            { q: "《桃花诺》能被称为“流行性古风”的原因是？", opts: ["古风题材 + 流行旋律", "摇滚节奏", "电子编曲", "说唱段落"], ans: 0, exp: "它用流行的方式唱古风的情绪。" }
+        ]
+    }
+];
+// ==================== 闯关逻辑 ====================
+let currentStyle = null, styleStreak = 0, styleQuestions = [];
+let currentArtist = null, masterStreak = 0, masterQuestions = [], masterIdx = 0;
+let currentFolkUnit = null, folkStreak = 0, folkQuestions = [];
+let currentGufengIndex = 0, gufengStreak = 0, gufengQuestions = [];
+// 风格闯关
+function loadStyle(style) {
+    if (!styleBank[style]) { alert(`《${style}》风格题库完善中～`); return; }
+ currentStyle = style;
+    styleStreak = 0;
+    styleQuestions = [...styleBank[style]].sort(() => 0.5 - Math.random()).slice(0, 5);
+    document.getElementById("styleQuizPanel").innerHTML = `
+        <div style="color:#F2C94C; margin-bottom:8px"> ${style} · 连续答对5题通关</div>
+        <div id="styleQ"></div>
+        <div id="styleFeed" class="feedback"></div>
+    `;
+    nextStyleQuestion();
+}
+function nextStyleQuestion() {
+    if (styleStreak >= styleQuestions.length) {
+        document.getElementById("styleFeed").innerHTML = " 获得风格勋章！";
+        saveStyleComplete(currentStyle);
+        return;
+    }
+    const q = styleQuestions[styleStreak];
+    document.getElementById("styleQ").innerHTML = `
+        <div class="lyric-question">${q.q}</div>
+        <div class="lyric-options" id="styleOpts"></div>
+    `;
+    const optsDiv = document.getElementById("styleOpts");
+    optsDiv.innerHTML = "";
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "lyric-opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (i === q.ans) {
+                styleStreak++;
+                document.getElementById("styleFeed").innerHTML = `✅ 正确！${styleStreak}/${styleQuestions.length}`;
+                nextStyleQuestion();
+            } else {
+                styleStreak = 0;
+                document.getElementById("styleFeed").innerHTML = `❌ 错误！重新开始`;
+                nextStyleQuestion();
+            }
+        };
+        optsDiv.appendChild(btn);
+    });
+}
+// 大师鉴赏
+function loadMaster(artist) {
+    if (!masterBank[artist]) { alert(`《${artist}》题库完善中～`); return; }
+    masterStreak = 0;
+    currentArtist = artist;
+    masterQuestions = [...masterBank[artist]].sort(() => 0.5 - Math.random()).slice(0, 6);
+    masterIdx = 0;
+    document.getElementById("masterQuizPanel").innerHTML = `
+        <div style="color:#F2C94C; margin-bottom:8px"> ${artist} · 连续答对6题得勋章</div>
+        <div id="masterQ"></div>
+        <div id="masterFeed" class="feedback"></div>
+    `;
+    nextMaster();
+}
+function nextMaster() {
+    if (masterStreak >= 6) {
+        document.getElementById("masterFeed").innerHTML = " 芦苇大师勋章！";
+        saveMasterComplete(currentArtist);
+        return;
+    }
+    if (masterIdx >= masterQuestions.length) {
+        masterQuestions = [...masterBank[currentArtist]].sort(() => 0.5 - Math.random()).slice(0, 6);
+        masterIdx = 0;
+    }
+    const q = masterQuestions[masterIdx++];
+    document.getElementById("masterQ").innerHTML = `
+        <div class="lyric-question">${q.q}</div>
+        <div class="lyric-options" id="masterOpts"></div>
+    `;
+    const optsDiv = document.getElementById("masterOpts");
+    optsDiv.innerHTML = "";
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "lyric-opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (i === q.ans) {
+                masterStreak++;
+                document.getElementById("masterFeed").innerHTML = `✅ 正确！${masterStreak}/6`;
+                nextMaster();
+            } else {
+                masterStreak = 0;
+                masterIdx = 0;
+                masterQuestions = [...masterBank[currentArtist]].sort(() => 0.5 - Math.random()).slice(0, 6);
+                document.getElementById("masterFeed").innerHTML = `❌ 错误！重新开始`;
+                nextMaster();
+            }
+        };
+        optsDiv.appendChild(btn);
+    });
+}
+// 民歌闯关
+function loadFolkUnit(unitName, unitData) {
+    currentFolkUnit = unitName;
+    folkStreak = 0;
+    folkQuestions = [...unitData].sort(() => 0.5 - Math.random()).slice(0, 5);
+    document.getElementById("folkQuizPanel").innerHTML = `
+        <div style="color:#F2C94C; margin-bottom:8px"> ${unitName} · 连续答对5题通关</div>
+        <div id="folkQ"></div>
+        <div id="folkFeed" class="feedback"></div>
+    `;
+    nextFolkQuestion();
+}
+function nextFolkQuestion() {
+    if (folkStreak >= folkQuestions.length) {
+        document.getElementById("folkFeed").innerHTML = " 获得「民歌通晓」勋章！";
+        return;
+    }
+    const q = folkQuestions[folkStreak];
+    document.getElementById("folkQ").innerHTML = `
+        <div class="lyric-question">${q.q}</div>
+        <div class="lyric-options" id="folkOpts"></div>
+    `;
+    const optsDiv = document.getElementById("folkOpts");
+    optsDiv.innerHTML = "";
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "lyric-opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (i === q.ans) {
+                folkStreak++;
+                document.getElementById("folkFeed").innerHTML = `✅ 正确！${folkStreak}/${folkQuestions.length}`;
+                nextFolkQuestion();
+            } else {
+                folkStreak = 0;
+                document.getElementById("folkFeed").innerHTML = `❌ 错误！重新开始`;
+                nextFolkQuestion();
+            }
+        };
+        optsDiv.appendChild(btn);
+    });
+}
+// 古风鉴赏
+function loadGufeng(index) {
+    const song = gufengSongs[index];
+    currentGufengIndex = index;
+    gufengStreak = 0;
+    gufengQuestions = [...song.questions].sort(() => 0.5 - Math.random()).slice(0, 5);
+    document.getElementById("gufengQuizPanel").innerHTML = `
+        <div style="color:#F2C94C; margin-bottom:8px"> ${song.name}（${song.artist}）· 连续答对5题通关</div>
+        <div id="gufengQ"></div>
+        <div id="gufengFeed" class="feedback"></div>
+    `;
+    nextGufengQuestion();
+}
+function nextGufengQuestion() {
+    if (gufengStreak >= gufengQuestions.length) {
+        document.getElementById("gufengFeed").innerHTML = " 获得「古风鉴赏家」勋章！";
+        return;
+    }
+    const q = gufengQuestions[gufengStreak];
+    document.getElementById("gufengQ").innerHTML = `
+        <div class="lyric-question">${q.q}</div>
+        <div class="lyric-options" id="gufengOpts"></div>
+    `;
+    const optsDiv = document.getElementById("gufengOpts");
+    optsDiv.innerHTML = "";
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "lyric-opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (i === q.ans) {
+                gufengStreak++;
+                document.getElementById("gufengFeed").innerHTML = `✅ 正确！${gufengStreak}/${gufengQuestions.length}`;
+                nextGufengQuestion();
+            } else {
+                gufengStreak = 0;
+                document.getElementById("gufengFeed").innerHTML = `❌ 错误！重新开始`;
+                nextGufengQuestion();
+            }
+        };
+        optsDiv.appendChild(btn);
+    });
+}
+// ==================== 构建UI ====================
+function buildStyleUI() {
+    const container = document.getElementById("styleList");
+    Object.keys(styleBank).forEach(style => {
+        const btn = document.createElement("button");
+        btn.className = "category-btn";
+        btn.innerText = style;
+        btn.onclick = () => loadStyle(style);
+        container.appendChild(btn);
+    });
+}
+function buildMasterUI() {
+    const container = document.getElementById("masterList");
+    const artists = ["周杰伦", "邓紫棋", "林俊杰", "陈奕迅", "王菲", "张惠妹", "孙燕姿", "五月天", "S.H.E", "梁静茹"];
+    artists.forEach(artist => {
+        const btn = document.createElement("button");
+        btn.className = "artist-btn";
+        btn.innerText = artist;
+        btn.onclick = () => loadMaster(artist);
+        container.appendChild(btn);
+    });
+}
+function buildFolkUI() {
+    const container = document.getElementById("folkList");
+    const unit1 = document.createElement("button");
+    unit1.className = "category-btn";
+    unit1.innerText = " 民歌地域猜猜看";
+    unit1.onclick = () => loadFolkUnit("民歌地域猜猜看", folkUnit1);
+    container.appendChild(unit1);
+    const unit2 = document.createElement("button");
+    unit2.className = "category-btn";
+    unit2.innerText = " 民歌情绪与场景";
+    unit2.onclick = () => loadFolkUnit("民歌情绪与场景", folkUnit2);
+    container.appendChild(unit2);
+    const unit3 = document.createElement("button");
+    unit3.className = "category-btn";
+    unit3.innerText = " 民歌与流行歌的改编";
+    unit3.onclick = () => loadFolkUnit("民歌与流行歌的改编", folkUnit3);
+    container.appendChild(unit3);
+}
+function buildGufengUI() {
+    const container = document.getElementById("gufengList");
+    gufengSongs.forEach((song, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "category-btn";
+        btn.innerText = `${song.name}（${song.artist}）`;
+        btn.onclick = () => loadGufeng(idx);
+        container.appendChild(btn);
+    });
+}
+// 初始化
+updateUserUI();
+buildStyleUI();
+buildMasterUI();
+buildFolkUI();
+buildGufengUI();
+</script>
+</body>
+</html>
+

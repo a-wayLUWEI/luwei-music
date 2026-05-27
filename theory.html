@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>芦苇音乐 · 乐理手册</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%); font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui; padding: 20px; }
+        .home-btn { position: fixed; bottom: 20px; left: 20px; background: #E69A2E; border: none; border-radius: 40px; padding: 8px 16px; z-index: 1000; cursor: pointer; font-weight: bold; color: #2D1E0C; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .home-btn:active { transform: scale(0.96); }
+        .back-to-top { position: fixed; bottom: 20px; right: 20px; background: #E69A2E; border: none; border-radius: 40px; padding: 8px 12px; z-index: 1000; cursor: pointer; font-weight: bold; color: #2D1E0C; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .user-bar { background: #0f281dcc; border-radius: 60px; padding: 6px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(4px); border: 1px solid #F2C94C; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 32px; height: 32px; background: #E69A2E; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .user-name { color: #FFD966; font-size: 0.8rem; font-weight: bold; }
+        .user-score { background: #2a4a3a; padding: 3px 10px; border-radius: 40px; font-size: 0.65rem; color: #FFD966; }
+        .login-btn { background: #E69A2E; border: none; padding: 5px 14px; border-radius: 40px; color: #2D1E0C; font-weight: bold; cursor: pointer; font-size: 0.7rem; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 24px; }
+        .header h1 { color: #FFD966; font-size: 1.8rem; margin-bottom: 8px; }
+        .header p { color: #AAD4B0; font-size: 0.8rem; }
+        .section { background: #0f281dcc; border-radius: 32px; padding: 20px; margin-bottom: 20px; border: 1px solid #F2C94C; }
+        .section-title { color: #FFD966; font-size: 1.3rem; font-weight: bold; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-left: 4px solid #E69A2E; padding-left: 12px; }
+        .category-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .category-btn { background: #3C6E4A; border: none; border-radius: 40px; padding: 8px 16px; color: white; font-size: 0.8rem; cursor: pointer; transition: all 0.1s ease; }
+        .category-btn:active { transform: scale(0.95); background: #E69A2E; color: #2D1E0C; }
+        .content-area { background: #172d23a0; border-radius: 20px; padding: 16px; max-height: 400px; overflow-y: auto; }
+        .content-card { background: #1f3e2e; border-radius: 16px; padding: 14px; margin-bottom: 12px; border-left: 4px solid #F2C94C; }
+        .content-card h3 { color: #FFD966; font-size: 1rem; margin-bottom: 8px; }
+        .content-card p { color: #F5ECD7; font-size: 0.85rem; line-height: 1.4; margin-bottom: 6px; }
+        .content-card .note { color: #D4C5A3; font-size: 0.75rem; font-style: italic; }
+        .loading { color: #C8E6C9; text-align: center; padding: 20px; }
+        @media (max-width: 768px) {
+            .category-btn { padding: 6px 12px; font-size: 0.7rem; }
+            .content-card h3 { font-size: 0.9rem; }
+            .content-card p { font-size: 0.75rem; }
+        }
+    </style>
+    <!-- ========== 引入用户系统 ========== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+    <script src="api.js"></script>
+    <script src="sync.js"></script>
+</head>
+<body>
+<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
+<div class="container">
+    <!-- 用户信息栏 -->
+    <div class="user-bar" id="userBar">
+        <div class="user-info">
+            <div class="user-avatar"></div>
+            <div>
+                <div class="user-name" id="userName">加载中...</div>
+                <div class="user-score" id="userScore">积分 0</div>
+            </div>
+        </div>
+        <button class="login-btn" id="loginBtn" style="display:none;"> 登录</button>
+        <button class="login-btn" id="logoutBtn" style="display:none;"> 退出</button>
+    </div>
+    <div class="header">
+        <h1> 芦苇乐理手册</h1>
+        <p>从零开始，系统学习音乐理论</p>
+    </div>
+    <!-- 芦苇乐理手册 -->
+    <div class="section">
+        <div class="section-title"> 芦苇乐理手册</div>
+        <div class="category-grid" id="theoryCategories"></div>
+        <div class="content-area" id="theoryContent">
+            <div class="loading">点击上方分类，查看知识点～</div>
+        </div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;"> 每张卡片都有芦苇说</div>
+    </div>
+    <!-- 中国传统音乐手册 -->
+    <div class="section">
+        <div class="section-title"> 中国传统音乐手册</div>
+        <div class="category-grid" id="chineseCategories"></div>
+        <div class="content-area" id="chineseContent">
+            <div class="loading">点击上方分类，查看知识点～</div>
+        </div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;"> 听懂中国人的音乐</div>
+    </div>
+</div>
+<script>
+// ==================== 用户界面 ====================
+function updateUserUI() {
+    const user = getCurrentUser();
+    const userNameSpan = document.getElementById('userName');
+    const userScoreSpan = document.getElementById('userScore');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (user) {
+        userNameSpan.innerText = user.nickname || '芦苇同学';
+        userScoreSpan.innerText = `积分 ${user.score || 0}`;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'block';
+    } else {
+        userNameSpan.innerText = '未登录';
+        userScoreSpan.innerText = '积分 0';
+        loginBtn.style.display = 'block';
+        logoutBtn.style.display = 'none';
+    }
+}
+// 登录/退出
+document.getElementById('loginBtn')?.addEventListener('click', () => { showLoginModal(); });
+document.getElementById('logoutBtn')?.addEventListener('click', () => { logout(); location.reload(); });
+// 登录成功回调
+window.onLoginSuccess = function(user) {
+    updateUserUI();
+};
+// ==================== 芦苇乐理手册数据 ====================
+const theoryHandbook = {
+    "音程": [
+        { title: "什么是音程", content: "两个音之间的高低距离叫音程。单位是“度”。", note: "芦苇说：音程是情绪的距离。" },
+        { title: "小二度", content: "1个半音。比如 E-F、B-C。", note: "芦苇说：像一声轻轻的叹息。" },
+        { title: "大二度", content: "2个半音。比如 C-D、D-E。", note: "芦苇说：像走路，一步一步往前走。" },
+        { title: "小三度", content: "3个半音。比如 D-F、E-G。", note: "芦苇说：它不哭，但它让你想安静下来。" },
+        { title: "大三度", content: "4个半音。比如 C-E、F-A。", note: "芦苇说：像阳光照进窗户。" },
+        { title: "纯四度", content: "5个半音。比如 C-F、D-G。", note: "芦苇说：像在喊一个人名字。" },
+        { title: "增四度 / 减五度", content: "6个半音。比如 C-F#、C-Gb。", note: "芦苇说：心跳漏了一拍。" },
+        { title: "纯五度", content: "7个半音。比如 C-G、D-A。", note: "芦苇说：像草原，空旷又稳。" },
+        { title: "小六度", content: "8个半音。比如 E-C、A-F。", note: "芦苇说：像黄昏，舍不得天黑。" },
+        { title: "大六度", content: "9个半音。比如 C-A、D-B。", note: "芦苇说：像跳过一个水坑，开心。" },
+        { title: "小七度", content: "10个半音。比如 C-Bb、D-C。", note: "芦苇说：像在等一个人回头。" },
+        { title: "大七度", content: "11个半音。比如 C-B、F-E。", note: "芦苇说：像梦快醒的那一刻。" },
+        { title: "纯八度", content: "12个半音。比如 C-c。", note: "芦苇说：像另一个自己。" },
+        { title: "音程转位", content: "根音和冠音互换。度数之和为9。", note: "芦苇说：翻过来看，角度不同，感觉也不同。" }
+    ],
+    "音阶": [
+        { title: "什么是音阶", content: "音高按顺序排列的阶梯。", note: "芦苇说：音乐的语言，从这几个音开始。" },
+        { title: "大调音阶", content: "全全半全全全半。色彩：明亮、积极。", note: "芦苇说：像晴天。" },
+        { title: "小调音阶", content: "全半全全半全全。色彩：柔和、忧伤。", note: "芦苇说：像雨天，但不一定是哭。" },
+        { title: "五声音阶", content: "宫商角徵羽。没有半音。", note: "芦苇说：中国音乐的DNA。" },
+        { title: "布鲁斯音阶", content: "在小调五声音阶上加降五音。", note: "芦苇说：蓝调的味道，苦中带甜。" }
+    ],
+    "和弦": [
+        { title: "什么是和弦", content: "三个或以上同时或依次发出的音。", note: "芦苇说：一个人是独白，三个人是对话。" },
+        { title: "大三和弦", content: "根音 + 大三度 + 纯五度。明亮、稳定。", note: "芦苇说：笑出声的音。" },
+        { title: "小三和弦", content: "根音 + 小三度 + 纯五度。忧伤、柔和。", note: "芦苇说：轻轻叹气的音。" },
+        { title: "增三和弦", content: "根音 + 大三度 + 增五度。紧张、扩张。", note: "芦苇说：像在问“真的吗？”" },
+        { title: "减三和弦", content: "根音 + 小三度 + 减五度。收缩、压抑。", note: "芦苇说：把话咽回去的感觉。" },
+        { title: "七和弦", content: "三和弦加七度音。", note: "芦苇说：话说一半，留一半。" },
+        { title: "大七和弦", content: "大三 + 大七。梦幻、松弛。", note: "芦苇说：夜晚的风。" },
+        { title: "小七和弦", content: "小三 + 小七。柔和、爵士感。", note: "芦苇说：舒服的懒。" },
+        { title: "属七和弦", content: "大三 + 小七。紧张、需要解决。", note: "芦苇说：急着要说什么。" },
+        { title: "挂留和弦", content: "用二度或四度代替三音。期待、不解决。", note: "芦苇说：等等，我还没说完。" }
+    ],
+    "调式": [
+        { title: "什么是调式", content: "音的排列方式，决定音乐的色彩。", note: "芦苇说：同一群人，不同心情。" },
+        { title: "自然大调", content: "全全半全全全半。明亮、积极。", note: "芦苇说：晴天。" },
+        { title: "自然小调", content: "全半全全半全全。柔和、忧伤。", note: "芦苇说：阴天，但不一定下雨。" },
+        { title: "多利亚调式", content: "升高Ⅵ级。柔和、爵士感。", note: "芦苇说：像老朋友慢慢聊天。" },
+        { title: "弗里吉亚调式", content: "降低Ⅱ级。黑暗、西班牙风。", note: "芦苇说：深夜巷子里的脚步声。" },
+        { title: "利底亚调式", content: "升高Ⅳ级。梦幻、升Ⅳ。", note: "芦苇说：半梦半醒。" },
+        { title: "混合利底亚", content: "降低Ⅶ级。摇滚、蓝调感。", note: "芦苇说：潇洒，不在乎。" }
+    ],
+    "节奏": [
+        { title: "什么是节奏", content: "音的长短和强弱。", note: "芦苇说：时间是骨架，节奏是心跳。" },
+        { title: "拍号", content: "表示每小节的拍数。4/4：每小节4拍。", note: "芦苇说：心里的节拍器。" },
+        { title: "附点音符", content: "延长原时值的一半。", note: "芦苇说：拉长一点，就不一样了。" },
+        { title: "切分音", content: "弱拍或弱位上的重音。", note: "芦苇说：故意走错一步，但很好看。" },
+        { title: "三连音", content: "一拍内均匀弹三个音。", note: "芦苇说：像水流，不是直线。" },
+        { title: "反拍", content: "强调第2、4拍。", note: "芦苇说：走路时故意颠一下。" },
+        { title: "Swing", content: "将八分音符演奏成三连音的前两个音。", note: "芦苇说：懒洋洋的摇摆。" }
+    ],
+    "记谱法": [
+        { title: "五线谱", content: "五条线，四个间。", note: "芦苇说：音乐的地图。" },
+        { title: "高音谱号", content: "又叫G谱号。中央C在下加一线。", note: "芦苇说：女声的声线。" },
+        { title: "低音谱号", content: "又叫F谱号。中央C在上加一线。", note: "芦苇说：低音的轮廓。" },
+        { title: "全音符", content: "4拍。空心符头，没有符干。", note: "芦苇说：一口气，慢慢吐。" },
+        { title: "二分音符", content: "2拍。空心符头，有符干。", note: "芦苇说：比全音符急一点。" },
+        { title: "四分音符", content: "1拍。实心符头，有符干。", note: "芦苇说：正常的脚步。" },
+        { title: "八分音符", content: "半拍。实心符头，符干加一条尾巴。", note: "芦苇说：小碎步。" },
+        { title: "休止符", content: "表示停顿。", note: "芦苇说：安静，也是音乐。" }
+    ],
+    "音乐术语": [
+        { title: "速度术语", content: "Largo（广板）、Adagio（柔板）、Andante（行板）、Allegro（快板）、Presto（急板）。", note: "芦苇说：情绪的速度。" },
+        { title: "力度术语", content: "pp（很弱）、p（弱）、mp（中弱）、mf（中强）、f（强）、ff（很强）。", note: "芦苇说：声音的轻重，像说话的语气。" }
+    ],
+    "旋律": [
+        { title: "什么是旋律", content: "单音按时间和音高排列。", note: "芦苇说：音乐最像说话的部分。" },
+        { title: "级进", content: "相邻音高。像走路。", note: "芦苇说：一步一步，不急。" },
+        { title: "跳进", content: "三度及以上。像跨越。", note: "芦苇说：跳一下，心也跟着动。" },
+        { title: "动机", content: "最小的旋律单位。", note: "芦苇说：一颗种子，能长成大树。" },
+        { title: "模进", content: "重复相同音型但移高或移低。", note: "芦苇说：换口气再说一遍。" }
+    ],
+    "和声织体": [
+        { title: "什么是织体", content: "声部的组合方式。", note: "芦苇说：衣服的厚薄，决定了温度。" },
+        { title: "主调织体", content: "一条主旋律 + 和声伴奏。", note: "芦苇说：一个人说话，一群人陪着。" },
+        { title: "复调织体", content: "两条或以上同等重要的旋律。", note: "芦苇说：两个人同时说话，但很动听。" },
+        { title: "柱式和弦", content: "所有音同时弹奏。", note: "芦苇说：一起喊出来。" },
+        { title: "分解和弦", content: "依次弹出和弦内的音。", note: "芦苇说：慢慢说，一个字一个字。" }
+    ],
+    "配器": [
+        { title: "什么是配器", content: "分配乐器演奏不同声部。", note: "芦苇说：颜色怎么涂。" },
+        { title: "弦乐组", content: "小提琴、中提琴、大提琴。", note: "芦苇说：像一群人在唱歌。" },
+        { title: "木管组", content: "长笛、双簧管、单簧管。", note: "芦苇说：清晨的鸟叫。" },
+        { title: "铜管组", content: "小号、圆号、长号。", note: "芦苇说：晚霞里的号角。" },
+        { title: "打击乐组", content: "定音鼓、军鼓、钹。", note: "芦苇说：心跳和脚步。" },
+        { title: "民族乐器", content: "古筝、二胡、笛子、琵琶。", note: "芦苇说：中国画的笔触。" }
+    ],
+    "声乐": [
+        { title: "女高音", content: "最高的女声。明亮、华丽。", note: "芦苇说：像清晨的第一道光。" },
+        { title: "女中音", content: "温暖、醇厚。", note: "芦苇说：妈妈的声音。" },
+        { title: "男高音", content: "最高的男声。辉煌、有力。", note: "芦苇说：山巅上的呼喊。" },
+        { title: "男中音", content: "浑厚、深沉。", note: "芦苇说：父亲的叮嘱。" },
+        { title: "男低音", content: "最低的男声。庄严、稳重。", note: "芦苇说：大地的回响。" },
+        { title: "流行唱法", content: "自然、微带气声。", note: "芦苇说：像在你耳边说话。" },
+        { title: "美声唱法", content: "共鸣饱满、圆润。", note: "芦苇说：教堂里的光。" },
+        { title: "民族唱法", content: "明亮、清脆。", note: "芦苇说：山泉水，清亮亮的。" }
+    ]
+};
+// ==================== 中国传统音乐手册数据 ====================
+const chineseHandbook = {
+    "宫廷音乐": [
+        { title: "什么是雅乐", content: "宫廷祭祀、朝会用的音乐。庄严、缓慢，代表“天命与秩序”。", note: "芦苇说：不是给你“好听”，是让你“跪下”。" },
+        { title: "什么是燕乐", content: "宫廷宴会、娱乐用的音乐。华丽、热闹，融合西域风格。", note: "芦苇说：大唐朝的派对。" },
+        { title: "编钟与编磬", content: "雅乐的核心乐器。金（钟）石（磬）之音，象征权力。", note: "芦苇说：两千年前的回声。" },
+        { title: "《秦王破阵乐》", content: "唐太宗为歌颂战功而创编。气势宏大，声震百里。", note: "芦苇说：大唐的BGM。" },
+        { title: "《霓裳羽衣曲》", content: "唐玄宗创作的宫廷乐舞。梦幻、浪漫，代表盛唐气象。", note: "芦苇说：月亮上的舞。" },
+        { title: "八音", content: "金、石、土、革、丝、木、匏、竹。古代乐器的八种材质分类。", note: "芦苇说：古人对声音的浪漫分类。" }
+    ],
+    "民间小调": [
+        { title: "什么是民间小调", content: "老百姓在日常生活中唱的歌曲。旋律流畅，结构规整。", note: "芦苇说：不是“表演”，是“活”。" },
+        { title: "北方小调", content: "《小白菜》《沂蒙山小调》《绣荷包》。朴实、叙事性强。", note: "芦苇说：北方的风，直来直去。" },
+        { title: "南方小调", content: "《茉莉花》《紫竹调》《无锡景》。婉转、优美。", note: "芦苇说：江南的雨，细细的。" },
+        { title: "小调里的爱情", content: "《绣荷包》《想亲亲》《康定情歌》。直白或含蓄，情真意切。", note: "芦苇说：喜欢一个人，就唱出来。" },
+        { title: "小调里的苦难", content: "《小白菜》《月儿弯弯照九州》。表现旧社会底层人民的辛酸。", note: "芦苇说：哭完了，日子还要过。" }
+    ],
+    "少数民族音乐": [
+        { title: "蒙古族长调", content: "悠长、自由、装饰音多。像草原上的风。", note: "芦苇说：草原上的风，吹不完。" },
+        { title: "马头琴", content: "蒙古族标志性乐器。传说为纪念死去的爱马而制。", note: "芦苇说：一匹马的故事，一把琴的声音。" },
+        { title: "《鸿雁》", content: "改编自乌拉特民歌。表达思乡之情。", note: "芦苇说：往南飞的时候，想家。" },
+        { title: "藏族山歌", content: "高亢、嘹亮、自由。高原上的歌声传得很远。", note: "芦苇说：云在上面听。" },
+        { title: "《青藏高原》", content: "李娜原唱。旋律辽阔，表现高原的壮美。", note: "芦苇说：山高，歌声更高。" },
+        { title: "维吾尔族十二木卡姆", content: "大型音乐套曲。联合国非物质文化遗产。", note: "芦苇说：一部歌集，一部人生。" },
+        { title: "侗族大歌", content: "多声部无伴奏合唱。联合国非物质文化遗产。", note: "芦苇说：一群人就是一座山。" }
+    ],
+    "戏曲": [
+        { title: "京剧", content: "国剧。四大徽班进京后形成。分生旦净丑。", note: "芦苇说：一桌一椅，就是天下。" },
+        { title: "京剧四大名旦", content: "梅兰芳、程砚秋、荀慧生、尚小云。", note: "芦苇说：四种美，四种人间。" },
+        { title: "梅兰芳", content: "梅派创始人。代表作《贵妃醉酒》。", note: "芦苇说：美了一百年。" },
+        { title: "脸谱", content: "净行的标志。红忠、白奸、黑勇。", note: "芦苇说：颜色比话还直白。" },
+        { title: "昆曲", content: "百戏之祖。发源于江苏昆山。笛子为主奏乐器。", note: "芦苇说：一个字能唱三分钟，不嫌慢。" },
+        { title: "越剧", content: "发源于浙江嵊县。柔美、抒情，擅长才子佳人。", note: "芦苇说：江南女子的心事。" },
+        { title: "豫剧", content: "河南梆子。高亢、激昂。常香玉《花木兰》。", note: "芦苇说：黄河边上的呐喊。" },
+        { title: "黄梅戏", content: "发源于湖北，发展于安徽。《天仙配》家喻户晓。", note: "芦苇说：树上的鸟儿成双对。" },
+        { title: "唱念做打", content: "戏曲的四功。唱是声乐，念是台词，做是表演，打是武打。", note: "芦苇说：四样都难，一样都不能少。" }
+    ],
+    "曲艺": [
+        { title: "相声", content: "说学逗唱。起源于北京。侯宝林、马三立为代表。", note: "芦苇说：笑是聪明人的药。" },
+        { title: "评书", content: "北方说书艺术。一人一桌一醒木。", note: "芦苇说：静下来，听一场大戏。" },
+        { title: "苏州评弹", content: "苏州话表演的说唱。琵琶、三弦伴奏。", note: "芦苇说：软得像水，听不腻。" },
+        { title: "京韵大鼓", content: "鼓、板、三弦伴奏。骆玉笙《重整河山待后生》。", note: "芦苇说：老北京的声音。" },
+        { title: "二人转", content: "东北说唱。一丑一旦，唱、说、扮、舞。", note: "芦苇说：东北人的乐子。" }
+    ],
+    "中国民族歌剧": [
+        { title: "什么是中国民族歌剧", content: "用民族音乐语言创作的歌剧。唱法贴近汉语。", note: "芦苇说：中国人的歌剧，唱中国人的事。" },
+        { title: "《白毛女》", content: "中国民族歌剧的奠基之作。旋律来自《小白菜》。", note: "芦苇说：旧社会把人变成鬼，新社会把鬼变成人。" },
+        { title: "《洪湖赤卫队》", content: "《洪湖水浪打浪》家喻户晓。表现革命精神。", note: "芦苇说：湖水会唱，人会记得。" },
+        { title: "《江姐》", content: "《红梅赞》《绣红旗》经典唱段。", note: "芦苇说：红岩上红梅开。" },
+        { title: "《刘三姐》", content: "壮族歌仙的故事。山歌斗地主。", note: "芦苇说：山歌能把山推倒。" }
+    ],
+    "中国原创音乐剧": [
+        { title: "什么是音乐剧", content: "集歌唱、舞蹈、对白于一体的舞台剧。", note: "芦苇说：比歌剧亲切，比话剧热闹。" },
+        { title: "《芳草心》", content: "中国第一部公认的原创音乐剧。主题曲《小草》。", note: "芦苇说：小草也有春天。" },
+        { title: "《蝶》", content: "中国原创音乐剧的里程碑。改编自梁祝。", note: "芦苇说：蝴蝶飞得过沧海。" },
+        { title: "《金沙》", content: "三宝作曲。以成都金沙遗址为背景。", note: "芦苇说：三千年，一首歌。" }
+    ]
+};
+// 显示芦苇乐理手册内容
+function showTheoryContent(category) {
+    const data = theoryHandbook[category];
+    if (!data) return;
+    const container = document.getElementById("theoryContent");
+    container.innerHTML = data.map(item => `
+        <div class="content-card">
+            <h3> ${item.title}</h3>
+            <p>${item.content}</p>
+            <div class="note"> ${item.note}</div>
+        </div>
+    `).join("");
+    // 记录阅读（可选，加分）
+    const user = getCurrentUser();
+    if (user) {
+        // 可以在这里加阅读积分
+    }
+}
+// 显示中国传统音乐内容
+function showChineseContent(category) {
+    const data = chineseHandbook[category];
+    if (!data) return;
+    const container = document.getElementById("chineseContent");
+    container.innerHTML = data.map(item => `
+        <div class="content-card">
+            <h3> ${item.title}</h3>
+            <p>${item.content}</p>
+            <div class="note"> ${item.note}</div>
+        </div>
+    `).join("");
+}
+// 构建芦苇乐理手册UI
+function buildTheoryUI() {
+    const container = document.getElementById("theoryCategories");
+    const categories = Object.keys(theoryHandbook);
+    categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "category-btn";
+        btn.innerText = cat;
+        btn.onclick = () => showTheoryContent(cat);
+        container.appendChild(btn);
+    });
+    // 默认显示第一个分类
+    if(categories.length > 0) showTheoryContent(categories[0]);
+}
+// 构建中国传统音乐手册UI
+function buildChineseUI() {
+    const container = document.getElementById("chineseCategories");
+    const categories = Object.keys(chineseHandbook);
+    categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "category-btn";
+        btn.innerText = cat;
+        btn.onclick = () => showChineseContent(cat);
+        container.appendChild(btn);
+    });
+    // 默认显示第一个分类
+    if(categories.length > 0) showChineseContent(categories[0]);
+}
+// 初始化
+buildTheoryUI();
+buildChineseUI();
+updateUserUI();
+</script>
+</body>
+</html>
+

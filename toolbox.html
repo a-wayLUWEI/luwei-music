@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>芦苇音乐 · 工具箱</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%); font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui; padding: 20px; }
+        .home-btn { position: fixed; bottom: 20px; left: 20px; background: #E69A2E; border: none; border-radius: 40px; padding: 8px 16px; z-index: 1000; cursor: pointer; font-weight: bold; color: #2D1E0C; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .home-btn:active { transform: scale(0.96); }
+        .back-to-top { position: fixed; bottom: 20px; right: 20px; background: #E69A2E; border: none; border-radius: 40px; padding: 8px 12px; z-index: 1000; cursor: pointer; font-weight: bold; color: #2D1E0C; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .user-bar { background: #0f281dcc; border-radius: 60px; padding: 6px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(4px); border: 1px solid #F2C94C; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 32px; height: 32px; background: #E69A2E; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .user-name { color: #FFD966; font-size: 0.8rem; font-weight: bold; }
+        .user-score { background: #2a4a3a; padding: 3px 10px; border-radius: 40px; font-size: 0.65rem; color: #FFD966; }
+        .login-btn { background: #E69A2E; border: none; padding: 5px 14px; border-radius: 40px; color: #2D1E0C; font-weight: bold; cursor: pointer; font-size: 0.7rem; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 24px; }
+        .header h1 { color: #FFD966; font-size: 1.8rem; margin-bottom: 8px; }
+        .header p { color: #AAD4B0; font-size: 0.8rem; }
+        .tool-card { background: #0f281dcc; border-radius: 28px; padding: 20px; margin-bottom: 20px; border: 1px solid #F2C94C; }
+        .tool-title { color: #FFD966; font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-left: 3px solid #E69A2E; padding-left: 12px; }
+        button { background: #3C6E4A; border: none; padding: 8px 16px; border-radius: 40px; font-weight: bold; color: white; cursor: pointer; transition: all 0.1s ease; font-size: 0.8rem; }
+        button:active { transform: scale(0.96); }
+        .btn-primary { background: #E69A2E; color: #2D1E0C; }
+        .btn-danger { background: #8a3a2a; }
+        input, .bpm-input { background: #2a4a3a; border: 1px solid #F2C94C; border-radius: 40px; padding: 8px 12px; color: #F5ECD7; font-size: 0.8rem; }
+        .stats-grid { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+        .stat-card { background: #0f281d; border-radius: 16px; padding: 10px; flex: 1; text-align: center; }
+        .stat-value { color: #FFD966; font-size: 1.2rem; font-weight: bold; }
+        .stat-label { color: #AAD4B0; font-size: 0.6rem; }
+        .progress-bar { background: #2a4a3a; border-radius: 10px; height: 8px; overflow: hidden; margin: 8px 0; }
+        .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #E69A2E, #FFD966); border-radius: 10px; }
+        .ear-options { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; justify-content: center; }
+        .feedback-text { color: #C8E6C9; font-size: 0.7rem; margin-top: 8px; text-align: center; }
+        .search-input { width: 100%; margin-bottom: 8px; }
+        .search-result { max-height: 150px; overflow-y: auto; font-size: 0.7rem; }
+        .search-item { padding: 6px 10px; background: #1f3e2e; margin: 4px 0; border-radius: 8px; cursor: pointer; }
+        .search-item:hover { background: #E69A2E30; }
+        @media (max-width: 768px) {
+            .tool-title { font-size: 1rem; }
+            .stat-value { font-size: 1rem; }
+        }
+    </style>
+    <!-- ========== 引入用户系统 ========== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+    <script src="api.js"></script>
+    <script src="sync.js"></script>
+</head>
+<body>
+<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
+<div class="container">
+    <!-- 用户信息栏 -->
+    <div class="user-bar" id="userBar">
+        <div class="user-info">
+            <div class="user-avatar"></div>
+            <div>
+                <div class="user-name" id="userName">加载中...</div>
+                <div class="user-score" id="userScore">积分 0</div>
+            </div>
+        </div>
+        <button class="login-btn" id="loginBtn" style="display:none;"> 登录</button>
+        <button class="login-btn" id="logoutBtn" style="display:none;"> 退出</button>
+    </div>
+    <div class="header">
+        <h1>🛠️ 芦苇工具箱</h1>
+        <p>练耳 · 节拍 · 计时 · 打卡 · 搜索</p>
+    </div>
+    <!-- 学习计时器 -->
+    <div class="tool-card">
+        <div class="tool-title">⏱️ 学习计时器</div>
+        <div style="background: #0f281d; border-radius: 16px; padding: 12px;">
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color:#C8E6C9;">今日学习</span>
+                <span id="todayTimerDisplay" style="color:#FFD966; font-size: 1.2rem; font-family:monospace;">00:00:00</span>
+            </div>
+            <div class="progress-bar"><div id="todayProgressBar" class="progress-fill"></div></div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color:#AAD4B0; font-size:0.6rem;"> 目标：30分钟</span>
+                <span id="todayProgressText" style="color:#AAD4B0; font-size:0.6rem;">0%</span>
+            </div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-label">本周学习</div><div id="weekTimerDisplay" class="stat-value">0分钟</div></div>
+            <div class="stat-card"><div class="stat-label">累计学习</div><div id="totalTimerDisplay" class="stat-value">0分钟</div></div>
+            <div class="stat-card"><div class="stat-label">总天数</div><div id="totalStudyDaysDisplay" class="stat-value">0天</div></div>
+        </div>
+        <button id="resetTimerBtn" class="btn-danger" style="width:100%; margin-top:8px;"> 重置今日</button>
+        <div class="feedback-text"> 每30秒自动保存</div>
+    </div>
+    <!-- 节拍器 -->
+    <div class="tool-card">
+        <div class="tool-title"> 节拍器</div>
+        <input type="range" id="bpmSlider" min="40" max="200" value="80" style="width:100%; margin:8px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span id="bpmValue" style="color:#FFD966; font-size:1rem;">80 BPM</span>
+            <div><button id="startMetronome" class="btn-primary">▶ 开始</button> <button id="stopMetronome">⏹ 停止</button></div>
+        </div>
+    </div>
+    <!-- 练耳小工具 -->
+    <div class="tool-card">
+        <div class="tool-title"> 练耳小工具</div>
+        <div id="earNote" style="text-align:center; color:#F5ECD7; margin:8px 0;">听音，然后选择</div>
+        <button id="playEarBtn" class="btn-primary" style="width:100%;"> 播放音高</button>
+        <div id="earOptions" class="ear-options"></div>
+        <div id="earFeedback" class="feedback-text"></div>
+    </div>
+    <!-- 节奏模仿器 -->
+    <div class="tool-card">
+        <div class="tool-title">🥁 节奏模仿器</div>
+        <button id="playRhythmBtn" class="btn-primary" style="width:48%;">▶ 播放节奏</button>
+        <button id="recordRhythmBtn" style="width:48%;"> 空格键模仿</button>
+        <div id="rhythmFeedback" class="feedback-text">按空格键模仿节奏</div>
+    </div>
+    <!-- 调音器参考音 -->
+    <div class="tool-card">
+        <div class="tool-title"> 调音器参考音</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+            <button class="tuner-note" data-freq="82.41">E2 (6弦)</button>
+            <button class="tuner-note" data-freq="110">A2 (5弦)</button>
+            <button class="tuner-note" data-freq="146.83">D3 (4弦)</button>
+            <button class="tuner-note" data-freq="196">G3 (3弦)</button>
+            <button class="tuner-note" data-freq="246.94">B3 (2弦)</button>
+            <button class="tuner-note" data-freq="329.63">E4 (1弦)</button>
+        </div>
+    </div>
+    <!-- 学习打卡 -->
+    <div class="tool-card">
+        <div class="tool-title"> 学习打卡</div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-label">连续打卡</div><div id="checkinStreak" class="stat-value">0</div><div style="font-size:0.5rem;">天</div></div>
+            <div class="stat-card"><div class="stat-label">累计打卡</div><div id="checkinTotal" class="stat-value">0</div><div style="font-size:0.5rem;">天</div></div>
+            <div class="stat-card"><div class="stat-label">打卡积分</div><div id="checkinTotalScore" class="stat-value">0</div><div style="font-size:0.5rem;">分</div></div>
+        </div>
+        <div id="checkinStatus" class="feedback-text">⭕ 今日未打卡</div>
+        <button id="checkinBtn" class="btn-primary" style="width:100%; margin-top:8px;">✅ 今日打卡</button>
+    </div>
+    <!-- 学习统计看板 -->
+    <div class="tool-card">
+        <div class="tool-title"> 学习统计</div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-label">总积分</div><div id="statsTotalScore" class="stat-value">0</div></div>
+            <div class="stat-card"><div class="stat-label">通关进度</div><div id="statsProgressPercent" class="stat-value">0%</div></div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-label">学习天数</div><div id="statsStudyDays" class="stat-value">0</div></div>
+            <div class="stat-card"><div class="stat-label">总时长</div><div id="statsTotalMinutes" class="stat-value">0</div></div>
+        </div>
+        <div id="statsExtra" style="margin-top:8px; font-size:0.65rem; color:#AAD4B0;"></div>
+    </div>
+    <!-- 搜索功能 -->
+    <div class="tool-card">
+        <div class="tool-title"> 搜索功能</div>
+        <input type="text" id="searchInput" class="search-input" placeholder="搜索和弦、歌手、风格、课程...">
+        <div id="searchResult" class="search-result">✨ 输入关键词开始搜索～</div>
+    </div>
+</div>
+<script>
+// ==================== 用户界面 ====================
+function updateUserUI() {
+    const user = getCurrentUser();
+    const userNameSpan = document.getElementById('userName');
+    const userScoreSpan = document.getElementById('userScore');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (user) {
+        userNameSpan.innerText = user.nickname || '芦苇同学';
+        userScoreSpan.innerText = `积分 ${user.score || 0}`;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'block';
+    } else {
+        userNameSpan.innerText = '未登录';
+        userScoreSpan.innerText = '积分 0';
+        loginBtn.style.display = 'block';
+        logoutBtn.style.display = 'none';
+    }
+}
+// 登录/退出
+document.getElementById('loginBtn')?.addEventListener('click', () => { showLoginModal(); });
+document.getElementById('logoutBtn')?.addEventListener('click', () => { logout(); location.reload(); });
+// 登录成功回调
+window.onLoginSuccess = function(user) {
+    updateUserUI();
+    updateStatsPanel();
+};
+// ==================== 1. 学习计时器（用户绑定） ====================
+(function() {
+    let studyStartTime = Date.now();
+    let timerInterval = null;
+    let todayStudySeconds = 0;
+    function getTodayDateStr() { return new Date().toDateString(); }
+    function getTotalStudyMinutes() { 
+        const user = getCurrentUser();
+        if (user) return parseInt(localStorage.getItem(`total_study_minutes_${user.user_id}`) || "0");
+        return parseInt(localStorage.getItem("total_study_minutes") || "0");
+    }
+    function getTotalStudyDays() {
+        const user = getCurrentUser();
+        const key = user ? `first_visit_date_${user.user_id}` : "first_visit_date";
+        let firstVisit = localStorage.getItem(key);
+        if (!firstVisit) { 
+            localStorage.setItem(key, getTodayDateStr()); 
+            return 1; 
+        }
+        return Math.floor((new Date() - new Date(firstVisit)) / (1000*60*60*24)) + 1;
+    }
+    function getWeekStudyMinutes() {
+        const user = getCurrentUser();
+        const prefix = user ? `daily_study_records_${user.user_id}` : "daily_study_records";
+        let weekRecords = JSON.parse(localStorage.getItem(prefix) || "{}");
+        let total = 0, today = new Date();
+        for (let i = 0; i < 7; i++) {
+            let date = new Date(today); date.setDate(today.getDate() - i);
+            total += weekRecords[date.toDateString()] || 0;
+        }
+        return total;
+    }
+    function saveTodayStudyTime() {
+        let currentSeconds = Math.floor((Date.now() - studyStartTime) / 1000);
+        todayStudySeconds = currentSeconds;
+        const user = getCurrentUser();
+        const prefix = user ? `_${user.user_id}` : "";
+        localStorage.setItem(`today_study_seconds${prefix}`, todayStudySeconds.toString());
+        localStorage.setItem(`timer_last_date${prefix}`, getTodayDateStr());
+        let lastAcc = localStorage.getItem(`last_accumulated_date${prefix}`);
+        let today = getTodayDateStr();
+        let todayMinutes = Math.floor(todayStudySeconds / 60);
+        if (lastAcc !== today && todayMinutes > 0) {
+            let existing = getTotalStudyMinutes();
+            localStorage.setItem(`total_study_minutes${prefix}`, (existing + todayMinutes).toString());
+            localStorage.setItem(`last_accumulated_date${prefix}`, today);
+            let dailyKey = `daily_study_records${prefix}`;
+            let daily = JSON.parse(localStorage.getItem(dailyKey) || "{}");
+            daily[today] = (daily[today] || 0) + todayMinutes;
+            localStorage.setItem(dailyKey, JSON.stringify(daily));
+        }
+    }
+    function initTodayStudyTime() {
+        const user = getCurrentUser();
+        const prefix = user ? `_${user.user_id}` : "";
+        let saved = localStorage.getItem(`timer_last_date${prefix}`);
+        let savedSeconds = parseInt(localStorage.getItem(`today_study_seconds${prefix}`) || "0");
+        if (saved === getTodayDateStr()) todayStudySeconds = savedSeconds;
+        else { todayStudySeconds = 0; localStorage.setItem(`timer_last_date${prefix}`, getTodayDateStr()); localStorage.setItem(`today_study_seconds${prefix}`, "0"); }
+        studyStartTime = Date.now() - (todayStudySeconds * 1000);
+    }
+    function updateTimerDisplay() {
+        let elapsed = Math.floor((Date.now() - studyStartTime) / 1000);
+        let hours = Math.floor(elapsed / 3600), minutes = Math.floor((elapsed % 3600) / 60), seconds = elapsed % 60;
+        let td = document.getElementById("todayTimerDisplay");
+        if (td) td.innerText = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        let percent = Math.min(100, Math.floor((elapsed / 1800) * 100));
+        let pb = document.getElementById("todayProgressBar"); if(pb) pb.style.width = percent + "%";
+        let pt = document.getElementById("todayProgressText"); if(pt) pt.innerText = percent + "%";
+        let wd = document.getElementById("weekTimerDisplay"); if(wd) wd.innerText = getWeekStudyMinutes() + "分钟";
+        let td2 = document.getElementById("totalTimerDisplay"); 
+        if(td2) { let total = getTotalStudyMinutes(); td2.innerText = Math.floor(total/60)>0 ? `${Math.floor(total/60)}h${total%60}m` : `${total}分钟`; }
+        let dd = document.getElementById("totalStudyDaysDisplay"); if(dd) dd.innerText = getTotalStudyDays() + "天";
+    }
+    function startTimerLoop() { if(timerInterval) clearInterval(timerInterval); timerInterval = setInterval(updateTimerDisplay, 1000); }
+    function resetTodayTimer() {
+        if(confirm("确定重置今日学习时长吗？")) {
+            todayStudySeconds = 0; studyStartTime = Date.now();
+            const user = getCurrentUser();
+            const prefix = user ? `_${user.user_id}` : "";
+            localStorage.setItem(`today_study_seconds${prefix}`, "0"); 
+            localStorage.setItem(`timer_last_date${prefix}`, getTodayDateStr());
+            updateTimerDisplay(); alert("✅ 已重置");
+        }
+    }
+    initTodayStudyTime(); startTimerLoop(); setInterval(saveTodayStudyTime, 30000);
+    document.getElementById("resetTimerBtn")?.addEventListener("click", resetTodayTimer);
+    window.addEventListener("beforeunload", () => saveTodayStudyTime());
+})();
+// ==================== 2. 节拍器 ====================
+(function() {
+    let metronomeInterval = null, bpm = 80, beatCount = 0;
+    let audioCtx = null;
+    function playBeep(isStrong) {
+        if(!audioCtx) audioCtx = new AudioContext();
+        if(audioCtx.state === "suspended") audioCtx.resume();
+        let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = isStrong ? 880 : 660;
+        gain.gain.value = isStrong ? 0.4 : 0.25;
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+    }
+    function startMetronome() {
+        if(metronomeInterval) clearInterval(metronomeInterval);
+        let interval = 60000 / bpm;
+        beatCount = 0;
+        metronomeInterval = setInterval(() => { beatCount++; playBeep(beatCount % 4 === 1); }, interval);
+    }
+    function stopMetronome() { if(metronomeInterval) { clearInterval(metronomeInterval); metronomeInterval = null; } }
+    let slider = document.getElementById("bpmSlider");
+    if(slider) {
+        slider.addEventListener("input", (e) => { bpm = e.target.value; document.getElementById("bpmValue").innerText = bpm + " BPM"; if(metronomeInterval) { stopMetronome(); startMetronome(); } });
+    }
+    document.getElementById("startMetronome")?.addEventListener("click", startMetronome);
+    document.getElementById("stopMetronome")?.addEventListener("click", stopMetronome);
+    document.body.onclick = () => { if(audioCtx && audioCtx.state === "suspended") audioCtx.resume(); };
+})();
+
+// ==================== 3. 练耳工具 ====================
+(function() {
+    const earNotes = ["C", "D", "E", "F", "G", "A", "B"];
+    let currentEarNote = null, audioCtx = null;
+    function playFreq(freq) {
+        if(!audioCtx) audioCtx = new AudioContext();
+        if(audioCtx.state === "suspended") audioCtx.resume();
+        let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = "sine"; osc.frequency.value = freq;
+        gain.gain.value = 0.4; gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 1);
+    }
+    function loadEarQuiz() {
+        currentEarNote = earNotes[Math.floor(Math.random() * earNotes.length)];
+        const noteMap = {C:261.63, D:293.66, E:329.63, F:349.23, G:392.00, A:440.00, B:493.88};
+        window.currentEarFreq = noteMap[currentEarNote];
+        let options = [currentEarNote];
+        while(options.length < 4) { let r = earNotes[Math.floor(Math.random()*earNotes.length)]; if(!options.includes(r)) options.push(r); }
+        options.sort(() => Math.random() - 0.5);
+        let optsDiv = document.getElementById("earOptions");
+        if(optsDiv) {
+            optsDiv.innerHTML = "";
+            options.forEach(note => {
+                let btn = document.createElement("button"); btn.className = "lyric-opt-btn"; btn.innerText = note;
+                btn.style.cssText = "background:#3C6E4A; padding:6px 12px; border-radius:30px; color:white; cursor:pointer;";
+                btn.onclick = () => {
+                    if(note === currentEarNote) { document.getElementById("earFeedback").innerHTML = "✅ 正确！"; loadEarQuiz(); }
+                    else { document.getElementById("earFeedback").innerHTML = `❌ 错误，正确答案是 ${currentEarNote}`; }
+                };
+                optsDiv.appendChild(btn);
+            });
+        }
+        document.getElementById("earNote").innerHTML = " 听音，然后选择";
+    }
+    document.getElementById("playEarBtn")?.addEventListener("click", () => { if(window.currentEarFreq) playFreq(window.currentEarFreq); });
+    loadEarQuiz();
+})();
+// ==================== 4. 节奏模仿器 ====================
+(function() {
+    let rhythmPattern = [0.5, 0.5, 1, 0.5, 0.5], rhythmInterval = null;
+    let audioCtx = null;
+    function playBeep() {
+        if(!audioCtx) audioCtx = new AudioContext();
+        if(audioCtx.state === "suspended") audioCtx.resume();
+        let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = "sine"; osc.frequency.value = 880;
+        gain.gain.value = 0.3; gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+    }
+    function playRhythm() {
+        if(rhythmInterval) clearInterval(rhythmInterval);
+        let index = 0;
+        rhythmInterval = setInterval(() => {
+            if(index >= rhythmPattern.length) { clearInterval(rhythmInterval); rhythmInterval = null; return; }
+            playBeep(); index++;
+        }, rhythmPattern[index] * 500);
+    }
+    document.getElementById("playRhythmBtn")?.addEventListener("click", playRhythm);
+    document.getElementById("recordRhythmBtn")?.addEventListener("click", () => {
+        document.getElementById("rhythmFeedback").innerHTML = " 按空格键模仿节奏";
+        window.addEventListener("keydown", function(e) { if(e.code === "Space") { e.preventDefault(); playBeep(); document.getElementById("rhythmFeedback").innerHTML = "✅ 节奏练习中～"; setTimeout(() => { if(document.getElementById("rhythmFeedback").innerHTML === "✅ 节奏练习中～") document.getElementById("rhythmFeedback").innerHTML = " 按空格键模仿节奏"; }, 2000); } });
+    });
+})();
+// ==================== 5. 调音器 ====================
+document.querySelectorAll(".tuner-note").forEach(btn => {
+    btn.addEventListener("click", () => {
+        let freq = parseFloat(btn.dataset.freq);
+        if(!isNaN(freq)) {
+            let audioCtx = new AudioContext();
+            if(audioCtx.state === "suspended") audioCtx.resume();
+            let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.type = "sine"; osc.frequency.value = freq;
+            gain.gain.value = 0.3; gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 1);
+        }
+    });
+});
+// ==================== 6. 打卡功能（用户绑定） ====================
+(function() {
+    let checkinData = { streak:0, totalDays:0, lastDate:null, totalScore:0 };
+    function loadData() { 
+        const user = getCurrentUser();
+        const key = user ? `checkin_data_${user.user_id}` : "checkin_data_v2";
+        let saved = localStorage.getItem(key); 
+        if(saved) checkinData = JSON.parse(saved); 
+    }
+    function saveData() { 
+        const user = getCurrentUser();
+        const key = user ? `checkin_data_${user.user_id}` : "checkin_data_v2";
+        localStorage.setItem(key, JSON.stringify(checkinData)); 
+    }
+    function getToday() { return new Date().toDateString(); }
+    function isTodayChecked() { return checkinData.lastDate === getToday(); }
+    function updateUI() {
+        document.getElementById("checkinStreak").innerText = checkinData.streak;
+        document.getElementById("checkinTotal").innerText = checkinData.totalDays;
+        document.getElementById("checkinTotalScore").innerText = checkinData.totalScore;
+        let status = document.getElementById("checkinStatus");
+        let btn = document.getElementById("checkinBtn");
+        if(isTodayChecked()) { if(status) status.innerHTML = "✅ 今日已打卡 · 明天再来～"; if(btn) btn.disabled = true; }
+        else { if(status) status.innerHTML = "⭕ 今日未打卡 · 点击打卡～"; if(btn) btn.disabled = false; }
+    }
+    async function doCheckin() {
+        if(isTodayChecked()) { alert("今天已经打卡过了～"); return; }
+        let today = getToday();
+        let yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+        let newStreak = (checkinData.lastDate === yesterday.toDateString()) ? checkinData.streak + 1 : 1;
+        let reward = 10;
+        if(newStreak === 7) reward += 30;
+        if(newStreak === 15) reward += 50;
+        if(newStreak === 30) reward += 100;
+        checkinData.streak = newStreak;
+        checkinData.totalDays += 1;
+        checkinData.lastDate = today;
+        checkinData.totalScore += reward;
+        saveData(); updateUI();
+        alert(`✅ 打卡成功！\n连续打卡：${newStreak}天\n获得积分：+${reward}`);
+        // 增加积分
+        const user = getCurrentUser();
+        if (user) {
+            user.score = (user.score || 0) + reward;
+            localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(user));
+            updateUserUI();
+            await API.addScore(reward, "每日打卡");
+        } else {
+            let scoreSpan = document.getElementById("scoreValue");
+            if(scoreSpan) scoreSpan.innerText = parseInt(scoreSpan.innerText||0) + reward;
+        }
+    }
+    loadData(); updateUI();
+    document.getElementById("checkinBtn")?.addEventListener("click", doCheckin);
+})();
+// ==================== 7. 学习统计 ====================
+function updateStatsPanel() {
+    const user = getCurrentUser();
+    let scoreSpan = document.getElementById("statsTotalScore");
+    if(scoreSpan) scoreSpan.innerText = user?.score || "0";
+    let completed = 0;
+    const userId = user?.user_id || "mock_user";
+    for(let i=0; i<29; i++) if(localStorage.getItem(`level_${i}_${userId}`) === "true") completed++;
+    let percent = Math.round((completed / 29) * 100);
+    let progSpan = document.getElementById("statsProgressPercent");
+    if(progSpan) progSpan.innerText = percent + "%";
+    let daysSpan = document.getElementById("statsStudyDays");
+    if(daysSpan) {
+        const user = getCurrentUser();
+        const key = user ? `first_visit_date_${user.user_id}` : "first_visit_date";
+        let first = localStorage.getItem(key);
+        if(!first) { localStorage.setItem(key, new Date().toDateString()); daysSpan.innerText = "1"; }
+        else daysSpan.innerText = Math.floor((new Date() - new Date(first)) / (1000*60*60*24)) + 1;
+    }
+    let totalMin = 0;
+    if (user) totalMin = parseInt(localStorage.getItem(`total_study_minutes_${user.user_id}`) || "0");
+    else totalMin = parseInt(localStorage.getItem("total_study_minutes") || "0");
+    let minSpan = document.getElementById("statsTotalMinutes");
+    if(minSpan) minSpan.innerText = Math.floor(totalMin/60)>0 ? `${Math.floor(totalMin/60)}h${totalMin%60}m` : `${totalMin}分钟`;
+    let extra = document.getElementById("statsExtra");
+    if(extra) {
+        const key = user ? `checkin_data_${user.user_id}` : "checkin_data_v2";
+        let checkin = JSON.parse(localStorage.getItem(key) || "{}");
+        extra.innerHTML = ` 通关率：${percent}% &nbsp;|&nbsp;  累计打卡：${checkin.totalDays || 0}天 &nbsp;|&nbsp;  连续：${checkin.streak || 0}天`;
+    }
+}
+updateStatsPanel();
+setInterval(updateStatsPanel, 5000);
+// ==================== 8. 搜索功能 ====================
+(function() {
+    let searchInput = document.getElementById("searchInput");
+    let searchResult = document.getElementById("searchResult");
+    if(!searchInput || !searchResult) return;
+    function doSearch() {
+        let keyword = searchInput.value.trim().toLowerCase();
+        if(keyword === "") { searchResult.innerHTML = "✨ 输入关键词开始搜索～"; return; }
+        let results = [];
+        let allElements = document.querySelectorAll(".tool-title, .stat-label, .stat-value, .feedback-text, button");
+        allElements.forEach(el => {
+            let text = el.innerText;
+            if(text && text.toLowerCase().includes(keyword)) results.push({ name: text.substring(0, 60), element: el });
+        });
+        if(results.length === 0) { searchResult.innerHTML = ` 未找到 "${keyword}" 相关内容`; return; }
+        let html = `<div style="color:#FFD966; margin-bottom:8px;"> 找到 ${results.length} 条结果</div>`;
+        results.slice(0, 10).forEach((r, idx) => {
+            html += `<div class="search-item" data-idx="${idx}"> ${r.name}</div>`;
+        });
+        searchResult.innerHTML = html;
+        document.querySelectorAll(".search-item").forEach((item, idx) => {
+            item.onclick = () => { results[idx].element.scrollIntoView({ behavior: "smooth", block: "center" }); results[idx].element.style.background = "#E69A2E30"; setTimeout(() => results[idx].element.style.background = "", 1500); };
+        });
+    }
+    searchInput.addEventListener("input", doSearch);
+    searchInput.addEventListener("keypress", (e) => { if(e.key === "Enter") doSearch(); });
+})();
+// 初始化
+updateUserUI();
+</script>
+</body>
+</html>
+
