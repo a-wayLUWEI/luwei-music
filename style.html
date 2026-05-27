@@ -22,9 +22,9 @@
         .header p { color: #AAD4B0; font-size: 0.8rem; }
         .section { background: #0f281dcc; border-radius: 32px; padding: 20px; margin-bottom: 20px; border: 1px solid #F2C94C; }
         .section-title { color: #FFD966; font-size: 1.2rem; font-weight: bold; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-left: 4px solid #E69A2E; padding-left: 12px; }
-        .category-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-        .category-btn { background: #3C6E4A; border: none; border-radius: 40px; padding: 8px 16px; color: white; font-size: 0.8rem; cursor: pointer; transition: all 0.1s ease; }
-        .category-btn:active { transform: scale(0.95); background: #E69A2E; color: #2D1E0C; }
+        .category-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; max-height: 200px; overflow-y: auto; padding: 4px; }
+        .category-btn, .artist-btn { background: #3C6E4A; border: none; border-radius: 40px; padding: 8px 16px; color: white; font-size: 0.8rem; cursor: pointer; transition: all 0.1s ease; }
+        .category-btn:active, .artist-btn:active { transform: scale(0.95); background: #E69A2E; color: #2D1E0C; }
         .quiz-panel { background: #1f3e2e; border-radius: 20px; padding: 16px; margin-top: 12px; }
         .lyric-question { font-size: 0.9rem; font-weight: bold; margin: 12px 0; color: #F5ECD7; line-height: 1.4; }
         .lyric-options { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0; }
@@ -32,130 +32,164 @@
         .lyric-opt-btn:active { transform: scale(0.95); }
         .feedback { color: #C8E6C9; font-size: 0.75rem; text-align: center; margin-top: 8px; }
         .badge { display: inline-block; background: #E69A2E; color: #2D1E0C; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; margin-top: 8px; }
-        .artist-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 16px; max-height: 200px; overflow-y: auto; padding: 8px; }
-        .artist-btn { background: #3C6E4A; border: none; border-radius: 30px; padding: 6px 12px; color: white; font-size: 0.7rem; cursor: pointer; transition: all 0.1s ease; }
-        .artist-btn:active { transform: scale(0.95); background: #E69A2E; }
-        .master-quiz { margin-top: 12px; }
+        .artist-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 16px; max-height: 250px; overflow-y: auto; padding: 8px; }
         @media (max-width: 768px) {
             .category-btn, .artist-btn { padding: 6px 12px; font-size: 0.7rem; }
             .section-title { font-size: 1rem; }
         }
     </style>
-    <!-- ========== 引入用户系统 ========== -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="auth.js"></script>
+    <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="sync.js"></script>
 </head>
 <body>
-<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
+<button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="container">
-    <!-- 用户信息栏 -->
     <div class="user-bar" id="userBar">
         <div class="user-info">
-            <div class="user-avatar"></div>
+            <div class="user-avatar">🎵</div>
             <div>
                 <div class="user-name" id="userName">加载中...</div>
                 <div class="user-score" id="userScore">积分 0</div>
             </div>
         </div>
-        <button class="login-btn" id="loginBtn" style="display:none;"> 登录</button>
-        <button class="login-btn" id="logoutBtn" style="display:none;"> 退出</button>
+        <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
+        <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
     </div>
     <div class="header">
-        <h1> 风格与鉴赏</h1>
+        <h1>🎧 风格与鉴赏</h1>
         <p>探索音乐风格 · 聆听大师经典</p>
     </div>
-    <!-- 风格闯关 -->
+
+    <!-- 风格闯关（15种风格）-->
     <div class="section">
-        <div class="section-title"> 风格闯关</div>
+        <div class="section-title">🎸 风格闯关</div>
         <div class="category-grid" id="styleList"></div>
         <div id="styleQuizPanel" class="quiz-panel">
-            <div class="feedback">点击上方风格开始闯关～</div>
+            <div class="feedback">✨ 点击上方风格开始闯关～</div>
         </div>
         <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题通关 ✨</div>
     </div>
-    <!-- 大师鉴赏 -->
+
+    <!-- 大师鉴赏（26位华语歌手）-->
     <div class="section">
-        <div class="section-title"> 大师鉴赏 · 华语流行音乐</div>
+        <div class="section-title">🌟 大师鉴赏 · 华语流行音乐</div>
         <div class="artist-grid" id="masterList"></div>
         <div id="masterQuizPanel" class="quiz-panel">
-            <div class="feedback">点击歌手开始鉴赏闯关～</div>
+            <div class="feedback">✨ 点击歌手开始鉴赏闯关～</div>
         </div>
         <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对6题得勋章 ✨</div>
     </div>
+
     <!-- 民歌闯关 -->
     <div class="section">
-        <div class="section-title"> 中国民族歌曲 · 芦苇通关</div>
+        <div class="section-title">🏮 中国民族歌曲 · 芦苇通关</div>
         <div class="category-grid" id="folkList"></div>
         <div id="folkQuizPanel" class="quiz-panel">
-            <div class="feedback">点击上方单元开始闯关～</div>
+            <div class="feedback">✨ 点击上方单元开始闯关～</div>
         </div>
         <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题通关 ✨</div>
     </div>
+
     <!-- 古风鉴赏 -->
     <div class="section">
-        <div class="section-title"> 流行性古风抒情歌 · 芦苇鉴赏</div>
+        <div class="section-title">🍃 流行性古风抒情歌 · 芦苇鉴赏</div>
         <div class="category-grid" id="gufengList"></div>
         <div id="gufengQuizPanel" class="quiz-panel">
-            <div class="feedback">点击歌曲开始鉴赏闯关～</div>
+            <div class="feedback">✨ 点击歌曲开始鉴赏闯关～</div>
         </div>
         <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题通关 ✨</div>
     </div>
 </div>
+
 <script>
 // ==================== 用户界面 ====================
-function updateUserUI() {
-    const user = getCurrentUser();
+let currentUserData = null;
+
+async function updateUserUI() {
+    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     const userNameSpan = document.getElementById('userName');
     const userScoreSpan = document.getElementById('userScore');
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
+    
     if (user) {
         userNameSpan.innerText = user.nickname || '芦苇同学';
-        userScoreSpan.innerText = `积分 ${user.score || 0}`;
-        loginBtn.style.display = 'none';
-        logoutBtn.style.display = 'block';
+        let score = user.score || 0;
+        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
+            const apiScore = await window.API.getUserScore();
+            if (apiScore !== undefined) score = apiScore;
+        }
+        userScoreSpan.innerText = `积分 ${score}`;
+        if(loginBtn) loginBtn.style.display = 'none';
+        if(logoutBtn) logoutBtn.style.display = 'block';
+        currentUserData = user;
     } else {
         userNameSpan.innerText = '未登录';
         userScoreSpan.innerText = '积分 0';
-        loginBtn.style.display = 'block';
-        logoutBtn.style.display = 'none';
+        if(loginBtn) loginBtn.style.display = 'block';
+        if(logoutBtn) logoutBtn.style.display = 'none';
+        currentUserData = null;
     }
 }
-// 登录/退出
-document.getElementById('loginBtn')?.addEventListener('click', () => { showLoginModal(); });
-document.getElementById('logoutBtn')?.addEventListener('click', () => { logout(); location.reload(); });
-// 登录成功回调
-window.onLoginSuccess = function(user) {
-    updateUserUI();
+
+async function addScore(amount, reason) {
+    if (!currentUserData) return;
+    if (typeof window.API !== 'undefined' && window.API.addScore) {
+        await window.API.addScore(amount, reason);
+        updateUserUI();
+    }
+}
+
+if(document.getElementById('loginBtn')) {
+    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
+}
+if(document.getElementById('logoutBtn')) {
+    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
+}
+
+window.onLoginSuccess = async function(user) {
+    currentUserData = user;
+    await updateUserUI();
+    if (typeof pullFromCloud === 'function') {
+        await pullFromCloud();
+    }
 };
-// 保存风格通关状态
+
+updateUserUI();
+
+// ==================== 保存通关记录 ====================
 function saveStyleComplete(style) {
-    const user = getCurrentUser();
-    if (!user) return;
-    const userId = user.user_id;
+    if (!currentUserData) return;
+    const userId = currentUserData.user_id;
     localStorage.setItem(`style_${style}_${userId}`, "true");
-    // 同步到云端（可选）
-    syncToCloud();
+    if (typeof syncToCloud === 'function') syncToCloud();
 }
-// 检查风格是否已通关
-function isStyleComplete(style) {
-    const user = getCurrentUser();
-    if (!user) return false;
-    const userId = user.user_id;
-    return localStorage.getItem(`style_${style}_${userId}`) === "true";
-}
-// 保存大师通关状态
+
 function saveMasterComplete(artist) {
-    const user = getCurrentUser();
-    if (!user) return;
-    const userId = user.user_id;
+    if (!currentUserData) return;
+    const userId = currentUserData.user_id;
     localStorage.setItem(`master_${artist}_${userId}`, "true");
-    syncToCloud();
+    if (typeof syncToCloud === 'function') syncToCloud();
 }
-// ==================== 风格题库 ====================
+
+function saveFolkComplete(unit) {
+    if (!currentUserData) return;
+    const userId = currentUserData.user_id;
+    localStorage.setItem(`folk_${unit}_${userId}`, "true");
+    if (typeof syncToCloud === 'function') syncToCloud();
+}
+
+function saveGufengComplete(song) {
+    if (!currentUserData) return;
+    const userId = currentUserData.user_id;
+    localStorage.setItem(`gufeng_${song}_${userId}`, "true");
+    if (typeof syncToCloud === 'function') syncToCloud();
+}
+
+// ==================== 风格题库（15种风格）====================
 const styleBank = {
     "摇滚": [
         { q: "摇滚乐的核心电吉他音色通常使用什么效果？", opts: ["失真", "合唱", "延迟", "混响"], ans: 0, exp: "失真效果是摇滚的标志性音色。" },
@@ -212,9 +246,59 @@ const styleBank = {
         { q: "以下哪位是嘻哈音乐的代表人物？", opts: ["Tupac", "Miles Davis", "Bob Dylan", "Elvis Presley"], ans: 0, exp: "Tupac 是嘻哈传奇。" },
         { q: "嘻哈音乐起源于哪里？", opts: ["美国布朗克斯区", "英国伦敦", "法国巴黎", "日本东京"], ans: 0, exp: "嘻哈 1970 年代起源于纽约布朗克斯。" },
         { q: "以下哪首歌是华语嘻哈代表作？", opts: ["《差不多先生》", "《小幸运》", "《泡沫》", "《红豆》"], ans: 0, exp: "MC HotDog 的《差不多先生》是华语嘻哈经典。" }
+    ],
+    "金属": [
+        { q: "金属乐的核心特点是什么？", opts: ["失真吉他、重节奏、高亢唱腔", "电子合成、轻快节奏", "木吉他、清唱", "萨克斯、即兴"], ans: 0, exp: "金属乐以失真吉他和重型节奏为标志。" },
+        { q: "以下哪个是金属乐的子风格？", opts: ["死亡金属", "House", "Salsa", "Funk"], ans: 0, exp: "死亡金属是金属乐的重要分支。" },
+        { q: "金属乐中常用的唱腔是什么？", opts: ["嘶吼或尖嗓", "假声", "低音吟唱", "说唱"], ans: 0, exp: "嘶吼和尖嗓是金属乐的标志性唱法。" },
+        { q: "以下哪位是金属乐的代表人物？", opts: ["Ozzy Osbourne", "B.B. King", "Bob Dylan", "Elvis Presley"], ans: 0, exp: "Ozzy Osbourne 是金属传奇。" },
+        { q: "金属乐的双踩（Double Bass）指的是什么？", opts: ["鼓手的快速双脚踩鼓", "双吉他独奏", "双主唱", "双贝斯"], ans: 0, exp: "双踩是金属乐鼓手的核心技术。" }
+    ],
+    "雷鬼": [
+        { q: "雷鬼音乐的核心节奏特征是什么？", opts: ["反拍（off-beat）", "正拍重音", "连续十六分音符", "三连音"], ans: 0, exp: "雷鬼标志性的节奏是吉他/键盘在反拍上的切分。" },
+        { q: "雷鬼音乐起源于哪里？", opts: ["牙买加", "美国", "英国", "巴西"], ans: 0, exp: "雷鬼音乐起源于牙买加。" },
+        { q: "以下哪位是雷鬼音乐的代表人物？", opts: ["Bob Marley", "Miles Davis", "Bob Dylan", "Elvis Presley"], ans: 0, exp: "Bob Marley 是雷鬼音乐的代名词。" },
+        { q: "雷鬼音乐中常见的乐器不包括？", opts: ["失真电吉他", "鼓", "贝斯", "键盘"], ans: 0, exp: "失真电吉他不是雷鬼的常规配置。" },
+        { q: "以下哪首歌是雷鬼经典？", opts: ["《No Woman, No Cry》", "《Stairway to Heaven》", "《Bohemian Rhapsody》", "《Hotel California》"], ans: 0, exp: "Bob Marley 的《No Woman, No Cry》是雷鬼经典。" }
+    ],
+    "灵魂乐": [
+        { q: "灵魂乐的核心特点是什么？", opts: ["情感充沛的演唱、福音和声", "电子合成", "说唱", "重金属"], ans: 0, exp: "灵魂乐强调直击心灵的情感表达。" },
+        { q: "灵魂乐起源于哪种音乐？", opts: ["福音音乐和节奏蓝调", "古典音乐", "爵士", "民谣"], ans: 0, exp: "灵魂乐融合了福音和 R&B。" },
+        { q: "以下哪位是灵魂乐的代表人物？", opts: ["Aretha Franklin", "Bob Marley", "Kurt Cobain", "Jimi Hendrix"], ans: 0, exp: "Aretha Franklin 是灵魂乐女王。" },
+        { q: "灵魂乐中常用的演唱技巧是什么？", opts: ["转音、呐喊、即兴", "嘶吼", "低语", "喊麦"], ans: 0, exp: "灵魂乐歌手以华丽转音和情感爆发著称。" },
+        { q: "以下哪首歌是灵魂乐经典？", opts: ["《Respect》", "《Stairway to Heaven》", "《Like a Rolling Stone》", "《Hotel California》"], ans: 0, exp: "Aretha Franklin 的《Respect》是灵魂乐国歌。" }
+    ],
+    "福音": [
+        { q: "福音音乐的核心主题是什么？", opts: ["信仰、赞美、希望", "爱情", "社会批判", "科幻"], ans: 0, exp: "福音音乐是基督教赞美诗。" },
+        { q: "福音音乐中常见的演唱形式是？", opts: ["合唱、呼应与应答", "独唱", "说唱", "无伴奏"], ans: 0, exp: "福音音乐以合唱和会众互动为特色。" },
+        { q: "以下哪位是福音音乐的代表人物？", opts: ["Mahalia Jackson", "B.B. King", "Bob Dylan", "Miles Davis"], ans: 0, exp: "Mahalia Jackson 是福音女王。" },
+        { q: "福音音乐对哪种流行音乐影响巨大？", opts: ["灵魂乐、R&B", "重金属", "电子", "乡村"], ans: 0, exp: "福音的演唱方式直接影响了灵魂乐。" },
+        { q: "福音音乐中常见的乐器是什么？", opts: ["钢琴、管风琴、鼓", "电吉他", "合成器", "口琴"], ans: 0, exp: "管风琴是传统福音音乐的核心乐器。" }
+    ],
+    "世界音乐": [
+        { q: "世界音乐通常指什么？", opts: ["世界各地传统与融合音乐", "西方流行音乐", "古典音乐", "电子音乐"], ans: 0, exp: "世界音乐是民族音乐与现代的融合。" },
+        { q: "以下哪个是世界音乐的代表？", opts: ["非洲鼓乐", "摇滚", "爵士", "乡村"], ans: 0, exp: "非洲鼓乐是世界音乐的重要组成部分。" },
+        { q: "世界音乐中常见的乐器是？", opts: ["各种民族乐器", "电吉他", "合成器", "口琴"], ans: 0, exp: "世界音乐强调本土特色乐器。" },
+        { q: "以下哪位是世界音乐的代表人物？", opts: ["Peter Gabriel", "Metallica", "Bob Marley", "Elvis Presley"], ans: 0, exp: "Peter Gabriel 推动了世界音乐的传播。" },
+        { q: "“佛朗明哥”是哪里的世界音乐？", opts: ["西班牙", "巴西", "印度", "非洲"], ans: 0, exp: "佛朗明哥是西班牙的国粹。" }
+    ],
+    "拉丁": [
+        { q: "拉丁音乐的核心节奏是什么？", opts: ["切分、复合拍", "正拍", "三连音", "附点"], ans: 0, exp: "拉丁音乐以丰富的切分和复合节奏为特征。" },
+        { q: "以下哪个是拉丁音乐的子风格？", opts: ["Salsa", "蓝调", "爵士", "摇滚"], ans: 0, exp: "Salsa 是拉丁音乐的重要分支。" },
+        { q: "拉丁音乐通常使用什么乐器？", opts: ["康加鼓、手鼓、小号", "电吉他失真效果器", "合成器", "口琴"], ans: 0, exp: "康加鼓、手鼓、小号是拉丁音乐的标志性乐器。" },
+        { q: "以下哪位是拉丁音乐的代表人物？", opts: ["Gloria Estefan", "B.B. King", "Bob Dylan", "Elvis Presley"], ans: 0, exp: "Gloria Estefan 是拉丁音乐女王。" },
+        { q: "“Bossa Nova”是哪个国家的音乐风格？", opts: ["巴西", "古巴", "美国", "西班牙"], ans: 0, exp: "Bossa Nova 起源于巴西。" }
+    ],
+    "乡村": [
+        { q: "乡村音乐的核心乐器是什么？", opts: ["木吉他、小提琴（Fiddle）", "电吉他", "合成器", "萨克斯"], ans: 0, exp: "木吉他和 Fiddle 是乡村的标志性乐器。" },
+        { q: "乡村音乐通常讲述什么故事？", opts: ["生活、爱情、家庭", "科幻", "政治", "历史"], ans: 0, exp: "乡村音乐以普通人的生活为主题。" },
+        { q: "以下哪位是乡村音乐的代表人物？", opts: ["Johnny Cash", "Miles Davis", "Bob Dylan", "Jimi Hendrix"], ans: 0, exp: "Johnny Cash 是乡村音乐传奇。" },
+        { q: "乡村音乐和民谣最大的区别是？", opts: ["有更多小提琴和踏板吉他", "速度更快", "歌词更复杂", "没有区别"], ans: 0, exp: "乡村音乐有独特的乐器音色。" },
+        { q: "乡村音乐中常用的吉他技巧是？", opts: ["鸡啄式（Fingerpicking）", "点弦", "扫拨", "摇把"], ans: 0, exp: "鸡啄式是乡村吉他的标志性弹法。" }
     ]
 };
-// ==================== 大师题库 ====================
+
+// ==================== 大师题库（26位华语歌手）====================
 const masterBank = {
     "周杰伦": [
         { q: "《安静》前奏 C–G–Am–F 为什么适合“安静地讲述”？", opts: ["速度快", "下行循环，温柔不逼迫", "全是白键", "有转调"], ans: 1, exp: "下行循环像叹气，不煽情却动人。" },
@@ -247,6 +331,142 @@ const masterBank = {
         { q: "《浮夸》副歌最高音表现什么情绪？", opts: ["愤怒", "绝望", "呐喊", "释怀"], ans: 2, exp: "高音像对世界的呐喊。" },
         { q: "《陪你度过漫长岁月》前奏用什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 1, exp: "木吉他温暖，像朋友陪伴。" },
         { q: "陈奕迅的嗓音特质是什么？", opts: ["高亢", "沙哑沧桑", "清澈", "甜美"], ans: 1, exp: "沙哑沧桑，辨识度极高。" }
+    ],
+    "王菲": [
+        { q: "《红豆》中「有时候 有时候」属于哪种句式？", opts: ["排比", "对仗", "顶针", "反复"], ans: 3, exp: "反复让时间感拉长，适合表达等待。" },
+        { q: "《匆匆那年》副歌旋律走向主要是什么？", opts: ["上行", "下行", "波浪", "平行"], ans: 0, exp: "上行推动情绪，让人感到时光流逝。" },
+        { q: "《流年》中“爱上一个天使的缺点”用了什么修辞？", opts: ["矛盾修辞", "排比", "顶针", "反问"], ans: 0, exp: "天使与缺点矛盾组合，增加诗意。" },
+        { q: "王菲《传奇》前奏的乐器音色给人什么感觉？", opts: ["空灵", "沉重", "急促", "滑稽"], ans: 0, exp: "空灵的乐器音色像在诉说一段遥远的回忆。" },
+        { q: "《致青春》副歌“良辰美景奈何天”引用了什么？", opts: ["古诗词", "流行歌词", "广告语", "谚语"], ans: 0, exp: "引用古诗词增加文化厚度。" },
+        { q: "《百年孤寂》整首歌的色调更接近？", opts: ["明亮", "灰冷孤独", "温暖", "热血"], ans: 1, exp: "编曲与歌词都透露出孤独与苍凉感。" }
+    ],
+    "张惠妹": [
+        { q: "张惠妹《听海》副歌最高音表现了什么情绪？", opts: ["愤怒", "绝望", "思念", "释怀"], ans: 2, exp: "高音像海浪一样涌出思念，一波接一波。" },
+        { q: "《记得》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，悲伤又熟悉，像在回忆。" },
+        { q: "《我可以抱你吗》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 1, exp: "木吉他弹唱，像在轻轻诉说。" },
+        { q: "《三天三夜》的节奏特点是什么？", opts: ["慢摇", "摇滚重拍", "三连音", "附点"], ans: 1, exp: "摇滚重拍，让人想跳起来。" },
+        { q: "《人质》副歌最高音表达了什么？", opts: ["无奈", "愤怒", "释怀", "绝望"], ans: 0, exp: "高音像被困住的人，无力挣脱。" },
+        { q: "张惠妹的嗓音被形容为？", opts: ["沙哑", "高亢", "清澈", "甜美"], ans: 0, exp: "沙哑又有爆发力，辨识度极高。" }
+    ],
+    "孙燕姿": [
+        { q: "孙燕姿《天黑黑》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 0, exp: "钢琴简单而深刻，像在轻轻诉说童年。" },
+        { q: "《遇见》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，等待感强烈。" },
+        { q: "《我怀念的》副歌最高音表达了什么？", opts: ["无奈", "愤怒", "释怀", "绝望"], ans: 0, exp: "高音像在说“我怀念的是无话不说”。" },
+        { q: "《第一天》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "三连音", "附点"], ans: 1, exp: "轻快跳跃，像第一天相遇的兴奋。" },
+        { q: "《克卜勒》歌名指的是什么？", opts: ["星星", "行星", "彗星", "银河"], ans: 0, exp: "克卜勒是星星的名字，象征光芒与陪伴。" },
+        { q: "孙燕姿的嗓音被形容为？", opts: ["沙哑", "高亢", "清澈穿透", "甜美"], ans: 2, exp: "清澈但有力，辨识度极高。" }
+    ],
+    "五月天": [
+        { q: "五月天《倔强》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，坚定又热血。" },
+        { q: "《突然好想你》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 0, exp: "钢琴简单却深刻，像突然想起一个人。" },
+        { q: "《恋爱ing》副歌最高音表达了什么？", opts: ["甜蜜", "愤怒", "绝望", "平静"], ans: 0, exp: "高音像恋爱中的兴奋。" },
+        { q: "五月天《温柔》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "三连音", "附点"], ans: 0, exp: "慢摇节奏，像在说“给你自由”。" },
+        { q: "《干杯》副歌用了哪种情绪递进？", opts: ["安静爆发", "逐步升高", "突然转调", "节奏加快"], ans: 1, exp: "逐步升高，像在回忆一生。" },
+        { q: "五月天主唱阿信的嗓音被形容为？", opts: ["沙哑", "高亢", "清澈", "低沉"], ans: 1, exp: "高亢又带少年感，辨识度极高。" }
+    ],
+    "S.H.E": [
+        { q: "S.H.E《恋人未满》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，暧昧又甜蜜。" },
+        { q: "《Super Star》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 1, exp: "电吉他摇滚，像超级巨星登场。" },
+        { q: "《热带雨林》副歌最高音表达了什么？", opts: ["悲伤", "愤怒", "绝望", "平静"], ans: 0, exp: "高音像雨林里的雨，悲伤又潮湿。" },
+        { q: "S.H.E《美丽新世界》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "三连音", "附点"], ans: 1, exp: "轻快跳跃，像进入美丽新世界。" },
+        { q: "《不想长大》副歌引用了哪首古典音乐？", opts: ["《莫扎特第40号交响曲》", "《贝多芬第五交响曲》", "《卡农》", "《四季》"], ans: 0, exp: "引用莫扎特，表达不想长大的无奈。" },
+        { q: "S.H.E被称为？", opts: ["摇滚天团", "女子天团", "创作天团", "偶像天团"], ans: 1, exp: "女子天团，华语乐坛传奇。" }
+    ],
+    "梁静茹": [
+        { q: "梁静茹《勇气》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，温暖又坚定。" },
+        { q: "《宁夏》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 0, exp: "钢琴轻快，像夏天的风。" },
+        { q: "《可惜不是你》副歌最高音表达了什么？", opts: ["遗憾", "愤怒", "释怀", "平静"], ans: 0, exp: "高音像在说“可惜不是你”，遗憾又无奈。" },
+        { q: "梁静茹《分手快乐》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "三连音", "附点"], ans: 0, exp: "慢摇节奏，像在安慰朋友。" },
+        { q: "《会呼吸的痛》副歌用了哪种情绪递进？", opts: ["安静爆发", "逐步升高", "突然转调", "节奏加快"], ans: 0, exp: "从安静到爆发，像痛在呼吸。" },
+        { q: "梁静茹被称为？", opts: ["情歌天后", "摇滚女王", "甜心教主", "铁肺天后"], ans: 0, exp: "情歌天后，疗伤系代表。" }
+    ],
+    "徐佳莹": [
+        { q: "徐佳莹《身骑白马》副歌融入了哪种戏曲元素？", opts: ["京剧", "歌仔戏", "豫剧", "黄梅调"], ans: 1, exp: "歌仔戏段落，独特又动人。" },
+        { q: "《失落沙洲》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 0, exp: "钢琴简单却深刻，像孤独的沙洲。" },
+        { q: "《寻人启事》副歌最高音表达了什么？", opts: ["思念", "愤怒", "绝望", "平静"], ans: 0, exp: "高音像在呼唤，寻人启事的等待。" },
+        { q: "徐佳莹《极限》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "三连音", "附点"], ans: 1, exp: "轻快跳跃，像在挑战极限。" },
+        { q: "《不难》副歌用了哪种情绪递进？", opts: ["安静爆发", "逐步升高", "突然转调", "节奏加快"], ans: 0, exp: "从安静到爆发，像在说“分手不难”。" },
+        { q: "徐佳莹被称为？", opts: ["情歌天后", "创作才女", "摇滚女王", "甜心教主"], ans: 1, exp: "创作才女，金曲歌后。" }
+    ],
+    "萧亚轩": [
+        { q: "萧亚轩《最熟悉的陌生人》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，遗憾又释然。" },
+        { q: "《突然想起你》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 0, exp: "钢琴简单却深刻，像突然想起一个人。" },
+        { q: "《爱的主打歌》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "三连音", "附点"], ans: 1, exp: "轻快跳跃，像主打歌一样抓耳。" },
+        { q: "萧亚轩《表白》副歌最高音表达了什么？", opts: ["勇敢", "愤怒", "绝望", "平静"], ans: 0, exp: "高音像在说“我要表白”。" },
+        { q: "《错的人》副歌用了哪种情绪递进？", opts: ["安静爆发", "逐步升高", "突然转调", "节奏加快"], ans: 0, exp: "从安静到爆发，像爱错了人。" },
+        { q: "萧亚轩被称为？", opts: ["情歌天后", "摇滚女王", "唱跳天后", "电音天后"], ans: 2, exp: "唱跳天后，舞台魅力强。" }
+    ],
+    "杨丞琳": [
+        { q: "杨丞琳《左边》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 0, exp: "钢琴简单却深刻，像左边心房的位置。" },
+        { q: "《暧昧》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，暧昧又心酸。" },
+        { q: "《雨爱》副歌最高音表达了什么？", opts: ["思念", "愤怒", "绝望", "平静"], ans: 0, exp: "高音像雨声，思念连绵不绝。" },
+        { q: "《带我走》副歌用了哪种情绪递进？", opts: ["安静爆发", "逐步升高", "突然转调", "节奏加快"], ans: 0, exp: "从安静到爆发，像在喊“带我走”。" },
+        { q: "《年轮说》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "三连音", "附点"], ans: 0, exp: "慢摇节奏，像时间在年轮中流转。" },
+        { q: "杨丞琳被称为？", opts: ["情歌天后", "可爱教主", "唱跳天后", "电音天后"], ans: 1, exp: "可爱教主，从少女到轻熟女。" }
+    ],
+    "张靓颖": [
+        { q: "张靓颖《画心》副歌最高音表达了什么？", opts: ["思念", "愤怒", "绝望", "平静"], ans: 0, exp: "高音像画皮里的狐妖，思念刻骨。" },
+        { q: "《如果这就是爱情》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，无奈又释然。" },
+        { q: "《终于等到你》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 0, exp: "钢琴温暖，像等待终于有了回音。" },
+        { q: "张靓颖《天下无双》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "三连音", "附点"], ans: 0, exp: "慢摇节奏，大气又深情。" },
+        { q: "《我相信》副歌用了哪种情绪递进？", opts: ["安静爆发", "逐步升高", "突然转调", "节奏加快"], ans: 0, exp: "从安静到爆发，像在说我相信。" },
+        { q: "张靓颖被称为？", opts: ["情歌天后", "海豚公主", "唱跳天后", "电音天后"], ans: 1, exp: "海豚公主，高音穿透力强。" }
+    ],
+    "张碧晨": [
+        { q: "张碧晨《年轮》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，像年轮一圈一圈。" },
+        { q: "《凉凉》前奏用了什么乐器？", opts: ["钢琴", "古筝", "口琴", "弦乐"], ans: 1, exp: "古筝声，带出仙侠世界的凉意。" },
+        { q: "《光的方向》副歌最高音表达了什么？", opts: ["希望", "愤怒", "绝望", "平静"], ans: 0, exp: "高音像一束光，照亮方向。" },
+        { q: "张碧晨《胡桃夹子》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "三连音", "附点"], ans: 0, exp: "慢摇节奏，像童话里的孤独。" },
+        { q: "《开往早晨的午夜》副歌用了哪种情绪递进？", opts: ["安静爆发", "逐步升高", "突然转调", "节奏加快"], ans: 1, exp: "逐步升高，像从深夜驶向黎明。" },
+        { q: "张碧晨被称为？", opts: ["情歌天后", "OST女王", "唱跳天后", "电音天后"], ans: 1, exp: "OST女王，唱过无数影视金曲。" }
+    ],
+    "华晨宇": [
+        { q: "华晨宇《齐天》副歌最高音表达了什么？", opts: ["反抗", "绝望", "释怀", "平静"], ans: 0, exp: "高音像齐天大圣，反抗命运。" },
+        { q: "《烟火里的尘埃》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，孤独又绚烂。" },
+        { q: "《好像爱这个世界啊》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 0, exp: "钢琴简单，像轻轻触碰受伤的心。" },
+        { q: "《我管你》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "摇滚重拍", "附点"], ans: 2, exp: "摇滚重拍，像在说“我管你”。" },
+        { q: "《国王与乞丐》副歌用了哪种情绪递进？", opts: ["安静爆发", "逐步升高", "突然转调", "节奏加快"], ans: 0, exp: "从安静到爆发，像国王与乞丐的拉扯。" },
+        { q: "华晨宇被称为？", opts: ["情歌王子", "摇滚诗人", "火星男孩", "唱跳天王"], ans: 2, exp: "火星男孩，独特音乐风格。" }
+    ],
+    "那英": [
+        { q: "那英《征服》副歌最高音表达了什么？", opts: ["骄傲", "愤怒", "绝望", "释怀"], ans: 0, exp: "高音像征服后的骄傲，霸气又脆弱。" },
+        { q: "《白天不懂夜的黑》副歌用了哪个和弦进行？", opts: ["C-G-Am-F", "C-Am-F-G", "F-G-Em-Am", "G-Em-C-D"], ans: 0, exp: "1564进行，孤独又无奈。" },
+        { q: "《梦一场》前奏用了什么乐器？", opts: ["钢琴", "吉他", "口琴", "弦乐"], ans: 0, exp: "钢琴简单，像梦一场，醒来就散了。" },
+        { q: "那英《相见不如怀念》前奏的节奏特点是什么？", opts: ["慢摇", "轻快跳跃", "三连音", "附点"], ans: 0, exp: "慢摇节奏，像在说相见不如怀念。" },
+        { q: "《心酸的浪漫》副歌用了哪种情绪递进？", opts: ["安静爆发", "逐步升高", "突然转调", "节奏加快"], ans: 0, exp: "从安静到爆发，像心酸的浪漫。" },
+        { q: "那英被称为？", opts: ["情歌天后", "摇滚女王", "唱跳天后", "电音天后"], ans: 0, exp: "情歌天后，华语乐坛代表性女声。" }
+    ],
+    "单依纯": [
+        { q: "单依纯《纯妹妹》专辑让她成为？", opts: ["首位00后内地歌后候选人", "最佳新人", "最受欢迎女歌手", "金曲奖新人"], ans: 0, exp: "《纯妹妹》入围金曲奖5项。" },
+        { q: "单依纯的唱功最被称道的是什么？", opts: ["高音炸裂", "气声叙事", "律动感强", "真假声转换"], ans: 1, exp: "气声叙事，情感细腻。" },
+        { q: "单依纯从哪档节目出道？", opts: ["《中国好声音》", "《超级女声》", "《明日之子》", "《歌手2024》"], ans: 0, exp: "《中国好声音》2020年度冠军。" },
+        { q: "《永不失联的爱》翻唱版让她？", opts: ["出道", "爆红", "夺冠", "签约"], ans: 1, exp: "翻唱《永不失联的爱》让她在好声音爆红。" },
+        { q: "单依纯的嗓音特点是？", opts: ["沙哑", "清澈空灵", "醇厚磁性", "甜美"], ans: 1, exp: "清澈空灵，像雨后空气。" },
+        { q: "单依纯被誉为？", opts: ["情歌天后", "新生代唱功天花板", "OST女王", "创作才女"], ans: 1, exp: "被媒体称为新生代唱功天花板。" }
+    ],
+    "窦靖童": [
+        { q: "窦靖童是谁的女儿？", opts: ["王菲", "那英", "张惠妹", "林忆莲"], ans: 0, exp: "王菲与窦唯的女儿，音乐基因强大。" },
+        { q: "窦靖童的音乐风格偏向？", opts: ["流行", "电子/实验/迷幻摇滚", "民谣", "古风"], ans: 1, exp: "电子、实验、迷幻摇滚，前卫独立。" },
+        { q: "窦靖童出道专辑是哪一张？", opts: ["《Stone Café》", "《Kids Only》", "《GSG》", "《春游》"], ans: 0, exp: "《Stone Café》是她首张个人专辑。" },
+        { q: "窦靖童的嗓音被形容为？", opts: ["沙哑", "慵懒空灵", "高亢", "甜美"], ans: 1, exp: "慵懒空灵，像在云端漫步。" },
+        { q: "《(It's not a crime) It's just what we do》是什么风格？", opts: ["流行", "电子迷幻", "摇滚", "民谣"], ans: 1, exp: "电子迷幻，迷离又松弛。" },
+        { q: "窦靖童被称为？", opts: ["摇滚女王", "独立音乐人", "唱跳天后", "创作才女"], ans: 1, exp: "独立音乐人，不迎合主流。" }
+    ],
+    "周兴哲": [
+        { q: "周兴哲哪首歌让他爆红？", opts: ["《以后别做朋友》", "《怎么了》", "《永不失联的爱》", "《你，好不好》"], ans: 0, exp: "《以后别做朋友》是《16个夏天》片尾曲。" },
+        { q: "周兴哲的创作特点是？", opts: ["多产情歌", "摇滚", "电子", "古风"], ans: 0, exp: "多产情歌，被称为“情歌王子”。" },
+        { q: "《怎么了》副歌最高音表达了什么？", opts: ["遗憾", "愤怒", "释怀", "幸福"], ans: 0, exp: "遗憾，像在问“怎么了”。" },
+        { q: "周兴哲哪首歌是电影《你的情歌》主题曲？", opts: ["《你的情歌》", "《怎么了》", "《以后别做朋友》", "《你，好不好》"], ans: 0, exp: "《你的情歌》是电影主题曲。" },
+        { q: "周兴哲的嗓音被形容为？", opts: ["沙哑", "温柔叙事", "高亢", "低沉"], ans: 1, exp: "温柔叙事，像在耳边讲故事。" },
+        { q: "周兴哲被称为？", opts: ["摇滚天王", "情歌王子", "创作才子", "唱跳天王"], ans: 1, exp: "情歌王子，首首金曲。" }
+    ],
+    "JOYCE就以斯": [
+        { q: "JOYCE就以斯最被称道的作品是？", opts: ["《都是weather你》", "《Deja Vu》", "《BFF》", "《Tears》"], ans: 0, exp: "《都是weather你》在金曲新人奖受瞩目。" },
+        { q: "JOYCE就以斯的音乐风格偏向？", opts: ["流行", "木吉他/生活感/纯爱", "摇滚", "电子"], ans: 1, exp: "木吉他、生活感、纯爱系。" },
+        { q: "JOYCE就以斯哪首歌让她入围金曲新人奖？", opts: ["《都是weather你》", "《Deja Vu》", "《BFF》", "《Tears》"], ans: 0, exp: "《都是weather你》让她备受瞩目。" },
+        { q: "JOYCE就以斯的嗓音被形容为？", opts: ["沙哑", "清澈叙事", "高亢", "甜美"], ans: 1, exp: "清澈叙事，像朋友在跟你说话。" },
+        { q: "《Deja Vu》表达了什么情绪？", opts: ["似曾相识", "愤怒", "绝望", "幸福"], ans: 0, exp: "似曾相识，像梦里的场景。" },
+        { q: "JOYCE就以斯被称为？", opts: ["金曲新人", "纯爱系代表", "摇滚女王", "唱跳天后"], ans: 1, exp: "纯爱系代表，清新不油腻。" }
     ]
 };
 // ==================== 民歌题库 ====================
@@ -271,6 +491,7 @@ const folkUnit3 = [
     { q: "《阿里山的姑娘》曾被改编成什么风格的流行歌？", opts: ["摇滚", "电子", "民谣", "说唱"], ans: 0, exp: "很多摇滚乐队改编过《阿里山的姑娘》。" },
     { q: "民歌《茉莉花》和哪首流行歌意境最接近？", opts: ["《小幸运》", "《泡沫》", "《红豆》", "《十年》"], ans: 0, exp: "《小幸运》的温柔感与《茉莉花》有相似的气质。" }
 ];
+
 // ==================== 古风题库 ====================
 const gufengSongs = [
     {
@@ -307,19 +528,21 @@ const gufengSongs = [
         ]
     }
 ];
+
 // ==================== 闯关逻辑 ====================
 let currentStyle = null, styleStreak = 0, styleQuestions = [];
 let currentArtist = null, masterStreak = 0, masterQuestions = [], masterIdx = 0;
 let currentFolkUnit = null, folkStreak = 0, folkQuestions = [];
 let currentGufengIndex = 0, gufengStreak = 0, gufengQuestions = [];
+
 // 风格闯关
 function loadStyle(style) {
     if (!styleBank[style]) { alert(`《${style}》风格题库完善中～`); return; }
- currentStyle = style;
+    currentStyle = style;
     styleStreak = 0;
     styleQuestions = [...styleBank[style]].sort(() => 0.5 - Math.random()).slice(0, 5);
     document.getElementById("styleQuizPanel").innerHTML = `
-        <div style="color:#F2C94C; margin-bottom:8px"> ${style} · 连续答对5题通关</div>
+        <div style="color:#F2C94C; margin-bottom:8px">🎸 ${style} · 连续答对5题通关</div>
         <div id="styleQ"></div>
         <div id="styleFeed" class="feedback"></div>
     `;
@@ -327,8 +550,9 @@ function loadStyle(style) {
 }
 function nextStyleQuestion() {
     if (styleStreak >= styleQuestions.length) {
-        document.getElementById("styleFeed").innerHTML = " 获得风格勋章！";
+        document.getElementById("styleFeed").innerHTML = "🏆 获得风格勋章！";
         saveStyleComplete(currentStyle);
+        addScore(30, `通关风格：${currentStyle}`);
         return;
     }
     const q = styleQuestions[styleStreak];
@@ -346,16 +570,18 @@ function nextStyleQuestion() {
             if (i === q.ans) {
                 styleStreak++;
                 document.getElementById("styleFeed").innerHTML = `✅ 正确！${styleStreak}/${styleQuestions.length}`;
+                addScore(5, `${currentStyle}答题正确`);
                 nextStyleQuestion();
             } else {
                 styleStreak = 0;
-                document.getElementById("styleFeed").innerHTML = `❌ 错误！重新开始`;
+                document.getElementById("styleFeed").innerHTML = `❌ 错误！正确答案：${q.opts[q.ans]}。 ${q.exp}`;
                 nextStyleQuestion();
             }
         };
         optsDiv.appendChild(btn);
     });
 }
+
 // 大师鉴赏
 function loadMaster(artist) {
     if (!masterBank[artist]) { alert(`《${artist}》题库完善中～`); return; }
@@ -364,7 +590,7 @@ function loadMaster(artist) {
     masterQuestions = [...masterBank[artist]].sort(() => 0.5 - Math.random()).slice(0, 6);
     masterIdx = 0;
     document.getElementById("masterQuizPanel").innerHTML = `
-        <div style="color:#F2C94C; margin-bottom:8px"> ${artist} · 连续答对6题得勋章</div>
+        <div style="color:#F2C94C; margin-bottom:8px">🌟 ${artist} · 连续答对6题得勋章</div>
         <div id="masterQ"></div>
         <div id="masterFeed" class="feedback"></div>
     `;
@@ -372,8 +598,9 @@ function loadMaster(artist) {
 }
 function nextMaster() {
     if (masterStreak >= 6) {
-        document.getElementById("masterFeed").innerHTML = " 芦苇大师勋章！";
+        document.getElementById("masterFeed").innerHTML = "🏆 芦苇大师勋章！";
         saveMasterComplete(currentArtist);
+        addScore(50, `通关大师：${currentArtist}`);
         return;
     }
     if (masterIdx >= masterQuestions.length) {
@@ -395,6 +622,7 @@ function nextMaster() {
             if (i === q.ans) {
                 masterStreak++;
                 document.getElementById("masterFeed").innerHTML = `✅ 正确！${masterStreak}/6`;
+                addScore(5, `${currentArtist}鉴赏答题正确`);
                 nextMaster();
             } else {
                 masterStreak = 0;
@@ -407,13 +635,14 @@ function nextMaster() {
         optsDiv.appendChild(btn);
     });
 }
+
 // 民歌闯关
 function loadFolkUnit(unitName, unitData) {
     currentFolkUnit = unitName;
     folkStreak = 0;
     folkQuestions = [...unitData].sort(() => 0.5 - Math.random()).slice(0, 5);
     document.getElementById("folkQuizPanel").innerHTML = `
-        <div style="color:#F2C94C; margin-bottom:8px"> ${unitName} · 连续答对5题通关</div>
+        <div style="color:#F2C94C; margin-bottom:8px">🏮 ${unitName} · 连续答对5题通关</div>
         <div id="folkQ"></div>
         <div id="folkFeed" class="feedback"></div>
     `;
@@ -421,7 +650,9 @@ function loadFolkUnit(unitName, unitData) {
 }
 function nextFolkQuestion() {
     if (folkStreak >= folkQuestions.length) {
-        document.getElementById("folkFeed").innerHTML = " 获得「民歌通晓」勋章！";
+        document.getElementById("folkFeed").innerHTML = "🏆 获得「民歌通晓」勋章！";
+        saveFolkComplete(currentFolkUnit);
+        addScore(30, `通关民歌：${currentFolkUnit}`);
         return;
     }
     const q = folkQuestions[folkStreak];
@@ -439,6 +670,7 @@ function nextFolkQuestion() {
             if (i === q.ans) {
                 folkStreak++;
                 document.getElementById("folkFeed").innerHTML = `✅ 正确！${folkStreak}/${folkQuestions.length}`;
+                addScore(5, `${currentFolkUnit}答题正确`);
                 nextFolkQuestion();
             } else {
                 folkStreak = 0;
@@ -449,6 +681,7 @@ function nextFolkQuestion() {
         optsDiv.appendChild(btn);
     });
 }
+
 // 古风鉴赏
 function loadGufeng(index) {
     const song = gufengSongs[index];
@@ -456,7 +689,7 @@ function loadGufeng(index) {
     gufengStreak = 0;
     gufengQuestions = [...song.questions].sort(() => 0.5 - Math.random()).slice(0, 5);
     document.getElementById("gufengQuizPanel").innerHTML = `
-        <div style="color:#F2C94C; margin-bottom:8px"> ${song.name}（${song.artist}）· 连续答对5题通关</div>
+        <div style="color:#F2C94C; margin-bottom:8px">🍃 ${song.name}（${song.artist}）· 连续答对5题通关</div>
         <div id="gufengQ"></div>
         <div id="gufengFeed" class="feedback"></div>
     `;
@@ -464,7 +697,9 @@ function loadGufeng(index) {
 }
 function nextGufengQuestion() {
     if (gufengStreak >= gufengQuestions.length) {
-        document.getElementById("gufengFeed").innerHTML = " 获得「古风鉴赏家」勋章！";
+        document.getElementById("gufengFeed").innerHTML = "🏆 获得「古风鉴赏家」勋章！";
+        saveGufengComplete(gufengSongs[currentGufengIndex].name);
+        addScore(30, `通关古风：${gufengSongs[currentGufengIndex].name}`);
         return;
     }
     const q = gufengQuestions[gufengStreak];
@@ -482,6 +717,7 @@ function nextGufengQuestion() {
             if (i === q.ans) {
                 gufengStreak++;
                 document.getElementById("gufengFeed").innerHTML = `✅ 正确！${gufengStreak}/${gufengQuestions.length}`;
+                addScore(5, `古风鉴赏答题正确`);
                 nextGufengQuestion();
             } else {
                 gufengStreak = 0;
@@ -492,10 +728,12 @@ function nextGufengQuestion() {
         optsDiv.appendChild(btn);
     });
 }
+
 // ==================== 构建UI ====================
 function buildStyleUI() {
     const container = document.getElementById("styleList");
-    Object.keys(styleBank).forEach(style => {
+    const styles = ["摇滚", "R&B", "爵士", "民谣", "蓝调", "放克", "电子", "嘻哈", "金属", "雷鬼", "灵魂乐", "福音", "世界音乐", "拉丁", "乡村"];
+    styles.forEach(style => {
         const btn = document.createElement("button");
         btn.className = "category-btn";
         btn.innerText = style;
@@ -503,9 +741,10 @@ function buildStyleUI() {
         container.appendChild(btn);
     });
 }
+
 function buildMasterUI() {
     const container = document.getElementById("masterList");
-    const artists = ["周杰伦", "邓紫棋", "林俊杰", "陈奕迅", "王菲", "张惠妹", "孙燕姿", "五月天", "S.H.E", "梁静茹"];
+    const artists = ["周杰伦", "邓紫棋", "林俊杰", "陈奕迅", "王菲", "张惠妹", "孙燕姿", "五月天", "S.H.E", "梁静茹", "徐佳莹", "萧亚轩", "杨丞琳", "张靓颖", "张碧晨", "华晨宇", "那英", "单依纯", "窦靖童", "周兴哲", "JOYCE就以斯"];
     artists.forEach(artist => {
         const btn = document.createElement("button");
         btn.className = "artist-btn";
@@ -514,24 +753,26 @@ function buildMasterUI() {
         container.appendChild(btn);
     });
 }
+
 function buildFolkUI() {
     const container = document.getElementById("folkList");
     const unit1 = document.createElement("button");
     unit1.className = "category-btn";
-    unit1.innerText = " 民歌地域猜猜看";
+    unit1.innerText = "🏔️ 民歌地域猜猜看";
     unit1.onclick = () => loadFolkUnit("民歌地域猜猜看", folkUnit1);
     container.appendChild(unit1);
     const unit2 = document.createElement("button");
     unit2.className = "category-btn";
-    unit2.innerText = " 民歌情绪与场景";
+    unit2.innerText = "💭 民歌情绪与场景";
     unit2.onclick = () => loadFolkUnit("民歌情绪与场景", folkUnit2);
     container.appendChild(unit2);
     const unit3 = document.createElement("button");
     unit3.className = "category-btn";
-    unit3.innerText = " 民歌与流行歌的改编";
+    unit3.innerText = "🎵 民歌与流行歌的改编";
     unit3.onclick = () => loadFolkUnit("民歌与流行歌的改编", folkUnit3);
     container.appendChild(unit3);
 }
+
 function buildGufengUI() {
     const container = document.getElementById("gufengList");
     gufengSongs.forEach((song, idx) => {
@@ -542,6 +783,7 @@ function buildGufengUI() {
         container.appendChild(btn);
     });
 }
+
 // 初始化
 updateUserUI();
 buildStyleUI();
@@ -551,4 +793,3 @@ buildGufengUI();
 </script>
 </body>
 </html>
-
