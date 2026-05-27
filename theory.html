@@ -16,100 +16,293 @@
         .user-name { color: #FFD966; font-size: 0.8rem; font-weight: bold; }
         .user-score { background: #2a4a3a; padding: 3px 10px; border-radius: 40px; font-size: 0.65rem; color: #FFD966; }
         .login-btn { background: #E69A2E; border: none; padding: 5px 14px; border-radius: 40px; color: #2D1E0C; font-weight: bold; cursor: pointer; font-size: 0.7rem; }
-        .container { max-width: 800px; margin: 0 auto; }
+        .container { max-width: 1000px; margin: 0 auto; }
         .header { text-align: center; margin-bottom: 24px; }
         .header h1 { color: #FFD966; font-size: 1.8rem; margin-bottom: 8px; }
         .header p { color: #AAD4B0; font-size: 0.8rem; }
         .section { background: #0f281dcc; border-radius: 32px; padding: 20px; margin-bottom: 20px; border: 1px solid #F2C94C; }
-        .section-title { color: #FFD966; font-size: 1.3rem; font-weight: bold; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-left: 4px solid #E69A2E; padding-left: 12px; }
+        .section-title { color: #FFD966; font-size: 1.3rem; font-weight: bold; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-left: 4px solid #E69A2E; padding-left: 12px; cursor: pointer; user-select: none; }
+        .section-title:active { opacity: 0.7; }
         .category-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
         .category-btn { background: #3C6E4A; border: none; border-radius: 40px; padding: 8px 16px; color: white; font-size: 0.8rem; cursor: pointer; transition: all 0.1s ease; }
-        .category-btn:active { transform: scale(0.95); background: #E69A2E; color: #2D1E0C; }
-        .content-area { background: #172d23a0; border-radius: 20px; padding: 16px; max-height: 400px; overflow-y: auto; }
+        .category-btn:active, .category-btn.active { background: #E69A2E; color: #2D1E0C; }
+        .content-area { background: #172d23a0; border-radius: 20px; padding: 16px; max-height: 500px; overflow-y: auto; display: none; }
+        .content-area.active { display: block; }
         .content-card { background: #1f3e2e; border-radius: 16px; padding: 14px; margin-bottom: 12px; border-left: 4px solid #F2C94C; }
         .content-card h3 { color: #FFD966; font-size: 1rem; margin-bottom: 8px; }
         .content-card p { color: #F5ECD7; font-size: 0.85rem; line-height: 1.4; margin-bottom: 6px; }
         .content-card .note { color: #D4C5A3; font-size: 0.75rem; font-style: italic; }
-        .loading { color: #C8E6C9; text-align: center; padding: 20px; }
+        .daily-rule-card { background: linear-gradient(135deg, #2a4a3a, #1a3a2a); border-radius: 20px; padding: 12px 16px; margin-bottom: 20px; border-left: 4px solid #FFD966; }
+        .daily-rule-title { color: #FFD966; font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; }
+        .daily-rule-content { color: #F5ECD7; font-size: 0.85rem; font-weight: bold; }
+        .daily-rule-example { color: #AAD4B0; font-size: 0.7rem; margin-top: 4px; }
+        .chord-table { background: #1f3e2e; border-radius: 16px; padding: 12px; margin-bottom: 16px; }
+        .chord-table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .chord-table-toggle { background: #3C6E4A; border: none; border-radius: 20px; padding: 4px 12px; font-size: 0.65rem; cursor: pointer; color: white; }
+        .chord-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+        .chord-item { background: #2a4a3a; padding: 8px; border-radius: 12px; cursor: pointer; text-align: center; font-size: 0.7rem; }
+        .chord-item:hover { background: #E69A2E30; }
+        .chord-item .chord-name { color: #FFD966; font-weight: bold; }
+        .chord-item .chord-notes { color: #C8E6C9; font-size: 0.6rem; }
+        .chord-detail-panel { background: #0f281d; border-radius: 12px; padding: 12px; margin-top: 12px; display: none; }
+        .scale-category { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .scale-cat-btn { background: #3C6E4A; border: none; border-radius: 30px; padding: 4px 12px; font-size: 0.65rem; cursor: pointer; color: white; }
+        .scale-cat-btn.active { background: #E69A2E; color: #2D1E0C; }
+        .scale-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; max-height: 180px; overflow-y: auto; }
+        .scale-detail-btn { background: #2a4a3a; border: 1px solid #F2C94C; border-radius: 30px; padding: 4px 10px; font-size: 0.6rem; cursor: pointer; color: #F5ECD7; }
+        .scale-detail-btn.active { background: #E69A2E; color: #2D1E0C; }
+        .chord-dict-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-bottom: 16px; }
+        .root-btn { background: #3C6E4A; border: none; border-radius: 40px; padding: 8px 12px; color: white; font-size: 0.75rem; cursor: pointer; }
+        .root-btn:active, .root-btn.active { background: #E69A2E; color: #2D1E0C; }
+        .chord-detail { background: #1f3e2e; border-radius: 16px; padding: 12px; margin-top: 12px; max-height: 400px; overflow-y: auto; }
+        .chord-type { margin-bottom: 12px; border-bottom: 1px solid #F2C94C20; padding-bottom: 10px; }
+        .chord-type-name { color: #F2C94C; font-weight: bold; font-size: 0.85rem; }
+        .chord-notes { color: #F5ECD7; font-family: monospace; font-size: 0.8rem; margin: 4px 0; }
+        .chord-color { color: #AAD4B0; font-size: 0.75rem; }
+        .chord-usage { color: #C8E6C9; font-size: 0.7rem; }
+        .chord-reed { color: #D4C5A3; font-size: 0.7rem; font-style: italic; margin-top: 4px; }
+        .connection-item { background: #1f3e2e; border-radius: 12px; padding: 10px; margin-bottom: 8px; border-left: 3px solid #F2C94C; }
+        .connection-from-to { color: #F2C94C; font-weight: bold; font-size: 0.85rem; }
+        .connection-reason { color: #C8E6C9; font-size: 0.75rem; margin-top: 4px; }
+        .connection-say { color: #D4C5A3; font-size: 0.7rem; font-style: italic; margin-top: 4px; }
+        .goal-options { display: flex; gap: 12px; margin-bottom: 12px; }
+        .goal-option { flex: 1; text-align: center; padding: 8px; background: #2a4a3a; border-radius: 40px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; }
+        .goal-option.active { background: #E69A2E; color: #2D1E0C; }
+        .goal-progress { font-size: 0.65rem; color: #AAD4B0; margin-top: 8px; }
         @media (max-width: 768px) {
-            .category-btn { padding: 6px 12px; font-size: 0.7rem; }
-            .content-card h3 { font-size: 0.9rem; }
-            .content-card p { font-size: 0.75rem; }
+            .category-btn, .root-btn { padding: 6px 12px; font-size: 0.7rem; }
+            .section-title { font-size: 1rem; }
+            .chord-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
         }
     </style>
-    <!-- ========== 引入用户系统 ========== -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="auth.js"></script>
+    <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="sync.js"></script>
 </head>
 <body>
-<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
+<button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="container">
-    <!-- 用户信息栏 -->
     <div class="user-bar" id="userBar">
         <div class="user-info">
-            <div class="user-avatar"></div>
+            <div class="user-avatar">🎵</div>
             <div>
                 <div class="user-name" id="userName">加载中...</div>
                 <div class="user-score" id="userScore">积分 0</div>
             </div>
         </div>
-        <button class="login-btn" id="loginBtn" style="display:none;"> 登录</button>
-        <button class="login-btn" id="logoutBtn" style="display:none;"> 退出</button>
+        <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
+        <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
     </div>
     <div class="header">
-        <h1> 芦苇乐理手册</h1>
-        <p>从零开始，系统学习音乐理论</p>
+        <h1>📖 芦苇乐理手册</h1>
+        <p>从零开始，系统学习音乐理论 · 完全和弦词典 · 和弦连接指南</p>
     </div>
+
+    <!-- 今日规则卡片 -->
+    <div class="daily-rule-card" id="dailyRuleCard">
+        <div class="daily-rule-title">📅 今日规则</div>
+        <div class="daily-rule-content" id="dailyRuleContent">主和弦（I级）可以连接到任何功能和弦</div>
+        <div class="daily-rule-example" id="dailyRuleExample">C → F | C → G | C → Am | C → Em</div>
+    </div>
+
+    <!-- 学习目标 -->
+    <div class="section">
+        <div class="section-title" data-target="goalContent">🎯 学习目标 ▼</div>
+        <div id="goalContent" class="content-area">
+            <div class="goal-options" id="goalOptions">
+                <div class="goal-option" data-days="7">7天学会基础和弦</div>
+                <div class="goal-option" data-days="30">30天掌握流行和声</div>
+                <div class="goal-option" data-days="60">60天成为创作达人</div>
+            </div>
+            <div id="goalProgress" class="goal-progress"></div>
+        </div>
+    </div>
+
+    <!-- 常用和弦速查表 -->
+    <div class="section">
+        <div class="section-title" data-target="chordTableContent">🎸 常用和弦速查表 ▼</div>
+        <div id="chordTableContent" class="content-area">
+            <div class="chord-table">
+                <div class="chord-table-header">
+                    <span style="color:#FFD966; font-size:0.85rem;">和弦速查</span>
+                    <button class="chord-table-toggle" id="chordTableToggle">🔀 进阶和弦</button>
+                </div>
+                <div id="basicChords" class="chord-grid">
+                    <!-- 基础和弦会动态生成 -->
+                </div>
+                <div id="advancedChords" class="chord-grid" style="display:none;">
+                    <!-- 进阶和弦会动态生成 -->
+                </div>
+                <div id="chordDetailPanel" class="chord-detail-panel">
+                    <div id="chordDetailText" style="color:#C8E6C9; font-size:0.7rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 音阶速查表 -->
+    <div class="section">
+        <div class="section-title" data-target="scaleContent">🎼 音阶速查表 ▼</div>
+        <div id="scaleContent" class="content-area">
+            <div class="scale-category" id="scaleCategories"></div>
+            <div id="scaleButtonsArea" class="scale-buttons"></div>
+            <div id="scaleResult" style="margin-top:12px;"></div>
+        </div>
+    </div>
+
     <!-- 芦苇乐理手册 -->
     <div class="section">
-        <div class="section-title"> 芦苇乐理手册</div>
+        <div class="section-title" data-target="theoryContent">🎵 芦苇乐理手册 ▼</div>
         <div class="category-grid" id="theoryCategories"></div>
-        <div class="content-area" id="theoryContent">
+        <div id="theoryContent" class="content-area">
             <div class="loading">点击上方分类，查看知识点～</div>
         </div>
-        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;"> 每张卡片都有芦苇说</div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">📝 每张卡片都有芦苇说</div>
     </div>
+
     <!-- 中国传统音乐手册 -->
     <div class="section">
-        <div class="section-title"> 中国传统音乐手册</div>
+        <div class="section-title" data-target="chineseContent">🏮 中国传统音乐手册 ▼</div>
         <div class="category-grid" id="chineseCategories"></div>
-        <div class="content-area" id="chineseContent">
+        <div id="chineseContent" class="content-area">
             <div class="loading">点击上方分类，查看知识点～</div>
         </div>
-        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;"> 听懂中国人的音乐</div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">🎋 听懂中国人的音乐</div>
+    </div>
+
+    <!-- 完全和弦词典 -->
+    <div class="section">
+        <div class="section-title" data-target="chordDictContent">🎹 完全和弦词典 ▼</div>
+        <div class="chord-dict-grid" id="rootList"></div>
+        <div id="chordDictContent" class="content-area">
+            <div class="loading">点击上方根音，查看所有和弦～</div>
+        </div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">🎸 12根音 · 17种和弦 · 色彩 · 应用 · 芦苇说</div>
+    </div>
+
+    <!-- 和弦连接指南 -->
+    <div class="section">
+        <div class="section-title" data-target="connectionContent">🔗 和弦连接指南 ▼</div>
+        <div class="category-grid" id="connectionPeriods"></div>
+        <div id="connectionContent" class="content-area">
+            <div class="loading">点击上方期数，查看和弦连接～</div>
+        </div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 不只看和弦，看它怎么走</div>
     </div>
 </div>
+
 <script>
-// ==================== 用户界面 ====================
-function updateUserUI() {
-    const user = getCurrentUser();
+// ==================== 用户界面与后端融合 ====================
+let currentUserData = null;
+
+async function updateUserUI() {
+    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     const userNameSpan = document.getElementById('userName');
     const userScoreSpan = document.getElementById('userScore');
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
+    
     if (user) {
         userNameSpan.innerText = user.nickname || '芦苇同学';
-        userScoreSpan.innerText = `积分 ${user.score || 0}`;
-        loginBtn.style.display = 'none';
-        logoutBtn.style.display = 'block';
+        // 从 API 获取真实积分
+        let score = user.score || 0;
+        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
+            const apiScore = await window.API.getUserScore();
+            if (apiScore !== undefined) score = apiScore;
+        }
+        userScoreSpan.innerText = `积分 ${score}`;
+        if(loginBtn) loginBtn.style.display = 'none';
+        if(logoutBtn) logoutBtn.style.display = 'block';
+        currentUserData = user;
     } else {
         userNameSpan.innerText = '未登录';
         userScoreSpan.innerText = '积分 0';
-        loginBtn.style.display = 'block';
-        logoutBtn.style.display = 'none';
+        if(loginBtn) loginBtn.style.display = 'block';
+        if(logoutBtn) logoutBtn.style.display = 'none';
+        currentUserData = null;
     }
 }
-// 登录/退出
-document.getElementById('loginBtn')?.addEventListener('click', () => { showLoginModal(); });
-document.getElementById('logoutBtn')?.addEventListener('click', () => { logout(); location.reload(); });
-// 登录成功回调
-window.onLoginSuccess = function(user) {
-    updateUserUI();
+
+async function addStudyPoints(amount, reason) {
+    if (!currentUserData) return;
+    if (typeof window.API !== 'undefined' && window.API.addScore) {
+        await window.API.addScore(amount, reason);
+        updateUserUI();
+    }
+}
+
+if(document.getElementById('loginBtn')) {
+    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
+}
+if(document.getElementById('logoutBtn')) {
+    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
+}
+
+window.onLoginSuccess = async function(user) {
+    currentUserData = user;
+    await updateUserUI();
+    if (typeof pullFromCloud === 'function') {
+        await pullFromCloud();
+    }
 };
-// ==================== 芦苇乐理手册数据 ====================
+
+// 页面加载时拉取云端数据
+(async function() {
+    await updateUserUI();
+    if (typeof pullFromCloud === 'function' && currentUserData) {
+        await pullFromCloud();
+    }
+})();
+
+// ==================== 学习目标 ====================
+function updateGoalProgress() {
+    const targetDays = parseInt(localStorage.getItem("learning_goal_days") || "30");
+    const startDate = localStorage.getItem("goal_start_date");
+    if (!startDate) {
+        document.getElementById("goalProgress").innerHTML = '🎯 选择目标开始计时～';
+        return;
+    }
+    const daysPassed = Math.floor((new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24));
+    const progress = Math.min(100, Math.floor((daysPassed / targetDays) * 100));
+    document.getElementById("goalProgress").innerHTML = `📊 目标进度：${progress}%（${daysPassed}/${targetDays}天）`;
+}
+
+document.querySelectorAll('.goal-option').forEach(option => {
+    const savedDays = localStorage.getItem('learning_goal_days') || '30';
+    if (parseInt(option.dataset.days) == savedDays) option.classList.add('active');
+    option.addEventListener('click', function() {
+        document.querySelectorAll('.goal-option').forEach(opt => opt.classList.remove('active'));
+        this.classList.add('active');
+        const days = parseInt(this.dataset.days);
+        localStorage.setItem('learning_goal_days', days);
+        localStorage.setItem('goal_start_date', new Date().toISOString());
+        updateGoalProgress();
+        addStudyPoints(5, "设定学习目标");
+    });
+});
+updateGoalProgress();
+
+// ==================== 今日规则 ====================
+const dailyRules = {
+    "第1期 · 基础三和弦": { rule: "主和弦（I级）可以连接到任何功能和弦", example: "C → F | C → G | C → Am | C → Em" },
+    "第2期 · 属七与终止式": { rule: "属七和弦 → 1级（大调主和弦）是最经典的解决", example: "G7 → C | D7 → G | E7 → Am" },
+    "第3期 · 大七/小七和弦": { rule: "大七明亮松弛 · 小七柔和爵士。小七 → 属七 → 大七 是2-5-1", example: "Dm7 → G7 → Cmaj7" },
+    "第4期 · 半减七/减七/挂留": { rule: "半减七 → 属七 → 小主和弦（小调2-5-1）", example: "Bm7b5 → E7 → Am" },
+    "第5期 · 九和弦": { rule: "任何属类九和弦 → 都可以接 1级大七 / 1级大九", example: "G9 → Cmaj7 | D9 → Gmaj9 | C9 → Fmaj7" },
+    "第6期 · 十一、十三和弦": { rule: "任何属类十一、十三和弦 → 都可以接 1级大七 / 1级大九", example: "G11 → Cmaj7 | D13 → Gmaj7 | C13 → Fmaj9" }
+};
+
+function updateDailyRule(periodName) {
+    const rule = dailyRules[periodName];
+    if (rule) {
+        document.getElementById("dailyRuleContent").innerHTML = rule.rule;
+        document.getElementById("dailyRuleExample").innerHTML = rule.example;
+    }
+}
+
+// ==================== 1. 芦苇乐理手册数据 ====================
 const theoryHandbook = {
     "音程": [
         { title: "什么是音程", content: "两个音之间的高低距离叫音程。单位是“度”。", note: "芦苇说：音程是情绪的距离。" },
@@ -211,7 +404,8 @@ const theoryHandbook = {
         { title: "民族唱法", content: "明亮、清脆。", note: "芦苇说：山泉水，清亮亮的。" }
     ]
 };
-// ==================== 中国传统音乐手册数据 ====================
+
+// ==================== 2. 中国传统音乐手册数据 ====================
 const chineseHandbook = {
     "宫廷音乐": [
         { title: "什么是雅乐", content: "宫廷祭祀、朝会用的音乐。庄严、缓慢，代表“天命与秩序”。", note: "芦苇说：不是给你“好听”，是让你“跪下”。" },
@@ -269,70 +463,639 @@ const chineseHandbook = {
         { title: "《金沙》", content: "三宝作曲。以成都金沙遗址为背景。", note: "芦苇说：三千年，一首歌。" }
     ]
 };
-// 显示芦苇乐理手册内容
+
+// ==================== 3. 完全和弦词典数据（12根音 × 17种）====================
+const fullChordDictionary = {
+    "C": {
+        "大三": { notes: "C E G", color: "明亮、稳定", usage: "开头、结尾、正能量段落", say: "芦苇说：最明亮的家。" },
+        "小三": { notes: "C Eb G", color: "柔和、忧伤", usage: "抒情主歌、悲伤桥段", say: "芦苇说：轻轻叹气的房间。" },
+        "增": { notes: "C E G#", color: "扩张、不安", usage: "悬疑、紧张瞬间", say: "芦苇说：像在问“真的吗？”" },
+        "减": { notes: "C Eb Gb", color: "收缩、压抑", usage: "过渡和弦、情绪下降", say: "芦苇说：把话咽回去的感觉。" },
+        "七": { notes: "C E G Bb", color: "紧张、需要解决", usage: "属七，推动到F和弦", say: "芦苇说：急着要说什么。" },
+        "大七": { notes: "C E G B", color: "梦幻、松弛", usage: "爵士、Bossa Nova主和弦", say: "芦苇说：夜晚的风。" },
+        "小七": { notes: "C Eb G Bb", color: "柔和、爵士感", usage: "R&B、抒情Ⅱ级", say: "芦苇说：舒服的懒。" },
+        "半减七": { notes: "C Eb Gb Bb", color: "压抑、小调感", usage: "小调Ⅱ级，爵士常见", say: "芦苇说：话到嘴边又咽下去。" },
+        "减七": { notes: "C Eb Gb A", color: "紧张、对称", usage: "过渡、转调桥梁", say: "芦苇说：迷宫，走不出去。" },
+        "挂二": { notes: "C D G", color: "开放、不解决", usage: "前奏、副歌前的期待感", say: "芦苇说：话没说清楚，但温柔。" },
+        "挂四": { notes: "C F G", color: "期待、悬停", usage: "摇滚、民谣中常见", say: "芦苇说：在等。" },
+        "属九": { notes: "C E G Bb D", color: "现代、华丽", usage: "替代C7，增加现代感", say: "芦苇说：话说一半，很好听。" },
+        "小九": { notes: "C Eb G Bb D", color: "压抑、深情", usage: "抒情桥段、R&B前奏", say: "芦苇说：深情又克制。" },
+        "大九": { notes: "C E G B D", color: "松弛、华丽", usage: "爵士结尾、温暖段落", say: "芦苇说：清晨的阳光。" },
+        "属十一": { notes: "C E G Bb D F", color: "现代、张力", usage: "爵士、Fusion悬停感", say: "芦苇说：悬在半空。" },
+        "属十三": { notes: "C E G Bb D F A", color: "饱满、终曲感", usage: "歌曲最后一小节华丽收尾", say: "芦苇说：盛典的落幕。" },
+        "大十三": { notes: "C E G B D F A", color: "丰满、圆满", usage: "爵士结尾，极尽华丽", say: "芦苇说：圆满又不舍。" }
+    },
+    "C#": {
+        "大三": { notes: "C# E#(F) G#", color: "明亮、稳定", usage: "升调段落、力量感", say: "芦苇说：明亮但不刺眼。" },
+        "小三": { notes: "C# E G#", color: "柔和、忧伤", usage: "冷色调抒情", say: "芦苇说：暗一点，更真实。" },
+        "增": { notes: "C# E# G##(A)", color: "扩张、不安", usage: "戏剧性转折", say: "芦苇说：想问又不敢问。" },
+        "减": { notes: "C# E G", color: "收缩、压抑", usage: "过渡、情绪下沉", say: "芦苇说：走了又回头。" },
+        "七": { notes: "C# E# G# B", color: "紧张、需要解决", usage: "属七，倾向F#", say: "芦苇说：急着赶路。" },
+        "大七": { notes: "C# E# G# B#(C)", color: "梦幻、松弛", usage: "爵士色彩", say: "芦苇说：深夜的月光。" },
+        "小七": { notes: "C# E G# B", color: "柔和、爵士感", usage: "R&B抒情", say: "芦苇说：温柔不打扰。" },
+        "半减七": { notes: "C# E G B", color: "压抑、小调感", usage: "爵士小调Ⅱ级", say: "芦苇说：想哭忍住了。" },
+        "减七": { notes: "C# E G Bb", color: "紧张、对称", usage: "转调桥梁", say: "芦苇说：绕来绕去。" },
+        "挂二": { notes: "C# D# G#", color: "开放、不解决", usage: "前奏铺垫", say: "芦苇说：轻轻推一下。" },
+        "挂四": { notes: "C# F# G#", color: "期待、悬停", usage: "制造悬念", say: "芦苇说：然后呢？" },
+        "属九": { notes: "C# E# G# B D#", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话到嘴边又咽下去。" },
+        "小九": { notes: "C# E G# B D#", color: "压抑、深情", usage: "冷色调深情", say: "芦苇说：不哭但难过。" },
+        "大九": { notes: "C# E# G# B# D#", color: "松弛、华丽", usage: "爵士温暖段落", say: "芦苇说：柔光。" },
+        "属十一": { notes: "C# E# G# B D# F#", color: "现代、张力", usage: "Fusion悬停", say: "芦苇说：悬在高处。" },
+        "属十三": { notes: "C# E# G# B D# F# A#", color: "饱满、终曲感", usage: "华丽结尾", say: "芦苇说：终章。" },
+        "大十三": { notes: "C# E# G# B# D# F# A#", color: "丰满、圆满", usage: "爵士终极结尾", say: "芦苇说：圆满落幕。" }
+    },
+    "Db": {
+        "大三": { notes: "Db F Ab", color: "明亮、稳定", usage: "温暖段落", say: "芦苇说：温柔又有力。" },
+        "小三": { notes: "Db Fb(E) Ab", color: "柔和、忧伤", usage: "冷色调抒情", say: "芦苇说：安静地难过。" },
+        "增": { notes: "Db F A", color: "扩张、不安", usage: "戏剧瞬间", say: "芦苇说：意外。" },
+        "减": { notes: "Db Fb Abb(G)", color: "收缩、压抑", usage: "过渡", say: "芦苇说：缩了一下。" },
+        "七": { notes: "Db F Ab Cb(B)", color: "紧张、需要解决", usage: "属七，倾向Gb", say: "芦苇说：急着走。" },
+        "大七": { notes: "Db F Ab C", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：夜色温柔。" },
+        "小七": { notes: "Db Fb Ab Cb", color: "柔和、爵士感", usage: "R&B抒情", say: "芦苇说：懒懒的。" },
+        "半减七": { notes: "Db Fb Abb Cb", color: "压抑、小调感", usage: "爵士小调Ⅱ级", say: "芦苇说：说不出口。" },
+        "减七": { notes: "Db Fb Abb Cbb(Bb)", color: "紧张、对称", usage: "转调", say: "芦苇说：转圈。" },
+        "挂二": { notes: "Db Eb Ab", color: "开放、不解决", usage: "前奏", say: "芦苇说：轻轻推。" },
+        "挂四": { notes: "Db Gb Ab", color: "期待、悬停", usage: "制造期待", say: "芦苇说：等一下。" },
+        "属九": { notes: "Db F Ab Cb Eb", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "Db Fb Ab Cb Eb", color: "压抑、深情", usage: "抒情", say: "芦苇说：忍着难过。" },
+        "大九": { notes: "Db F Ab C Eb", color: "松弛、华丽", usage: "爵士段落", say: "芦苇说：清晨。" },
+        "属十一": { notes: "Db F Ab Cb Eb Gb", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬。" },
+        "属十三": { notes: "Db F Ab Cb Eb Gb Bb", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：落幕。" },
+        "大十三": { notes: "Db F Ab C Eb Gb Bb", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满。" }
+    },
+    "D": {
+        "大三": { notes: "D F# A", color: "明亮、稳定", usage: "摇滚、流行主和弦", say: "芦苇说：有力量的家。" },
+        "小三": { notes: "D F A", color: "柔和、忧伤", usage: "抒情主歌", say: "芦苇说：温柔的叹息。" },
+        "增": { notes: "D F# A#", color: "扩张、不安", usage: "悬念", say: "芦苇说：往上撑了一下。" },
+        "减": { notes: "D F Ab", color: "收缩、压抑", usage: "过渡", say: "芦苇说：往下沉。" },
+        "七": { notes: "D F# A C", color: "紧张、需要解决", usage: "属七，倾向G", say: "芦苇说：急着回家。" },
+        "大七": { notes: "D F# A C#", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：海风。" },
+        "小七": { notes: "D F A C", color: "柔和、爵士感", usage: "R&B", say: "芦苇说：舒服。" },
+        "半减七": { notes: "D F Ab C", color: "压抑、小调感", usage: "小调Ⅱ级", say: "芦苇说：话变少了。" },
+        "减七": { notes: "D F Ab Cb", color: "紧张、对称", usage: "转调", say: "芦苇说：迷宫。" },
+        "挂二": { notes: "D E A", color: "开放、不解决", usage: "前奏", say: "芦苇说：不急。" },
+        "挂四": { notes: "D G A", color: "期待、悬停", usage: "摇滚", say: "芦苇说：等。" },
+        "属九": { notes: "D F# A C E", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "D F A C E", color: "压抑、深情", usage: "抒情桥段", say: "芦苇说：深情。" },
+        "大九": { notes: "D F# A C# E", color: "松弛、华丽", usage: "爵士", say: "芦苇说：清晨的阳光。" },
+        "属十一": { notes: "D F# A C E G", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬在半空。" },
+        "属十三": { notes: "D F# A C E G B", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：盛典。" },
+        "大十三": { notes: "D F# A C# E G B", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满又不舍。" }
+    },
+    "D#": {
+        "大三": { notes: "D# F##(G) A#", color: "明亮、稳定", usage: "升调段落", say: "芦苇说：亮但不刺眼。" },
+        "小三": { notes: "D# F# A#", color: "柔和、忧伤", usage: "冷色调抒情", say: "芦苇说：暗处。" },
+        "增": { notes: "D# F## A##(B)", color: "扩张、不安", usage: "戏剧转折", say: "芦苇说：意外。" },
+        "减": { notes: "D# F# A", color: "收缩、压抑", usage: "过渡", say: "芦苇说：缩了一下。" },
+        "七": { notes: "D# F## A# C#", color: "紧张、需要解决", usage: "属七，倾向G#", say: "芦苇说：急着走。" },
+        "大七": { notes: "D# F## A# C##(D)", color: "梦幻、松弛", usage: "爵士", say: "芦苇说：夜色。" },
+        "小七": { notes: "D# F# A# C#", color: "柔和、爵士感", usage: "R&B", say: "芦苇说：懒懒的。" },
+        "半减七": { notes: "D# F# A C#", color: "压抑、小调感", usage: "小调Ⅱ级", say: "芦苇说：说不出口。" },
+        "减七": { notes: "D# F# A C", color: "紧张、对称", usage: "转调", say: "芦苇说：转圈。" },
+        "挂二": { notes: "D# E# A#", color: "开放、不解决", usage: "前奏", say: "芦苇说：轻轻推。" },
+        "挂四": { notes: "D# G# A#", color: "期待、悬停", usage: "制造期待", say: "芦苇说：等一下。" },
+        "属九": { notes: "D# F## A# C# E#", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "D# F# A# C# E#", color: "压抑、深情", usage: "抒情", say: "芦苇说：忍着难过。" },
+        "大九": { notes: "D# F## A# C## E#", color: "松弛、华丽", usage: "爵士段落", say: "芦苇说：清晨。" },
+        "属十一": { notes: "D# F## A# C# E# G#", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬。" },
+        "属十三": { notes: "D# F## A# C# E# G# B#", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：落幕。" },
+        "大十三": { notes: "D# F## A# C## E# G# B#", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满。" }
+    },
+    "Eb": {
+        "大三": { notes: "Eb G Bb", color: "明亮、稳定", usage: "温暖段落", say: "芦苇说：温柔又有力。" },
+        "小三": { notes: "Eb Gb Bb", color: "柔和、忧伤", usage: "冷色调抒情", say: "芦苇说：安静地难过。" },
+        "增": { notes: "Eb G B", color: "扩张、不安", usage: "戏剧瞬间", say: "芦苇说：意外。" },
+        "减": { notes: "Eb Gb Bbb(A)", color: "收缩、压抑", usage: "过渡", say: "芦苇说：缩了一下。" },
+        "七": { notes: "Eb G Bb Db", color: "紧张、需要解决", usage: "属七，倾向Ab", say: "芦苇说：急着走。" },
+        "大七": { notes: "Eb G Bb D", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：夜色温柔。" },
+        "小七": { notes: "Eb Gb Bb Db", color: "柔和、爵士感", usage: "R&B抒情", say: "芦苇说：懒懒的。" },
+        "半减七": { notes: "Eb Gb Bbb Db", color: "压抑、小调感", usage: "爵士小调Ⅱ级", say: "芦苇说：说不出口。" },
+        "减七": { notes: "Eb Gb Bbb Dbb(C)", color: "紧张、对称", usage: "转调", say: "芦苇说：转圈。" },
+        "挂二": { notes: "Eb F Bb", color: "开放、不解决", usage: "前奏", say: "芦苇说：轻轻推。" },
+        "挂四": { notes: "Eb Ab Bb", color: "期待、悬停", usage: "制造期待", say: "芦苇说：等一下。" },
+        "属九": { notes: "Eb G Bb Db F", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "Eb Gb Bb Db F", color: "压抑、深情", usage: "抒情", say: "芦苇说：忍着难过。" },
+        "大九": { notes: "Eb G Bb D F", color: "松弛、华丽", usage: "爵士段落", say: "芦苇说：清晨。" },
+        "属十一": { notes: "Eb G Bb Db F Ab", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬。" },
+        "属十三": { notes: "Eb G Bb Db F Ab C", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：落幕。" },
+        "大十三": { notes: "Eb G Bb D F Ab C", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满。" }
+    },
+    "E": {
+        "大三": { notes: "E G# B", color: "明亮、稳定", usage: "摇滚、流行主和弦", say: "芦苇说：有力量的家。" },
+        "小三": { notes: "E G B", color: "柔和、忧伤", usage: "抒情主歌", say: "芦苇说：温柔的叹息。" },
+        "增": { notes: "E G# B#(C)", color: "扩张、不安", usage: "悬念", say: "芦苇说：往上撑了一下。" },
+        "减": { notes: "E G Bb", color: "收缩、压抑", usage: "过渡", say: "芦苇说：往下沉。" },
+        "七": { notes: "E G# B D", color: "紧张、需要解决", usage: "属七，倾向A", say: "芦苇说：急着回家。" },
+        "大七": { notes: "E G# B D#", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：海风。" },
+        "小七": { notes: "E G B D", color: "柔和、爵士感", usage: "R&B", say: "芦苇说：舒服。" },
+        "半减七": { notes: "E G Bb D", color: "压抑、小调感", usage: "小调Ⅱ级", say: "芦苇说：话变少了。" },
+        "减七": { notes: "E G Bb Db", color: "紧张、对称", usage: "转调", say: "芦苇说：迷宫。" },
+        "挂二": { notes: "E F# B", color: "开放、不解决", usage: "前奏", say: "芦苇说：不急。" },
+        "挂四": { notes: "E A B", color: "期待、悬停", usage: "摇滚", say: "芦苇说：等。" },
+        "属九": { notes: "E G# B D F#", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "E G B D F#", color: "压抑、深情", usage: "抒情桥段", say: "芦苇说：深情。" },
+        "大九": { notes: "E G# B D# F#", color: "松弛、华丽", usage: "爵士", say: "芦苇说：清晨的阳光。" },
+        "属十一": { notes: "E G# B D F# A", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬在半空。" },
+        "属十三": { notes: "E G# B D F# A C#", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：盛典。" },
+        "大十三": { notes: "E G# B D# F# A C#", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满又不舍。" }
+    },
+    "F": {
+        "大三": { notes: "F A C", color: "明亮、稳定", usage: "温暖段落", say: "芦苇说：温柔又有力。" },
+        "小三": { notes: "F Ab C", color: "柔和、忧伤", usage: "抒情主歌", say: "芦苇说：轻轻叹息。" },
+        "增": { notes: "F A C#", color: "扩张、不安", usage: "戏剧转折", say: "芦苇说：意外。" },
+        "减": { notes: "F Ab Cb", color: "收缩、压抑", usage: "过渡", say: "芦苇说：缩了一下。" },
+        "七": { notes: "F A C Eb", color: "紧张、需要解决", usage: "属七，倾向Bb", say: "芦苇说：急着走。" },
+        "大七": { notes: "F A C E", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：夜色温柔。" },
+        "小七": { notes: "F Ab C Eb", color: "柔和、爵士感", usage: "R&B", say: "芦苇说：懒懒的。" },
+        "半减七": { notes: "F Ab Cb Eb", color: "压抑、小调感", usage: "小调Ⅱ级", say: "芦苇说：说不出口。" },
+        "减七": { notes: "F Ab Cb D", color: "紧张、对称", usage: "转调", say: "芦苇说：转圈。" },
+        "挂二": { notes: "F G C", color: "开放、不解决", usage: "前奏", say: "芦苇说：轻轻推。" },
+        "挂四": { notes: "F Bb C", color: "期待、悬停", usage: "制造期待", say: "芦苇说：等一下。" },
+        "属九": { notes: "F A C Eb G", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "F Ab C Eb G", color: "压抑、深情", usage: "抒情", say: "芦苇说：忍着难过。" },
+        "大九": { notes: "F A C E G", color: "松弛、华丽", usage: "爵士段落", say: "芦苇说：清晨。" },
+        "属十一": { notes: "F A C Eb G Bb", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬。" },
+        "属十三": { notes: "F A C Eb G Bb D", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：落幕。" },
+        "大十三": { notes: "F A C E G Bb D", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满。" }
+    },
+    "F#": {
+        "大三": { notes: "F# A# C#", color: "明亮、稳定", usage: "升调段落", say: "芦苇说：亮但不刺眼。" },
+        "小三": { notes: "F# A C#", color: "柔和、忧伤", usage: "冷色调抒情", say: "芦苇说：暗处。" },
+        "增": { notes: "F# A# C##(D)", color: "扩张、不安", usage: "戏剧转折", say: "芦苇说：意外。" },
+        "减": { notes: "F# A C", color: "收缩、压抑", usage: "过渡", say: "芦苇说：缩了一下。" },
+        "七": { notes: "F# A# C# E", color: "紧张、需要解决", usage: "属七，倾向B", say: "芦苇说：急着走。" },
+        "大七": { notes: "F# A# C# E#(F)", color: "梦幻、松弛", usage: "爵士", say: "芦苇说：夜色。" },
+        "小七": { notes: "F# A C# E", color: "柔和、爵士感", usage: "R&B", say: "芦苇说：懒懒的。" },
+        "半减七": { notes: "F# A C E", color: "压抑、小调感", usage: "小调Ⅱ级", say: "芦苇说：说不出口。" },
+        "减七": { notes: "F# A C Eb", color: "紧张、对称", usage: "转调", say: "芦苇说：转圈。" },
+        "挂二": { notes: "F# G# C#", color: "开放、不解决", usage: "前奏", say: "芦苇说：轻轻推。" },
+        "挂四": { notes: "F# B C#", color: "期待、悬停", usage: "制造期待", say: "芦苇说：等一下。" },
+        "属九": { notes: "F# A# C# E G#", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "F# A C# E G#", color: "压抑、深情", usage: "抒情", say: "芦苇说：忍着难过。" },
+        "大九": { notes: "F# A# C# E# G#", color: "松弛、华丽", usage: "爵士段落", say: "芦苇说：清晨。" },
+        "属十一": { notes: "F# A# C# E G# B", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬。" },
+        "属十三": { notes: "F# A# C# E G# B D#", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：落幕。" },
+        "大十三": { notes: "F# A# C# E# G# B D#", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满。" }
+    },
+    "Gb": {
+        "大三": { notes: "Gb Bb Db", color: "明亮、稳定", usage: "温暖段落", say: "芦苇说：温柔又有力。" },
+        "小三": { notes: "Gb Bbb(A) Db", color: "柔和、忧伤", usage: "冷色调抒情", say: "芦苇说：安静地难过。" },
+        "增": { notes: "Gb Bb D", color: "扩张、不安", usage: "戏剧瞬间", say: "芦苇说：意外。" },
+        "减": { notes: "Gb Bbb Dbb(C)", color: "收缩、压抑", usage: "过渡", say: "芦苇说：缩了一下。" },
+        "七": { notes: "Gb Bb Db Fb(E)", color: "紧张、需要解决", usage: "属七，倾向Cb", say: "芦苇说：急着走。" },
+        "大七": { notes: "Gb Bb Db F", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：夜色温柔。" },
+        "小七": { notes: "Gb Bbb Db Fb", color: "柔和、爵士感", usage: "R&B抒情", say: "芦苇说：懒懒的。" },
+        "半减七": { notes: "Gb Bbb Dbb Fb", color: "压抑、小调感", usage: "爵士小调Ⅱ级", say: "芦苇说：说不出口。" },
+        "减七": { notes: "Gb Bbb Dbb Fbb(Eb)", color: "紧张、对称", usage: "转调", say: "芦苇说：转圈。" },
+        "挂二": { notes: "Gb Ab Db", color: "开放、不解决", usage: "前奏", say: "芦苇说：轻轻推。" },
+        "挂四": { notes: "Gb Cb Db", color: "期待、悬停", usage: "制造期待", say: "芦苇说：等一下。" },
+        "属九": { notes: "Gb Bb Db Fb Ab", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "Gb Bbb Db Fb Ab", color: "压抑、深情", usage: "抒情", say: "芦苇说：忍着难过。" },
+        "大九": { notes: "Gb Bb Db F Ab", color: "松弛、华丽", usage: "爵士段落", say: "芦苇说：清晨。" },
+        "属十一": { notes: "Gb Bb Db Fb Ab Cb", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬。" },
+        "属十三": { notes: "Gb Bb Db Fb Ab Cb Eb", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：落幕。" },
+        "大十三": { notes: "Gb Bb Db F Ab Cb Eb", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满。" }
+    },
+    "G": {
+        "大三": { notes: "G B D", color: "明亮、稳定", usage: "摇滚、流行主和弦", say: "芦苇说：有力量的家。" },
+        "小三": { notes: "G Bb D", color: "柔和、忧伤", usage: "抒情主歌", say: "芦苇说：温柔的叹息。" },
+        "增": { notes: "G B D#", color: "扩张、不安", usage: "悬念", say: "芦苇说：往上撑了一下。" },
+        "减": { notes: "G Bb Db", color: "收缩、压抑", usage: "过渡", say: "芦苇说：往下沉。" },
+        "七": { notes: "G B D F", color: "紧张、需要解决", usage: "属七，倾向C", say: "芦苇说：急着回家。" },
+        "大七": { notes: "G B D F#", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：海风。" },
+        "小七": { notes: "G Bb D F", color: "柔和、爵士感", usage: "R&B", say: "芦苇说：舒服。" },
+        "半减七": { notes: "G Bb Db F", color: "压抑、小调感", usage: "小调Ⅱ级", say: "芦苇说：话变少了。" },
+        "减七": { notes: "G Bb Db Fb", color: "紧张、对称", usage: "转调", say: "芦苇说：迷宫。" },
+        "挂二": { notes: "G A D", color: "开放、不解决", usage: "前奏", say: "芦苇说：不急。" },
+        "挂四": { notes: "G C D", color: "期待、悬停", usage: "摇滚", say: "芦苇说：等。" },
+        "属九": { notes: "G B D F A", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "G Bb D F A", color: "压抑、深情", usage: "抒情桥段", say: "芦苇说：深情。" },
+        "大九": { notes: "G B D F# A", color: "松弛、华丽", usage: "爵士", say: "芦苇说：清晨的阳光。" },
+        "属十一": { notes: "G B D F A C", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬在半空。" },
+        "属十三": { notes: "G B D F A C E", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：盛典。" },
+        "大十三": { notes: "G B D F# A C E", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满又不舍。" }
+    },
+    "G#": {
+        "大三": { notes: "G# B#(C) D#", color: "明亮、稳定", usage: "升调段落", say: "芦苇说：亮但不刺眼。" },
+        "小三": { notes: "G# B D#", color: "柔和、忧伤", usage: "冷色调抒情", say: "芦苇说：暗处。" },
+        "增": { notes: "G# B# D##(E)", color: "扩张、不安", usage: "戏剧转折", say: "芦苇说：意外。" },
+        "减": { notes: "G# B D", color: "收缩、压抑", usage: "过渡", say: "芦苇说：缩了一下。" },
+        "七": { notes: "G# B# D# F#", color: "紧张、需要解决", usage: "属七，倾向C#", say: "芦苇说：急着走。" },
+        "大七": { notes: "G# B# D# F##(G)", color: "梦幻、松弛", usage: "爵士", say: "芦苇说：夜色。" },
+        "小七": { notes: "G# B D# F#", color: "柔和、爵士感", usage: "R&B", say: "芦苇说：懒懒的。" },
+        "半减七": { notes: "G# B D F#", color: "压抑、小调感", usage: "小调Ⅱ级", say: "芦苇说：说不出口。" },
+        "减七": { notes: "G# B D F", color: "紧张、对称", usage: "转调", say: "芦苇说：转圈。" },
+        "挂二": { notes: "G# A# D#", color: "开放、不解决", usage: "前奏", say: "芦苇说：轻轻推。" },
+        "挂四": { notes: "G# C# D#", color: "期待、悬停", usage: "制造期待", say: "芦苇说：等一下。" },
+        "属九": { notes: "G# B# D# F# A#", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "G# B D# F# A#", color: "压抑、深情", usage: "抒情", say: "芦苇说：忍着难过。" },
+        "大九": { notes: "G# B# D# F## A#", color: "松弛、华丽", usage: "爵士段落", say: "芦苇说：清晨。" },
+        "属十一": { notes: "G# B# D# F# A# C#", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬。" },
+        "属十三": { notes: "G# B# D# F# A# C# E#", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：落幕。" },
+        "大十三": { notes: "G# B# D# F## A# C# E#", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满。" }
+    },
+    "Ab": {
+        "大三": { notes: "Ab C Eb", color: "明亮、稳定", usage: "温暖段落", say: "芦苇说：温柔又有力。" },
+        "小三": { notes: "Ab Cb(B) Eb", color: "柔和、忧伤", usage: "冷色调抒情", say: "芦苇说：安静地难过。" },
+        "增": { notes: "Ab C E", color: "扩张、不安", usage: "戏剧瞬间", say: "芦苇说：意外。" },
+        "减": { notes: "Ab Cb Ebb(D)", color: "收缩、压抑", usage: "过渡", say: "芦苇说：缩了一下。" },
+        "七": { notes: "Ab C Eb Gb", color: "紧张、需要解决", usage: "属七，倾向Db", say: "芦苇说：急着走。" },
+        "大七": { notes: "Ab C Eb G", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：夜色温柔。" },
+        "小七": { notes: "Ab Cb Eb Gb", color: "柔和、爵士感", usage: "R&B抒情", say: "芦苇说：懒懒的。" },
+        "半减七": { notes: "Ab Cb Ebb Gb", color: "压抑、小调感", usage: "爵士小调Ⅱ级", say: "芦苇说：说不出口。" },
+        "减七": { notes: "Ab Cb Ebb Gbb(F)", color: "紧张、对称", usage: "转调", say: "芦苇说：转圈。" },
+        "挂二": { notes: "Ab Bb Eb", color: "开放、不解决", usage: "前奏", say: "芦苇说：轻轻推。" },
+        "挂四": { notes: "Ab Db Eb", color: "期待、悬停", usage: "制造期待", say: "芦苇说：等一下。" },
+        "属九": { notes: "Ab C Eb Gb Bb", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "Ab Cb Eb Gb Bb", color: "压抑、深情", usage: "抒情", say: "芦苇说：忍着难过。" },
+        "大九": { notes: "Ab C Eb G Bb", color: "松弛、华丽", usage: "爵士段落", say: "芦苇说：清晨。" },
+        "属十一": { notes: "Ab C Eb Gb Bb Db", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬。" },
+        "属十三": { notes: "Ab C Eb Gb Bb Db F", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：落幕。" },
+        "大十三": { notes: "Ab C Eb G Bb Db F", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满。" }
+    },
+    "A": {
+        "大三": { notes: "A C# E", color: "明亮、稳定", usage: "摇滚、流行主和弦", say: "芦苇说：有力量的家。" },
+        "小三": { notes: "A C E", color: "柔和、忧伤", usage: "抒情主歌", say: "芦苇说：温柔的叹息。" },
+        "增": { notes: "A C# E#(F)", color: "扩张、不安", usage: "悬念", say: "芦苇说：往上撑了一下。" },
+        "减": { notes: "A C Eb", color: "收缩、压抑", usage: "过渡", say: "芦苇说：往下沉。" },
+        "七": { notes: "A C# E G", color: "紧张、需要解决", usage: "属七，倾向D", say: "芦苇说：急着回家。" },
+        "大七": { notes: "A C# E G#", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：海风。" },
+        "小七": { notes: "A C E G", color: "柔和、爵士感", usage: "R&B", say: "芦苇说：舒服。" },
+        "半减七": { notes: "A C Eb G", color: "压抑、小调感", usage: "小调Ⅱ级", say: "芦苇说：话变少了。" },
+        "减七": { notes: "A C Eb Gb", color: "紧张、对称", usage: "转调", say: "芦苇说：迷宫。" },
+        "挂二": { notes: "A B E", color: "开放、不解决", usage: "前奏", say: "芦苇说：不急。" },
+        "挂四": { notes: "A D E", color: "期待、悬停", usage: "摇滚", say: "芦苇说：等。" },
+        "属九": { notes: "A C# E G B", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "A C E G B", color: "压抑、深情", usage: "抒情桥段", say: "芦苇说：深情。" },
+        "大九": { notes: "A C# E G# B", color: "松弛、华丽", usage: "爵士", say: "芦苇说：清晨的阳光。" },
+        "属十一": { notes: "A C# E G B D", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬在半空。" },
+        "属十三": { notes: "A C# E G B D F#", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：盛典。" },
+        "大十三": { notes: "A C# E G# B D F#", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满又不舍。" }
+    },
+    "A#": {
+        "大三": { notes: "A# C##(D) E#(F)", color: "明亮、稳定", usage: "升调段落", say: "芦苇说：亮但不刺眼。" },
+        "小三": { notes: "A# C# E#", color: "柔和、忧伤", usage: "冷色调抒情", say: "芦苇说：暗处。" },
+        "增": { notes: "A# C## E##(G)", color: "扩张、不安", usage: "戏剧转折", say: "芦苇说：意外。" },
+        "减": { notes: "A# C# E", color: "收缩、压抑", usage: "过渡", say: "芦苇说：缩了一下。" },
+        "七": { notes: "A# C## E# G#", color: "紧张、需要解决", usage: "属七，倾向D#", say: "芦苇说：急着走。" },
+        "大七": { notes: "A# C## E# G##(A)", color: "梦幻、松弛", usage: "爵士", say: "芦苇说：夜色。" },
+        "小七": { notes: "A# C# E# G#", color: "柔和、爵士感", usage: "R&B", say: "芦苇说：懒懒的。" },
+        "半减七": { notes: "A# C# E G#", color: "压抑、小调感", usage: "小调Ⅱ级", say: "芦苇说：说不出口。" },
+        "减七": { notes: "A# C# E G", color: "紧张、对称", usage: "转调", say: "芦苇说：转圈。" },
+        "挂二": { notes: "A# B# E#", color: "开放、不解决", usage: "前奏", say: "芦苇说：轻轻推。" },
+        "挂四": { notes: "A# D# E#", color: "期待、悬停", usage: "制造期待", say: "芦苇说：等一下。" },
+        "属九": { notes: "A# C## E# G# B#", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "A# C# E# G# B#", color: "压抑、深情", usage: "抒情", say: "芦苇说：忍着难过。" },
+        "大九": { notes: "A# C## E# G## B#", color: "松弛、华丽", usage: "爵士段落", say: "芦苇说：清晨。" },
+        "属十一": { notes: "A# C## E# G# B# D#", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬。" },
+        "属十三": { notes: "A# C## E# G# B# D# F##", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：落幕。" },
+        "大十三": { notes: "A# C## E# G## B# D# F##", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满。" }
+    },
+    "Bb": {
+        "大三": { notes: "Bb D F", color: "明亮、稳定", usage: "温暖段落", say: "芦苇说：温柔又有力。" },
+        "小三": { notes: "Bb Db F", color: "柔和、忧伤", usage: "冷色调抒情", say: "芦苇说：安静地难过。" },
+        "增": { notes: "Bb D F#", color: "扩张、不安", usage: "戏剧瞬间", say: "芦苇说：意外。" },
+        "减": { notes: "Bb Db Fb(E)", color: "收缩、压抑", usage: "过渡", say: "芦苇说：缩了一下。" },
+        "七": { notes: "Bb D F Ab", color: "紧张、需要解决", usage: "属七，倾向Eb", say: "芦苇说：急着走。" },
+        "大七": { notes: "Bb D F A", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：夜色温柔。" },
+        "小七": { notes: "Bb Db F Ab", color: "柔和、爵士感", usage: "R&B抒情", say: "芦苇说：懒懒的。" },
+        "半减七": { notes: "Bb Db Fb Ab", color: "压抑、小调感", usage: "爵士小调Ⅱ级", say: "芦苇说：说不出口。" },
+        "减七": { notes: "Bb Db Fb Abb(G)", color: "紧张、对称", usage: "转调", say: "芦苇说：转圈。" },
+        "挂二": { notes: "Bb C F", color: "开放、不解决", usage: "前奏", say: "芦苇说：轻轻推。" },
+        "挂四": { notes: "Bb Eb F", color: "期待、悬停", usage: "制造期待", say: "芦苇说：等一下。" },
+        "属九": { notes: "Bb D F Ab C", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "Bb Db F Ab C", color: "压抑、深情", usage: "抒情", say: "芦苇说：忍着难过。" },
+        "大九": { notes: "Bb D F A C", color: "松弛、华丽", usage: "爵士段落", say: "芦苇说：清晨。" },
+        "属十一": { notes: "Bb D F Ab C Eb", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬。" },
+        "属十三": { notes: "Bb D F Ab C Eb G", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：落幕。" },
+        "大十三": { notes: "Bb D F A C Eb G", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满。" }
+    },
+    "B": {
+        "大三": { notes: "B D# F#", color: "明亮、稳定", usage: "摇滚、流行主和弦", say: "芦苇说：有力量的家。" },
+        "小三": { notes: "B D F#", color: "柔和、忧伤", usage: "抒情主歌", say: "芦苇说：温柔的叹息。" },
+        "增": { notes: "B D# F##(G)", color: "扩张、不安", usage: "悬念", say: "芦苇说：往上撑了一下。" },
+        "减": { notes: "B D F", color: "收缩、压抑", usage: "过渡", say: "芦苇说：往下沉。" },
+        "七": { notes: "B D# F# A", color: "紧张、需要解决", usage: "属七，倾向E", say: "芦苇说：急着回家。" },
+        "大七": { notes: "B D# F# A#", color: "梦幻、松弛", usage: "爵士主和弦", say: "芦苇说：海风。" },
+        "小七": { notes: "B D F# A", color: "柔和、爵士感", usage: "R&B", say: "芦苇说：舒服。" },
+        "半减七": { notes: "B D F A", color: "压抑、小调感", usage: "小调Ⅱ级", say: "芦苇说：话变少了。" },
+        "减七": { notes: "B D F Ab", color: "紧张、对称", usage: "转调", say: "芦苇说：迷宫。" },
+        "挂二": { notes: "B C# F#", color: "开放、不解决", usage: "前奏", say: "芦苇说：不急。" },
+        "挂四": { notes: "B E F#", color: "期待、悬停", usage: "摇滚", say: "芦苇说：等。" },
+        "属九": { notes: "B D# F# A C#", color: "现代、华丽", usage: "替代属七", say: "芦苇说：话说一半。" },
+        "小九": { notes: "B D F# A C#", color: "压抑、深情", usage: "抒情桥段", say: "芦苇说：深情。" },
+        "大九": { notes: "B D# F# A# C#", color: "松弛、华丽", usage: "爵士", say: "芦苇说：清晨的阳光。" },
+        "属十一": { notes: "B D# F# A C# E", color: "现代、张力", usage: "Fusion", say: "芦苇说：悬在半空。" },
+        "属十三": { notes: "B D# F# A C# E G#", color: "饱满、终曲感", usage: "结尾", say: "芦苇说：盛典。" },
+        "大十三": { notes: "B D# F# A# C# E G#", color: "丰满、圆满", usage: "终极结尾", say: "芦苇说：圆满又不舍。" }
+    }
+};
+
+// ==================== 4. 和弦连接指南数据 ====================
+const chordConnectionData = {
+    "第1期 · 基础三和弦": [
+        { from: "C 大三", to: "F 大三", reason: "主到下属，温暖推进", say: "芦苇说：像从客厅走到阳台。" },
+        { from: "C 大三", to: "G 大三", reason: "主到属，能量上升", say: "芦苇说：像准备出发。" },
+        { from: "C 大三", to: "Am", reason: "关系小调，温柔转折", say: "芦苇说：像轻轻叹一口气。" },
+        { from: "G 大三", to: "C 大三", reason: "属到主，最经典的解决", say: "芦苇说：像回到家。" },
+        { from: "F 大三", to: "C 大三", reason: "下属到主，稳定收束", say: "芦苇说：像说完一句话。" },
+        { from: "Am", to: "F 大三", reason: "小调到下属，情感释放", say: "芦苇说：像打开窗户。" },
+        { from: "Dm", to: "G 大三", reason: "Ⅱ→Ⅴ，最常见的推动", say: "芦苇说：像把话递出去。" }
+    ],
+    "第2期 · 属七与终止式": [
+        { from: "G7", to: "C", reason: "经典属到主，最强烈解决", say: "芦苇说：急着回到家。" },
+        { from: "G7", to: "Cmaj7", reason: "属七到一级大七，温柔解决", say: "芦苇说：像推开门但轻一点。" },
+        { from: "D7", to: "G", reason: "Ⅴ→Ⅰ，完美终止", say: "芦苇说：像推开门。" },
+        { from: "C7", to: "F", reason: "副属和弦，临时转调", say: "芦苇说：像绕了一段路。" },
+        { from: "E7", to: "Am", reason: "Ⅲ7→Ⅵm，小调色彩", say: "芦苇说：像暗处转身。" },
+        { from: "A7", to: "Dm", reason: "Ⅵ7→Ⅱm，爵士感", say: "芦苇说：像悄悄靠近。" }
+    ],
+    "第3期 · 大七/小七和弦": [
+        { from: "Cmaj7", to: "Fmaj7", reason: "Ⅰ→Ⅳ，松弛爵士", say: "芦苇说：像飘。" },
+        { from: "Cmaj7", to: "Dm7", reason: "Ⅰ→Ⅱ，现代感", say: "芦苇说：像慢慢走。" },
+        { from: "Cmaj7", to: "Am7", reason: "Ⅰ→Ⅵ，温暖递进", say: "芦苇说：像拥抱后松开。" },
+        { from: "Fmaj7", to: "G7", reason: "Ⅳ→Ⅴ，推着走", say: "芦苇说：像轻轻推。" },
+        { from: "Dm7", to: "G7", reason: "Ⅱ→Ⅴ，核心推动", say: "芦苇说：像把话说出去。" },
+        { from: "Am7", to: "Dm7", reason: "Ⅵ→Ⅱ，R&B感", say: "芦苇说：像柔和地转。" }
+    ],
+    "第4期 · 半减七/减七/挂留": [
+        { from: "Bm7b5", to: "E7", reason: "Ⅱ-Ⅴ-Ⅰ小调核心", say: "芦苇说：像暗处推动。" },
+        { from: "Cdim7", to: "Dm7", reason: "减七转位，过渡", say: "芦苇说：像转一圈。" },
+        { from: "Csus4", to: "C", reason: "挂四解决到三音", say: "芦苇说：像终于说出口。" },
+        { from: "Gsus4", to: "G", reason: "摇滚常用", say: "芦苇说：像等到了。" }
+    ],
+    "第5期 · 九和弦": [
+        { from: "G9", to: "Cmaj7", reason: "属九到一级大七", say: "芦苇说：像飞了一会儿轻轻落下。" },
+        { from: "C9", to: "Fmaj7", reason: "属九到一级大七", say: "芦苇说：像飘在云上。" },
+        { from: "D9", to: "Gmaj7", reason: "属九到一级大七", say: "芦苇说：像推开了金色的门。" },
+        { from: "A9", to: "Dmaj7", reason: "属九到一级大七", say: "芦苇说：像在水面滑行。" },
+        { from: "Dm9", to: "G13", reason: "Ⅱ-Ⅴ-Ⅰ爵士", say: "芦苇说：像优雅地转身。" },
+        { from: "Cmaj9", to: "Am9", reason: "松弛进行", say: "芦苇说：像晨光。" }
+    ],
+    "第6期 · 十一、十三和弦": [
+        { from: "G11", to: "Cmaj7", reason: "属十一到一级大七", say: "芦苇说：像悬在半空然后降落。" },
+        { from: "G13", to: "Cmaj7", reason: "属十三到一级大七", say: "芦苇说：像盛大结束后的安静。" },
+        { from: "C11", to: "Fmaj7", reason: "属十一到一级大七", say: "芦苇说：像晨雾散去。" },
+        { from: "D13", to: "Gmaj7", reason: "属十三到一级大七", say: "芦苇说：像河流汇入大海。" },
+        { from: "A13", to: "Dmaj7", reason: "属十三到一级大七", say: "芦苇说：像温暖拥抱。" },
+        { from: "D13", to: "G13", reason: "五度循环，爵士经典", say: "芦苇说：像盛大结束后的另一个开始。" }
+    ]
+};
+
+// ==================== 常用和弦速查表 ====================
+const basicChords = [
+    { name: "C", notes: "C E G" }, { name: "Dm", notes: "D F A" }, { name: "Em", notes: "E G B" },
+    { name: "F", notes: "F A C" }, { name: "G", notes: "G B D" }, { name: "Am", notes: "A C E" },
+    { name: "G7", notes: "G B D F" }, { name: "Cmaj7", notes: "C E G B" }
+];
+const advancedChords = [
+    { name: "Cm7", notes: "C Eb G Bb" }, { name: "D7", notes: "D F# A C" }, { name: "Dm7", notes: "D F A C" },
+    { name: "E7", notes: "E G# B D" }, { name: "Em7", notes: "E G B D" }, { name: "Fmaj7", notes: "F A C E" },
+    { name: "F#m", notes: "F# A C#" }, { name: "A7", notes: "A C# E G" }, { name: "Am7", notes: "A C E G" },
+    { name: "B7", notes: "B D# F# A" }, { name: "Bm", notes: "B D F#" }, { name: "C9", notes: "C E G Bb D" }
+];
+
+function buildChordTable() {
+    const basicDiv = document.getElementById("basicChords");
+    const advancedDiv = document.getElementById("advancedChords");
+    basicDiv.innerHTML = basicChords.map(c => `<div class="chord-item" data-name="${c.name}" data-notes="${c.notes}"><div class="chord-name">${c.name}</div><div class="chord-notes">${c.notes}</div></div>`).join("");
+    advancedDiv.innerHTML = advancedChords.map(c => `<div class="chord-item" data-name="${c.name}" data-notes="${c.notes}"><div class="chord-name">${c.name}</div><div class="chord-notes">${c.notes}</div></div>`).join("");
+    document.querySelectorAll(".chord-item").forEach(item => {
+        item.addEventListener("click", () => {
+            const name = item.dataset.name;
+            const notes = item.dataset.notes;
+            const detailPanel = document.getElementById("chordDetailPanel");
+            const detailText = document.getElementById("chordDetailText");
+            detailText.innerHTML = `<div style="color:#FFD966; font-weight:bold;">${name} 和弦</div><div style="margin-top:4px;">组成音：${notes}</div><div style="margin-top:4px;">点击钢琴键感受音色～</div>`;
+            detailPanel.style.display = "block";
+            addStudyPoints(1, "查看和弦速查");
+        });
+    });
+}
+let isBasic = true;
+document.getElementById("chordTableToggle").addEventListener("click", () => {
+    const basicDiv = document.getElementById("basicChords");
+    const advancedDiv = document.getElementById("advancedChords");
+    if (isBasic) {
+        basicDiv.style.display = "none";
+        advancedDiv.style.display = "grid";
+        document.getElementById("chordTableToggle").innerHTML = "🔙 返回基础";
+        isBasic = false;
+    } else {
+        basicDiv.style.display = "grid";
+        advancedDiv.style.display = "none";
+        document.getElementById("chordTableToggle").innerHTML = "🔀 进阶和弦";
+        isBasic = true;
+    }
+});
+
+// ==================== 音阶速查表 ====================
+const scalesData = {
+    "C大调": { notes: "C D E F G A B C", type: "major", color: "明亮、积极" },
+    "G大调": { notes: "G A B C D E F# G", type: "major", color: "明亮、积极" },
+    "D大调": { notes: "D E F# G A B C# D", type: "major", color: "明亮、积极" },
+    "A大调": { notes: "A B C# D E F# G# A", type: "major", color: "明亮、积极" },
+    "E大调": { notes: "E F# G# A B C# D# E", type: "major", color: "明亮、积极" },
+    "B大调": { notes: "B C# D# E F# G# A# B", type: "major", color: "明亮、积极" },
+    "F大调": { notes: "F G A Bb C D E F", type: "major", color: "明亮、积极" },
+    "Bb大调": { notes: "Bb C D Eb F G A Bb", type: "major", color: "明亮、积极" },
+    "Eb大调": { notes: "Eb F G Ab Bb C D Eb", type: "major", color: "明亮、积极" },
+    "Ab大调": { notes: "Ab Bb C Db Eb F G Ab", type: "major", color: "明亮、积极" },
+    "Db大调": { notes: "Db Eb F Gb Ab Bb C Db", type: "major", color: "明亮、积极" },
+    "Gb大调": { notes: "Gb Ab Bb Cb Db Eb F Gb", type: "major", color: "明亮、积极" },
+    "a小调": { notes: "A B C D E F G A", type: "minor", color: "柔和、忧伤" },
+    "e小调": { notes: "E F# G A B C D E", type: "minor", color: "柔和、忧伤" },
+    "C五声": { notes: "C D E G A C", type: "pentatonic", color: "空灵、中国风" },
+    "G五声": { notes: "G A B D E G", type: "pentatonic", color: "空灵、中国风" },
+    "C布鲁斯": { notes: "C Eb F F# G Bb C", type: "blues", color: "蓝调、苦中带甜" }
+};
+const scaleCategories = {
+    "major": ["C大调", "G大调", "D大调", "A大调", "E大调", "B大调", "F大调", "Bb大调", "Eb大调", "Ab大调", "Db大调", "Gb大调"],
+    "minor": ["a小调", "e小调"],
+    "pentatonic": ["C五声", "G五声"],
+    "blues": ["C布鲁斯"]
+};
+let currentScaleCat = "major";
+function buildScaleButtons() {
+    const container = document.getElementById("scaleButtonsArea");
+    const scales = scaleCategories[currentScaleCat];
+    container.innerHTML = scales.map(scale => `<button class="scale-detail-btn" data-scale="${scale}">${scale}</button>`).join("");
+    document.querySelectorAll(".scale-detail-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const scaleName = btn.dataset.scale;
+            const scale = scalesData[scaleName];
+            if (scale) {
+                document.getElementById("scaleResult").innerHTML = `
+                    <div style="background:#2a4a3a; border-radius:12px; padding:12px;">
+                        <div style="color:#FFD966; font-weight:bold;">🎼 ${scaleName}</div>
+                        <div style="color:#F5ECD7; font-family:monospace; margin:8px 0;">${scale.notes}</div>
+                        <div style="color:#AAD4B0;">🎨 ${scale.color}</div>
+                    </div>
+                `;
+                addStudyPoints(1, "查看音阶");
+            }
+        });
+    });
+}
+function buildScaleCategories() {
+    const container = document.getElementById("scaleCategories");
+    const cats = [
+        { id: "major", name: "大调" }, { id: "minor", name: "小调" },
+        { id: "pentatonic", name: "五声" }, { id: "blues", name: "布鲁斯" }
+    ];
+    container.innerHTML = cats.map(cat => `<button class="scale-cat-btn ${cat.id === currentScaleCat ? 'active' : ''}" data-cat="${cat.id}">${cat.name}</button>`).join("");
+    document.querySelectorAll(".scale-cat-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".scale-cat-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentScaleCat = btn.dataset.cat;
+            buildScaleButtons();
+        });
+    });
+    buildScaleButtons();
+}
+
+// ==================== UI 构建函数 ====================
 function showTheoryContent(category) {
     const data = theoryHandbook[category];
     if (!data) return;
     const container = document.getElementById("theoryContent");
     container.innerHTML = data.map(item => `
         <div class="content-card">
-            <h3> ${item.title}</h3>
+            <h3>📌 ${item.title}</h3>
             <p>${item.content}</p>
-            <div class="note"> ${item.note}</div>
+            <div class="note">${item.note}</div>
         </div>
     `).join("");
-    // 记录阅读（可选，加分）
-    const user = getCurrentUser();
-    if (user) {
-        // 可以在这里加阅读积分
-    }
+    addStudyPoints(1, "浏览乐理知识");
 }
-// 显示中国传统音乐内容
 function showChineseContent(category) {
     const data = chineseHandbook[category];
     if (!data) return;
     const container = document.getElementById("chineseContent");
     container.innerHTML = data.map(item => `
         <div class="content-card">
-            <h3> ${item.title}</h3>
+            <h3>🏮 ${item.title}</h3>
             <p>${item.content}</p>
-            <div class="note"> ${item.note}</div>
+            <div class="note">${item.note}</div>
         </div>
     `).join("");
+    addStudyPoints(1, "浏览传统音乐");
 }
-// 构建芦苇乐理手册UI
+function showChordDict(root) {
+    const chords = fullChordDictionary[root];
+    if (!chords) return;
+    const container = document.getElementById("chordDictContent");
+    container.innerHTML = `
+        <div style="background: #1f3e2e; border-radius: 24px; padding: 20px;">
+            <div style="color: #FFD966; font-weight: bold; margin-bottom: 16px; font-size: 1.1rem;">🎵 ${root} 为根音</div>
+            ${Object.entries(chords).map(([type, data]) => `
+                <div class="chord-type">
+                    <div class="chord-type-name">${type}</div>
+                    <div class="chord-notes">📝 ${data.notes}</div>
+                    <div class="chord-color">🎨 ${data.color}</div>
+                    <div class="chord-usage">🎯 ${data.usage}</div>
+                    <div class="chord-reed">💬 ${data.say}</div>
+                </div>
+            `).join("")}
+        </div>
+    `;
+    document.querySelectorAll(".root-btn").forEach(btn => btn.classList.remove("active"));
+    const activeBtn = Array.from(document.querySelectorAll(".root-btn")).find(b => b.innerText === root);
+    if(activeBtn) activeBtn.classList.add("active");
+    addStudyPoints(1, "查看和弦词典");
+}
+function showConnection(period) {
+    const data = chordConnectionData[period];
+    if (!data) return;
+    const container = document.getElementById("connectionContent");
+    container.innerHTML = data.map(item => `
+        <div class="connection-item">
+            <div class="connection-from-to">${item.from} → ${item.to}</div>
+            <div class="connection-reason">💡 ${item.reason}</div>
+            <div class="connection-say">${item.say}</div>
+        </div>
+    `).join("");
+    updateDailyRule(period);
+    addStudyPoints(1, "浏览和弦连接");
+}
 function buildTheoryUI() {
     const container = document.getElementById("theoryCategories");
-    const categories = Object.keys(theoryHandbook);
-    categories.forEach(cat => {
+    Object.keys(theoryHandbook).forEach(cat => {
         const btn = document.createElement("button");
         btn.className = "category-btn";
         btn.innerText = cat;
         btn.onclick = () => showTheoryContent(cat);
         container.appendChild(btn);
     });
-    // 默认显示第一个分类
-    if(categories.length > 0) showTheoryContent(categories[0]);
+    showTheoryContent(Object.keys(theoryHandbook)[0]);
 }
-// 构建中国传统音乐手册UI
 function buildChineseUI() {
     const container = document.getElementById("chineseCategories");
-    const categories = Object.keys(chineseHandbook);
-    categories.forEach(cat => {
+    Object.keys(chineseHandbook).forEach(cat => {
         const btn = document.createElement("button");
         btn.className = "category-btn";
         btn.innerText = cat;
         btn.onclick = () => showChineseContent(cat);
         container.appendChild(btn);
     });
-    // 默认显示第一个分类
-    if(categories.length > 0) showChineseContent(categories[0]);
+    showChineseContent(Object.keys(chineseHandbook)[0]);
+}
+function buildChordDictUI() {
+    const container = document.getElementById("rootList");
+    const roots = ["C", "C#", "Db", "D", "D#", "Eb", "E", "F", "F#", "Gb", "G", "G#", "Ab", "A", "A#", "Bb", "B"];
+    roots.forEach(root => {
+        if (fullChordDictionary[root]) {
+            const btn = document.createElement("button");
+            btn.className = "root-btn";
+            btn.innerText = root;
+            btn.onclick = () => showChordDict(root);
+            container.appendChild(btn);
+        }
+    });
+    showChordDict("C");
+}
+function buildConnectionUI() {
+    const container = document.getElementById("connectionPeriods");
+    Object.keys(chordConnectionData).forEach(period => {
+        const btn = document.createElement("button");
+        btn.className = "category-btn";
+        btn.innerText = period;
+        btn.onclick = () => showConnection(period);
+        container.appendChild(btn);
+    });
+    showConnection(Object.keys(chordConnectionData)[0]);
+}
+function initCollapse() {
+    document.querySelectorAll('.section-title').forEach(title => {
+        title.addEventListener('click', () => {
+            const targetId = title.dataset.target;
+            const target = document.getElementById(targetId);
+            if(target) {
+                if(target.classList.contains('active')) {
+                    target.classList.remove('active');
+                    title.innerHTML = title.innerHTML.replace('▲', '▼');
+                } else {
+                    target.classList.add('active');
+                    title.innerHTML = title.innerHTML.replace('▼', '▲');
+                }
+            }
+        });
+        if(title.dataset.target === 'theoryContent') {
+            document.getElementById('theoryContent').classList.add('active');
+            title.innerHTML = title.innerHTML.replace('▼', '▲');
+        }
+    });
 }
 // 初始化
 buildTheoryUI();
 buildChineseUI();
+buildChordDictUI();
+buildConnectionUI();
+buildChordTable();
+buildScaleCategories();
+initCollapse();
 updateUserUI();
 </script>
 </body>
 </html>
-
