@@ -21,12 +21,14 @@
         .header h1 { color: #FFD966; font-size: 1.8rem; margin-bottom: 8px; }
         .header p { color: #AAD4B0; font-size: 0.8rem; }
         .tool-card { background: #0f281dcc; border-radius: 28px; padding: 20px; margin-bottom: 20px; border: 1px solid #F2C94C; }
-        .tool-title { color: #FFD966; font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-left: 3px solid #E69A2E; padding-left: 12px; }
+        .tool-title { color: #FFD966; font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-left: 3px solid #E69A2E; padding-left: 12px; cursor: pointer; user-select: none; }
+        .tool-title:active { opacity: 0.7; }
         button { background: #3C6E4A; border: none; padding: 8px 16px; border-radius: 40px; font-weight: bold; color: white; cursor: pointer; transition: all 0.1s ease; font-size: 0.8rem; }
         button:active { transform: scale(0.96); }
         .btn-primary { background: #E69A2E; color: #2D1E0C; }
         .btn-danger { background: #8a3a2a; }
-        input, .bpm-input { background: #2a4a3a; border: 1px solid #F2C94C; border-radius: 40px; padding: 8px 12px; color: #F5ECD7; font-size: 0.8rem; }
+        input, textarea { background: #2a4a3a; border: 1px solid #F2C94C; border-radius: 16px; padding: 10px; color: #F5ECD7; font-size: 0.8rem; font-family: inherit; width: 100%; }
+        textarea { resize: vertical; }
         .stats-grid { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
         .stat-card { background: #0f281d; border-radius: 16px; padding: 10px; flex: 1; text-align: center; }
         .stat-value { color: #FFD966; font-size: 1.2rem; font-weight: bold; }
@@ -39,177 +41,314 @@
         .search-result { max-height: 150px; overflow-y: auto; font-size: 0.7rem; }
         .search-item { padding: 6px 10px; background: #1f3e2e; margin: 4px 0; border-radius: 8px; cursor: pointer; }
         .search-item:hover { background: #E69A2E30; }
+        .works-list { max-height: 200px; overflow-y: auto; margin-top: 12px; }
+        .work-item { background: #1f3e2e; border-radius: 12px; padding: 10px; margin-bottom: 8px; border-left: 3px solid #F2C94C; }
+        .work-title { color: #FFD966; font-weight: bold; font-size: 0.8rem; }
+        .work-content { color: #C8E6C9; font-size: 0.7rem; margin-top: 4px; }
+        .work-delete { background: #8a3a2a; border: none; border-radius: 20px; padding: 2px 8px; font-size: 0.6rem; cursor: pointer; float: right; }
+        .note-item { background: #1f3e2e; border-radius: 12px; padding: 10px; margin-bottom: 8px; border-left: 3px solid #E69A2E; }
+        .note-date { color: #AAD4B0; font-size: 0.6rem; }
+        .note-content { color: #F5ECD7; font-size: 0.7rem; margin-top: 4px; }
+        .note-delete { background: #8a3a2a; border: none; border-radius: 20px; padding: 2px 8px; font-size: 0.6rem; cursor: pointer; float: right; }
+        .goal-options { display: flex; gap: 10px; margin-bottom: 12px; }
+        .goal-option { flex: 1; text-align: center; padding: 8px; background: #2a4a3a; border-radius: 40px; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; }
+        .goal-option.active { background: #E69A2E; color: #2D1E0C; }
+        .content-area { display: none; margin-top: 12px; }
+        .content-area.active { display: block; }
         @media (max-width: 768px) {
             .tool-title { font-size: 1rem; }
             .stat-value { font-size: 1rem; }
         }
     </style>
-    <!-- ========== 引入用户系统 ========== -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="auth.js"></script>
+    <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="sync.js"></script>
 </head>
 <body>
-<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
+<button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="container">
-    <!-- 用户信息栏 -->
     <div class="user-bar" id="userBar">
         <div class="user-info">
-            <div class="user-avatar"></div>
+            <div class="user-avatar">🛠️</div>
             <div>
                 <div class="user-name" id="userName">加载中...</div>
                 <div class="user-score" id="userScore">积分 0</div>
             </div>
         </div>
-        <button class="login-btn" id="loginBtn" style="display:none;"> 登录</button>
-        <button class="login-btn" id="logoutBtn" style="display:none;"> 退出</button>
+        <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
+        <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
     </div>
     <div class="header">
         <h1>🛠️ 芦苇工具箱</h1>
-        <p>练耳 · 节拍 · 计时 · 打卡 · 搜索</p>
+        <p>计时 · 节拍 · 练耳 · 打卡 · 作品 · 笔记 · 统计 · 搜索</p>
     </div>
+
     <!-- 学习计时器 -->
     <div class="tool-card">
-        <div class="tool-title">⏱️ 学习计时器</div>
-        <div style="background: #0f281d; border-radius: 16px; padding: 12px;">
-            <div style="display: flex; justify-content: space-between;">
-                <span style="color:#C8E6C9;">今日学习</span>
-                <span id="todayTimerDisplay" style="color:#FFD966; font-size: 1.2rem; font-family:monospace;">00:00:00</span>
+        <div class="tool-title" data-target="timerContent">⏱️ 学习计时器 ▼</div>
+        <div id="timerContent" class="content-area">
+            <div style="background: #0f281d; border-radius: 16px; padding: 12px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color:#C8E6C9;">今日学习</span>
+                    <span id="todayTimerDisplay" style="color:#FFD966; font-size: 1.2rem; font-family:monospace;">00:00:00</span>
+                </div>
+                <div class="progress-bar"><div id="todayProgressBar" class="progress-fill"></div></div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color:#AAD4B0; font-size:0.6rem;">🎯 目标：30分钟</span>
+                    <span id="todayProgressText" style="color:#AAD4B0; font-size:0.6rem;">0%</span>
+                </div>
             </div>
-            <div class="progress-bar"><div id="todayProgressBar" class="progress-fill"></div></div>
-            <div style="display: flex; justify-content: space-between;">
-                <span style="color:#AAD4B0; font-size:0.6rem;"> 目标：30分钟</span>
-                <span id="todayProgressText" style="color:#AAD4B0; font-size:0.6rem;">0%</span>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-label">本周学习</div><div id="weekTimerDisplay" class="stat-value">0分钟</div></div>
+                <div class="stat-card"><div class="stat-label">累计学习</div><div id="totalTimerDisplay" class="stat-value">0分钟</div></div>
+                <div class="stat-card"><div class="stat-label">总天数</div><div id="totalStudyDaysDisplay" class="stat-value">0天</div></div>
             </div>
+            <button id="resetTimerBtn" class="btn-danger" style="width:100%; margin-top:8px;">🔄 重置今日</button>
+            <div class="feedback-text">💾 每30秒自动保存</div>
         </div>
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-label">本周学习</div><div id="weekTimerDisplay" class="stat-value">0分钟</div></div>
-            <div class="stat-card"><div class="stat-label">累计学习</div><div id="totalTimerDisplay" class="stat-value">0分钟</div></div>
-            <div class="stat-card"><div class="stat-label">总天数</div><div id="totalStudyDaysDisplay" class="stat-value">0天</div></div>
-        </div>
-        <button id="resetTimerBtn" class="btn-danger" style="width:100%; margin-top:8px;"> 重置今日</button>
-        <div class="feedback-text"> 每30秒自动保存</div>
     </div>
+
     <!-- 节拍器 -->
     <div class="tool-card">
-        <div class="tool-title"> 节拍器</div>
-        <input type="range" id="bpmSlider" min="40" max="200" value="80" style="width:100%; margin:8px 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span id="bpmValue" style="color:#FFD966; font-size:1rem;">80 BPM</span>
-            <div><button id="startMetronome" class="btn-primary">▶ 开始</button> <button id="stopMetronome">⏹ 停止</button></div>
+        <div class="tool-title" data-target="metronomeContent">🎵 节拍器 ▼</div>
+        <div id="metronomeContent" class="content-area">
+            <input type="range" id="bpmSlider" min="40" max="200" value="80" style="width:100%; margin:8px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span id="bpmValue" style="color:#FFD966; font-size:1rem;">80 BPM</span>
+                <div><button id="startMetronome" class="btn-primary">▶ 开始</button> <button id="stopMetronome">⏹ 停止</button></div>
+            </div>
         </div>
     </div>
+
     <!-- 练耳小工具 -->
     <div class="tool-card">
-        <div class="tool-title"> 练耳小工具</div>
-        <div id="earNote" style="text-align:center; color:#F5ECD7; margin:8px 0;">听音，然后选择</div>
-        <button id="playEarBtn" class="btn-primary" style="width:100%;"> 播放音高</button>
-        <div id="earOptions" class="ear-options"></div>
-        <div id="earFeedback" class="feedback-text"></div>
+        <div class="tool-title" data-target="earContent">👂 练耳小工具 ▼</div>
+        <div id="earContent" class="content-area">
+            <div id="earNote" style="text-align:center; color:#F5ECD7; margin:8px 0;">🎵 听音，然后选择</div>
+            <button id="playEarBtn" class="btn-primary" style="width:100%;">🔊 播放音高</button>
+            <div id="earOptions" class="ear-options"></div>
+            <div id="earFeedback" class="feedback-text"></div>
+        </div>
     </div>
+
     <!-- 节奏模仿器 -->
     <div class="tool-card">
-        <div class="tool-title">🥁 节奏模仿器</div>
-        <button id="playRhythmBtn" class="btn-primary" style="width:48%;">▶ 播放节奏</button>
-        <button id="recordRhythmBtn" style="width:48%;"> 空格键模仿</button>
-        <div id="rhythmFeedback" class="feedback-text">按空格键模仿节奏</div>
+        <div class="tool-title" data-target="rhythmContent">🥁 节奏模仿器 ▼</div>
+        <div id="rhythmContent" class="content-area">
+            <button id="playRhythmBtn" class="btn-primary" style="width:48%;">▶ 播放节奏</button>
+            <button id="recordRhythmBtn" style="width:48%;">␣ 空格键模仿</button>
+            <div id="rhythmFeedback" class="feedback-text">按空格键模仿节奏</div>
+        </div>
     </div>
+
     <!-- 调音器参考音 -->
     <div class="tool-card">
-        <div class="tool-title"> 调音器参考音</div>
-        <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-            <button class="tuner-note" data-freq="82.41">E2 (6弦)</button>
-            <button class="tuner-note" data-freq="110">A2 (5弦)</button>
-            <button class="tuner-note" data-freq="146.83">D3 (4弦)</button>
-            <button class="tuner-note" data-freq="196">G3 (3弦)</button>
-            <button class="tuner-note" data-freq="246.94">B3 (2弦)</button>
-            <button class="tuner-note" data-freq="329.63">E4 (1弦)</button>
+        <div class="tool-title" data-target="tunerContent">🎸 调音器参考音 ▼</div>
+        <div id="tunerContent" class="content-area">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                <button class="tuner-note" data-freq="82.41">E2 (6弦)</button>
+                <button class="tuner-note" data-freq="110">A2 (5弦)</button>
+                <button class="tuner-note" data-freq="146.83">D3 (4弦)</button>
+                <button class="tuner-note" data-freq="196">G3 (3弦)</button>
+                <button class="tuner-note" data-freq="246.94">B3 (2弦)</button>
+                <button class="tuner-note" data-freq="329.63">E4 (1弦)</button>
+            </div>
         </div>
     </div>
+
     <!-- 学习打卡 -->
     <div class="tool-card">
-        <div class="tool-title"> 学习打卡</div>
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-label">连续打卡</div><div id="checkinStreak" class="stat-value">0</div><div style="font-size:0.5rem;">天</div></div>
-            <div class="stat-card"><div class="stat-label">累计打卡</div><div id="checkinTotal" class="stat-value">0</div><div style="font-size:0.5rem;">天</div></div>
-            <div class="stat-card"><div class="stat-label">打卡积分</div><div id="checkinTotalScore" class="stat-value">0</div><div style="font-size:0.5rem;">分</div></div>
+        <div class="tool-title" data-target="checkinContent">📅 学习打卡 ▼</div>
+        <div id="checkinContent" class="content-area">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-label">连续打卡</div><div id="checkinStreak" class="stat-value">0</div><div style="font-size:0.5rem;">天</div></div>
+                <div class="stat-card"><div class="stat-label">累计打卡</div><div id="checkinTotal" class="stat-value">0</div><div style="font-size:0.5rem;">天</div></div>
+                <div class="stat-card"><div class="stat-label">打卡积分</div><div id="checkinTotalScore" class="stat-value">0</div><div style="font-size:0.5rem;">分</div></div>
+            </div>
+            <div id="checkinStatus" class="feedback-text">⭕ 今日未打卡 · 点击打卡～</div>
+            <button id="checkinBtn" class="btn-primary" style="width:100%; margin-top:8px;">✅ 今日打卡</button>
         </div>
-        <div id="checkinStatus" class="feedback-text">⭕ 今日未打卡</div>
-        <button id="checkinBtn" class="btn-primary" style="width:100%; margin-top:8px;">✅ 今日打卡</button>
     </div>
+
+    <!-- 我的作品 -->
+    <div class="tool-card">
+        <div class="tool-title" data-target="worksContent">📝 我的作品 ▼</div>
+        <div id="worksContent" class="content-area">
+            <input type="text" id="workTitle" placeholder="作品标题" style="margin-bottom: 8px;">
+            <textarea id="workContent" rows="3" placeholder="写歌词 / 笔记..."></textarea>
+            <button id="saveWorkBtn" class="btn-primary" style="margin-top: 8px; width:100%;">💾 保存作品</button>
+            <div id="worksList" class="works-list"></div>
+        </div>
+    </div>
+
+    <!-- 我的学习笔记 -->
+    <div class="tool-card">
+        <div class="tool-title" data-target="notesContent">📓 我的学习笔记 ▼</div>
+        <div id="notesContent" class="content-area">
+            <textarea id="studyNotesInput" rows="3" placeholder="在这里记录你的学习笔记..."></textarea>
+            <button id="saveNotesBtn" class="btn-primary" style="margin-top: 8px; width:100%;">💾 保存笔记</button>
+            <div id="savedNotesDisplay" style="max-height: 200px; overflow-y: auto; margin-top: 12px;"></div>
+        </div>
+    </div>
+
+    <!-- 学习目标 -->
+    <div class="tool-card">
+        <div class="tool-title" data-target="goalContent">🎯 学习目标 ▼</div>
+        <div id="goalContent" class="content-area">
+            <div class="goal-options" id="goalOptions">
+                <div class="goal-option" data-days="7">7天学会基础和弦</div>
+                <div class="goal-option" data-days="30">30天掌握流行和声</div>
+                <div class="goal-option" data-days="60">60天成为创作达人</div>
+            </div>
+            <div id="goalProgress" class="feedback-text"></div>
+        </div>
+    </div>
+
+    <!-- 分享学习成果 -->
+    <div class="tool-card">
+        <div class="tool-title" data-target="shareContent">📤 分享学习成果 ▼</div>
+        <div id="shareContent" class="content-area">
+            <button id="shareBtn" class="btn-primary" style="width:100%;">📋 复制学习报告</button>
+            <div id="shareFeedback" class="feedback-text">点击复制今日学习成果，分享给朋友～</div>
+        </div>
+    </div>
+
+    <!-- 继续学习 -->
+    <div class="tool-card">
+        <div class="tool-title" data-target="continueContent">▶️ 继续学习 ▼</div>
+        <div id="continueContent" class="content-area">
+            <button id="continueLearningBtn" class="btn-primary" style="width:100%;">🎯 继续上次学习</button>
+            <div id="lastLearnInfo" class="feedback-text" style="margin-top: 8px;"></div>
+        </div>
+    </div>
+
     <!-- 学习统计看板 -->
     <div class="tool-card">
-        <div class="tool-title"> 学习统计</div>
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-label">总积分</div><div id="statsTotalScore" class="stat-value">0</div></div>
-            <div class="stat-card"><div class="stat-label">通关进度</div><div id="statsProgressPercent" class="stat-value">0%</div></div>
+        <div class="tool-title" data-target="statsContent">📊 学习统计 ▼</div>
+        <div id="statsContent" class="content-area">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-label">总积分</div><div id="statsTotalScore" class="stat-value">0</div></div>
+                <div class="stat-card"><div class="stat-label">通关进度</div><div id="statsProgressPercent" class="stat-value">0%</div></div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-label">学习天数</div><div id="statsStudyDays" class="stat-value">0</div></div>
+                <div class="stat-card"><div class="stat-label">总时长</div><div id="statsTotalMinutes" class="stat-value">0</div></div>
+            </div>
+            <div id="statsExtra" style="margin-top:8px; font-size:0.65rem; color:#AAD4B0;"></div>
         </div>
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-label">学习天数</div><div id="statsStudyDays" class="stat-value">0</div></div>
-            <div class="stat-card"><div class="stat-label">总时长</div><div id="statsTotalMinutes" class="stat-value">0</div></div>
-        </div>
-        <div id="statsExtra" style="margin-top:8px; font-size:0.65rem; color:#AAD4B0;"></div>
     </div>
+
     <!-- 搜索功能 -->
     <div class="tool-card">
-        <div class="tool-title"> 搜索功能</div>
-        <input type="text" id="searchInput" class="search-input" placeholder="搜索和弦、歌手、风格、课程...">
-        <div id="searchResult" class="search-result">✨ 输入关键词开始搜索～</div>
+        <div class="tool-title" data-target="searchContent">🔍 搜索功能 ▼</div>
+        <div id="searchContent" class="content-area">
+            <input type="text" id="searchInput" class="search-input" placeholder="搜索和弦、歌手、风格、课程...">
+            <div id="searchResult" class="search-result">✨ 输入关键词开始搜索～</div>
+        </div>
     </div>
 </div>
+
 <script>
 // ==================== 用户界面 ====================
-function updateUserUI() {
-    const user = getCurrentUser();
+let currentUserData = null;
+
+async function updateUserUI() {
+    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     const userNameSpan = document.getElementById('userName');
     const userScoreSpan = document.getElementById('userScore');
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
+    
     if (user) {
         userNameSpan.innerText = user.nickname || '芦苇同学';
-        userScoreSpan.innerText = `积分 ${user.score || 0}`;
-        loginBtn.style.display = 'none';
-        logoutBtn.style.display = 'block';
+        let score = user.score || 0;
+        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
+            const apiScore = await window.API.getUserScore();
+            if (apiScore !== undefined) score = apiScore;
+        }
+        userScoreSpan.innerText = `积分 ${score}`;
+        if(loginBtn) loginBtn.style.display = 'none';
+        if(logoutBtn) logoutBtn.style.display = 'block';
+        currentUserData = user;
     } else {
         userNameSpan.innerText = '未登录';
         userScoreSpan.innerText = '积分 0';
-        loginBtn.style.display = 'block';
-        logoutBtn.style.display = 'none';
+        if(loginBtn) loginBtn.style.display = 'block';
+        if(logoutBtn) logoutBtn.style.display = 'none';
+        currentUserData = null;
     }
 }
-// 登录/退出
-document.getElementById('loginBtn')?.addEventListener('click', () => { showLoginModal(); });
-document.getElementById('logoutBtn')?.addEventListener('click', () => { logout(); location.reload(); });
-// 登录成功回调
-window.onLoginSuccess = function(user) {
-    updateUserUI();
-    updateStatsPanel();
+
+async function addScore(amount, reason) {
+    if (!currentUserData) return;
+    if (typeof window.API !== 'undefined' && window.API.addScore) {
+        await window.API.addScore(amount, reason);
+        updateUserUI();
+    }
+}
+
+if(document.getElementById('loginBtn')) {
+    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
+}
+if(document.getElementById('logoutBtn')) {
+    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
+}
+
+window.onLoginSuccess = async function(user) {
+    currentUserData = user;
+    await updateUserUI();
+    if (typeof pullFromCloud === 'function') {
+        await pullFromCloud();
+    }
 };
-// ==================== 1. 学习计时器（用户绑定） ====================
+
+updateUserUI();
+
+// ==================== 折叠面板 ====================
+document.querySelectorAll('.tool-title').forEach(title => {
+    title.addEventListener('click', () => {
+        const targetId = title.dataset.target;
+        const target = document.getElementById(targetId);
+        if(target) {
+            if(target.classList.contains('active')) {
+                target.classList.remove('active');
+                title.innerHTML = title.innerHTML.replace('▲', '▼');
+            } else {
+                target.classList.add('active');
+                title.innerHTML = title.innerHTML.replace('▼', '▲');
+            }
+        }
+    });
+    // 默认展开第一个
+    if(title.dataset.target === 'timerContent') {
+        document.getElementById('timerContent').classList.add('active');
+        title.innerHTML = title.innerHTML.replace('▼', '▲');
+    }
+});
+
+// ==================== 1. 学习计时器 ====================
 (function() {
     let studyStartTime = Date.now();
     let timerInterval = null;
     let todayStudySeconds = 0;
+    
     function getTodayDateStr() { return new Date().toDateString(); }
     function getTotalStudyMinutes() { 
-        const user = getCurrentUser();
+        const user = currentUserData;
         if (user) return parseInt(localStorage.getItem(`total_study_minutes_${user.user_id}`) || "0");
         return parseInt(localStorage.getItem("total_study_minutes") || "0");
     }
     function getTotalStudyDays() {
-        const user = getCurrentUser();
+        const user = currentUserData;
         const key = user ? `first_visit_date_${user.user_id}` : "first_visit_date";
         let firstVisit = localStorage.getItem(key);
-        if (!firstVisit) { 
-            localStorage.setItem(key, getTodayDateStr()); 
-            return 1; 
-        }
+        if (!firstVisit) { localStorage.setItem(key, getTodayDateStr()); return 1; }
         return Math.floor((new Date() - new Date(firstVisit)) / (1000*60*60*24)) + 1;
     }
     function getWeekStudyMinutes() {
-        const user = getCurrentUser();
+        const user = currentUserData;
         const prefix = user ? `daily_study_records_${user.user_id}` : "daily_study_records";
         let weekRecords = JSON.parse(localStorage.getItem(prefix) || "{}");
         let total = 0, today = new Date();
@@ -222,7 +361,7 @@ window.onLoginSuccess = function(user) {
     function saveTodayStudyTime() {
         let currentSeconds = Math.floor((Date.now() - studyStartTime) / 1000);
         todayStudySeconds = currentSeconds;
-        const user = getCurrentUser();
+        const user = currentUserData;
         const prefix = user ? `_${user.user_id}` : "";
         localStorage.setItem(`today_study_seconds${prefix}`, todayStudySeconds.toString());
         localStorage.setItem(`timer_last_date${prefix}`, getTodayDateStr());
@@ -237,10 +376,11 @@ window.onLoginSuccess = function(user) {
             let daily = JSON.parse(localStorage.getItem(dailyKey) || "{}");
             daily[today] = (daily[today] || 0) + todayMinutes;
             localStorage.setItem(dailyKey, JSON.stringify(daily));
+            addScore(todayMinutes, "学习时长积累");
         }
     }
     function initTodayStudyTime() {
-        const user = getCurrentUser();
+        const user = currentUserData;
         const prefix = user ? `_${user.user_id}` : "";
         let saved = localStorage.getItem(`timer_last_date${prefix}`);
         let savedSeconds = parseInt(localStorage.getItem(`today_study_seconds${prefix}`) || "0");
@@ -265,7 +405,7 @@ window.onLoginSuccess = function(user) {
     function resetTodayTimer() {
         if(confirm("确定重置今日学习时长吗？")) {
             todayStudySeconds = 0; studyStartTime = Date.now();
-            const user = getCurrentUser();
+            const user = currentUserData;
             const prefix = user ? `_${user.user_id}` : "";
             localStorage.setItem(`today_study_seconds${prefix}`, "0"); 
             localStorage.setItem(`timer_last_date${prefix}`, getTodayDateStr());
@@ -276,6 +416,7 @@ window.onLoginSuccess = function(user) {
     document.getElementById("resetTimerBtn")?.addEventListener("click", resetTodayTimer);
     window.addEventListener("beforeunload", () => saveTodayStudyTime());
 })();
+
 // ==================== 2. 节拍器 ====================
 (function() {
     let metronomeInterval = null, bpm = 80, beatCount = 0;
@@ -334,17 +475,23 @@ window.onLoginSuccess = function(user) {
                 let btn = document.createElement("button"); btn.className = "lyric-opt-btn"; btn.innerText = note;
                 btn.style.cssText = "background:#3C6E4A; padding:6px 12px; border-radius:30px; color:white; cursor:pointer;";
                 btn.onclick = () => {
-                    if(note === currentEarNote) { document.getElementById("earFeedback").innerHTML = "✅ 正确！"; loadEarQuiz(); }
-                    else { document.getElementById("earFeedback").innerHTML = `❌ 错误，正确答案是 ${currentEarNote}`; }
+                    if(note === currentEarNote) { 
+                        document.getElementById("earFeedback").innerHTML = "✅ 正确！"; 
+                        loadEarQuiz(); 
+                        addScore(2, "练耳答题正确");
+                    } else { 
+                        document.getElementById("earFeedback").innerHTML = `❌ 错误，正确答案是 ${currentEarNote}`; 
+                    }
                 };
                 optsDiv.appendChild(btn);
             });
         }
-        document.getElementById("earNote").innerHTML = " 听音，然后选择";
+        document.getElementById("earNote").innerHTML = "🎵 听音，然后选择";
     }
     document.getElementById("playEarBtn")?.addEventListener("click", () => { if(window.currentEarFreq) playFreq(window.currentEarFreq); });
     loadEarQuiz();
 })();
+
 // ==================== 4. 节奏模仿器 ====================
 (function() {
     let rhythmPattern = [0.5, 0.5, 1, 0.5, 0.5], rhythmInterval = null;
@@ -368,10 +515,11 @@ window.onLoginSuccess = function(user) {
     }
     document.getElementById("playRhythmBtn")?.addEventListener("click", playRhythm);
     document.getElementById("recordRhythmBtn")?.addEventListener("click", () => {
-        document.getElementById("rhythmFeedback").innerHTML = " 按空格键模仿节奏";
-        window.addEventListener("keydown", function(e) { if(e.code === "Space") { e.preventDefault(); playBeep(); document.getElementById("rhythmFeedback").innerHTML = "✅ 节奏练习中～"; setTimeout(() => { if(document.getElementById("rhythmFeedback").innerHTML === "✅ 节奏练习中～") document.getElementById("rhythmFeedback").innerHTML = " 按空格键模仿节奏"; }, 2000); } });
+        document.getElementById("rhythmFeedback").innerHTML = "🎵 按空格键模仿节奏";
+        window.addEventListener("keydown", function(e) { if(e.code === "Space") { e.preventDefault(); playBeep(); document.getElementById("rhythmFeedback").innerHTML = "✅ 节奏练习中～"; setTimeout(() => { if(document.getElementById("rhythmFeedback").innerHTML === "✅ 节奏练习中～") document.getElementById("rhythmFeedback").innerHTML = "🎵 按空格键模仿节奏"; }, 2000); } });
     });
 })();
+
 // ==================== 5. 调音器 ====================
 document.querySelectorAll(".tuner-note").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -387,17 +535,18 @@ document.querySelectorAll(".tuner-note").forEach(btn => {
         }
     });
 });
-// ==================== 6. 打卡功能（用户绑定） ====================
+
+// ==================== 6. 打卡功能 ====================
 (function() {
     let checkinData = { streak:0, totalDays:0, lastDate:null, totalScore:0 };
     function loadData() { 
-        const user = getCurrentUser();
+        const user = currentUserData;
         const key = user ? `checkin_data_${user.user_id}` : "checkin_data_v2";
         let saved = localStorage.getItem(key); 
         if(saved) checkinData = JSON.parse(saved); 
     }
     function saveData() { 
-        const user = getCurrentUser();
+        const user = currentUserData;
         const key = user ? `checkin_data_${user.user_id}` : "checkin_data_v2";
         localStorage.setItem(key, JSON.stringify(checkinData)); 
     }
@@ -427,35 +576,176 @@ document.querySelectorAll(".tuner-note").forEach(btn => {
         checkinData.totalScore += reward;
         saveData(); updateUI();
         alert(`✅ 打卡成功！\n连续打卡：${newStreak}天\n获得积分：+${reward}`);
-        // 增加积分
-        const user = getCurrentUser();
-        if (user) {
-            user.score = (user.score || 0) + reward;
-            localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(user));
-            updateUserUI();
-            await API.addScore(reward, "每日打卡");
-        } else {
-            let scoreSpan = document.getElementById("scoreValue");
-            if(scoreSpan) scoreSpan.innerText = parseInt(scoreSpan.innerText||0) + reward;
-        }
+        await addScore(reward, "每日打卡");
     }
     loadData(); updateUI();
     document.getElementById("checkinBtn")?.addEventListener("click", doCheckin);
 })();
-// ==================== 7. 学习统计 ====================
+
+// ==================== 7. 我的作品 ====================
+function loadWorks() {
+    const user = currentUserData;
+    const userId = user?.user_id || "guest";
+    const works = JSON.parse(localStorage.getItem(`user_works_${userId}`) || "[]");
+    const container = document.getElementById("worksList");
+    if (container) {
+        container.innerHTML = works.map((w, i) => `
+            <div class="work-item">
+                <button class="work-delete" data-idx="${i}">🗑️ 删除</button>
+                <div class="work-title">📌 ${escapeHtml(w.title)}</div>
+                <div class="work-content">${escapeHtml(w.content.substring(0, 100))}${w.content.length > 100 ? '...' : ''}</div>
+                <div style="font-size:0.6rem; color:#AAD4B0; margin-top:4px;">📅 ${w.date}</div>
+            </div>
+        `).join("");
+        document.querySelectorAll(".work-delete").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const worksArr = JSON.parse(localStorage.getItem(`user_works_${userId}`) || "[]");
+                worksArr.splice(parseInt(btn.dataset.idx), 1);
+                localStorage.setItem(`user_works_${userId}`, JSON.stringify(worksArr));
+                loadWorks();
+            });
+        });
+    }
+}
+function escapeHtml(str) { return str.replace(/[&<>]/g, function(m) { if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m;}); }
+document.getElementById("saveWorkBtn")?.addEventListener("click", () => {
+    const title = document.getElementById("workTitle").value;
+    const content = document.getElementById("workContent").value;
+    if (!title || !content) { alert("请填写标题和内容"); return; }
+    const user = currentUserData;
+    const userId = user?.user_id || "guest";
+    const works = JSON.parse(localStorage.getItem(`user_works_${userId}`) || "[]");
+    works.unshift({ title, content, date: new Date().toLocaleString() });
+    if (works.length > 30) works.pop();
+    localStorage.setItem(`user_works_${userId}`, JSON.stringify(works));
+    document.getElementById("workTitle").value = "";
+    document.getElementById("workContent").value = "";
+    loadWorks();
+    addScore(3, "保存作品");
+    alert("✅ 作品已保存");
+});
+
+// ==================== 8. 我的学习笔记 ====================
+function loadNotes() {
+    const user = currentUserData;
+    const userId = user?.user_id || "guest";
+    const notes = JSON.parse(localStorage.getItem(`study_notes_${userId}`) || "[]");
+    const container = document.getElementById("savedNotesDisplay");
+    if (container) {
+        container.innerHTML = notes.map((note, idx) => `
+            <div class="note-item">
+                <button class="note-delete" data-idx="${idx}">🗑️ 删除</button>
+                <div class="note-date">📅 ${note.date}</div>
+                <div class="note-content">${escapeHtml(note.content)}</div>
+            </div>
+        `).join("");
+        document.querySelectorAll(".note-delete").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const notesArr = JSON.parse(localStorage.getItem(`study_notes_${userId}`) || "[]");
+                notesArr.splice(parseInt(btn.dataset.idx), 1);
+                localStorage.setItem(`study_notes_${userId}`, JSON.stringify(notesArr));
+                loadNotes();
+            });
+        });
+    }
+}
+document.getElementById("saveNotesBtn")?.addEventListener("click", () => {
+    const content = document.getElementById("studyNotesInput").value;
+    if (!content.trim()) { alert("请填写笔记内容"); return; }
+    const user = currentUserData;
+    const userId = user?.user_id || "guest";
+    const notes = JSON.parse(localStorage.getItem(`study_notes_${userId}`) || "[]");
+    notes.unshift({ content: content, date: new Date().toLocaleString() });
+    if (notes.length > 30) notes.pop();
+    localStorage.setItem(`study_notes_${userId}`, JSON.stringify(notes));
+    document.getElementById("studyNotesInput").value = "";
+    loadNotes();
+    addScore(2, "保存学习笔记");
+    alert("✅ 笔记已保存");
+});
+
+// ==================== 9. 学习目标 ====================
+function updateGoalProgress() {
+    const targetDays = parseInt(localStorage.getItem("learning_goal_days") || "30");
+    const startDate = localStorage.getItem("goal_start_date");
+    if (!startDate) {
+        document.getElementById("goalProgress").innerHTML = '🎯 选择目标开始计时～';
+        return;
+    }
+    const daysPassed = Math.floor((new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24));
+    const progress = Math.min(100, Math.floor((daysPassed / targetDays) * 100));
+    document.getElementById("goalProgress").innerHTML = `📊 目标进度：${progress}%（${daysPassed}/${targetDays}天）`;
+}
+document.querySelectorAll('.goal-option').forEach(option => {
+    const savedDays = localStorage.getItem('learning_goal_days') || '30';
+    if (parseInt(option.dataset.days) == savedDays) option.classList.add('active');
+    option.addEventListener('click', function() {
+        document.querySelectorAll('.goal-option').forEach(opt => opt.classList.remove('active'));
+        this.classList.add('active');
+        const days = parseInt(this.dataset.days);
+        localStorage.setItem('learning_goal_days', days);
+        localStorage.setItem('goal_start_date', new Date().toISOString());
+        updateGoalProgress();
+        addScore(5, "设定学习目标");
+    });
+});
+updateGoalProgress();
+
+// ==================== 10. 分享学习成果 ====================
+document.getElementById("shareBtn")?.addEventListener("click", () => {
+    const level = document.getElementById("levelValue")?.innerText || "1";
+    const score = document.getElementById("scoreValue")?.innerText || "0";
+    const percent = document.getElementById("statsProgressPercent")?.innerText || "0%";
+    const date = new Date().toLocaleDateString();
+    const quotes = ["和弦是音乐的骨架", "坚持每天10分钟", "慢慢来，比较快", "情绪到位，音乐自然好听"];
+    const text = `📊 芦苇音乐学习报告
+━━━━━━━━━━━━━━━━
+📅 日期：${date}
+🎵 当前关卡：第 ${level} / 29 关
+✨ 智慧积分：${score} 分
+📈 通关进度：${percent}
+🌾 芦苇说：${quotes[Math.floor(Math.random() * quotes.length)]}
+━━━━━━━━━━━━━━━━
+#芦苇音乐 #音乐学习`;
+    navigator.clipboard.writeText(text);
+    document.getElementById("shareFeedback").innerHTML = "✅ 已复制学习报告！";
+    setTimeout(() => { document.getElementById("shareFeedback").innerHTML = "点击复制今日学习成果，分享给朋友～"; }, 2000);
+    addScore(2, "分享学习成果");
+});
+
+// ==================== 11. 继续学习 ====================
+function updateLastLearnInfo() {
+    const last = localStorage.getItem('last_module');
+    if (last) {
+        document.getElementById("lastLearnInfo").innerHTML = `📌 上次学习：${last} 模块`;
+    } else {
+        document.getElementById("lastLearnInfo").innerHTML = "📌 暂无记录，从首页选择模块开始吧～";
+    }
+}
+document.getElementById("continueLearningBtn")?.addEventListener("click", () => {
+    const last = localStorage.getItem('last_module');
+    if (last) {
+        window.location.href = `${last}.html`;
+    } else {
+        alert("暂无学习记录，请从首页选择模块开始学习～");
+        window.location.href = "index.html";
+    }
+});
+updateLastLearnInfo();
+
+// ==================== 12. 学习统计 ====================
 function updateStatsPanel() {
-    const user = getCurrentUser();
+    const user = currentUserData;
     let scoreSpan = document.getElementById("statsTotalScore");
     if(scoreSpan) scoreSpan.innerText = user?.score || "0";
     let completed = 0;
-    const userId = user?.user_id || "mock_user";
+    const userId = user?.user_id || "guest";
     for(let i=0; i<29; i++) if(localStorage.getItem(`level_${i}_${userId}`) === "true") completed++;
     let percent = Math.round((completed / 29) * 100);
     let progSpan = document.getElementById("statsProgressPercent");
     if(progSpan) progSpan.innerText = percent + "%";
     let daysSpan = document.getElementById("statsStudyDays");
     if(daysSpan) {
-        const user = getCurrentUser();
         const key = user ? `first_visit_date_${user.user_id}` : "first_visit_date";
         let first = localStorage.getItem(key);
         if(!first) { localStorage.setItem(key, new Date().toDateString()); daysSpan.innerText = "1"; }
@@ -470,12 +760,13 @@ function updateStatsPanel() {
     if(extra) {
         const key = user ? `checkin_data_${user.user_id}` : "checkin_data_v2";
         let checkin = JSON.parse(localStorage.getItem(key) || "{}");
-        extra.innerHTML = ` 通关率：${percent}% &nbsp;|&nbsp;  累计打卡：${checkin.totalDays || 0}天 &nbsp;|&nbsp;  连续：${checkin.streak || 0}天`;
+        extra.innerHTML = `🎯 通关率：${percent}% &nbsp;|&nbsp; 📅 累计打卡：${checkin.totalDays || 0}天 &nbsp;|&nbsp; 🔥 连续：${checkin.streak || 0}天`;
     }
 }
 updateStatsPanel();
 setInterval(updateStatsPanel, 5000);
-// ==================== 8. 搜索功能 ====================
+
+// ==================== 13. 搜索功能 ====================
 (function() {
     let searchInput = document.getElementById("searchInput");
     let searchResult = document.getElementById("searchResult");
@@ -484,15 +775,15 @@ setInterval(updateStatsPanel, 5000);
         let keyword = searchInput.value.trim().toLowerCase();
         if(keyword === "") { searchResult.innerHTML = "✨ 输入关键词开始搜索～"; return; }
         let results = [];
-        let allElements = document.querySelectorAll(".tool-title, .stat-label, .stat-value, .feedback-text, button");
+        let allElements = document.querySelectorAll(".tool-title, .stat-label, .stat-value, .feedback-text, button, .work-title, .note-content");
         allElements.forEach(el => {
             let text = el.innerText;
             if(text && text.toLowerCase().includes(keyword)) results.push({ name: text.substring(0, 60), element: el });
         });
-        if(results.length === 0) { searchResult.innerHTML = ` 未找到 "${keyword}" 相关内容`; return; }
-        let html = `<div style="color:#FFD966; margin-bottom:8px;"> 找到 ${results.length} 条结果</div>`;
+        if(results.length === 0) { searchResult.innerHTML = `🔍 未找到 "${keyword}" 相关内容`; return; }
+        let html = `<div style="color:#FFD966; margin-bottom:8px;">📚 找到 ${results.length} 条结果</div>`;
         results.slice(0, 10).forEach((r, idx) => {
-            html += `<div class="search-item" data-idx="${idx}"> ${r.name}</div>`;
+            html += `<div class="search-item" data-idx="${idx}">🔍 ${r.name}</div>`;
         });
         searchResult.innerHTML = html;
         document.querySelectorAll(".search-item").forEach((item, idx) => {
@@ -502,9 +793,11 @@ setInterval(updateStatsPanel, 5000);
     searchInput.addEventListener("input", doSearch);
     searchInput.addEventListener("keypress", (e) => { if(e.key === "Enter") doSearch(); });
 })();
+
 // 初始化
+loadWorks();
+loadNotes();
 updateUserUI();
 </script>
 </body>
 </html>
-
