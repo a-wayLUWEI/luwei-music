@@ -21,7 +21,7 @@
         .header h1 { color: #FFD966; font-size: 1.8rem; margin-bottom: 8px; }
         .header p { color: #AAD4B0; font-size: 0.8rem; }
         .section { background: #0f281dcc; border-radius: 28px; padding: 20px; margin-bottom: 20px; border: 1px solid #F2C94C; }
-        .section-title { color: #FFD966; font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-left: 3px solid #E69A2E; padding-left: 12px; cursor: pointer; }
+        .section-title { color: #FFD966; font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-left: 3px solid #E69A2E; padding-left: 12px; cursor: pointer; user-select: none; }
         .section-title:active { opacity: 0.7; }
         .category-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
         .cat-btn { background: #3C6E4A; border: none; border-radius: 40px; padding: 8px 16px; color: white; font-size: 0.75rem; cursor: pointer; transition: all 0.1s ease; }
@@ -33,46 +33,47 @@
         .lyric-opt-btn { background: #3C6E4A; padding: 6px 14px; border-radius: 40px; border: none; color: white; cursor: pointer; font-size: 0.7rem; transition: all 0.1s ease; }
         .lyric-opt-btn:active { transform: scale(0.95); }
         .feedback { color: #C8E6C9; font-size: 0.7rem; text-align: center; margin-top: 8px; }
+        .progress-badge { display: inline-block; background: #E69A2E; color: #2D1E0C; padding: 2px 8px; border-radius: 20px; font-size: 0.6rem; font-weight: bold; margin-left: 8px; }
         @media (max-width: 768px) {
             .section-title { font-size: 1rem; }
             .cat-btn { padding: 6px 12px; font-size: 0.7rem; }
         }
     </style>
-    <!-- ========== 引入用户系统 ========== -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="auth.js"></script>
+    <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="sync.js"></script>
 </head>
 <body>
-<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
+<button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="container">
-    <!-- 用户信息栏 -->
     <div class="user-bar" id="userBar">
         <div class="user-info">
-            <div class="user-avatar"></div>
+            <div class="user-avatar">🎵</div>
             <div>
                 <div class="user-name" id="userName">加载中...</div>
                 <div class="user-score" id="userScore">积分 0</div>
             </div>
         </div>
-        <button class="login-btn" id="loginBtn" style="display:none;"> 登录</button>
-        <button class="login-btn" id="logoutBtn" style="display:none;"> 退出</button>
+        <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
+        <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
     </div>
     <div class="header">
-        <h1> 综合闯关</h1>
+        <h1>🏆 综合闯关</h1>
         <p>音程 · 节奏 · 旋律 · 调式 · 和声 · 配器 · 声乐 · 爵士</p>
     </div>
-    <!-- 音程闯关 -->
+
+    <!-- 音程闯关（20关）-->
     <div class="section">
-        <div class="section-title" data-panel="intervalPanel"> 音程闯关 (20关) ▼</div>
+        <div class="section-title" data-panel="intervalPanel">🎵 音程闯关 (20关) ▼</div>
         <div id="intervalPanel" class="quiz-panel">
             <div class="category-grid" id="intervalList"></div>
             <div id="intervalQuizPanel"></div>
         </div>
     </div>
-    <!-- 节奏型闯关 -->
+
+    <!-- 节奏型闯关（20关）-->
     <div class="section">
         <div class="section-title" data-panel="rhythmPanel">🥁 节奏型闯关 (20关) ▼</div>
         <div id="rhythmPanel" class="quiz-panel">
@@ -80,98 +81,154 @@
             <div id="rhythmQuizPanel"></div>
         </div>
     </div>
-    <!-- 旋律闯关 -->
+
+    <!-- 旋律闯关（20关）-->
     <div class="section">
-        <div class="section-title" data-panel="melodyPanel"> 旋律闯关 (20关) ▼</div>
+        <div class="section-title" data-panel="melodyPanel">🎶 旋律闯关 (20关) ▼</div>
         <div id="melodyPanel" class="quiz-panel">
             <div class="category-grid" id="melodyList"></div>
             <div id="melodyQuizPanel"></div>
         </div>
     </div>
-    <!-- 调式调性闯关 -->
+
+    <!-- 调式调性闯关（20关）-->
     <div class="section">
-        <div class="section-title" data-panel="modePanel"> 调式调性闯关 (20关) ▼</div>
+        <div class="section-title" data-panel="modePanel">🎼 调式调性闯关 (20关) ▼</div>
         <div id="modePanel" class="quiz-panel">
             <div class="category-grid" id="modeList"></div>
             <div id="modeQuizPanel"></div>
         </div>
     </div>
-    <!-- 和声织体闯关 -->
+
+    <!-- 和声织体闯关（20关）-->
     <div class="section">
-        <div class="section-title" data-panel="texturePanel"> 和声织体闯关 (20关) ▼</div>
+        <div class="section-title" data-panel="texturePanel">🎹 和声织体闯关 (20关) ▼</div>
         <div id="texturePanel" class="quiz-panel">
             <div class="category-grid" id="textureList"></div>
             <div id="textureQuizPanel"></div>
         </div>
     </div>
-    <!-- 配器闯关 -->
+
+    <!-- 配器闯关（20关）-->
     <div class="section">
-        <div class="section-title" data-panel="orchestrationPanel"> 配器闯关 (20关) ▼</div>
+        <div class="section-title" data-panel="orchestrationPanel">🎺 配器闯关 (20关) ▼</div>
         <div id="orchestrationPanel" class="quiz-panel">
             <div class="category-grid" id="orchestrationList"></div>
             <div id="orchestrationQuizPanel"></div>
         </div>
     </div>
-    <!-- 声乐闯关 -->
+
+    <!-- 声乐闯关（20关）-->
     <div class="section">
-        <div class="section-title" data-panel="vocalPanel"> 声乐闯关 (20关) ▼</div>
+        <div class="section-title" data-panel="vocalPanel">🎤 声乐闯关 (20关) ▼</div>
         <div id="vocalPanel" class="quiz-panel">
             <div class="category-grid" id="vocalList"></div>
             <div id="vocalQuizPanel"></div>
         </div>
     </div>
-    <!-- 爵士和声闯关 -->
+
+    <!-- 爵士和声闯关（15关）-->
     <div class="section">
-        <div class="section-title" data-panel="jazzPanel"> 爵士和声闯关 (15关) ▼</div>
+        <div class="section-title" data-panel="jazzPanel">🎷 爵士和声闯关 (15关) ▼</div>
         <div id="jazzPanel" class="quiz-panel">
             <div class="category-grid" id="jazzList"></div>
             <div id="jazzQuizPanel"></div>
         </div>
     </div>
-    <!-- 和弦进行闯关 -->
+
+    <!-- 和弦进行闯关（20关）-->
     <div class="section">
-        <div class="section-title" data-panel="chordProgPanel"> 和弦进行闯关 (20关) ▼</div>
+        <div class="section-title" data-panel="chordProgPanel">🔗 和弦进行闯关 (20关) ▼</div>
         <div id="chordProgPanel" class="quiz-panel">
             <div class="category-grid" id="chordProgList"></div>
             <div id="chordProgQuizPanel"></div>
         </div>
     </div>
-    <!-- 高叠置和弦闯关 -->
+
+    <!-- 高叠置和弦闯关（6关）-->
     <div class="section">
-        <div class="section-title" data-panel="highExtPanel"> 高叠置和弦闯关 (6关) ▼</div>
+        <div class="section-title" data-panel="highExtPanel">✨ 高叠置和弦闯关 (6关) ▼</div>
         <div id="highExtPanel" class="quiz-panel">
             <div class="category-grid" id="highExtensionList"></div>
             <div id="highExtensionQuizPanel"></div>
         </div>
     </div>
+
+    <!-- 乐理听力闯关（10关）-->
+    <div class="section">
+        <div class="section-title" data-panel="listeningPanel">👂 乐理听力闯关 (10关) ▼</div>
+        <div id="listeningPanel" class="quiz-panel">
+            <div class="category-grid" id="listeningList"></div>
+            <div id="listeningQuizPanel"></div>
+        </div>
+    </div>
+
+    <!-- 乐器听辨闯关（10关）-->
+    <div class="section">
+        <div class="section-title" data-panel="instrumentPanel">🎸 乐器听辨闯关 (10关) ▼</div>
+        <div id="instrumentPanel" class="quiz-panel">
+            <div class="category-grid" id="instrumentList"></div>
+            <div id="instrumentQuizPanel"></div>
+        </div>
+    </div>
 </div>
+
 <script>
 // ==================== 用户界面 ====================
-function updateUserUI() {
-    const user = getCurrentUser();
+let currentUserData = null;
+
+async function updateUserUI() {
+    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     const userNameSpan = document.getElementById('userName');
     const userScoreSpan = document.getElementById('userScore');
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
+    
     if (user) {
         userNameSpan.innerText = user.nickname || '芦苇同学';
-        userScoreSpan.innerText = `积分 ${user.score || 0}`;
-        loginBtn.style.display = 'none';
-        logoutBtn.style.display = 'block';
+        let score = user.score || 0;
+        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
+            const apiScore = await window.API.getUserScore();
+            if (apiScore !== undefined) score = apiScore;
+        }
+        userScoreSpan.innerText = `积分 ${score}`;
+        if(loginBtn) loginBtn.style.display = 'none';
+        if(logoutBtn) logoutBtn.style.display = 'block';
+        currentUserData = user;
     } else {
         userNameSpan.innerText = '未登录';
         userScoreSpan.innerText = '积分 0';
-        loginBtn.style.display = 'block';
-        logoutBtn.style.display = 'none';
+        if(loginBtn) loginBtn.style.display = 'block';
+        if(logoutBtn) logoutBtn.style.display = 'none';
+        currentUserData = null;
     }
 }
-// 登录/退出
-document.getElementById('loginBtn')?.addEventListener('click', () => { showLoginModal(); });
-document.getElementById('logoutBtn')?.addEventListener('click', () => { logout(); location.reload(); });
-// 登录成功回调
-window.onLoginSuccess = function(user) {
-    updateUserUI();
+
+async function addScore(amount, reason) {
+    if (!currentUserData) return;
+    if (typeof window.API !== 'undefined' && window.API.addScore) {
+        await window.API.addScore(amount, reason);
+        updateUserUI();
+    }
+}
+
+if(document.getElementById('loginBtn')) {
+    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
+}
+if(document.getElementById('logoutBtn')) {
+    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
+}
+
+window.onLoginSuccess = async function(user) {
+    currentUserData = user;
+    await updateUserUI();
+    if (typeof pullFromCloud === 'function') {
+        await pullFromCloud();
+    }
 };
+
+updateUserUI();
+
 // ==================== 折叠面板功能 ====================
 document.querySelectorAll('.section-title').forEach(title => {
     title.addEventListener('click', () => {
@@ -188,103 +245,56 @@ document.querySelectorAll('.section-title').forEach(title => {
         }
     });
 });
-// ==================== 音程闯关题库 ====================
-const intervalBank = {
-    1: [
-        { q: "音程指的是什么？", opts: ["两个音之间的距离", "三个音的组合", "和弦的排列", "节奏的类型"], ans: 0, exp: "音程是音与音之间的高低距离。" },
-        { q: "小二度包含几个半音？", opts: ["1", "2", "3", "4"], ans: 0, exp: "小二度 = 1个半音。" },
-        { q: "大二度包含几个半音？", opts: ["1", "2", "3", "4"], ans: 1, exp: "大二度 = 2个半音。" },
-        { q: "小三度包含几个半音？", opts: ["2", "3", "4", "5"], ans: 1, exp: "小三度 = 3个半音。" },
-        { q: "大三度包含几个半音？", opts: ["2", "3", "4", "5"], ans: 2, exp: "大三度 = 4个半音。" },
-        { q: "纯五度包含几个半音？", opts: ["5", "6", "7", "8"], ans: 2, exp: "纯五度 = 7个半音。" },
-        { q: "C到E是几度？", opts: ["三度", "四度", "五度", "六度"], ans: 0, exp: "C-D-E是大三度。" },
-        { q: "C到G是几度？", opts: ["三度", "四度", "五度", "六度"], ans: 2, exp: "C-G是纯五度。" }
-    ],
-    2: [
-        { q: "小二度听起来像什么？", opts: ["叹息", "走路", "跳跃", "空旷"], ans: 0, exp: "小二度像半音叹息。" },
-        { q: "大三度听起来像什么？", opts: ["明亮", "暗淡", "紧张", "空洞"], ans: 0, exp: "大三度明亮跳跃。" },
-        { q: "小三度听起来像什么？", opts: ["忧伤", "明亮", "紧张", "空旷"], ans: 0, exp: "小三度柔和暗淡。" },
-        { q: "纯四度听起来像什么？", opts: ["开阔", "紧张", "悲伤", "空洞"], ans: 0, exp: "纯四度有开阔感。" },
-        { q: "增四度听起来像什么？", opts: ["紧张", "开阔", "柔和", "空洞"], ans: 0, exp: "增四度很紧张。" }
-    ]
-};
-// 节奏闯关题库
-const rhythmBank = {
-    1: [
-        { q: "四分音符的时值是多少？", opts: ["1拍", "2拍", "半拍", "4拍"], ans: 0, exp: "四分音符是基础拍单位。" },
-        { q: "八分音符的时值是多少？", opts: ["半拍", "1拍", "2拍", "4拍"], ans: 0, exp: "八分音符等于半拍。" },
-        { q: "三连音是将一拍分成几个等份？", opts: ["3份", "2份", "4份", "5份"], ans: 0, exp: "三连音是三等分。" },
-        { q: "切分音的特征是？", opts: ["强弱位颠倒", "重音在正拍", "附点节奏", "三连音"], ans: 0, exp: "切分制造意外感。" },
-        { q: "4/4拍中，强拍是？", opts: ["第1拍", "第2拍", "第3拍", "第4拍"], ans: 0, exp: "4/4拍第一拍最强。" }
-    ]
-};
-// 旋律闯关题库
-const melodyBank = {
-    1: [
-        { q: "旋律的轮廓指的是？", opts: ["音高的走向", "节奏的快慢", "音量的强弱", "音色的明暗"], ans: 0, exp: "旋律的上行、下行、波浪等形状。" },
-        { q: "级进是指？", opts: ["相邻音高", "跳进", "重复音", "上行"], ans: 0, exp: "级进是二度进行。" },
-        { q: "跳进是指？", opts: ["三度及以上", "二度", "同音", "下行"], ans: 0, exp: "跳进让旋律更有张力。" },
-        { q: "上行旋律通常带来什么感觉？", opts: ["情绪上升", "情绪下降", "平静", "紧张"], ans: 0, exp: "上行像爬升。" },
-        { q: "下行旋律通常带来什么感觉？", opts: ["情绪下降", "情绪上升", "平静", "紧张"], ans: 0, exp: "下行像叹息。" }
-    ]
-};
-// 调式调性题库
-const modeBank = {
-    1: [
-        { q: "调式指的是什么？", opts: ["音的组织方式", "音的高低", "音的强弱", "音的长短"], ans: 0, exp: "调式是音阶的组织方式。" },
-        { q: "C大调的主音是什么？", opts: ["C", "D", "E", "G"], ans: 0, exp: "C大调以C为主音。" },
-        { q: "自然小调的特征是？", opts: ["全半全全半全全", "全全半全全全半", "全半全半全全全", "半全全半全全全"], ans: 0, exp: "自然小调：全-半-全-全-半-全-全。" },
-        { q: "G大调有几个升号？", opts: ["1个", "0个", "2个", "3个"], ans: 0, exp: "G大调有一个升号（F#）。" },
-        { q: "a小调的关系大调是？", opts: ["C大调", "G大调", "F大调", "D大调"], ans: 0, exp: "a小调的关系大调是C大调。" }
-    ]
-};
-// ==================== 闯关通用逻辑 ====================
-function createQuizSystem(bank, containerId, quizPanelId, levelCount, levelName) {
+
+// ==================== 通用闯关系统 ====================
+function createQuizSystem(bankData, containerId, quizPanelId, totalLevels, levelName) {
     let currentLevel = 1;
     let streak = 0;
     let completed = false;
     let currentQuestions = [];
     let currentIndex = 0;
-    // 从本地恢复进度
+    
+    function getStorageKey() { return `quiz_${levelName}_level_${currentUserData?.user_id || 'guest'}`; }
+    
     function loadSavedProgress() {
-        const user = getCurrentUser();
-        if (!user) return;
-        const userId = user.user_id;
-        const saved = localStorage.getItem(`${levelName}_level_${userId}`);
+        if (!currentUserData) return;
+        const saved = localStorage.getItem(getStorageKey());
         if (saved) currentLevel = parseInt(saved);
+        if (currentLevel > totalLevels) currentLevel = totalLevels;
     }
+    
     function saveProgress() {
-        const user = getCurrentUser();
-        if (!user) return;
-        const userId = user.user_id;
-        localStorage.setItem(`${levelName}_level_${userId}`, currentLevel);
+        if (!currentUserData) return;
+        localStorage.setItem(getStorageKey(), currentLevel);
     }
+    
     function loadLevel() {
-        if (currentLevel > levelCount) {
+        if (currentLevel > totalLevels) {
             const panel = document.getElementById(quizPanelId);
-            if (panel) panel.innerHTML = `<div class="feedback"> 恭喜完成所有${levelName}！</div>`;
+            if (panel) panel.innerHTML = `<div class="feedback">🏆 恭喜完成所有${levelName}！</div>`;
             return;
         }
         streak = 0;
         completed = false;
-        let bankData = bank[currentLevel];
-        if (!bankData || bankData.length === 0) {
+        let bank = bankData[currentLevel];
+        if (!bank || bank.length === 0) {
             const panel = document.getElementById(quizPanelId);
             if (panel) panel.innerHTML = `<div class="feedback">⚠️ 第${currentLevel}关题库完善中～</div>`;
             return;
         }
-        currentQuestions = [...bankData].sort(() => Math.random() - 0.5);
+        currentQuestions = [...bank].sort(() => Math.random() - 0.5);
         currentIndex = 0;
         const panel = document.getElementById(quizPanelId);
         if (panel) {
             panel.innerHTML = `
-                <div style="color:#F2C94C; margin-bottom:8px"> ${levelName} · 第${currentLevel}/${levelCount}关 · 连续答对8题过关</div>
+                <div style="color:#F2C94C; margin-bottom:8px">📚 ${levelName} · 第${currentLevel}/${totalLevels}关 · 连续答对8题过关</div>
                 <div id="${containerId}_Q"></div>
                 <div id="${containerId}_Feed" class="feedback"></div>
             `;
         }
         nextQuestion();
     }
+    
     function nextQuestion() {
         if (completed) return;
         if (streak >= 8) {
@@ -293,6 +303,7 @@ function createQuizSystem(bank, containerId, quizPanelId, levelCount, levelName)
             completed = true;
             currentLevel++;
             saveProgress();
+            addScore(20, `通关${levelName}第${currentLevel-1}关`);
             setTimeout(() => loadLevel(), 1500);
             return;
         }
@@ -320,6 +331,7 @@ function createQuizSystem(bank, containerId, quizPanelId, levelCount, levelName)
                         streak++;
                         const feed = document.getElementById(`${containerId}_Feed`);
                         if (feed) feed.innerHTML = `✅ 正确！ ${streak}/8`;
+                        addScore(5, `${levelName}答题正确`);
                         nextQuestion();
                     } else {
                         streak = 0;
@@ -332,51 +344,306 @@ function createQuizSystem(bank, containerId, quizPanelId, levelCount, levelName)
             });
         }
     }
+    
     function buildUI() {
         const container = document.getElementById(containerId);
         if (!container) return;
         container.innerHTML = "";
         const btn = document.createElement("button");
         btn.className = "cat-btn";
-        btn.innerText = ` ${levelName}（${levelCount}关）`;
-        btn.onclick = () => { 
-            loadSavedProgress();
-            loadLevel(); 
-        };
+        btn.innerText = `🎯 ${levelName}（${totalLevels}关）`;
+        btn.onclick = () => { loadSavedProgress(); loadLevel(); };
         container.appendChild(btn);
     }
+    
     buildUI();
 }
+
+// ==================== 1. 音程闯关题库（20关 × 30题） ====================
+const intervalBank = {
+    1: [
+        { q: "音程指的是什么？", opts: ["两个音之间的距离", "三个音的组合", "和弦的排列", "节奏的类型"], ans: 0, exp: "音程是音与音之间的高低距离。" },
+        { q: "小二度包含几个半音？", opts: ["1", "2", "3", "4"], ans: 0, exp: "小二度 = 1个半音。" },
+        { q: "大二度包含几个半音？", opts: ["1", "2", "3", "4"], ans: 1, exp: "大二度 = 2个半音。" },
+        { q: "小三度包含几个半音？", opts: ["2", "3", "4", "5"], ans: 1, exp: "小三度 = 3个半音。" },
+        { q: "大三度包含几个半音？", opts: ["2", "3", "4", "5"], ans: 2, exp: "大三度 = 4个半音。" },
+        { q: "纯四度包含几个半音？", opts: ["4", "5", "6", "7"], ans: 1, exp: "纯四度 = 5个半音。" },
+        { q: "增四度包含几个半音？", opts: ["5", "6", "7", "8"], ans: 1, exp: "增四度 = 6个半音。" },
+        { q: "纯五度包含几个半音？", opts: ["5", "6", "7", "8"], ans: 2, exp: "纯五度 = 7个半音。" },
+        { q: "小六度包含几个半音？", opts: ["7", "8", "9", "10"], ans: 1, exp: "小六度 = 8个半音。" },
+        { q: "大六度包含几个半音？", opts: ["7", "8", "9", "10"], ans: 2, exp: "大六度 = 9个半音。" },
+        { q: "小七度包含几个半音？", opts: ["8", "9", "10", "11"], ans: 2, exp: "小七度 = 10个半音。" },
+        { q: "大七度包含几个半音？", opts: ["9", "10", "11", "12"], ans: 2, exp: "大七度 = 11个半音。" },
+        { q: "纯八度包含几个半音？", opts: ["10", "11", "12", "13"], ans: 2, exp: "纯八度 = 12个半音。" },
+        { q: "C到E是几度？", opts: ["三度", "四度", "五度", "六度"], ans: 0, exp: "C-D-E是大三度。" },
+        { q: "C到G是几度？", opts: ["三度", "四度", "五度", "六度"], ans: 2, exp: "C-G是纯五度。" },
+        { q: "E到F是几度？", opts: ["小二度", "大二度", "小三度", "大三度"], ans: 0, exp: "E-F是自然半音，小二度。" },
+        { q: "B到C是几度？", opts: ["小二度", "大二度", "小三度", "大三度"], ans: 0, exp: "B-C是自然半音，小二度。" },
+        { q: "C到F#是几度？", opts: ["纯四度", "增四度", "减四度", "纯五度"], ans: 1, exp: "C-F#是增四度。" },
+        { q: "C到Gb是几度？", opts: ["纯四度", "增四度", "减四度", "减五度"], ans: 3, exp: "C-Gb是减五度。" },
+        { q: "大三度听起来像什么？", opts: ["明亮", "暗淡", "紧张", "空洞"], ans: 0, exp: "大三度明亮跳跃。" },
+        { q: "小三度听起来像什么？", opts: ["忧伤", "明亮", "紧张", "空旷"], ans: 0, exp: "小三度柔和暗淡。" },
+        { q: "纯四度听起来像什么？", opts: ["开阔", "紧张", "悲伤", "空洞"], ans: 0, exp: "纯四度有开阔感。" },
+        { q: "增四度听起来像什么？", opts: ["紧张", "开阔", "柔和", "空洞"], ans: 0, exp: "增四度很紧张。" },
+        { q: "小二度转位后变成？", opts: ["大七度", "小七度", "大二度", "小二度"], ans: 0, exp: "小二度转位是大七度。" },
+        { q: "大二度转位后变成？", opts: ["大七度", "小七度", "大二度", "小二度"], ans: 1, exp: "大二度转位是小七度。" },
+        { q: "小三度转位后变成？", opts: ["大六度", "小六度", "大三度", "小三度"], ans: 0, exp: "小三度转位是大六度。" },
+        { q: "大三度转位后变成？", opts: ["大六度", "小六度", "大三度", "小三度"], ans: 1, exp: "大三度转位是小六度。" },
+        { q: "纯四度转位后变成？", opts: ["纯五度", "增四度", "减五度", "纯四度"], ans: 0, exp: "纯四度转位是纯五度。" },
+        { q: "纯五度转位后变成？", opts: ["纯四度", "增四度", "减五度", "纯五度"], ans: 0, exp: "纯五度转位是纯四度。" }
+    ],
+    2: [
+        { q: "C到D是几度？", opts: ["大二度", "小二度", "大三度", "小三度"], ans: 0, exp: "C-D是全音，大二度。" },
+        { q: "D到E是几度？", opts: ["大二度", "小二度", "大三度", "小三度"], ans: 0, exp: "D-E是全音，大二度。" },
+        { q: "F到G是几度？", opts: ["大二度", "小二度", "大三度", "小三度"], ans: 0, exp: "F-G是全音，大二度。" },
+        { q: "G到A是几度？", opts: ["大二度", "小二度", "大三度", "小三度"], ans: 0, exp: "G-A是全音，大二度。" },
+        { q: "A到B是几度？", opts: ["大二度", "小二度", "大三度", "小三度"], ans: 0, exp: "A-B是全音，大二度。" },
+        { q: "C#到D是几度？", opts: ["小二度", "大二度", "小三度", "大三度"], ans: 0, exp: "C#-D是半音，小二度。" },
+        { q: "D#到E是几度？", opts: ["小二度", "大二度", "小三度", "大三度"], ans: 0, exp: "D#-E是半音，小二度。" },
+        { q: "F#到G是几度？", opts: ["小二度", "大二度", "小三度", "大三度"], ans: 0, exp: "F#-G是半音，小二度。" },
+        { q: "G#到A是几度？", opts: ["小二度", "大二度", "小三度", "大三度"], ans: 0, exp: "G#-A是半音，小二度。" },
+        { q: "A#到B是几度？", opts: ["小二度", "大二度", "小三度", "大三度"], ans: 0, exp: "A#-B是半音，小二度。" },
+        { q: "C到Eb是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 0, exp: "C-Eb是小三度。" },
+        { q: "D到F是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 0, exp: "D-F是小三度。" },
+        { q: "E到G是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 0, exp: "E-G是小三度。" },
+        { q: "F到Ab是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 0, exp: "F-Ab是小三度。" },
+        { q: "G到Bb是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 0, exp: "G-Bb是小三度。" },
+        { q: "A到C是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 0, exp: "A-C是小三度。" },
+        { q: "B到D是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 0, exp: "B-D是小三度。" },
+        { q: "C到E是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 1, exp: "C-E是大三度。" },
+        { q: "D到F#是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 1, exp: "D-F#是大三度。" },
+        { q: "E到G#是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 1, exp: "E-G#是大三度。" },
+        { q: "F到A是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 1, exp: "F-A是大三度。" },
+        { q: "G到B是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 1, exp: "G-B是大三度。" },
+        { q: "A到C#是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 1, exp: "A-C#是大三度。" },
+        { q: "B到D#是几度？", opts: ["小三度", "大三度", "减三度", "增三度"], ans: 1, exp: "B-D#是大三度。" },
+        { q: "C到F是几度？", opts: ["纯四度", "增四度", "减四度", "纯五度"], ans: 0, exp: "C-F是纯四度。" },
+        { q: "D到G是几度？", opts: ["纯四度", "增四度", "减四度", "纯五度"], ans: 0, exp: "D-G是纯四度。" },
+        { q: "E到A是几度？", opts: ["纯四度", "增四度", "减四度", "纯五度"], ans: 0, exp: "E-A是纯四度。" },
+        { q: "F到Bb是几度？", opts: ["纯四度", "增四度", "减四度", "纯五度"], ans: 0, exp: "F-Bb是纯四度。" },
+        { q: "G到C是几度？", opts: ["纯四度", "增四度", "减四度", "纯五度"], ans: 0, exp: "G-C是纯四度。" }
+    ],
+    3: [
+        { q: "A到D是几度？", opts: ["纯四度", "增四度", "减四度", "纯五度"], ans: 0, exp: "A-D是纯四度。" },
+        { q: "B到E是几度？", opts: ["纯四度", "增四度", "减四度", "纯五度"], ans: 0, exp: "B-E是纯四度。" },
+        { q: "C到G是几度？", opts: ["纯五度", "增五度", "减五度", "纯四度"], ans: 0, exp: "C-G是纯五度。" },
+        { q: "D到A是几度？", opts: ["纯五度", "增五度", "减五度", "纯四度"], ans: 0, exp: "D-A是纯五度。" },
+        { q: "E到B是几度？", opts: ["纯五度", "增五度", "减五度", "纯四度"], ans: 0, exp: "E-B是纯五度。" },
+        { q: "F到C是几度？", opts: ["纯五度", "增五度", "减五度", "纯四度"], ans: 0, exp: "F-C是纯五度。" },
+        { q: "G到D是几度？", opts: ["纯五度", "增五度", "减五度", "纯四度"], ans: 0, exp: "G-D是纯五度。" },
+        { q: "A到E是几度？", opts: ["纯五度", "增五度", "减五度", "纯四度"], ans: 0, exp: "A-E是纯五度。" },
+        { q: "B到F#是几度？", opts: ["纯五度", "增五度", "减五度", "纯四度"], ans: 0, exp: "B-F#是纯五度。" },
+        { q: "C到Ab是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 0, exp: "C-Ab是小六度。" },
+        { q: "D到Bb是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 0, exp: "D-Bb是小六度。" },
+        { q: "E到C是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 0, exp: "E-C是小六度。" },
+        { q: "F到Db是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 0, exp: "F-Db是小六度。" },
+        { q: "G到Eb是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 0, exp: "G-Eb是小六度。" },
+        { q: "A到F是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 0, exp: "A-F是小六度。" },
+        { q: "B到G是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 0, exp: "B-G是小六度。" },
+        { q: "C到A是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 1, exp: "C-A是大六度。" },
+        { q: "D到B是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 1, exp: "D-B是大六度。" },
+        { q: "E到C#是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 1, exp: "E-C#是大六度。" },
+        { q: "F到D是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 1, exp: "F-D是大六度。" },
+        { q: "G到E是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 1, exp: "G-E是大六度。" },
+        { q: "A到F#是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 1, exp: "A-F#是大六度。" },
+        { q: "B到G#是几度？", opts: ["小六度", "大六度", "减六度", "增六度"], ans: 1, exp: "B-G#是大六度。" },
+        { q: "C到Bb是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 0, exp: "C-Bb是小七度。" },
+        { q: "D到C是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 0, exp: "D-C是小七度。" },
+        { q: "E到D是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 0, exp: "E-D是小七度。" },
+        { q: "F到Eb是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 0, exp: "F-Eb是小七度。" },
+        { q: "G到F是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 0, exp: "G-F是小七度。" },
+        { q: "A到G是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 0, exp: "A-G是小七度。" }
+    ],
+    4: [
+        { q: "B到A是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 0, exp: "B-A是小七度。" },
+        { q: "C到B是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 1, exp: "C-B是大七度。" },
+        { q: "D到C#是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 1, exp: "D-C#是大七度。" },
+        { q: "E到D#是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 1, exp: "E-D#是大七度。" },
+        { q: "F到E是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 1, exp: "F-E是大七度。" },
+        { q: "G到F#是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 1, exp: "G-F#是大七度。" },
+        { q: "A到G#是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 1, exp: "A-G#是大七度。" },
+        { q: "B到A#是几度？", opts: ["小七度", "大七度", "减七度", "增七度"], ans: 1, exp: "B-A#是大七度。" },
+        { q: "C到高音C是几度？", opts: ["纯八度", "增八度", "减八度", "倍减八度"], ans: 0, exp: "C到C是纯八度。" },
+        { q: "完全协和音程包括？", opts: ["纯一度、纯八度", "大二度、小二度", "增四度、减五度", "大七度、小七度"], ans: 0, exp: "纯一、纯四、纯五、纯八是完全协和。" },
+        { q: "中间协和音程包括？", opts: ["大三度、小三度", "大二度、小二度", "增四度、减五度", "大七度、小七度"], ans: 0, exp: "大小三、六度是中间协和。" },
+        { q: "不协和音程包括？", opts: ["大二度、小二度", "大三度、小三度", "纯四度、纯五度", "大六度、小六度"], ans: 0, exp: "大小二、七度、增减音程不协和。" },
+        { q: "增四度属于？", opts: ["不协和", "完全协和", "中间协和", "完美协和"], ans: 0, exp: "增四度很紧张，是不协和音程。" },
+        { q: "减五度属于？", opts: ["不协和", "完全协和", "中间协和", "完美协和"], ans: 0, exp: "减五度不协和。" },
+        { q: "小三度属于？", opts: ["中间协和", "不协和", "完全协和", "完美协和"], ans: 0, exp: "小三度是中间协和音程。" },
+        { q: "大三度属于？", opts: ["中间协和", "不协和", "完全协和", "完美协和"], ans: 0, exp: "大三度是中间协和音程。" },
+        { q: "纯四度属于？", opts: ["完全协和", "不协和", "中间协和", "完美协和"], ans: 0, exp: "纯四度是完全协和音程。" },
+        { q: "纯五度属于？", opts: ["完全协和", "不协和", "中间协和", "完美协和"], ans: 0, exp: "纯五度是完全协和音程。" },
+        { q: "小六度属于？", opts: ["中间协和", "不协和", "完全协和", "完美协和"], ans: 0, exp: "小六度是中间协和音程。" },
+        { q: "大六度属于？", opts: ["中间协和", "不协和", "完全协和", "完美协和"], ans: 0, exp: "大六度是中间协和音程。" }
+    ]
+};
+// 补充5-20关（使用第4关的数据循环，实际使用时可以继续扩展）
+for(let i=5; i<=20; i++) { intervalBank[i] = intervalBank[4]; }
+
+// ==================== 2. 节奏型闯关题库（20关） ====================
+const rhythmBank = {
+    1: [
+        { q: "四分音符的时值是多少？", opts: ["1拍", "2拍", "半拍", "4拍"], ans: 0, exp: "四分音符是基础拍单位。" },
+        { q: "八分音符的时值是多少？", opts: ["半拍", "1拍", "2拍", "4拍"], ans: 0, exp: "八分音符等于半拍。" },
+        { q: "十六分音符的时值是多少？", opts: ["1/4拍", "半拍", "1拍", "2拍"], ans: 0, exp: "四个十六分等于一拍。" },
+        { q: "二分音符的时值是多少？", opts: ["2拍", "1拍", "半拍", "4拍"], ans: 0, exp: "二分音符等于2拍。" },
+        { q: "全音符的时值是多少？", opts: ["4拍", "2拍", "1拍", "半拍"], ans: 0, exp: "全音符等于4拍。" },
+        { q: "附点四分音符的时值是多少？", opts: ["1.5拍", "1拍", "2拍", "3拍"], ans: 0, exp: "附点延长原时值一半。" },
+        { q: "附点八分音符的时值是多少？", opts: ["3/4拍", "1拍", "1.5拍", "2拍"], ans: 0, exp: "0.5+0.25=0.75拍。" },
+        { q: "三连音是将一拍分成几个等份？", opts: ["3份", "2份", "4份", "5份"], ans: 0, exp: "三连音是三等分。" },
+        { q: "切分音的特征是？", opts: ["强弱位颠倒", "重音在正拍", "附点节奏", "三连音"], ans: 0, exp: "切分制造意外感。" },
+        { q: "4/4拍中，强拍是？", opts: ["第1拍", "第2拍", "第3拍", "第4拍"], ans: 0, exp: "4/4拍第一拍最强。" },
+        { q: "4/4拍中，次强拍是？", opts: ["第3拍", "第2拍", "第4拍", "第1拍"], ans: 0, exp: "第3拍是次强。" },
+        { q: "3/4拍中，强弱规律是？", opts: ["强-弱-弱", "强-弱", "强-弱-次强-弱", "弱-强-弱"], ans: 0, exp: "3/4拍是圆舞曲节奏。" },
+        { q: "2/4拍中，强弱规律是？", opts: ["强-弱", "强-弱-弱", "强-弱-次强-弱", "弱-强"], ans: 0, exp: "2/4拍：强、弱。" },
+        { q: "6/8拍中，每小节有几拍？", opts: ["6拍", "3拍", "4拍", "2拍"], ans: 0, exp: "6/8拍每小节6个八分音符。" },
+        { q: "摇滚乐常见的节奏型是？", opts: ["反拍（backbeat）", "三连音", "附点", "切分"], ans: 0, exp: "军鼓在2、4拍是摇滚核心。" },
+        { q: "爵士乐中的摇摆节奏（swing）是指？", opts: ["将八分音符演奏成三连音的前两个音", "正拍", "反拍", "附点"], ans: 0, exp: "swing是爵士的灵魂。" },
+        { q: "放克音乐的核心节奏是？", opts: ["十六分音符切分", "三连音", "附点", "正拍"], ans: 0, exp: "放克强调十六分切分。" },
+        { q: "雷鬼音乐的特征节奏是？", opts: ["反拍切分（off-beat）", "正拍", "三连音", "附点"], ans: 0, exp: "吉他/键盘在反拍上弹奏。" },
+        { q: "前八后十六的时值分配是？", opts: ["0.5拍+0.25拍+0.25拍", "0.25+0.25+0.5", "0.5+0.5", "0.25+0.25+0.25+0.25"], ans: 0, exp: "前八后十六：一个八分接两个十六分。" },
+        { q: "前十六后八的时值分配是？", opts: ["0.25+0.25+0.5", "0.5+0.25+0.25", "0.5+0.5", "0.25+0.25+0.25+0.25"], ans: 0, exp: "前十六后八：两个十六分接一个八分。" }
+    ],
+    2: [
+        { q: "四个十六分音符的时值总和是？", opts: ["1拍", "半拍", "2拍", "1.5拍"], ans: 0, exp: "四个十六分等于一拍。" },
+        { q: "弱起小节是指？", opts: ["从弱拍开始", "从强拍开始", "从正拍开始", "从反拍开始"], ans: 0, exp: "弱起小节带来轻盈感。" },
+        { q: "反拍（backbeat）强调的是哪一拍？", opts: ["2、4拍", "1、3拍", "1、2拍", "3、4拍"], ans: 0, exp: "军鼓在2、4拍。" },
+        { q: "切分音听起来像？", opts: ["意外的重音", "正拍", "弱拍", "附点"], ans: 0, exp: "切分制造“错位”感。" },
+        { q: "六八拍中，强弱规律是？", opts: ["强-弱-弱-次强-弱-弱", "强-弱-强-弱", "强-弱-弱", "强-弱-次强-弱"], ans: 0, exp: "6/8拍是复合拍。" },
+        { q: "八九拍中，强弱规律是？", opts: ["强-弱-弱-次强-弱-弱-次强-弱-弱", "强-弱-弱", "强-弱-强-弱", "强-弱-次强-弱"], ans: 0, exp: "9/8拍常出现在民谣。" },
+        { q: "12/8拍中，强弱规律是？", opts: ["强-弱-次强-弱", "强-弱-弱", "强-弱-强-弱", "弱-强-弱-强"], ans: 0, exp: "12/8拍有摇摆感。" },
+        { q: "Largo（广板）的速度范围是？", opts: ["40-60 BPM", "60-80 BPM", "80-100 BPM", "100-120 BPM"], ans: 0, exp: "Largo非常慢。" },
+        { q: "Adagio（柔板）的速度范围是？", opts: ["66-76 BPM", "40-60 BPM", "80-100 BPM", "100-120 BPM"], ans: 0, exp: "Adagio较慢。" },
+        { q: "Andante（行板）的速度范围是？", opts: ["76-108 BPM", "40-60 BPM", "60-76 BPM", "108-120 BPM"], ans: 0, exp: "Andante像走路的速度。" },
+        { q: "Allegro（快板）的速度范围是？", opts: ["120-168 BPM", "76-108 BPM", "108-120 BPM", "168-200 BPM"], ans: 0, exp: "Allegro快速活泼。" },
+        { q: "Presto（急板）的速度范围是？", opts: ["168-200 BPM", "120-168 BPM", "76-108 BPM", "200以上"], ans: 0, exp: "Presto非常快。" },
+        { q: "速度术语“Ritardando”的意思是？", opts: ["渐慢", "渐快", "回原速", "加速"], ans: 0, exp: "Rit.是渐慢。" },
+        { q: "速度术语“Accelerando”的意思是？", opts: ["渐快", "渐慢", "回原速", "减速"], ans: 0, exp: "Accel.是渐快。" },
+        { q: "速度术语“A tempo”的意思是？", opts: ["回原速", "渐慢", "渐快", "自由速度"], ans: 0, exp: "A tempo回到原来速度。" },
+        { q: "速度术语“Rubato”的意思是？", opts: ["自由速度", "渐慢", "渐快", "回原速"], ans: 0, exp: "Rubato让节奏有弹性。" }
+    ]
+};
+for(let i=3; i<=20; i++) { rhythmBank[i] = rhythmBank[2]; }
+// ==================== 3. 旋律闯关题库（20关） ====================
+const melodyBank = {
+    1: [
+        { q: "旋律的轮廓指的是？", opts: ["音高的走向", "节奏的快慢", "音量的强弱", "音色的明暗"], ans: 0, exp: "旋律的上行、下行、波浪等形状。" },
+        { q: "级进是指？", opts: ["相邻音高", "跳进", "重复音", "上行"], ans: 0, exp: "级进是二度进行。" },
+        { q: "跳进是指？", opts: ["三度及以上", "二度", "同音", "下行"], ans: 0, exp: "跳进让旋律更有张力。" },
+        { q: "上行旋律通常带来什么感觉？", opts: ["情绪上升", "情绪下降", "平静", "紧张"], ans: 0, exp: "上行像爬升。" },
+        { q: "下行旋律通常带来什么感觉？", opts: ["情绪下降", "情绪上升", "平静", "紧张"], ans: 0, exp: "下行像叹息。" },
+        { q: "波浪形旋律的特点是什么？", opts: ["起伏感强", "平直", "急促", "缓慢"], ans: 0, exp: "像山脉一样。" },
+        { q: "旋律的“动机”是指？", opts: ["最小的音乐单位", "副歌", "前奏", "结尾"], ans: 0, exp: "动机是旋律的种子。" },
+        { q: "模进是指？", opts: ["重复但移高或移低", "完全重复", "反向进行", "节奏变化"], ans: 0, exp: "模进让旋律有统一感。" },
+        { q: "旋律中“高潮”通常在哪？", opts: ["副歌或最高音处", "前奏", "主歌", "结尾"], ans: 0, exp: "高潮是情绪释放点。" },
+        { q: "级进为主的旋律听起来？", opts: ["流畅、自然", "跳跃、紧张", "激昂", "悲伤"], ans: 0, exp: "级进像走路。" },
+        { q: "跳进为主的旋律听起来？", opts: ["跳跃、有张力", "流畅", "平静", "忧伤"], ans: 0, exp: "跳进像跨越。" },
+        { q: "同音反复的旋律常用来？", opts: ["强调、积累", "装饰", "转折", "结尾"], ans: 0, exp: "同音反复像在念叨。" },
+        { q: "旋律中出现的“装饰音”作用是？", opts: ["增加表情", "加快节奏", "增加音量", "改变调性"], ans: 0, exp: "装饰音让旋律更生动。" },
+        { q: "倚音的感觉像？", opts: ["叹气", "跳跃", "走路", "跑步"], ans: 0, exp: "倚音像轻轻碰一下。" },
+        { q: "颤音的作用是？", opts: ["使音更饱满", "加快速度", "增加力度", "改变音高"], ans: 0, exp: "颤音让音有波动感。" },
+        { q: "滑音的感觉像？", opts: ["滑动、连接", "跳跃", "停顿", "加速"], ans: 0, exp: "滑音是音高的连续变化。" },
+        { q: "旋律与和弦的关系是？", opts: ["旋律音常来自和弦音", "无关", "对立", "相同"], ans: 0, exp: "旋律通常以和弦音为主。" },
+        { q: "副歌的旋律通常比主歌？", opts: ["更高、更宽", "更低", "更窄", "相同"], ans: 0, exp: "副歌推向情绪高点。" },
+        { q: "旋律的“呼吸感”来自？", opts: ["乐句间的停顿", "快速连续音", "高音", "低音"], ans: 0, exp: "停顿让旋律有呼吸。" },
+        { q: "好的旋律通常？", opts: ["有记忆点、有情绪", "非常复杂", "非常快", "非常长"], ans: 0, exp: "容易被记住很重要。" }
+    ],
+    2: [
+        { q: "《小星星》的旋律用了什么手法？", opts: ["级进为主", "跳进为主", "同音反复", "模进"], ans: 0, exp: "级进简单流畅。" },
+        { q: "《生日快乐》的旋律第一句是？", opts: ["上行", "下行", "波浪", "平行"], ans: 0, exp: "上行像在呼唤。" },
+        { q: "《茉莉花》的旋律特点？", opts: ["婉转、级进", "跳跃", "激昂", "急促"], ans: 0, exp: "五声级进很美。" },
+        { q: "《青花瓷》的旋律特点？", opts: ["五声级进", "大跳", "同音反复", "装饰音"], ans: 0, exp: "中国风韵味。" },
+        { q: "《稻香》前奏旋律用了什么？", opts: ["级进", "大跳", "同音反复", "模进"], ans: 0, exp: "级进温暖。" },
+        { q: "《泡沫》副歌旋律用了什么？", opts: ["大跳上行", "级进", "同音反复", "下行"], ans: 0, exp: "大跳表现情感爆发。" },
+        { q: "《光年之外》副歌旋律用了？", opts: ["大跳", "级进", "同音反复", "下行"], ans: 0, exp: "大跳制造张力。" },
+        { q: "什么是“乐句”？", opts: ["旋律的完整句子", "一个音", "两个音", "三个音"], ans: 0, exp: "乐句像说话的句子。" },
+        { q: "什么是“问答句”？", opts: ["前句问，后句答", "两句相同", "两句相反", "两句无关"], ans: 0, exp: "问答句让旋律有对话感。" },
+        { q: "什么是“起承转合”？", opts: ["四句结构", "两句结构", "三句结构", "一句结构"], ans: 0, exp: "起承转合是东方音乐的结构。" }
+    ]
+};
+for(let i=3; i<=20; i++) { melodyBank[i] = melodyBank[2]; }
+
+// ==================== 4. 调式调性闯关题库（20关） ====================
+const modeBank = {
+    1: [
+        { q: "调式指的是什么？", opts: ["音的组织方式", "音的高低", "音的强弱", "音的长短"], ans: 0, exp: "调式是音阶的组织方式。" },
+        { q: "C大调的主音是什么？", opts: ["C", "D", "E", "G"], ans: 0, exp: "C大调以C为主音。" },
+        { q: "自然小调的特征是？", opts: ["全半全全半全全", "全全半全全全半", "全半全半全全全", "半全全半全全全"], ans: 0, exp: "自然小调：全-半-全-全-半-全-全。" },
+        { q: "G大调有几个升号？", opts: ["1个", "0个", "2个", "3个"], ans: 0, exp: "G大调有一个升号（F#）。" },
+        { q: "a小调的关系大调是？", opts: ["C大调", "G大调", "F大调", "D大调"], ans: 0, exp: "a小调的关系大调是C大调。" },
+        { q: "F大调有几个降号？", opts: ["1个", "0个", "2个", "3个"], ans: 0, exp: "F大调有一个降号（Bb）。" },
+        { q: "D大调有几个升号？", opts: ["2个", "1个", "3个", "4个"], ans: 0, exp: "D大调有两个升号（F#、C#）。" },
+        { q: "Bb大调有几个降号？", opts: ["2个", "1个", "3个", "4个"], ans: 0, exp: "Bb大调有两个降号（Bb、Eb）。" },
+        { q: "A大调有几个升号？", opts: ["3个", "2个", "4个", "5个"], ans: 0, exp: "A大调有三个升号（F#、C#、G#）。" },
+        { q: "Eb大调有几个降号？", opts: ["3个", "2个", "4个", "5个"], ans: 0, exp: "Eb大调有三个降号（Bb、Eb、Ab）。" },
+        { q: "E大调有几个升号？", opts: ["4个", "3个", "5个", "6个"], ans: 0, exp: "E大调有四个升号（F#、C#、G#、D#）。" },
+        { q: "Ab大调有几个降号？", opts: ["4个", "3个", "5个", "6个"], ans: 0, exp: "Ab大调有四个降号（Bb、Eb、Ab、Db）。" },
+        { q: "升号调的顺序口诀是？", opts: ["Fa Do Sol Re La Mi Si", "Do Re Mi Fa Sol La Si", "Si Mi La Re Sol Do Fa", "Sol Re La Mi Si Fa Do"], ans: 0, exp: "升号调顺序：法-多-索-莱-拉-米-西。" },
+        { q: "降号调的顺序口诀是？", opts: ["Si Mi La Re Sol Do Fa", "Fa Do Sol Re La Mi Si", "Do Re Mi Fa Sol La Si", "Sol Re La Mi Si Fa Do"], ans: 0, exp: "降号调顺序：西-米-拉-莱-索-多-法。" },
+        { q: "多利亚调式（Dorian）的特征音是？", opts: ["升高Ⅵ级", "降低Ⅶ级", "升高Ⅳ级", "降低Ⅱ级"], ans: 0, exp: "Dorian是自然小调升高Ⅵ级。" },
+        { q: "弗里吉亚调式（Phrygian）的特征音是？", opts: ["降低Ⅱ级", "升高Ⅵ级", "降低Ⅶ级", "升高Ⅳ级"], ans: 0, exp: "Phrygian是自然小调降低Ⅱ级。" },
+        { q: "利底亚调式（Lydian）的特征音是？", opts: ["升高Ⅳ级", "降低Ⅱ级", "升高Ⅵ级", "降低Ⅶ级"], ans: 0, exp: "Lydian是自然大调升高Ⅳ级。" },
+        { q: "混合利底亚调式（Mixolydian）的特征音是？", opts: ["降低Ⅶ级", "升高Ⅳ级", "降低Ⅱ级", "升高Ⅵ级"], ans: 0, exp: "Mixolydian是自然大调降低Ⅶ级。" },
+        { q: "洛克里亚调式（Locrian）的特征音是？", opts: ["降低Ⅱ、Ⅴ级", "升高Ⅳ级", "降低Ⅶ级", "升高Ⅵ级"], ans: 0, exp: "Locrian是自然小调降低Ⅱ、Ⅴ级。" },
+        { q: "Dorian调式的代表歌曲是？", opts: ["《Scarborough Fair》", "《茉莉花》", "《小幸运》", "《青花瓷》"], ans: 0, exp: "《Scarborough Fair》是Dorian。" }
+    ],
+    2: [
+        { q: "C大调中，Ⅰ级和弦是？", opts: ["C", "Dm", "Em", "F"], ans: 0, exp: "Ⅰ级是主和弦。" },
+        { q: "C大调中，Ⅴ级和弦是？", opts: ["G", "C", "F", "Am"], ans: 0, exp: "Ⅴ级是属和弦。" },
+        { q: "C大调中，Ⅳ级和弦是？", opts: ["F", "C", "G", "Am"], ans: 0, exp: "Ⅳ级是下属和弦。" },
+        { q: "a小调中，Ⅰ级和弦是？", opts: ["Am", "C", "Dm", "Em"], ans: 0, exp: "Ⅰ级是主和弦。" },
+        { q: "和声小调与自然小调的区别是？", opts: ["Ⅶ级升高", "Ⅵ级升高", "Ⅴ级升高", "Ⅳ级升高"], ans: 0, exp: "和声小调让Ⅴ级变成大三。" },
+        { q: "什么是“转调”？", opts: ["从一个调转到另一个调", "在同一调内", "改变速度", "改变节奏"], ans: 0, exp: "转调让音乐有变化。" },
+        { q: "什么是“近关系调”？", opts: ["相差一个升降号", "相差两个升降号", "相差三个升降号", "相差四个升降号"], ans: 0, exp: "近关系调转调更自然。" },
+        { q: "什么是“同主音调”？", opts: ["主音相同，调式不同", "调号相同", "关系大小调", "平行大小调"], ans: 0, exp: "C大调和c小调是同主音调。" },
+        { q: "什么是“关系大小调”？", opts: ["调号相同，主音相差小三度", "主音相同", "调号不同", "无关系"], ans: 0, exp: "C大调和a小调是关系大小调。" },
+        { q: "什么是“等音调”？", opts: ["音响相同，记谱不同", "调号相同", "主音相同", "调式相同"], ans: 0, exp: "F#大调和Gb大调是等音调。" }
+    ]
+};
+for(let i=3; i<=20; i++) { modeBank[i] = modeBank[2]; }
+
+// ==================== 5-12. 其他题库占位（待补充完整，先给占位结构） ====================
+// 和声织体闯关
+const textureBank = { 1: [{ q: "什么是织体？", opts: ["声部的组合方式", "音高", "节奏", "音量"], ans: 0, exp: "织体是音乐的结构。" }] };
+for(let i=2; i<=20; i++) textureBank[i] = textureBank[1];
+// 配器闯关
+const orchestrationBank = { 1: [{ q: "弦乐四重奏包括哪些乐器？", opts: ["2小提、1中提、1大提", "1小提、2中提、1大提", "2小提、2大提", "1小提、1中提、2大提"], ans: 0, exp: "弦乐四重奏是经典室内乐形式。" }] };
+for(let i=2; i<=20; i++) orchestrationBank[i] = orchestrationBank[1];
+// 声乐闯关
+const vocalBank = { 1: [{ q: "女高音的音域特点是？", opts: ["高音明亮", "低沉", "浑厚", "沙哑"], ans: 0, exp: "女高音是最高的女声。" }] };
+for(let i=2; i<=20; i++) vocalBank[i] = vocalBank[1];
+// 爵士和声闯关
+const jazzBank = { 1: [{ q: "II-V-I 进行在爵士中为什么重要？", opts: ["建立调性的核心进行", "很少用", "太复杂", "太简单"], ans: 0, exp: "II-V-I是爵士的DNA。" }] };
+for(let i=2; i<=15; i++) jazzBank[i] = jazzBank[1];
+// 和弦进行闯关
+const chordProgBank = { 1: [{ q: "和弦进行中最基本的终止式是什么？", opts: ["V-I", "I-V", "IV-I", "I-IV"], ans: 0, exp: "V-I是最经典的终止式。" }] };
+for(let i=2; i<=20; i++) chordProgBank[i] = chordProgBank[1];
+// 高叠置和弦闯关
+const highExtensionBank = { 1: [{ q: "C9 是在哪个和弦基础上加九音？", opts: ["C7", "Cmaj7", "Cm7", "Cdim7"], ans: 0, exp: "C9 = C7 + 九音 D。" }] };
+for(let i=2; i<=6; i++) highExtensionBank[i] = highExtensionBank[1];
+// 乐理听力闯关
+const listeningBank = { 1: [{ q: "两个音同时响起，听起来“最明亮”的是什么音程？", opts: ["大三度", "小三度", "小二度", "大二度"], ans: 0, exp: "大三度跳跃明亮。" }] };
+for(let i=2; i<=10; i++) listeningBank[i] = listeningBank[1];
+// 乐器听辨闯关
+const instrumentBank = { 1: [{ q: "小提琴的音色特点是？", opts: ["明亮、优美", "低沉", "尖锐", "浑厚"], ans: 0, exp: "小提琴是高音弦乐。" }] };
+for(let i=2; i<=10; i++) instrumentBank[i] = instrumentBank[1];
+
 // ==================== 初始化各个闯关模块 ====================
-createQuizSystem(intervalBank, "intervalList", "intervalQuizPanel", 2, "音程闯关");
-createQuizSystem(rhythmBank, "rhythmList", "rhythmQuizPanel", 1, "节奏型闯关");
-createQuizSystem(melodyBank, "melodyList", "melodyQuizPanel", 1, "旋律闯关");
-createQuizSystem(modeBank, "modeList", "modeQuizPanel", 1, "调式调性闯关");
-// 简单的面板初始化（题库待完善）
-function initSimplePanel(containerId, quizPanelId, name, levelCount) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    container.innerHTML = "";
-    const btn = document.createElement("button");
-    btn.className = "cat-btn";
-    btn.innerText = ` ${name}（${levelCount}关）`;
-    btn.onclick = () => {
-        const panel = document.getElementById(quizPanelId);
-        if (panel) panel.innerHTML = `<div class="feedback">✨ ${name}题库正在完善中，敬请期待～</div>`;
-    };
-    container.appendChild(btn);
-}
-initSimplePanel("textureList", "textureQuizPanel", "和声织体闯关", 20);
-initSimplePanel("orchestrationList", "orchestrationQuizPanel", "配器闯关", 20);
-initSimplePanel("vocalList", "vocalQuizPanel", "声乐闯关", 20);
-initSimplePanel("jazzList", "jazzQuizPanel", "爵士和声闯关", 15);
-initSimplePanel("chordProgList", "chordProgQuizPanel", "和弦进行闯关", 20);
-initSimplePanel("highExtensionList", "highExtensionQuizPanel", "高叠置和弦闯关", 6);
+createQuizSystem(intervalBank, "intervalList", "intervalQuizPanel", 20, "音程闯关");
+createQuizSystem(rhythmBank, "rhythmList", "rhythmQuizPanel", 20, "节奏型闯关");
+createQuizSystem(melodyBank, "melodyList", "melodyQuizPanel", 20, "旋律闯关");
+createQuizSystem(modeBank, "modeList", "modeQuizPanel", 20, "调式调性闯关");
+createQuizSystem(textureBank, "textureList", "textureQuizPanel", 20, "和声织体闯关");
+createQuizSystem(orchestrationBank, "orchestrationList", "orchestrationQuizPanel", 20, "配器闯关");
+createQuizSystem(vocalBank, "vocalList", "vocalQuizPanel", 20, "声乐闯关");
+createQuizSystem(jazzBank, "jazzList", "jazzQuizPanel", 15, "爵士和声闯关");
+createQuizSystem(chordProgBank, "chordProgList", "chordProgQuizPanel", 20, "和弦进行闯关");
+createQuizSystem(highExtensionBank, "highExtensionList", "highExtensionQuizPanel", 6, "高叠置和弦闯关");
+createQuizSystem(listeningBank, "listeningList", "listeningQuizPanel", 10, "乐理听力闯关");
+createQuizSystem(instrumentBank, "instrumentList", "instrumentQuizPanel", 10, "乐器听辨闯关");
+
 // 默认展开第一个面板
 document.getElementById("intervalPanel")?.classList.add("active");
-// 初始化用户界面
-updateUserUI();
 </script>
 </body>
 </html>
-
