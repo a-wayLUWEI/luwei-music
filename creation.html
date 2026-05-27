@@ -21,7 +21,8 @@
         .header h1 { color: #FFD966; font-size: 1.8rem; margin-bottom: 8px; }
         .header p { color: #AAD4B0; font-size: 0.8rem; }
         .section { background: #0f281dcc; border-radius: 32px; padding: 20px; margin-bottom: 20px; border: 1px solid #F2C94C; }
-        .section-title { color: #FFD966; font-size: 1.2rem; font-weight: bold; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-left: 4px solid #E69A2E; padding-left: 12px; }
+        .section-title { color: #FFD966; font-size: 1.2rem; font-weight: bold; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-left: 4px solid #E69A2E; padding-left: 12px; cursor: pointer; user-select: none; }
+        .section-title:active { opacity: 0.7; }
         .input-area { margin-bottom: 12px; }
         textarea, input { width: 100%; background: #2a4a3a; border: 1px solid #F2C94C; border-radius: 16px; padding: 10px; color: #F5ECD7; font-size: 0.8rem; font-family: inherit; }
         textarea:focus, input:focus { outline: none; border-color: #E69A2E; }
@@ -37,111 +38,204 @@
         .chord-card strong { color: #FFD966; }
         .submit-btn { background: #E69A2E; width: 100%; padding: 12px; margin-top: 8px; font-weight: bold; color: #2D1E0C; }
         .inspiration-item { background: #1f3e2e; margin: 8px 0; padding: 10px 12px; border-radius: 12px; cursor: pointer; border-left: 3px solid #F2C94C; }
+        .content-area { display: none; }
+        .content-area.active { display: block; }
         @media (max-width: 768px) {
             .section-title { font-size: 1rem; }
             .chord-progress { font-size: 0.7rem; }
         }
     </style>
-    <!-- ========== 引入用户系统 ========== -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="auth.js"></script>
+    <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="sync.js"></script>
 </head>
 <body>
-<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
+<button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="container">
-    <!-- 用户信息栏 -->
     <div class="user-bar" id="userBar">
         <div class="user-info">
-            <div class="user-avatar"></div>
+            <div class="user-avatar">✍️</div>
             <div>
                 <div class="user-name" id="userName">加载中...</div>
                 <div class="user-score" id="userScore">积分 0</div>
             </div>
         </div>
-        <button class="login-btn" id="loginBtn" style="display:none;"> 登录</button>
-        <button class="login-btn" id="logoutBtn" style="display:none;"> 退出</button>
+        <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
+        <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
     </div>
     <div class="header">
         <h1>✍️ 创作工坊</h1>
-        <p>写歌 · 填词 · 和弦模板 · 灵感库</p>
+        <p>写歌 · 填词 · 和弦模板 · 灵感库 · 投稿</p>
     </div>
+
     <!-- 歌词韵脚检测器 -->
     <div class="section">
-        <div class="section-title"> 歌词韵脚检测器</div>
-        <textarea id="lyricRhymeInput" rows="3" placeholder="粘贴你的歌词...&#10;每行一句，会自动检测结尾字的押韵"></textarea>
-        <button id="checkRhymeBtn" class="btn-primary" style="margin-top: 8px;"> 检测韵脚</button>
-        <div id="rhymeResult" class="result-box">粘贴歌词后点击检测～</div>
+        <div class="section-title" data-target="rhymeDetectContent">📝 歌词韵脚检测器 ▼</div>
+        <div id="rhymeDetectContent" class="content-area">
+            <textarea id="lyricRhymeInput" rows="3" placeholder="粘贴你的歌词...&#10;每行一句，会自动检测结尾字的押韵"></textarea>
+            <button id="checkRhymeBtn" class="btn-primary" style="margin-top: 8px;">🔍 检测韵脚</button>
+            <div id="rhymeResult" class="result-box">粘贴歌词后点击检测～</div>
+        </div>
     </div>
+
     <!-- 原创歌词灵感库 -->
     <div class="section">
-        <div class="section-title">✨ 原创歌词灵感库</div>
-        <div class="category-grid" id="inspirationTags">
-            <button class="cat-btn" data-cat="rhyme"> 押韵词库</button>
-            <button class="cat-btn" data-cat="golden">✨ 金句素材</button>
-            <button class="cat-btn" data-cat="pattern"> 句式模板</button>
-            <button class="cat-btn" data-cat="reed"> 芦苇示例</button>
-            <button class="cat-btn" data-cat="my"> 我的收藏</button>
+        <div class="section-title" data-target="inspirationContent">✨ 原创歌词灵感库 ▼</div>
+        <div id="inspirationContent" class="content-area">
+            <div class="category-grid" id="inspirationTags">
+                <button class="cat-btn" data-cat="rhyme">📚 押韵词库</button>
+                <button class="cat-btn" data-cat="golden">✨ 金句素材</button>
+                <button class="cat-btn" data-cat="pattern">📐 句式模板</button>
+                <button class="cat-btn" data-cat="reed">🌾 芦苇示例</button>
+                <button class="cat-btn" data-cat="my">⭐ 我的收藏</button>
+            </div>
+            <div id="inspirationDisplay" class="result-box" style="max-height: 300px; overflow-y: auto;">点击分类查看素材～</div>
         </div>
-        <div id="inspirationContent" class="result-box" style="max-height: 300px; overflow-y: auto;">点击分类查看素材～</div>
     </div>
-    <!-- 和弦进行模板库 -->
+
+    <!-- 和弦进行模板库（完整版）-->
     <div class="section">
-        <div class="section-title"> 和弦进行模板库</div>
-        <div class="chord-progress" id="chordProgressContent">
-            <div class="chord-card"><strong>1564：</strong>C - G - Am - F<br><span style="color:#AAD4B0;"> 示例：《倔强》《小幸运》《好久不见》</span><br><span style="color:#D4C5A3;"> 芦苇说：这是流行歌的万金油</span></div>
-            <div class="chord-card"><strong>1645：</strong>C - Am - F - G<br><span style="color:#AAD4B0;"> 示例：《青花瓷》《月亮代表我的心》</span><br><span style="color:#D4C5A3;"> 芦苇说：像一条小河，弯弯曲曲流向大海</span></div>
-            <div class="chord-card"><strong>卡农：</strong>C - G - Am - Em - F - C - F - G<br><span style="color:#AAD4B0;"> 示例：《卡农》《老男孩》《知足》《晴天》</span><br><span style="color:#D4C5A3;"> 芦苇说：人生就像卡农，看似重复，其实一直在往前走</span></div>
-            <div class="chord-card"><strong>爵士 II-V-I：</strong>Dm7 - G7 - Cmaj7<br><span style="color:#AAD4B0;"> 示例：《Fly Me To The Moon》</span><br><span style="color:#D4C5A3;"> 芦苇说：爵士的DNA</span></div>
-            <div class="chord-card"><strong>12小节蓝调：</strong>C7 - C7 - C7 - C7 - F7 - F7 - C7 - C7 - G7 - F7 - C7 - C7<br><span style="color:#AAD4B0;"> 示例：《The Thrill Is Gone》</span><br><span style="color:#D4C5A3;"> 芦苇说：所有现代音乐的根</span></div>
-            <div class="chord-card"><strong>6415：</strong>Am - F - C - G<br><span style="color:#AAD4B0;"> 示例：《演员》《空白格》《突然好想你》</span><br><span style="color:#D4C5A3;"> 芦苇说：从黑暗走向光明，只需要四个和弦</span></div>
+        <div class="section-title" data-target="chordTemplateContent">🎸 和弦进行模板库 ▼</div>
+        <div id="chordTemplateContent" class="content-area">
+            <div class="chord-progress" id="chordProgressContent"></div>
         </div>
     </div>
+
     <!-- 粉丝歌词投稿 -->
     <div class="section">
-        <div class="section-title">✉️ 粉丝歌词发行投稿</div>
-        <input type="text" id="lyricTitle" placeholder="作品名称 / 标题" style="margin-bottom: 8px;">
-        <input type="text" id="lyricAuthor" placeholder="您的昵称 / 笔名" style="margin-bottom: 8px;">
-        <textarea id="lyricContent" rows="4" placeholder="请在这里粘贴您的歌词作品..."></textarea>
-        <input type="text" id="lyricContact" placeholder="联系方式（微信/QQ/邮箱，选填）" style="margin-top: 8px;">
-        <button id="submitLyricBtn" class="submit-btn">✉️ 提交歌词投稿</button>
-        <div id="submitFeedback" class="result-box" style="margin-top: 8px;"></div>
+        <div class="section-title" data-target="submitContent">✉️ 粉丝歌词发行投稿 ▼</div>
+        <div id="submitContent" class="content-area">
+            <input type="text" id="lyricTitle" placeholder="作品名称 / 标题" style="margin-bottom: 8px;">
+            <input type="text" id="lyricAuthor" placeholder="您的昵称 / 笔名" style="margin-bottom: 8px;">
+            <textarea id="lyricContent" rows="4" placeholder="请在这里粘贴您的歌词作品..."></textarea>
+            <input type="text" id="lyricContact" placeholder="联系方式（微信/QQ/邮箱，选填）" style="margin-top: 8px;">
+            <button id="submitLyricBtn" class="submit-btn">✉️ 提交歌词投稿</button>
+            <div id="submitFeedback" class="result-box" style="margin-top: 8px;"></div>
+        </div>
     </div>
 </div>
+
 <script>
 // ==================== 用户界面 ====================
-function updateUserUI() {
-    const user = getCurrentUser();
+let currentUserData = null;
+
+async function updateUserUI() {
+    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     const userNameSpan = document.getElementById('userName');
     const userScoreSpan = document.getElementById('userScore');
     const loginBtn = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
+    
     if (user) {
         userNameSpan.innerText = user.nickname || '芦苇同学';
-        userScoreSpan.innerText = `积分 ${user.score || 0}`;
-        loginBtn.style.display = 'none';
-        logoutBtn.style.display = 'block';
+        let score = user.score || 0;
+        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
+            const apiScore = await window.API.getUserScore();
+            if (apiScore !== undefined) score = apiScore;
+        }
+        userScoreSpan.innerText = `积分 ${score}`;
+        if(loginBtn) loginBtn.style.display = 'none';
+        if(logoutBtn) logoutBtn.style.display = 'block';
+        currentUserData = user;
     } else {
         userNameSpan.innerText = '未登录';
         userScoreSpan.innerText = '积分 0';
-        loginBtn.style.display = 'block';
-        logoutBtn.style.display = 'none';
+        if(loginBtn) loginBtn.style.display = 'block';
+        if(logoutBtn) logoutBtn.style.display = 'none';
+        currentUserData = null;
     }
 }
-// 登录/退出
-document.getElementById('loginBtn')?.addEventListener('click', () => { showLoginModal(); });
-document.getElementById('logoutBtn')?.addEventListener('click', () => { logout(); location.reload(); });
-// 登录成功回调
-window.onLoginSuccess = function(user) {
-    updateUserUI();
-    loadMyInspirations();
+
+async function addScore(amount, reason) {
+    if (!currentUserData) return;
+    if (typeof window.API !== 'undefined' && window.API.addScore) {
+        await window.API.addScore(amount, reason);
+        updateUserUI();
+    }
+}
+
+if(document.getElementById('loginBtn')) {
+    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
+}
+if(document.getElementById('logoutBtn')) {
+    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
+}
+
+window.onLoginSuccess = async function(user) {
+    currentUserData = user;
+    await updateUserUI();
+    if (typeof pullFromCloud === 'function') {
+        await pullFromCloud();
+    }
 };
+
+updateUserUI();
+
+// ==================== 折叠面板 ====================
+document.querySelectorAll('.section-title').forEach(title => {
+    title.addEventListener('click', () => {
+        const targetId = title.dataset.target;
+        const target = document.getElementById(targetId);
+        if(target) {
+            if(target.classList.contains('active')) {
+                target.classList.remove('active');
+                title.innerHTML = title.innerHTML.replace('▲', '▼');
+            } else {
+                target.classList.add('active');
+                title.innerHTML = title.innerHTML.replace('▼', '▲');
+            }
+        }
+    });
+    // 默认展开第一个
+    if(title.dataset.target === 'rhymeDetectContent') {
+        document.getElementById('rhymeDetectContent').classList.add('active');
+        title.innerHTML = title.innerHTML.replace('▼', '▲');
+    }
+});
+
+// ==================== 和弦进行模板库（完整版）====================
+const chordTemplates = [
+    { name: "1564（万能和弦）", progression: "C - G - Am - F", example: "《倔强》《小幸运》《好久不见》《老男孩》", say: "芦苇说：这是流行歌的万金油，弹起来就像在讲故事。" },
+    { name: "1645", progression: "C - Am - F - G", example: "《青花瓷》《月亮代表我的心》《恰似你的温柔》", say: "芦苇说：像一条小河，弯弯曲曲流向大海。" },
+    { name: "4536", progression: "F - G - Em - Am", example: "《后来》《遇见》《爱情转移》", say: "芦苇说：淡淡的忧伤，像黄昏的余晖。" },
+    { name: "6415", progression: "Am - F - C - G", example: "《演员》《空白格》《突然好想你》", say: "芦苇说：从黑暗走向光明，只需要四个和弦。" },
+    { name: "卡农进行", progression: "C - G - Am - Em - F - C - F - G", example: "《卡农》《老男孩》《知足》《晴天》", say: "芦苇说：人生就像卡农，看似重复，其实一直在往前走。" },
+    { name: "50年代进行", progression: "C - Am - Dm - G", example: "《Earth Angel》《Blue Moon》《Only You》", say: "芦苇说：复古的味道，像黑白电影。" },
+    { name: "流行摇滚", progression: "C - G - Am - Em - F - C - F - G", example: "《倔强》《温柔》《恋爱ing》", say: "芦苇说：热血又青春，适合摇滚风格。" },
+    { name: "伤感进行", progression: "Am - F - C - G", example: "《泡沫》《光年之外》《修炼爱情》", say: "芦苇说：忧伤又美丽，适合情歌副歌。" },
+    { name: "爵士II-V-I", progression: "Dm7 - G7 - Cmaj7", example: "《Fly Me To The Moon》《Autumn Leaves》", say: "芦苇说：爵士的DNA，学会这个能弹几百首爵士标准曲。" },
+    { name: "爵士小调II-V-I", progression: "Dm7b5 - G7b9 - Cm7", example: "《Softly As In A Morning Sunrise》", say: "芦苇说：小调II-V-I更忧伤，爵士必备。" },
+    { name: "三全音替代", progression: "Dm7 - Db7 - Cmaj7", example: "爵士即兴常用技巧", say: "芦苇说：用降二级属七替代五级，半音下行超好听。" },
+    { name: "R&B九和弦", progression: "Cmaj9 - Dm9 - Em9 - Dm9", example: "方大同、陶喆、Stevie Wonder", say: "芦苇说：九和弦是R&B的灵魂，弹起来像泡在云里。" },
+    { name: "福音进行", progression: "C - C/E - F - F/A - C/G - G - C", example: "《Oh Happy Day》《His Eye Is On The Sparrow》", say: "芦苇说：福音的转位和弦像走在阶梯上，一步一步向上。" },
+    { name: "挂留进行", progression: "Csus4 - C - Gsus4 - G", example: "《Every Breath You Take》前奏", say: "芦苇说：挂留和弦像话说到一半，解决时像终于说出口。" },
+    { name: "流行转调（升Key）", progression: "C - G - Am - F → Db - Ab - Bbm - Gb", example: "《爱》《我们的歌》《我是真的爱上你》", say: "芦苇说：最后一遍副歌升半音，情绪直接拉满。" },
+    { name: "12小节蓝调", progression: "C7 - C7 - C7 - C7 - F7 - F7 - C7 - C7 - G7 - F7 - C7 - C7", example: "《The Thrill Is Gone》《Stormy Monday》", say: "芦苇说：12小节蓝调是所有现代音乐的根，必须背下来。" },
+    { name: "五度圈进行", progression: "C - F - Bb - Eb - Ab - Db - Gb - B - E - A - D - G - C", example: "巴赫《平均律》、爵士即兴练习", say: "芦苇说：五度圈是音乐的藏宝图，绕一圈回到家的感觉太爽了。" },
+    { name: "久石让风格", progression: "C - Em - Am - F - G - C", example: "《天空之城》《龙猫》《千与千寻》", say: "芦苇说：久石让的和声像童话，温暖又带一点点忧伤。" },
+    { name: "周杰伦中国风", progression: "Am - F - C - G", example: "《青花瓷》《烟花易冷》《菊花台》", say: "芦苇说：五声音阶 + 六级小调开头，中国风的味道就出来了。" },
+    { name: "邓紫棋情绪推进", progression: "Am - F - C - G - Am - F - G - E7", example: "《泡沫》《光年之外》《来自天堂的魔鬼》", say: "芦苇说：低音半音下行 + 属七和弦，情绪推到顶。" },
+    { name: "林俊杰温暖进行", progression: "C - G/B - Am - Em - F - C/E - Dm7 - G7", example: "《修炼爱情》《可惜没如果》《不为谁而作的歌》", say: "芦苇说：转位和弦让低音流动起来，像走路一样自然。" },
+    { name: "五月天热血进行", progression: "C - G - Am - Em - F - C - F - G", example: "《倔强》《恋爱ing》《突然好想你》", say: "芦苇说：卡农进行的低音下行，热血又感人。" }
+];
+
+function buildChordTemplates() {
+    const container = document.getElementById("chordProgressContent");
+    container.innerHTML = chordTemplates.map(t => `
+        <div class="chord-card">
+            <strong>${t.name}：</strong>${t.progression}<br>
+            <span style="color:#AAD4B0;">🎵 示例：${t.example}</span><br>
+            <span style="color:#D4C5A3; font-style:italic;">💬 ${t.say}</span>
+        </div>
+    `).join("");
+}
+
 // ==================== 灵感库数据 ====================
 const megaInspirationDB = {
     rhyme: {
-        name: " 押韵词库",
+        name: "📚 押韵词库",
         items: [
             "一七辙（i/ü）：你、里、雨、忆、期、迷、离、戏、夕、依、喜、起、地、西、衣",
             "发花辙（a/ia/ua）：花、家、霞、沙、话、夏、茶、画、崖、下、马、大、怕、她、假",
@@ -150,7 +244,11 @@ const megaInspirationDB = {
             "言前辙（an/ian/uan/üan）：天、年、边、前、念、远、间、烟、愿、晚、见、变、圆、连、仙",
             "人辰辙（en/in/un/ün）：心、人、真、深、身、神、门、魂、晨、分、问、春、寻、音、信",
             "江阳辙（ang/iang/uang）：光、想、方、忘、阳、乡、窗、浪、伤、望、凉、香、场、亮、扬",
-            "中东辙（eng/ing/ong/iong）：风、空、梦、中、痛、懂、红、星、行、终、同、动、龙、永、影"
+            "中东辙（eng/ing/ong/iong）：风、空、梦、中、痛、懂、红、星、行、终、同、动、龙、永、影",
+            "灰堆辙（ei/ui）：泪、会、悔、飞、悲、醉、美、黑、碎、回、归、谁、随、眉、味",
+            "梭波辙（o/e/uo）：歌、过、错、落、火、多、破、我、说、果、诺、活、波、昨、朵",
+            "乜斜辙（ie/üe）：月、夜、别、解、谢、缺、切、雪、血、街、邪、借、却、约、绝",
+            "姑苏辙（u）：路、苦、处、无、步、湖、独、雾、楚、苏、渡、顾、书、初、暮"
         ]
     },
     golden: {
@@ -165,11 +263,21 @@ const megaInspirationDB = {
             "你是我眼里的光，也是我不敢触碰的伤。",
             "青春是一场大雨，即使感冒了也想再淋一次。",
             "愿你往后路途，深情不再枉付。",
-            "你的一句晚安，是我一夜的好梦。"
+            "你的一句晚安，是我一夜的好梦。",
+            "我们都曾以为，来日方长。",
+            "有些人，说了再见，就再也不见。",
+            "愿你出走半生，归来仍是少年。",
+            "回忆是座桥，通往寂寞的牢。",
+            "我曾踏月而来，只因你在山中。",
+            "你是人间四月天，笑响点亮了四面风。",
+            "我途经你的盛放，你赠我一身花香。",
+            "所有的相遇都是久别重逢。",
+            "愿你被世界温柔以待。",
+            "岁月不饶人，我亦未曾饶过岁月。"
         ]
     },
     pattern: {
-        name: " 句式模板",
+        name: "📐 句式模板",
         items: [
             "如果……会不会……",
             "我曾……后来……",
@@ -180,24 +288,40 @@ const megaInspirationDB = {
             "宁愿……也不愿……",
             "曾经……如今……",
             "我想……可是……",
-            "终于……终于……"
+            "终于……终于……",
+            "我以为……却……",
+            "你说过……还记得……",
+            "如果当时……现在……",
+            "我多想……可惜……",
+            "有人说……我却觉得……",
+            "从前……后来……",
+            "你在……我在……",
+            "风吹过……雨落下……",
+            "梦醒了……天亮了……"
         ]
     },
     reed: {
-        name: " 芦苇示例",
+        name: "🌾 芦苇示例",
         items: [
-            "《错过》\n我们之间，隔着一整个青春。\n你往前走，我往后看。\n\n 芦苇说：有些错过，是注定的。",
-            "《后来》\n后来我才明白，有些人光是遇见就赚了。\n至于结局，交给时间。\n\n 芦苇说：遇见本身，就是礼物。",
-            "《遗憾》\n我设想过一万次重逢，\n却忘了你已经没有理由再出现。\n\n 芦苇说：遗憾，是爱情最真实的结局。",
-            "《雨》\n下雨了，你说那是天空在哭。\n我说，那是天空在替我流泪。\n\n 芦苇说：雨是天空的眼泪。",
-            "《时间》\n时间不是解药，\n是麻药。\n久了，就不疼了。\n\n 芦苇说：时间让疼痛变麻木。"
+            "《错过》\n我们之间，隔着一整个青春。\n你往前走，我往后看。\n\n🌾 芦苇说：有些错过，是注定的。",
+            "《后来》\n后来我才明白，有些人光是遇见就赚了。\n至于结局，交给时间。\n\n🌾 芦苇说：遇见本身，就是礼物。",
+            "《遗憾》\n我设想过一万次重逢，\n却忘了你已经没有理由再出现。\n\n🌾 芦苇说：遗憾，是爱情最真实的结局。",
+            "《想念》\n你是我眼里的光，\n也是我不敢触碰的伤。\n\n🌾 芦苇说：想念是甜的，也是疼的。",
+            "《告别》\n说了再见，就再也不见。\n不是狠心，是怕自己回头。\n\n🌾 芦苇说：不回头，才能往前走。",
+            "《成全》\n我放过你，也放过自己。\n从此山水不相逢，莫道彼此长和短。\n\n🌾 芦苇说：成全，是最后能给你的爱。",
+            "《雨》\n下雨了，你说那是天空在哭。\n我说，那是天空在替我流泪。\n\n🌾 芦苇说：雨是天空的眼泪。",
+            "《夜》\n深夜是思念的帮凶，\n它让所有的逞强都溃不成军。\n\n🌾 芦苇说：夜晚是思念的温床。",
+            "《车站》\n车站比教堂见证了更多的拥抱。\n离别比相聚说了更多的真心话。\n\n🌾 芦苇说：车站是离别的圣殿。",
+            "《时间》\n时间不是解药，\n是麻药。\n久了，就不疼了。\n\n🌾 芦苇说：时间让疼痛变麻木。"
         ]
     }
 };
-// 用户收藏（云端同步）
+
+// 用户收藏
 let myInspirations = [];
+
 function loadMyInspirations() {
-    const user = getCurrentUser();
+    const user = currentUserData;
     if (!user) {
         myInspirations = JSON.parse(localStorage.getItem("my_inspirations_temp") || "[]");
         return;
@@ -206,30 +330,32 @@ function loadMyInspirations() {
     const saved = localStorage.getItem(`my_inspirations_${userId}`);
     myInspirations = saved ? JSON.parse(saved) : [];
 }
+
 function saveMyInspirations() {
-    const user = getCurrentUser();
+    const user = currentUserData;
     if (!user) {
         localStorage.setItem("my_inspirations_temp", JSON.stringify(myInspirations));
         return;
     }
     const userId = user.user_id;
     localStorage.setItem(`my_inspirations_${userId}`, JSON.stringify(myInspirations));
-    // 同步到云端（可选）
-    syncToCloud();
+    if (typeof syncToCloud === 'function') syncToCloud();
 }
+
 function addToMyInspirations(content, category) {
     if (!myInspirations.some(item => item.content === content)) {
         myInspirations.push({ content, category, time: new Date().toLocaleString() });
         saveMyInspirations();
+        addScore(2, "收藏灵感素材");
         return true;
     }
     return false;
 }
+
 function showInspirationContent(category) {
     if (category === 'my') {
-        // 显示我的收藏
         if (myInspirations.length === 0) {
-            document.getElementById("inspirationContent").innerHTML = '<div style="color:#AAD4B0; text-align:center; padding:20px;">暂无收藏，去其他分类收藏喜欢的素材吧～</div>';
+            document.getElementById("inspirationDisplay").innerHTML = '<div style="color:#AAD4B0; text-align:center; padding:20px;">⭐ 暂无收藏，去其他分类收藏喜欢的素材吧～</div>';
             return;
         }
         let itemsHtml = '';
@@ -239,31 +365,14 @@ function showInspirationContent(category) {
                 <div class="inspiration-item" data-content="${item.content.replace(/"/g, '&quot;')}" onclick="copyInspirationText(this)">
                     <div style="color:#F5ECD7; font-size:0.75rem; line-height:1.5;">${escapedItem}</div>
                     <div style="display:flex; gap:8px; margin-top:8px;">
-                        <button class="copy-btn" data-content="${item.content.replace(/"/g, '&quot;')}" style="background:#3C6E4A; border:none; border-radius:20px; padding:4px 12px; font-size:0.65rem; color:white; cursor:pointer;"> 复制</button>
-                        <button class="remove-btn" data-idx="${idx}" style="background:#8a3a2a; border:none; border-radius:20px; padding:4px 12px; font-size:0.65rem; color:white; cursor:pointer;"> 删除</button>
+                        <button class="copy-btn" data-content="${item.content.replace(/"/g, '&quot;')}" style="background:#3C6E4A; border:none; border-radius:20px; padding:4px 12px; font-size:0.65rem; color:white; cursor:pointer;">📋 复制</button>
+                        <button class="remove-btn" data-idx="${idx}" style="background:#8a3a2a; border:none; border-radius:20px; padding:4px 12px; font-size:0.65rem; color:white; cursor:pointer;">🗑️ 删除</button>
                     </div>
                 </div>
             `;
         });
-        document.getElementById("inspirationContent").innerHTML = itemsHtml;
-        document.querySelectorAll(".copy-btn").forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                const content = btn.dataset.content;
-                navigator.clipboard.writeText(content);
-                btn.innerText = "✅ 已复制";
-                setTimeout(() => { btn.innerText = " 复制"; }, 1500);
-            };
-        });
-        document.querySelectorAll(".remove-btn").forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                const idx = parseInt(btn.dataset.idx);
-                myInspirations.splice(idx, 1);
-                saveMyInspirations();
-                showInspirationContent('my');
-            };
-        });
+        document.getElementById("inspirationDisplay").innerHTML = itemsHtml;
+        bindInspirationButtons();
         return;
     }
     const data = megaInspirationDB[category];
@@ -275,20 +384,25 @@ function showInspirationContent(category) {
             <div class="inspiration-item" data-content="${item.replace(/"/g, '&quot;')}" onclick="copyInspirationText(this)">
                 <div style="color:#F5ECD7; font-size:0.75rem; line-height:1.5;">${escapedItem}</div>
                 <div style="display:flex; gap:8px; margin-top:8px;">
-                    <button class="copy-btn" data-content="${item.replace(/"/g, '&quot;')}" style="background:#3C6E4A; border:none; border-radius:20px; padding:4px 12px; font-size:0.65rem; color:white; cursor:pointer;"> 复制</button>
+                    <button class="copy-btn" data-content="${item.replace(/"/g, '&quot;')}" style="background:#3C6E4A; border:none; border-radius:20px; padding:4px 12px; font-size:0.65rem; color:white; cursor:pointer;">📋 复制</button>
                     <button class="favorite-btn" data-content="${item.replace(/"/g, '&quot;')}" data-category="${category}" style="background:#E69A2E; border:none; border-radius:20px; padding:4px 12px; font-size:0.65rem; color:#2D1E0C; cursor:pointer;">⭐ 收藏</button>
                 </div>
             </div>
         `;
     });
-    document.getElementById("inspirationContent").innerHTML = itemsHtml;
+    document.getElementById("inspirationDisplay").innerHTML = itemsHtml;
+    bindInspirationButtons();
+}
+
+function bindInspirationButtons() {
     document.querySelectorAll(".copy-btn").forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
             const content = btn.dataset.content;
             navigator.clipboard.writeText(content);
             btn.innerText = "✅ 已复制";
-            setTimeout(() => { btn.innerText = " 复制"; }, 1500);
+            setTimeout(() => { btn.innerText = "📋 复制"; }, 1500);
+            addScore(1, "复制灵感素材");
         };
     });
     document.querySelectorAll(".favorite-btn").forEach(btn => {
@@ -304,23 +418,26 @@ function showInspirationContent(category) {
             }
         };
     });
+    document.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.idx);
+            myInspirations.splice(idx, 1);
+            saveMyInspirations();
+            showInspirationContent('my');
+        };
+    });
 }
+
 window.copyInspirationText = function(el) {
     const content = el.dataset.content;
     if (content) {
         navigator.clipboard.writeText(content);
-        alert("✅ 已复制");
+        alert("✅ 已复制到剪贴板");
+        addScore(1, "复制灵感素材");
     }
 };
-function bindInspirationButtons() {
-    document.querySelectorAll(".cat-btn").forEach(btn => {
-        btn.onclick = () => {
-            const cat = btn.dataset.cat;
-            showInspirationContent(cat);
-        };
-    });
-    showInspirationContent("rhyme");
-}
+
 // ==================== 歌词韵脚检测器 ====================
 document.getElementById("checkRhymeBtn")?.addEventListener("click", () => {
     const text = document.getElementById("lyricRhymeInput").value;
@@ -340,7 +457,7 @@ document.getElementById("checkRhymeBtn")?.addEventListener("click", () => {
             lastChars.push({ lineNum: i + 1, char: cleanLine.slice(-1) });
         }
     });
-    let result = " 韵脚分析：\n" + "━".repeat(25) + "\n";
+    let result = "📊 韵脚分析：\n" + "━".repeat(25) + "\n";
     lastChars.forEach(item => { result += `第${item.lineNum}行结尾字：「${item.char}」\n`; });
     result += "\n" + "━".repeat(25) + "\n";
     let rhymeGroups = [];
@@ -357,12 +474,14 @@ document.getElementById("checkRhymeBtn")?.addEventListener("click", () => {
     }
     if (currentGroup.length >= 2) rhymeGroups.push(currentGroup);
     if (rhymeGroups.length > 0) {
-        result += " 检测到相同韵脚：\n";
+        result += "🔍 检测到相同韵脚：\n";
         rhymeGroups.forEach(group => { result += `  「${group[0].char}」出现在第 ${group.map(g => g.lineNum).join("、")} 行\n`; });
     } else result += "⚠️ 未检测到相同韵脚\n";
-    result += "\n 芦苇说：押韵让歌词更顺口，但不要强行押韵～";
+    result += "\n🌾 芦苇说：押韵让歌词更顺口，但不要强行押韵～";
     document.getElementById("rhymeResult").innerHTML = result;
+    addScore(2, "使用韵脚检测器");
 });
+
 // ==================== 歌词投稿 ====================
 document.getElementById("submitLyricBtn")?.addEventListener("click", () => {
     const title = document.getElementById("lyricTitle").value;
@@ -374,13 +493,27 @@ document.getElementById("submitLyricBtn")?.addEventListener("click", () => {
         return;
     }
     window.location.href = `mailto:1573738696@qq.com?subject=歌词投稿：${encodeURIComponent(title)}&body=作者：${author}%0A联系方式：${contact}%0A%0A${content}`;
-    document.getElementById("submitFeedback").innerHTML = " 已打开邮箱，发送即可～";
+    document.getElementById("submitFeedback").innerHTML = "📧 已打开邮箱，发送即可～";
+    addScore(5, "提交歌词投稿");
 });
-// 初始化
-updateUserUI();
+
+// ==================== 初始化 ====================
+function bindCategoryButtons() {
+    document.querySelectorAll("#inspirationTags .cat-btn").forEach(btn => {
+        btn.onclick = () => {
+            const cat = btn.dataset.cat;
+            showInspirationContent(cat);
+        };
+    });
+}
+
+buildChordTemplates();
 loadMyInspirations();
-bindInspirationButtons();
+bindCategoryButtons();
+showInspirationContent("rhyme");
+
+// 默认展开第一个内容区
+document.getElementById("rhymeDetectContent").classList.add("active");
 </script>
 </body>
 </html>
-
