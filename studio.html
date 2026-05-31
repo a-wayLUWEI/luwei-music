@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>LuWei.studio · 芦苇音乐专业DAW</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #0e2a1f;
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        :root {
+            --bg-dark: #1a3a2a;
+            --bg-darker: #0e2a1f;
+            --bg-card: #0f281dcc;
+            --gold: #FFD966;
+            --gold-light: #FFDE9E;
+            --gold-dark: #E69A2E;
+            --text-light: #F5ECD7;
+            --text-dim: #C8E6C9;
+            --text-muted: #AAD4B0;
+            --text-note: #D4C5A3;
+            --border: #F2C94C;
+            --btn-primary-bg: #E69A2E;
+            --btn-primary-text: #2D1E0C;
+            --btn-secondary-bg: #3C6E4A;
+            --btn-secondary-text: white;
+            --track-height: 80px;
+            --piano-roll-height: 300px;
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* 菜单栏 */
+        .menu-bar {
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 16px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .menu-item {
+            color: var(--text-light);
+            font-size: 0.75rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.1s;
+        }
+
+        .menu-item:hover {
+            background: var(--btn-secondary-bg);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--gold);
+            margin-right: 20px;
+        }
+
+        .logo small {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+
+        /* 工具栏 */
+        .toolbar {
+            background: var(--bg-darker);
+            padding: 8px 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .btn {
+            background: var(--btn-secondary-bg);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: var(--btn-secondary-text);
+            font-size: 0.7rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+        }
+
+        .bpm-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card);
+            padding: 4px 12px;
+            border-radius: 30px;
+        }
+
+        .bpm-control label {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+
+        .bpm-value {
+            color: var(--gold);
+            font-size: 1rem;
+            font-weight: bold;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        input[type="range"] {
+            width: 100px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: var(--btn-secondary-bg);
+            border-radius: 2px;
+        }
+
+        input[type="range"]:focus {
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+        }
+
+        /* 主布局：轨道区 + 混音台 */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .tracks-area {
+            flex: 3;
+            overflow-y: auto;
+            background: var(--bg-darker);
+        }
+
+        /* 混音台 */
+        .mixer-area {
+            width: 280px;
+            background: var(--bg-dark);
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .mixer-title {
+            color: var(--gold);
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .mixer-channel {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(242, 201, 76, 0.3);
+        }
+
+        .mixer-channel-name {
+            color: var(--gold);
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .mixer-control {
+            margin-bottom: 10px;
+        }
+
+        .mixer-control label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.55rem;
+            margin-bottom: 4px;
+        }
+
+        .mixer-slider {
+            width: 100%;
+        }
+
+        .mixer-value {
+            color: var(--gold);
+            font-size: 0.55rem;
+            text-align: right;
+        }
+
+        .level-meter {
+            background: #0b1812;
+            border-radius: 4px;
+            height: 60px;
+            margin: 8px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: linear-gradient(0deg, var(--gold-dark), var(--gold));
+            transition: height 0.05s;
+        }
+
+        /* 轨道样式 */
+        .track {
+            border-bottom: 1px solid rgba(242, 201, 76, 0.2);
+            background: var(--bg-card);
+        }
+
+        .track-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(15, 40, 29, 0.8);
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .track-name {
+            color: var(--gold);
+            font-size: 0.8rem;
+            font-weight: bold;
+            min-width: 80px;
+        }
+
+        .track-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .track-btn {
+            background: var(--btn-secondary-bg);
+            border: none;
+            padding: 4px 10px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.6rem;
+            cursor: pointer;
+        }
+
+        .track-btn.mute { background: #8a3a2a; }
+        .track-btn.solo.active { background: var(--gold-dark); color: var(--btn-primary-text); }
+
+        /* 音色选择器 */
+        .instrument-select {
+            background: var(--btn-secondary-bg);
+            border: none;
+            padding: 4px 8px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.6rem;
+            cursor: pointer;
+        }
+
+        /* 钢琴卷帘 */
+        .piano-roll-container {
+            overflow-x: auto;
+            background: #0b1812;
+        }
+
+        .piano-roll {
+            min-width: 2000px;
+            position: relative;
+        }
+
+        .note-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(64, 30px);
+            border-bottom: 1px solid rgba(242, 201, 76, 0.2);
+        }
+
+        .note-row {
+            display: contents;
+        }
+
+        .note-label {
+            background: var(--bg-dark);
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            padding: 4px;
+            text-align: center;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid rgba(242, 201, 76, 0.2);
+        }
+
+        .note-cell {
+            background: rgba(26, 58, 42, 0.5);
+            border-right: 1px solid rgba(242, 201, 76, 0.1);
+            border-bottom: 1px solid rgba(242, 201, 76, 0.1);
+            height: 24px;
+            cursor: pointer;
+            transition: all 0.05s;
+        }
+
+        .note-cell.active {
+            background: var(--gold-dark);
+            box-shadow: inset 0 0 0 1px var(--gold);
+        }
+
+        .note-cell:hover {
+            background: rgba(230, 154, 46, 0.5);
+        }
+
+        /* 底部状态栏 */
+        .status-bar {
+            background: var(--bg-dark);
+            border-top: 1px solid var(--border);
+            padding: 6px 16px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track { background: var(--bg-darker); }
+        ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <!-- 菜单栏 -->
+    <div class="menu-bar">
+        <div class="logo">LuWei.studio <small>Professional DAW</small></div>
+        <div class="menu-item">文件</div>
+        <div class="menu-item">编辑</div>
+        <div class="menu-item">轨道</div>
+        <div class="menu-item">效果</div>
+        <div class="menu-item">视图</div>
+    </div>
+
+    <!-- 工具栏 -->
+    <div class="toolbar">
+        <button class="btn btn-primary" id="playBtn">▶ 播放</button>
+        <button class="btn" id="stopBtn">⏹ 停止</button>
+        <button class="btn" id="metronomeBtn">🥁 节拍器</button>
+        <div class="bpm-control">
+            <label>BPM</label>
+            <input type="range" id="bpmSlider" min="40" max="200" value="120">
+            <span id="bpmValue" class="bpm-value">120</span>
+        </div>
+        <button class="btn" id="saveBtn">💾 保存</button>
+        <button class="btn" id="loadBtn">📁 加载</button>
+        <button class="btn" id="exportMidiBtn">📤 导出MIDI</button>
+        <button class="btn" id="newProjectBtn">✨ 新建</button>
+        <button class="btn" id="showMixerBtn">🎚️ 混音台</button>
+    </div>
+
+    <!-- 主布局 -->
+    <div class="main-layout">
+        <!-- 轨道区域 -->
+        <div class="tracks-area" id="tracksArea"></div>
+
+        <!-- 混音台（默认隐藏，点击按钮显示） -->
+        <div class="mixer-area" id="mixerArea" style="display: none;">
+            <div class="mixer-title">🎛️ 混音台</div>
+            <div id="mixerChannels"></div>
+        </div>
+    </div>
+
+    <!-- 底部状态栏 -->
+    <div class="status-bar">
+        <span id="playheadTime">00:00:00</span>
+        <span id="statusText">✅ LuWei.studio Phase 2 | 24种音色 | 混音台</span>
+        <span>🎹 8轨 | 独立音量/声像 | 实时电平</span>
+    </div>
+</div>
+
+<script>
+    // ==================== 音频引擎 ====================
+    let audioCtx = null;
+    let isPlaying = false;
+    let currentBeat = 0;
+    let metronomeOn = false;
+    let currentBPM = 120;
+    let currentPlayInterval = null;
+
+    // ==================== 24种音色配置 ====================
+    const instruments = [
+        { id: 0, name: "🎹 大钢琴", type: "piano", baseFreq: 440, waveType: "sine" },
+        { id: 1, name: "🎹 电钢琴", type: "epiano", baseFreq: 440, waveType: "sine" },
+        { id: 2, name: "🎸 民谣吉他", type: "acoustic_guitar", baseFreq: 440, waveType: "sine" },
+        { id: 3, name: "🎸 电吉他清音", type: "clean_guitar", baseFreq: 440, waveType: "sine" },
+        { id: 4, name: "🎸 电吉他失真", type: "dist_guitar", baseFreq: 440, waveType: "sawtooth" },
+        { id: 5, name: "🎸 指弹贝斯", type: "bass", baseFreq: 440, waveType: "sine" },
+        { id: 6, name: "🎸 合成贝斯", type: "synth_bass", baseFreq: 440, waveType: "sawtooth" },
+        { id: 7, name: "🥁 标准鼓组", type: "drum", baseFreq: 440, waveType: "noise" },
+        { id: 8, name: "🎻 弦乐合奏", type: "strings", baseFreq: 440, waveType: "sine" },
+        { id: 9, name: "🎻 小提琴", type: "violin", baseFreq: 440, waveType: "sine" },
+        { id: 10, name: "🎻 大提琴", type: "cello", baseFreq: 440, waveType: "sine" },
+        { id: 11, name: "🎺 小号", type: "trumpet", baseFreq: 440, waveType: "sawtooth" },
+        { id: 12, name: "🎷 萨克斯", type: "sax", baseFreq: 440, waveType: "sawtooth" },
+        { id: 13, name: "🪈 长笛", type: "flute", baseFreq: 440, waveType: "sine" },
+        { id: 14, name: "🎹 管风琴", type: "organ", baseFreq: 440, waveType: "sawtooth" },
+        { id: 15, name: "🎹 大键琴", type: "harpsichord", baseFreq: 440, waveType: "square" },
+        { id: 16, name: "🎹 合成器Pad", type: "pad", baseFreq: 440, waveType: "sine" },
+        { id: 17, name: "🎹 合成器Lead", type: "lead", baseFreq: 440, waveType: "sawtooth" },
+        { id: 18, name: "🎹 电子鼓", type: "electronic_drum", baseFreq: 440, waveType: "noise" },
+        { id: 19, name: "🪕 班卓琴", type: "banjo", baseFreq: 440, waveType: "sine" },
+        { id: 20, name: "🎸 尤克里里", type: "ukulele", baseFreq: 440, waveType: "sine" },
+        { id: 21, name: "🎹 马林巴", type: "marimba", baseFreq: 440, waveType: "sine" },
+        { id: 22, name: "🎹 颤音琴", type: "vibraphone", baseFreq: 440, waveType: "sine" },
+        { id: 23, name: "🎹 钢片琴", type: "celesta", baseFreq: 440, waveType: "sine" }
+    ];
+
+    // ==================== 轨道配置（8轨，增加音色和声像） ====================
+    let tracks = [
+        { id: 0, name: "钢琴", instrumentId: 0, color: "#FFD966", muted: false, soloed: false, volume: 80, pan: 0, notes: [] },
+        { id: 1, name: "吉他", instrumentId: 2, color: "#AAD4B0", muted: false, soloed: false, volume: 80, pan: 0, notes: [] },
+        { id: 2, name: "贝斯", instrumentId: 5, color: "#C8E6C9", muted: false, soloed: false, volume: 80, pan: 0, notes: [] },
+        { id: 3, name: "鼓", instrumentId: 7, color: "#F2C94C", muted: false, soloed: false, volume: 80, pan: 0, notes: [] },
+        { id: 4, name: "弦乐", instrumentId: 8, color: "#D4C5A3", muted: false, soloed: false, volume: 80, pan: 0, notes: [] },
+        { id: 5, name: "管乐", instrumentId: 11, color: "#FFDE9E", muted: false, soloed: false, volume: 80, pan: 0, notes: [] },
+        { id: 6, name: "合成器", instrumentId: 16, color: "#3C6E4A", muted: false, soloed: false, volume: 80, pan: 0, notes: [] },
+        { id: 7, name: "效果", instrumentId: 17, color: "#8a3a2a", muted: false, soloed: false, volume: 80, pan: 0, notes: [] }
+    ];
+
+    const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const totalNotes = 24;
+
+    // ==================== 音频初始化 ====================
+    function initAudio() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function resumeAudio() {
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    // ==================== 播放音符（支持音色和声像） ====================
+    function playNoteWithInstrument(pitch, duration = 0.5, volume = 0.3, instrumentId = 0, pan = 0) {
+        if (!audioCtx) return;
+        
+        const instrument = instruments[instrumentId];
+        const freq = 440 * Math.pow(2, (pitch - 69) / 12);
+        
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const panner = audioCtx.createStereoPanner();
+        
+        osc.type = instrument.waveType;
+        osc.frequency.value = freq;
+        
+        gain.gain.value = volume * (tracks.find(t => t.id === tracks.findIndex(t => t.instrumentId === instrumentId))?.volume / 100 || 1);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        
+        panner.pan.value = pan / 100;
+        
+        osc.connect(gain);
+        gain.connect(panner);
+        panner.connect(audioCtx.destination);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+        
+        // 更新电平表（模拟）
+        updateLevelMeter(volume);
+    }
+
+    function updateLevelMeter(volume) {
+        // 简化版电平显示
+    }
+
+    // ==================== 播放节拍器 ====================
+    function playClick(isStrong) {
+        if (!audioCtx || !metronomeOn) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = isStrong ? 880 : 660;
+        gain.gain.value = 0.3;
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+    }
+
+    // ==================== 播放工程 ====================
+    function playProject() {
+        if (isPlaying) return;
+        resumeAudio();
+        isPlaying = true;
+        
+        const interval = (60 / currentBPM) * 1000;
+        let beatCounter = 0;
+        
+        if (currentPlayInterval) clearInterval(currentPlayInterval);
+        
+        currentPlayInterval = setInterval(() => {
+            if (!isPlaying) {
+                clearInterval(currentPlayInterval);
+                return;
+            }
+            
+            if (metronomeOn) playClick(beatCounter % 4 === 0);
+            
+            for (const track of tracks) {
+                if (track.muted) continue;
+                const anySolo = tracks.some(t => t.soloed);
+                if (anySolo && !track.soloed) continue;
+                
+                for (const note of track.notes) {
+                    if (note.beat === beatCounter) {
+                        playNoteWithInstrument(note.pitch, 0.4, track.volume / 100 * 0.4, track.instrumentId, track.pan);
+                    }
+                }
+            }
+            
+            beatCounter++;
+            updatePlayheadTime(beatCounter);
+        }, interval);
+    }
+
+    function stopProject() {
+        isPlaying = false;
+        if (currentPlayInterval) {
+            clearInterval(currentPlayInterval);
+            currentPlayInterval = null;
+        }
+        updatePlayheadTime(0);
+    }
+
+    function updatePlayheadTime(beat) {
+        const minutes = Math.floor(beat / 4 / 60);
+        const seconds = Math.floor(beat / 4 % 60);
+        const beats = beat % 4;
+        document.getElementById('playheadTime').innerText = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}:${beats}`;
+    }
+// ==================== 构建钢琴卷帘 ====================
+    function buildPianoRoll(trackId) {
+        const track = tracks[trackId];
+        const container = document.getElementById(`piano-roll-${trackId}`);
+        if (!container) return;
+        
+        let html = '<div class="note-grid">';
+        for (let i = totalNotes - 1; i >= 0; i--) {
+            const noteNumber = 48 + i;
+            const octave = Math.floor(noteNumber / 12) - 1;
+            const noteIndex = noteNumber % 12;
+            const noteName = noteNames[noteIndex] + octave;
+            
+            html += `<div class="note-row">`;
+            html += `<div class="note-label">${noteName}</div>`;
+            
+            for (let beat = 0; beat < 64; beat++) {
+                const hasNote = track.notes.some(n => n.beat === beat && n.pitch === noteNumber);
+                html += `<div class="note-cell ${hasNote ? 'active' : ''}" data-track="${trackId}" data-beat="${beat}" data-pitch="${noteNumber}"></div>`;
+            }
+            html += `</div>`;
+        }
+        html += '</div>';
+        container.innerHTML = html;
+        
+        container.querySelectorAll('.note-cell').forEach(cell => {
+            cell.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const beat = parseInt(cell.dataset.beat);
+                const pitch = parseInt(cell.dataset.pitch);
+                const trackIdx = parseInt(cell.dataset.track);
+                
+                const noteIndex = tracks[trackIdx].notes.findIndex(n => n.beat === beat && n.pitch === pitch);
+                if (noteIndex === -1) {
+                    tracks[trackIdx].notes.push({ beat, pitch, duration: 0.5, velocity: 80 });
+                    cell.classList.add('active');
+                } else {
+                    tracks[trackIdx].notes.splice(noteIndex, 1);
+                    cell.classList.remove('active');
+                }
+                updateStatus(`轨道 ${trackIdx + 1} 已更新`);
+            });
+        });
+    }
+
+    // ==================== 构建混音台 ====================
+    function buildMixer() {
+        const container = document.getElementById('mixerChannels');
+        if (!container) return;
+        
+        container.innerHTML = tracks.map((track, idx) => `
+            <div class="mixer-channel">
+                <div class="mixer-channel-name">${track.name}</div>
+                <div class="level-meter">
+                    <div class="level-fill" id="level-${idx}" style="height: 0%;"></div>
+                </div>
+                <div class="mixer-control">
+                    <label>音量 ${track.volume}%</label>
+                    <input type="range" class="mixer-slider" data-track="${idx}" data-param="volume" min="0" max="100" value="${track.volume}">
+                </div>
+                <div class="mixer-control">
+                    <label>声像 ${track.pan > 0 ? `R${track.pan}` : track.pan < 0 ? `L${-track.pan}` : 'C'}</label>
+                    <input type="range" class="mixer-slider" data-track="${idx}" data-param="pan" min="-100" max="100" value="${track.pan}">
+                </div>
+                <div class="mixer-control">
+                    <label>音色</label>
+                    <select class="instrument-select" data-track="${idx}" data-param="instrument">
+                        ${instruments.map(inst => `<option value="${inst.id}" ${track.instrumentId === inst.id ? 'selected' : ''}>${inst.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div style="display: flex; gap: 6px; margin-top: 8px;">
+                    <button class="track-btn ${track.muted ? 'mute' : ''}" data-track="${idx}" data-action="mute" style="flex:1">🔇 静音</button>
+                    <button class="track-btn ${track.soloed ? 'solo active' : ''}" data-track="${idx}" data-action="solo" style="flex:1">🎤 独奏</button>
+                </div>
+            </div>
+        `).join('');
+        
+        // 绑定混音台事件
+        document.querySelectorAll('.mixer-slider').forEach(slider => {
+            slider.addEventListener('input', (e) => {
+                const trackIdx = parseInt(slider.dataset.track);
+                const param = slider.dataset.param;
+                const value = parseInt(slider.value);
+                tracks[trackIdx][param] = value;
+                const label = slider.previousElementSibling;
+                if (param === 'volume') label.innerText = `音量 ${value}%`;
+                if (param === 'pan') label.innerText = `声像 ${value > 0 ? `R${value}` : value < 0 ? `L${-value}` : 'C'}`;
+                updateStatus(`${tracks[trackIdx].name} ${param === 'volume' ? '音量' : '声像'} 已设为 ${value}`);
+                buildPianoRoll(trackIdx);
+            });
+        });
+        
+        document.querySelectorAll('.instrument-select').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const trackIdx = parseInt(select.dataset.track);
+                const instrumentId = parseInt(select.value);
+                tracks[trackIdx].instrumentId = instrumentId;
+                updateStatus(`${tracks[trackIdx].name} 音色已改为 ${instruments[instrumentId].name}`);
+            });
+        });
+        
+        document.querySelectorAll('.track-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const trackIdx = parseInt(btn.dataset.track);
+                const action = btn.dataset.action;
+                if (action === 'mute') {
+                    tracks[trackIdx].muted = !tracks[trackIdx].muted;
+                    btn.classList.toggle('mute');
+                    updateStatus(`${tracks[trackIdx].name} ${tracks[trackIdx].muted ? '已静音' : '已取消静音'}`);
+                } else if (action === 'solo') {
+                    tracks[trackIdx].soloed = !tracks[trackIdx].soloed;
+                    btn.classList.toggle('active');
+                    updateStatus(`${tracks[trackIdx].name} ${tracks[trackIdx].soloed ? '已独奏' : '已取消独奏'}`);
+                }
+                buildPianoRoll(trackIdx);
+            });
+        });
+    }
+
+    // ==================== 构建轨道UI ====================
+    function buildTracksUI() {
+        const container = document.getElementById('tracksArea');
+        container.innerHTML = '';
+        
+        tracks.forEach((track, idx) => {
+            const instrument = instruments[track.instrumentId];
+            const trackDiv = document.createElement('div');
+            trackDiv.className = 'track';
+            trackDiv.innerHTML = `
+                <div class="track-header">
+                    <div class="track-name" style="color: ${track.color}">🎹 ${track.name}</div>
+                    <div class="track-controls">
+                        <select class="instrument-select" data-track="${idx}" data-param="instrument">
+                            ${instruments.map(inst => `<option value="${inst.id}" ${track.instrumentId === inst.id ? 'selected' : ''}>${inst.name}</option>`).join('')}
+                        </select>
+                        <span style="color:var(--text-muted); font-size:0.6rem;">音量</span>
+                        <input type="range" class="volume-slider" data-track="${idx}" data-param="volume" min="0" max="100" value="${track.volume}" style="width:80px">
+                        <span style="color:var(--text-muted); font-size:0.6rem;">${track.volume}%</span>
+                        <button class="track-btn ${track.muted ? 'mute' : ''}" data-track="${idx}" data-action="mute">🔇</button>
+                        <button class="track-btn ${track.soloed ? 'solo active' : ''}" data-track="${idx}" data-action="solo">🎤</button>
+                    </div>
+                </div>
+                <div class="piano-roll-container">
+                    <div class="piano-roll" id="piano-roll-${idx}"></div>
+                </div>
+            `;
+            container.appendChild(trackDiv);
+            buildPianoRoll(idx);
+        });
+        
+        // 绑定轨道事件
+        document.querySelectorAll('.instrument-select').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const trackIdx = parseInt(select.dataset.track);
+                const instrumentId = parseInt(select.value);
+                tracks[trackIdx].instrumentId = instrumentId;
+                updateStatus(`${tracks[trackIdx].name} 音色已改为 ${instruments[instrumentId].name}`);
+            });
+        });
+        
+        document.querySelectorAll('.volume-slider').forEach(slider => {
+            slider.addEventListener('input', (e) => {
+                const trackIdx = parseInt(slider.dataset.track);
+                const value = parseInt(slider.value);
+                tracks[trackIdx].volume = value;
+                slider.nextElementSibling.innerText = value + '%';
+                updateStatus(`${tracks[trackIdx].name} 音量已设为 ${value}%`);
+            });
+        });
+        
+        document.querySelectorAll('.track-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const trackIdx = parseInt(btn.dataset.track);
+                const action = btn.dataset.action;
+                if (action === 'mute') {
+                    tracks[trackIdx].muted = !tracks[trackIdx].muted;
+                    btn.classList.toggle('mute');
+                    updateStatus(`${tracks[trackIdx].name} ${tracks[trackIdx].muted ? '已静音' : '已取消静音'}`);
+                } else if (action === 'solo') {
+                    tracks[trackIdx].soloed = !tracks[trackIdx].soloed;
+                    btn.classList.toggle('active');
+                    updateStatus(`${tracks[trackIdx].name} ${tracks[trackIdx].soloed ? '已独奏' : '已取消独奏'}`);
+                }
+                buildPianoRoll(trackIdx);
+            });
+        });
+    }
+
+    // ==================== 工程管理 ====================
+    function saveProject() {
+        const project = { bpm: currentBPM, tracks: tracks.map(t => ({ ...t, notes: t.notes })) };
+        localStorage.setItem('luwei_studio_project', JSON.stringify(project));
+        updateStatus('✅ 工程已保存');
+        alert('工程已保存！');
+    }
+
+    function loadProject() {
+        const saved = localStorage.getItem('luwei_studio_project');
+        if (!saved) { alert('没有找到保存的工程'); return; }
+        try {
+            const project = JSON.parse(saved);
+            currentBPM = project.bpm;
+            document.getElementById('bpmSlider').value = currentBPM;
+            document.getElementById('bpmValue').innerText = currentBPM;
+            project.tracks.forEach((savedTrack, idx) => {
+                if (tracks[idx]) {
+                    tracks[idx].muted = savedTrack.muted;
+                    tracks[idx].soloed = savedTrack.soloed;
+                    tracks[idx].volume = savedTrack.volume;
+                    tracks[idx].pan = savedTrack.pan || 0;
+                    tracks[idx].instrumentId = savedTrack.instrumentId || 0;
+                    tracks[idx].notes = savedTrack.notes || [];
+                }
+            });
+            buildTracksUI();
+            buildMixer();
+            updateStatus('✅ 工程已加载');
+            alert('工程加载成功！');
+        } catch(e) { alert('加载失败'); }
+    }
+
+    function newProject() {
+        if (!confirm('新建工程会清空当前所有数据，确定吗？')) return;
+        tracks.forEach(track => { track.notes = []; track.muted = false; track.soloed = false; track.volume = 80; track.pan = 0; });
+        currentBPM = 120;
+        document.getElementById('bpmSlider').value = 120;
+        document.getElementById('bpmValue').innerText = '120';
+        buildTracksUI();
+        buildMixer();
+        updateStatus('✨ 新建工程完成');
+    }
+
+    function exportMIDI() {
+        let midiData = [0x4D, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01, 0x00, 0x01, 0x00, 0x60];
+        midiData.push(0x4D, 0x54, 0x72, 0x6B);
+        let trackData = [];
+        for (const track of tracks) {
+            for (const note of track.notes) {
+                trackData.push(0x00, 0x90, note.pitch, note.velocity || 80);
+                trackData.push(0x60, 0x80, note.pitch, 0);
+            }
+        }
+        const trackLength = trackData.length + 4;
+        midiData.push((trackLength >> 24) & 0xFF, (trackLength >> 16) & 0xFF, (trackLength >> 8) & 0xFF, trackLength & 0xFF);
+        midiData.push(...trackData);
+        const blob = new Blob([new Uint8Array(midiData)], { type: 'audio/midi' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'luwei_studio_export.mid';
+        a.click();
+        URL.revokeObjectURL(url);
+        updateStatus('✅ MIDI 已导出');
+    }
+
+    function updateStatus(msg) {
+        document.getElementById('statusText').innerHTML = msg;
+        setTimeout(() => {
+            if (document.getElementById('statusText').innerHTML === msg)
+                document.getElementById('statusText').innerHTML = '✅ LuWei.studio Phase 2 | 24种音色 | 混音台';
+        }, 2000);
+    }
+
+    // ==================== 初始化 ====================
+    function setupControls() {
+        document.getElementById('bpmSlider').addEventListener('input', (e) => {
+            currentBPM = parseInt(e.target.value);
+            document.getElementById('bpmValue').innerText = currentBPM;
+        });
+        document.getElementById('playBtn').addEventListener('click', () => { initAudio(); playProject(); });
+        document.getElementById('stopBtn').addEventListener('click', stopProject);
+        document.getElementById('metronomeBtn').addEventListener('click', () => {
+            metronomeOn = !metronomeOn;
+            const btn = document.getElementById('metronomeBtn');
+            btn.style.background = metronomeOn ? 'var(--gold-dark)' : '';
+            btn.style.color = metronomeOn ? 'var(--btn-primary-text)' : '';
+        });
+        document.getElementById('saveBtn').addEventListener('click', saveProject);
+        document.getElementById('loadBtn').addEventListener('click', loadProject);
+        document.getElementById('newProjectBtn').addEventListener('click', newProject);
+        document.getElementById('exportMidiBtn').addEventListener('click', exportMIDI);
+        document.getElementById('showMixerBtn').addEventListener('click', () => {
+            const mixer = document.getElementById('mixerArea');
+            const isVisible = mixer.style.display === 'block';
+            mixer.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible) buildMixer();
+            document.getElementById('showMixerBtn').style.background = isVisible ? '' : 'var(--gold-dark)';
+        });
+    }
+
+    document.body.addEventListener('click', () => {
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    });
+
+    function init() {
+        buildTracksUI();
+        buildMixer();
+        setupControls();
+        updateStatus('✅ LuWei.studio Phase 2 已就绪 | 24种音色 | 独立音量/声像 | 混音台');
+    }
+    init();
+</script>
+</body>
+</html>
