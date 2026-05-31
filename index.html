@@ -142,6 +142,25 @@
             font-weight: bold;
             white-space: nowrap;
         }
+        /* 超强版特殊样式 */
+        .module-card-super {
+            background: linear-gradient(135deg, #0f281dcc 0%, #1a3a2a 80%);
+            border: 2px solid #FFD966;
+            box-shadow: 0 0 15px rgba(255, 217, 102, 0.2);
+        }
+        .module-card-super .module-icon {
+            background: #E69A2E;
+            box-shadow: 0 0 10px rgba(230, 154, 46, 0.5);
+        }
+        .module-card-super .module-name {
+            font-size: 1.15rem;
+            letter-spacing: 1px;
+        }
+        .badge-super {
+            background: #FFD966;
+            color: #2D1E0C;
+            box-shadow: 0 0 8px rgba(255, 217, 102, 0.5);
+        }
         .footer {
             text-align: center;
             color: #b8aa78;
@@ -174,9 +193,8 @@
             font-size: 0.65rem;
         }
     </style>
-    <!-- ========== 引入用户系统 ========== -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="auth.js"></script>
+    <script src="auth.js"></script>
     <script src="api.js"></script>
     <script src="sync.js"></script>
 </head>
@@ -205,6 +223,7 @@
         <span id="lastModule">暂无记录</span>
     </div>
     <div class="modules-grid">
+        <!-- 模块1：音乐小白学习 -->
         <div class="module-card" data-module="beginner">
             <div class="module-icon"></div>
             <div class="module-info">
@@ -213,14 +232,16 @@
             </div>
             <div class="module-badge">推荐入门</div>
         </div>
+        <!-- 模块2：乐理手册 -->
         <div class="module-card" data-module="theory">
             <div class="module-icon"></div>
             <div class="module-info">
                 <div class="module-name">乐理手册</div>
-                <div class="module-desc">音程 · 音阶 · 和弦 · 调式 · 节奏 · 配器</div>
+                <div class="module-desc">音程 · 音阶 · 和弦 · 调式 · 节奏 · 配器 · 和弦词典</div>
             </div>
             <div class="module-badge">必备知识</div>
         </div>
+        <!-- 模块3：风格与鉴赏 -->
         <div class="module-card" data-module="style">
             <div class="module-icon"></div>
             <div class="module-info">
@@ -229,29 +250,50 @@
             </div>
             <div class="module-badge">拓展视野</div>
         </div>
+        <!-- 模块4：创作工坊 -->
         <div class="module-card" data-module="creation">
             <div class="module-icon">✍️</div>
             <div class="module-info">
                 <div class="module-name">创作工坊</div>
-                <div class="module-desc">歌词押韵 · 灵感库 · 和弦模板 · 投稿</div>
+                <div class="module-desc">歌词押韵 · 灵感库 · 22条和弦模板 · 投稿</div>
             </div>
             <div class="module-badge">原创创作</div>
         </div>
+        <!-- 模块5：芦苇工具箱 -->
         <div class="module-card" data-module="toolbox">
             <div class="module-icon">🛠️</div>
             <div class="module-info">
                 <div class="module-name">芦苇工具箱</div>
-                <div class="module-desc">节拍器 · 练耳 · 计时器 · 打卡 · 统计 · 搜索</div>
+                <div class="module-desc">节拍器 · 练耳 · 计时器 · 打卡 · 笔记 · 作品 · 统计</div>
             </div>
             <div class="module-badge">实用工具</div>
         </div>
+        <!-- 模块6：综合闯关 -->
         <div class="module-card" data-module="advanced">
             <div class="module-icon"></div>
             <div class="module-info">
                 <div class="module-name">综合闯关</div>
-                <div class="module-desc">音程 · 节奏 · 旋律 · 调式 · 和声织体 · 配器 · 声乐</div>
+                <div class="module-desc">音程 · 节奏 · 旋律 · 调式 · 和声织体 · 配器 · 声乐 · 爵士</div>
             </div>
             <div class="module-badge">进阶挑战</div>
+        </div>
+        <!-- 模块7：LuWei.studio 标准版 -->
+        <div class="module-card" data-module="studio">
+            <div class="module-icon">️</div>
+            <div class="module-info">
+                <div class="module-name">LuWei.studio 标准版</div>
+                <div class="module-desc">专业DAW · 多轨编曲 · 钢琴卷帘 · MIDI导出 · 录音混音</div>
+            </div>
+            <div class="module-badge">推荐</div>
+        </div>
+        <!-- 模块8：LuWei.studio 超强版（新增） -->
+        <div class="module-card module-card-super" data-module="studio2">
+            <div class="module-icon"></div>
+            <div class="module-info">
+                <div class="module-name">LuWei.studio 超强版</div>
+                <div class="module-desc">250+功能 · 10大全能菜单 · AI智能框架 · 50+效果器 · 乐谱/视频/云端 · 旗舰体验</div>
+            </div>
+            <div class="module-badge badge-super">⭐ 旗舰版</div>
         </div>
     </div>
     <div class="reed-say">
@@ -271,7 +313,9 @@
         'style': '风格与鉴赏',
         'creation': '创作工坊',
         'toolbox': '芦苇工具箱',
-        'advanced': '综合闯关'
+        'advanced': '综合闯关',
+        'studio': 'LuWei.studio 标准版',
+        'studio2': 'LuWei.studio 超强版'
     };
     // 更新用户界面
     function updateUserUI() {
@@ -316,29 +360,35 @@
     });
     // 登录按钮
     document.getElementById('loginBtn')?.addEventListener('click', () => {
-        showLoginModal();
+        if (typeof showLoginModal === 'function') {
+            showLoginModal();
+        } else {
+            alert('登录功能需要先配置 auth.js');
+        }
     });
     // 退出按钮
     document.getElementById('logoutBtn')?.addEventListener('click', () => {
-        logout();
+        if (typeof logout === 'function') {
+            logout();
+        }
         updateUserUI();
     });
-    // 监听用户变化（auth.js 中登录成功会调用 onLoginSuccess）
+    // 监听用户变化
     window.onLoginSuccess = function(user) {
         updateUserUI();
-        // 拉取云端数据
-        pullFromCloud().then(() => {
-            // 刷新积分显示
-            if (user.score !== undefined) {
-                document.getElementById('userScore').innerText = `积分 ${user.score}`;
-            }
-        });
+        if (typeof pullFromCloud === 'function') {
+            pullFromCloud().then(() => {
+                if (user.score !== undefined) {
+                    document.getElementById('userScore').innerText = `积分 ${user.score}`;
+                }
+            });
+        }
     };
     // 初始化
     showLastModule();
     updateUserUI();
     // 页面刷新时尝试同步
-    if (getCurrentUser() && navigator.onLine) {
+    if (typeof getCurrentUser === 'function' && getCurrentUser() && navigator.onLine && typeof syncToCloud === 'function') {
         syncToCloud();
     }
 </script>
