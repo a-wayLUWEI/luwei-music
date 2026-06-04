@@ -3,7 +3,7 @@
 const SUPABASE_URL = "https://alzbseigpxxtlqqseczx.supabase.co"
 const SUPABASE_ANON_KEY = "sb_publishable_UzooeSumvdzsMaJN0YbFBQ_hPQW4hiF"
 let supabaseClient = null
-let currentUserCache = null  // 改名，避免冲突
+let currentApiUser = null  // 改名避免与 auth.js 冲突
 // 初始化 Supabase
 async function initSupabase() {
     if (supabaseClient) return supabaseClient
@@ -27,27 +27,27 @@ async function anonymousLogin() {
         const { data: existing } = await client.auth.getSession()
         if (existing?.session) {
             console.log("已有 session")
-            currentUserCache = existing.session.user
-            return currentUserCache
+            currentApiUser = existing.session.user
+            return currentApiUser
         }
         const { data, error } = await client.auth.signInAnonymously()
         if (error) throw error
         console.log("匿名登录成功:", data.user.id)
-        currentUserCache = data.user
+        currentApiUser = data.user
         return data.user
     } catch (e) {
         console.error("匿名登录失败:", e)
         return null
     }
 }
-// 获取当前用户
+// 获取当前用户（异步）
 async function getCurrentUser() {
-    if (currentUserCache) return currentUserCache
+    if (currentApiUser) return currentApiUser
     const client = await initSupabase()
     if (!client) return null
     const { data } = await client.auth.getUser()
-    currentUserCache = data?.user || null
-    return currentUserCache
+    currentApiUser = data?.user || null
+    return currentApiUser
 }
 // 获取用户积分
 async function getUserScore() {
@@ -166,6 +166,23 @@ async function pullFromCloud() {
         data: { score, levels, wrongs: [], favorites: [] }
     }
 }
+// 刷新页面数据（供 sync.js 调用）
+async function refreshPageData() {
+    console.log("刷新页面数据...");
+    // 重新加载用户积分显示
+    const score = await getUserScore();
+    const scoreElements = document.querySelectorAll('#userScore, #scoreValue');
+    scoreElements.forEach(el => {
+        if (el) el.innerText = `积分 ${score}`;
+    });
+    // 刷新关卡进度显示
+    if (typeof updateProgressDisplay === 'function') {
+        updateProgressDisplay();
+    }
+    if (typeof updateStats === 'function') {
+        updateStats();
+    }
+}
 // 全局暴露
 window.API = {
     initSupabase,
@@ -176,7 +193,8 @@ window.API = {
     getCompletedLevels,
     completeLevel,
     syncUserData,
-    pullFromCloud
+    pullFromCloud,
+    refreshPageData
 }
 // 页面加载时自动登录
 window.addEventListener('DOMContentLoaded', async () => {
