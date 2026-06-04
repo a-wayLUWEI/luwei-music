@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>芦苇音乐 · 音乐人接单中心</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: system-ui, 'Segoe UI', sans-serif;
+            padding: 20px;
+            color: #e8e9f0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        /* 头部 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #F2C94C40;
+        }
+        .title h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #FFD966, #E69A2E);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .title p {
+            font-size: 0.7rem;
+            color: #AAD4B0;
+        }
+        .back-btn {
+            background: rgba(230, 154, 46, 0.2);
+            border: 1px solid #E69A2E;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: #FFD966;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .back-btn:hover {
+            background: #E69A2E;
+            color: #2D1E0C;
+        }
+        /* 用户栏 */
+        .user-bar {
+            background: #0f281dcc;
+            border-radius: 60px;
+            padding: 8px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(4px);
+            border: 1px solid #F2C94C;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #E69A2E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .user-name {
+            color: #FFD966;
+            font-weight: bold;
+        }
+        .user-score {
+            font-size: 0.7rem;
+            color: #AAD4B0;
+        }
+        .login-btn, .logout-btn {
+            background: #E69A2E;
+            border: none;
+            padding: 6px 20px;
+            border-radius: 40px;
+            color: #2D1E0C;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .logout-btn {
+            background: rgba(230, 154, 46, 0.3);
+            color: #FFD966;
+        }
+        /* Tab 选项卡 */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: rgba(31, 62, 46, 0.6);
+            border: 1px solid #F2C94C;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: #E69A2E;
+            color: #2D1E0C;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* 卡片样式 */
+        .card {
+            background: rgba(31, 62, 46, 0.5);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 1px solid #F2C94C40;
+            transition: 0.2s;
+        }
+        .card:hover {
+            border-color: #F2C94C;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 8px;
+        }
+        .card-info {
+            font-size: 0.8rem;
+            color: #C8E6C9;
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .card-desc {
+            font-size: 0.85rem;
+            margin: 10px 0;
+            color: #e0e0e0;
+        }
+        .badge {
+            display: inline-block;
+            background: #E69A2E30;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+        }
+        .winner-badge {
+            background: #FFD700;
+            color: #2D1E0C;
+        }
+        button {
+            background: #E69A2E;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+        button.secondary {
+            background: transparent;
+            border: 1px solid #E69A2E;
+            color: #FFD966;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            border-radius: 30px;
+            border: 1px solid #F2C94C;
+            background: #2a4a3a;
+            color: #e8e9f0;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: #FFD966;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #1a3a2a;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 28px;
+            padding: 20px;
+            border: 1px solid #F2C94C;
+        }
+        .close-modal {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #F2C94C;
+        }
+        .empty-tip {
+            text-align: center;
+            padding: 40px;
+            color: #AAD4B0;
+        }
+        .rating {
+            color: #FFD700;
+        }
+        @media (max-width: 600px) {
+            .card-info {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="title">
+            <h1> 音乐人接单中心</h1>
+            <p>发布需求 · 投稿中标 · 版权签约 · 交易评价</p>
+        </div>
+        <a href="index.html" class="back-btn">← 返回首页</a>
+    </div>
+    <!-- 用户信息栏 -->
+    <div class="user-bar" id="userBar">
+        <div class="user-info" id="userInfo">
+            <div class="user-avatar"></div>
+            <div>
+                <div class="user-name" id="userName">加载中...</div>
+                <div class="user-score" id="userScore"></div>
+            </div>
+        </div>
+        <button class="login-btn" id="loginBtn" style="display:none;">登录</button>
+        <button class="logout-btn" id="logoutBtn" style="display:none;">退出</button>
+    </div>
+    <!-- Tab 选项卡 -->
+    <div class="tabs" id="tabButtons">
+        <div class="tab-btn active" data-tab="square"> 需求广场</div>
+        <div class="tab-btn" data-tab="publish"> 发布招标</div>
+        <div class="tab-btn" data-tab="mybids"> 我的投稿</div>
+        <div class="tab-btn" data-tab="mytenders">⭐ 我的发布</div>
+    </div>
+    <!-- 需求广场 -->
+    <div id="tab-square" class="tab-content active">
+        <div id="squareList"></div>
+    </div>
+    <!-- 发布招标 -->
+    <div id="tab-publish" class="tab-content">
+        <div class="card">
+            <h3 style="color:#FFD966; margin-bottom:15px;"> 发布新需求</h3>
+            <input type="text" id="pubTitle" placeholder="标题 *">
+            <textarea id="pubDesc" rows="3" placeholder="详细描述 *"></textarea>
+            <input type="number" id="pubBudget" placeholder="预算（元） *">
+            <input type="text" id="pubStyle" placeholder="风格（流行/古风/电子等）">
+            <input type="date" id="pubDeadline">
+            <input type="text" id="pubRef" placeholder="参考链接（可选）">
+            <button id="submitTenderBtn">发布招标</button>
+        </div>
+    </div>
+    <!-- 我的投稿 -->
+    <div id="tab-mybids" class="tab-content">
+        <div id="myBidsList"></div>
+    </div>
+    <!-- 我的发布 -->
+    <div id="tab-mytenders" class="tab-content">
+        <div id="myTendersList"></div>
+    </div>
+</div>
+<!-- 投稿弹窗 -->
+<div class="modal" id="submitModal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeModalBtn">&times;</span>
+        <h3 style="color:#FFD966;"> 投稿</h3>
+        <input type="text" id="demoUrl" placeholder="试听链接（网盘/音频） *">
+        <textarea id="bidMsg" rows="3" placeholder="给甲方的话（自我介绍、报价等）"></textarea>
+        <input type="hidden" id="currentTenderId">
+        <button id="doSubmitBtn">提交投稿</button>
+    </div>
+</div>
+<!-- 合同弹窗 -->
+<div class="modal" id="contractModal">
+    <div class="modal-content" style="max-width: 700px;">
+        <span class="close-modal" id="closeContractBtn">&times;</span>
+        <h3 style="color:#FFD966;"> 版权合同</h3>
+        <div id="contractContent" style="max-height: 400px; overflow-y: auto; background: #2a4a3a; padding: 15px; border-radius: 16px; margin: 10px 0; white-space: pre-wrap; font-size: 0.8rem;"></div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button id="editContractBtn">✏️ 修改合同</button>
+            <button id="confirmContractBtn">✅ 确认锁定</button>
+            <button id="signContractBtn"> 电子签名</button>
+        </div>
+        <div id="contractStatus" style="margin-top: 10px; font-size: 0.8rem;"></div>
+    </div>
+</div>
+<script>
+    // Supabase 配置
+    const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentUser = null;
+    let currentTenderForBid = null;
+    // ========== 用户认证 ==========
+    async function loadUser() {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (user) {
+            currentUser = user;
+            document.getElementById('userName').innerText = user.email?.split('@')[0] || '音乐人';
+            document.getElementById('userScore').innerHTML = ' 已登录';
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'block';
+        } else {
+            currentUser = null;
+            document.getElementById('userName').innerText = '未登录';
+            document.getElementById('userScore').innerHTML = '请登录后使用';
+            document.getElementById('loginBtn').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'none';
+        }
+    }
+    document.getElementById('loginBtn').onclick = async () => {
+        const email = prompt('请输入邮箱地址');
+        if (!email) return;
+        const { error } = await supabaseClient.auth.signInWithOtp({ email });
+        if (error) alert('登录失败: ' + error.message);
+        else alert('验证码已发送到邮箱（Mock: 123456）');
+    };
+    document.getElementById('logoutBtn').onclick = async () => {
+        await supabaseClient.auth.signOut();
+        location.reload();
+    };
+    // ========== Tab 切换 ==========
+    const tabs = ['square', 'publish', 'mybids', 'mytenders'];
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.onclick = () => {
+            const tabId = btn.getAttribute('data-tab');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            if (tabId === 'square') loadSquare();
+            if (tabId === 'mybids') loadMyBids();
+            if (tabId === 'mytenders') loadMyTenders();
+        };
+    });
+    // ========== 需求广场 ==========
+    async function loadSquare() {
+        const { data, error } = await supabaseClient
+            .from('tenders')
+            .select('*')
+            .in('status', ['bidding', 'selected', 'completed'])
+            .order('created_at', { ascending: false });
+        if (error) return;
+        const container = document.getElementById('squareList');
+        if (!data.length) {
+            container.innerHTML = '<div class="empty-tip">暂无需求，快来发布第一个吧</div>';
+            return;
+        }
+        container.innerHTML = data.map(t => `
+            <div class="card">
+                <div class="card-title">${escapeHtml(t.title)}</div>
+                <div class="card-info">
+                    <span> ${t.budget}元</span>
+                    <span> ${t.style || '未分类'}</span>
+                    <span> ${t.deadline || '无期限'}</span>
+                    <span> ${escapeHtml(t.publisher_name || '匿名')}</span>
+                    <span> ${statusMap(t.status)}</span>
+                </div>
+                <div class="card-desc">${escapeHtml(t.description).substring(0, 100)}...</div>
+                ${t.status === 'bidding' ? `<button onclick="openBidModal('${t.id}')"> 投稿</button>` : ''}
+                ${t.status === 'selected' && t.winner_id === currentUser?.id ? `<button onclick="startWork('${t.id}')">✍️ 开始创作</button>` : ''}
+                <button onclick="viewDetail('${t.id}')">查看详情</button>
+            </div>
+        `).join('');
+    }
+    function statusMap(s) {
+        if (s === 'bidding') return '招标中';
+        if (s === 'selected') return '已选中音乐人';
+        if (s === 'completed') return '已完成';
+        return s;
+    }
+    window.openBidModal = (tenderId) => {
+        if (!currentUser) { alert('请先登录'); return; }
+        currentTenderForBid = tenderId;
+        document.getElementById('currentTenderId').value = tenderId;
+        document.getElementById('demoUrl').value = '';
+        document.getElementById('bidMsg').value = '';
+        document.getElementById('submitModal').classList.add('active');
+    };
+    document.getElementById('doSubmitBtn').onclick = async () => {
+        const demoUrl = document.getElementById('demoUrl').value.trim();
+        const message = document.getElementById('bidMsg').value.trim();
+        if (!demoUrl) { alert('请填写试听链接'); return; }
+        const { error } = await supabaseClient.from('submissions').insert({
+            id: Date.now().toString(),
+            tender_id: currentTenderForBid,
+            musician_id: currentUser.id,
+            musician_name: currentUser.email?.split('@')[0],
+            demo_url: demoUrl,
+            message: message
+        });
+        if (error) alert('投稿失败: ' + error.message);
+        else {
+            alert('投稿成功！');
+            document.getElementById('submitModal').classList.remove('active');
+            loadSquare();
+        }
+    };
+    // ========== 我的投稿 ==========
+    async function loadMyBids() {
+        if (!currentUser) { document.getElementById('myBidsList').innerHTML = '<div class="empty-tip">请先登录</div>'; return; }
+        const { data, error } = await supabaseClient
+            .from('submissions')
+            .select('*, tenders(title, publisher_name, status)')
+            .eq('musician_id', currentUser.id);
+        if (error) return;
+        if (!data.length) {
+            document.getElementById('myBidsList').innerHTML = '<div class="empty-tip">暂无投稿记录</div>';
+            return;
+        }
+        document.getElementById('myBidsList').innerHTML = data.map(s => `
+            <div class="card">
+                <div class="card-title"> ${escapeHtml(s.tenders?.title || '未知')}</div>
+                <div class="card-info">发布者：${escapeHtml(s.tenders?.publisher_name || '匿名')} | 状态：${bidStatusMap(s.status)}</div>
+                <div class="card-desc"> ${escapeHtml(s.message || '无留言')}</div>
+                ${s.status === 'selected' ? '<span class="badge winner-badge"> 已中标！</span>' : ''}
+            </div>
+        `).join('');
+    }
+    function bidStatusMap(s) {
+        if (s === 'pending') return '待选中';
+        if (s === 'selected') return '已中标';
+        if (s === 'rejected') return '未选中';
+        return s;
+    }
+    // ========== 我的发布 ==========
+    async function loadMyTenders() {
+        if (!currentUser) { document.getElementById('myTendersList').innerHTML = '<div class="empty-tip">请先登录</div>'; return; }
+        const { data, error } = await supabaseClient
+            .from('tenders')
+            .select('*')
+            .eq('publisher_id', currentUser.id)
+            .order('created_at', { ascending: false });
+        if (error) return;
+        if (!data.length) {
+            document.getElementById('myTendersList').innerHTML = '<div class="empty-tip">暂无发布记录</div>';
+            return;
+        }
+        document.getElementById('myTendersList').innerHTML = data.map(t => `
+            <div class="card">
+                <div class="card-title">${escapeHtml(t.title)}</div>
+                <div class="card-info"> ${t.budget}元 | 状态：${statusMap(t.status)}</div>
+                <div class="card-desc">${escapeHtml(t.description).substring(0, 80)}</div>
+                ${t.status === 'selected' ? `<button onclick="checkSubmissions('${t.id}')"> 查看投稿</button>` : ''}
+                ${t.status === 'bidding' ? `<button onclick="viewSubmissions('${t.id}')"> 查看投稿并选人</button>` : ''}
+            </div>
+        `).join('');
+    }
+    window.viewSubmissions = async (tenderId) => {
+        const { data } = await supabaseClient.from('submissions').select('*').eq('tender_id', tenderId);
+        if (!data.length) { alert('暂无投稿'); return; }
+        let msg = ' 投稿列表：\n\n';
+        data.forEach((s, i) => {
+            msg += `${i+1}. ${s.musician_name}\n   试听：${s.demo_url}\n   留言：${s.message}\n   状态：${s.status}\n   回复"select ${s.id}"选中\n\n`;
+        });
+        const reply = prompt(msg + '输入 select + 投稿ID 选中中标');
+        if (reply && reply.startsWith('select')) {
+            const subId = reply.split(' ')[1];
+            const sub = data.find(s => s.id === subId);
+            if (sub) {
+                await supabaseClient.from('tenders').update({
+                    status: 'selected',
+                    winner_id: sub.musician_id,
+                    winner_name: sub.musician_name,
+                    selected_at: new Date(),
+                    winner_response: 'pending'
+                }).eq('id', tenderId);
+                await supabaseClient.from('submissions').update({ status: 'selected' }).eq('id', subId);
+                await supabaseClient.from('submissions').update({ status: 'rejected' }).eq('tender_id', tenderId).neq('id', subId);
+                alert('已选中 ' + sub.musician_name);
+                loadMyTenders();
+            }
+        }
+    };
+    window.startWork = async (tenderId) => {
+        await supabaseClient.from('tenders').update({ winner_response: 'accepted' }).eq('id', tenderId);
+        alert('已确认开始创作，进入合同阶段');
+        openContract(tenderId);
+    };
+    // ========== 合同 ==========
+    const defaultContract = `音乐作品委托创作合同
+甲方（委托方）：________
+乙方（创作者）：________
+第一条 作品信息
+作品名称：________
+第二条 版权归属
+甲方买断全部版权，乙方保留署名权。
+第三条 费用
+总费用：________元，甲方线下支付给乙方。
+第四条 交付
+乙方按约定时间交付作品，甲方验收后确认。
+第五条 违约责任
+一方违约需赔偿对方全部损失。
+双方签字后生效。`;
+    async function openContract(tenderId) {
+        let { data: contract } = await supabaseClient.from('contracts').select('*').eq('tender_id', tenderId).single();
+        if (!contract) {
+            const newId = Date.now().toString();
+            await supabaseClient.from('contracts').insert({
+                id: newId, tender_id: tenderId, content: defaultContract, status: 'editing'
+            });
+            contract = { content: defaultContract, status: 'editing', buyer_confirmed: false, musician_confirmed: false };
+        }
+        document.getElementById('contractContent').innerText = contract.content;
+        document.getElementById('contractModal').classList.add('active');
+        window.currentContractTender = tenderId;
+    }
+    document.getElementById('editContractBtn').onclick = () => {
+        const newContent = prompt('编辑合同内容（直接修改文字）', document.getElementById('contractContent').innerText);
+        if (newContent) {
+            document.getElementById('contractContent').innerText = newContent;
+            alert('合同已修改，请对方确认后锁定');
+        }
+    };
+    document.getElementById('confirmContractBtn').onclick = async () => {
+        alert('双方确认后点击电子签名');
+    };
+    document.getElementById('signContractBtn').onclick = async () => {
+        alert('合同已签署（演示版）');
+        document.getElementById('contractModal').classList.remove('active');
+    };
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+    }
+    // 发布招标
+    document.getElementById('submitTenderBtn').onclick = async () => {
+        if (!currentUser) { alert('请先登录'); return; }
+        const title = document.getElementById('pubTitle').value.trim();
+        const desc = document.getElementById('pubDesc').value.trim();
+        const budget = parseInt(document.getElementById('pubBudget').value);
+        if (!title || !desc || !budget) { alert('请填写标题、描述和预算'); return; }
+        const { error } = await supabaseClient.from('tenders').insert({
+            id: Date.now().toString(),
+            title, description: desc, budget,
+            style: document.getElementById('pubStyle').value,
+            deadline: document.getElementById('pubDeadline').value,
+            reference_url: document.getElementById('pubRef').value,
+            publisher_id: currentUser.id,
+            publisher_name: currentUser.email?.split('@')[0],
+            status: 'bidding'
+        });
+        if (error) alert('发布失败: ' + error.message);
+        else {
+            alert('发布成功！');
+            document.getElementById('pubTitle').value = '';
+            document.getElementById('pubDesc').value = '';
+            document.getElementById('pubBudget').value = '';
+            document.querySelector('.tab-btn[data-tab="square"]').click();
+        }
+    };
+    // 关闭弹窗
+    document.getElementById('closeModalBtn').onclick = () => document.getElementById('submitModal').classList.remove('active');
+    document.getElementById('closeContractBtn').onclick = () => document.getElementById('contractModal').classList.remove('active');
+    window.onclick = (e) => {
+        if (e.target.classList.contains('modal')) e.target.classList.remove('active');
+    };
+    loadUser();
+    loadSquare();
+</script>
+</body>
+</html>
+
