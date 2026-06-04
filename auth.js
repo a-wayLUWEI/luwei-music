@@ -2,7 +2,7 @@
 // 芦苇音乐 · 用户认证模块（邮箱登录版）
 const AUTH_CONFIG = {
     // 改为 true 则使用真实后端，false 则使用 Mock 模式（本地模拟）
-    USE_REAL_API: false,
+    USE_REAL_API: true,
     // 真实后端地址（后续替换）
     API_BASE_URL: "https://your-api.com/api",
     // 微信小程序 AppID（真实接入时填写）
