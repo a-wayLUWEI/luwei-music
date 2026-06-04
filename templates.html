@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创作工坊 · 和弦模板库 | 芦苇音乐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e8e9f0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #FFD966, #E69A2E);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #AAD4B0;
+            font-size: 0.9rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: #0f281dcc;
+            border-radius: 60px;
+            padding: 12px 20px;
+            margin-bottom: 24px;
+            border: 1px solid #F2C94C;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .stat {
+            background: #2a4a3a;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+        }
+
+        .stat span {
+            color: #FFD966;
+            font-weight: bold;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .filter-group {
+            background: #0f281dcc;
+            border-radius: 40px;
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #F2C94C;
+        }
+
+        .filter-group label {
+            font-size: 0.75rem;
+            color: #AAD4B0;
+        }
+
+        select, input {
+            background: #2a4a3a;
+            border: 1px solid #F2C94C;
+            border-radius: 30px;
+            padding: 6px 12px;
+            color: #F5ECD7;
+            font-size: 0.8rem;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .search-input {
+            width: 200px;
+        }
+
+        .reset-btn {
+            background: rgba(230, 154, 46, 0.2);
+            border: 1px solid rgba(230, 154, 46, 0.4);
+            border-radius: 30px;
+            padding: 6px 16px;
+            color: #FFD966;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #E69A2E;
+            color: #2D1E0C;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 20px;
+            background: #0f281dcc;
+            border: 1px solid #F2C94C;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        th {
+            background: rgba(15, 40, 29, 0.9);
+            padding: 14px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #FFD966;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            border-bottom: 1px solid #F2C94C;
+        }
+
+        th:hover {
+            background: #2a4a3a;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(242, 201, 76, 0.1);
+            vertical-align: top;
+        }
+
+        tr:hover {
+            background: rgba(31, 62, 46, 0.5);
+        }
+
+        .emotion-tag {
+            display: inline-block;
+            background: rgba(100, 150, 120, 0.3);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #C8E6C9;
+        }
+
+        .progress {
+            color: #AAD4B0;
+            font-size: 0.75rem;
+            margin-top: 20px;
+            text-align: center;
+            padding: 15px;
+        }
+
+        /* 和弦速查侧边栏 */
+        .chord-lookup-overlay {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            height: 100vh;
+            background: #0f281dcc;
+            backdrop-filter: blur(10px);
+            border-left: 2px solid #F2C94C;
+            z-index: 10000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.3);
+        }
+
+        .chord-lookup-overlay.open {
+            right: 0;
+        }
+
+        .chord-lookup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #F2C94C;
+        }
+
+        .chord-lookup-header h3 {
+            color: #FFD966;
+            font-size: 1.2rem;
+        }
+
+        .chord-lookup-close {
+            background: none;
+            border: none;
+            color: #FFD966;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .root-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(242,201,76,0.3);
+        }
+
+        .root-btn {
+            background: rgba(60, 110, 74, 0.6);
+            border: 1px solid rgba(242,201,76,0.3);
+            border-radius: 30px;
+            padding: 6px 14px;
+            color: #C8E6C9;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .root-btn:hover, .root-btn.active {
+            background: #E69A2E;
+            color: #2D1E0C;
+            border-color: #E69A2E;
+        }
+
+        .chord-list {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .chord-category {
+            margin-bottom: 20px;
+        }
+
+        .chord-category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 12px;
+        }
+
+        .chord-category-title {
+            color: #E69A2E;
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+
+        .collapse-icon {
+            color: #E69A2E;
+            font-size: 0.7rem;
+            background: rgba(230,154,46,0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            transition: transform 0.2s;
+        }
+
+        .collapse-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .chord-category-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .chord-category-content.collapsed {
+            max-height: 0;
+        }
+
+        .chord-item {
+            background: rgba(31, 62, 46, 0.6);
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chord-name {
+            color: #FFD966;
+            font-weight: bold;
+            font-family: monospace;
+            min-width: 70px;
+        }
+
+        .chord-notes {
+            color: #C8E6C9;
+            font-family: monospace;
+            flex: 1;
+        }
+
+        .chord-formula {
+            color: #AAD4B0;
+            font-size: 0.6rem;
+            font-family: monospace;
+        }
+
+        @media (max-width: 768px) {
+            th, td {
+                font-size: 0.7rem;
+                padding: 8px;
+            }
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                justify-content: space-between;
+            }
+            .search-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🎵 创作工坊 · 和弦模板库</h1>
+        <p>85条经典和弦进行 · 可筛选 · 可搜索 · 乐理详解 · 芦苇说</p>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stats">
+            <div class="stat">📚 总计 <span id="totalCount">0</span> 条</div>
+            <div class="stat">🎵 流行抒情 <span id="countPL">0</span></div>
+            <div class="stat">😢 伤感/emo <span id="countEM">0</span></div>
+            <div class="stat">🎸 民谣/清新 <span id="countFL">0</span></div>
+            <div class="stat">🎷 爵士/R&B <span id="countJZ">0</span></div>
+            <div class="stat">🏔️ 独立民谣 <span id="countID">0</span></div>
+            <div class="stat">🔥 布鲁斯/摇滚 <span id="countBR">0</span></div>
+            <div class="stat">✨ 离调/过渡 <span id="countMD">0</span></div>
+            <div class="stat">🏁 经典终止式 <span id="countCL">0</span></div>
+        </div>
+    </div>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label>🎭 情绪筛选</label>
+            <select id="emotionFilter">
+                <option value="all">全部情绪</option>
+                <option value="温暖遗憾">温暖遗憾</option>
+                <option value="遗憾不甘">遗憾不甘</option>
+                <option value="苦、难">苦、难</option>
+                <option value="退让释怀">退让释怀</option>
+                <option value="emo孤独">emo孤独</option>
+                <option value="心酸无奈">心酸无奈</option>
+                <option value="温柔抒情">温柔抒情</option>
+                <option value="清新阳光">清新阳光</option>
+                <option value="灵动优雅">灵动优雅</option>
+                <option value="独立孤独">独立孤独</option>
+                <option value="力量叛逆">力量叛逆</option>
+                <option value="华丽期待">华丽期待</option>
+                <option value="解决圆满">解决圆满</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>📂 分类</label>
+            <select id="categoryFilter">
+                <option value="all">全部分类</option>
+                <option value="流行抒情">🎵 流行抒情</option>
+                <option value="伤感_emo">😢 伤感/emo</option>
+                <option value="民谣_清新">🎸 民谣/清新</option>
+                <option value="爵士_R_B">🎷 爵士/R&B</option>
+                <option value="独立民谣">🏔️ 独立民谣</option>
+                <option value="布鲁斯_摇滚">🔥 布鲁斯/摇滚</option>
+                <option value="离调_过渡">✨ 离调/过渡</option>
+                <option value="经典终止式">🏁 经典终止式</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>🔍 搜索</label>
+            <input type="text" id="searchInput" class="search-input" placeholder="搜索名称、进行、歌曲...">
+        </div>
+        <button class="reset-btn" id="resetBtn">重置筛选</button>
+        <button class="reset-btn" id="chordLookupBtn" style="background:#E69A2E; color:#2D1E0C;">🎵 和弦构成音速查</button>
+    </div>
+
+    <div class="table-container">
+        <table id="chordTable">
+            <thead>
+                <tr>
+                    <th data-sort="id">编号</th>
+                    <th data-sort="name">模板名称</th>
+                    <th>和弦进行（C大调示例）</th>
+                    <th>乐理原理 / 芦苇说</th>
+                    <th data-sort="emotion">情绪</th>
+                    <th>参考歌曲</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="6" style="text-align:center; padding:40px;">加载中... 🎵</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="progress" id="progressInfo"></div>
+</div>
+
+<script>
+// ==================== 85条和弦模板数据库 ====================
+const chordData = {
+    // 1. 流行抒情类 (20条)
+    流行抒情: [
+        { id: "PL-01", 名称: "流行抒情色彩进行", 进行: "1 — 5m7 — 4 — 5(7)", 示例: "C — Gm7 — F — G", 乐理: "1级到5m7打破大调预期；5m7到4制造下行惯性；最后的5(7)准备回归。", 情绪: "温暖中带遗憾", 歌曲: "《后来》刘若英、《年少有为》李荣浩", 芦苇说: "苦情歌不是写哭，是写想哭但没哭。" },
+        { id: "PL-02", 名称: "借用小调六级情歌经典", 进行: "1 — b6 — 4 — 5", 示例: "C — Ab — F — G", 乐理: "b6借用同主音小调，制造心疼的听觉反差。", 情绪: "遗憾、不甘、心疼", 歌曲: "《泡沫》邓紫棋、《我好想你》苏打绿", 芦苇说: "小调是眼泪，大调是假装坚强。" },
+        { id: "PL-03", 名称: "华语苦情歌常用", 进行: "1 — 5m — b6m — 5", 示例: "C — Gm — Abm — G", 乐理: "连续非大调和弦制造失落感；最后的5准备回归但没回去。", 情绪: "苦、难、放不下", 歌曲: "《一万个理由》郑源", 芦苇说: "苦情歌的魂，在想回但回不去。" },
+        { id: "PL-04", 名称: "流行抒情经典下行", 进行: "1 — b7 — 6m — 5", 示例: "C — Bb — Am — G", 乐理: "混合利底亚色彩，阶梯式下行。", 情绪: "退让、释怀", 歌曲: "《平凡之路》朴树", 芦苇说: "下行是退，上行是进。" },
+        { id: "PL-05", 名称: "主歌万能框架", 进行: "2m — 5 — 1 — 6m", 示例: "Dm — G — C — Am", 乐理: "II-V-I的扩展版，6m制造未完成感。", 情绪: "稳定、叙述", 歌曲: "《她说》林俊杰", 芦苇说: "主歌是说，副歌是唱。" },
+        { id: "PL-06", 名称: "副歌常用进行", 进行: "4 — 5 — 6m — 1", 示例: "F — G — Am — C", 乐理: "4-5上行制造打开感，5-6m下行制造释放。", 情绪: "打开、释放", 歌曲: "《喜欢你》邓紫棋", 芦苇说: "副歌是喊出来。" },
+        { id: "PL-07", 名称: "流行摇滚降号序列", 进行: "1 — b7 — b6 — b5", 示例: "C — Bb — Ab — Gb", 乐理: "连续大二度下行，制造摇滚的黑暗感。", 情绪: "力量、叛逆", 歌曲: "《Smells Like Teen Spirit》", 芦苇说: "下行是我不服。" },
+        { id: "PL-08", 名称: "主歌循环进行", 进行: "4 — 5 — 2m — 5", 示例: "F — G — Dm — G", 乐理: "永远不会停在主和弦，制造一直想说的感觉。", 情绪: "叙述、铺垫", 歌曲: "《记得》张惠妹", 芦苇说: "不回家，是因为话没说完。" },
+        { id: "PL-09", 名称: "日系清新编曲", 进行: "1 — 2m7 — 3maj7 — 4", 示例: "C — Dm7 — Emaj7 — F", 乐理: "每个和弦比前一个高一度，制造向上感。", 情绪: "清新、阳光", 歌曲: "《小幸运》田馥甄", 芦苇说: "向上的和弦，像早晨的光。" },
+        { id: "PL-10", 名称: "流行终止式", 进行: "1 — 4maj7 — 5(7) — 1", 示例: "C — Fmaj7 — G7 — C", 乐理: "4maj7比4更亮，5(7)制造紧张后解决。", 情绪: "圆满、温暖", 歌曲: "《Fly Me To The Moon》", 芦苇说: "终止式是句号。" },
+        { id: "PL-11", 名称: "1564经典进行", 进行: "1 — 5 — 6m — 4", 示例: "C — G — Am — F", 乐理: "流行音乐最常用的进行，平衡稳定。", 情绪: "稳定、温暖", 歌曲: "《Let It Be》The Beatles", 芦苇说: "1564是流行乐的母语。" },
+        { id: "PL-12", 名称: "6415万能进行", 进行: "6m — 4 — 1 — 5", 示例: "Am — F — C — G", 乐理: "1564的小调版本，更暗。", 情绪: "温暖、民谣", 歌曲: "《成都》赵雷", 芦苇说: "四个和弦，唱完一个故事。" },
+        { id: "PL-13", 名称: "4536251卡农变体", 进行: "4 — 5 — 3m — 6m — 2m — 5 — 1", 示例: "F — G — Em — Am — Dm — G — C", 乐理: "卡农进行的变体，层层递进。", 情绪: "温暖、推进", 歌曲: "《记得》张惠妹", 芦苇说: "卡农是循环，也是答案。" },
+        { id: "PL-14", 名称: "流行抒情1546", 进行: "1 — 5 — 4 — 6m", 示例: "C — G — F — Am", 乐理: "1564的变体，4和6m交换位置。", 情绪: "温暖、叙述", 歌曲: "《安静》周杰伦", 芦苇说: "细节变化，情绪不同。" },
+        { id: "PL-15", 名称: "小调1564", 进行: "6m — 3m — 4 — 5", 示例: "Am — Em — F — G", 乐理: "小调版本的1564，更暗更伤。", 情绪: "伤感、隐忍", 歌曲: "《董小姐》宋冬野", 芦苇说: "小调是另一种颜色。" },
+        { id: "PL-16", 名称: "流行抒情3625", 进行: "3m — 6m — 2m — 5", 示例: "Em — Am — Dm — G", 乐理: "连续下行五度进行。", 情绪: "忧郁、英伦", 歌曲: "《Creep》Radiohead", 芦苇说: "英伦是冷里的暖。" },
+        { id: "PL-17", 名称: "流行抒情桥段进行", 进行: "3m — 4 — 5 — 1", 示例: "Em — F — G — C", 乐理: "从三级上行到一级，情绪爬升。", 情绪: "期待、向上", 歌曲: "《那些花儿》朴树", 芦苇说: "桥段是等一下，我要变了。" },
+        { id: "PL-18", 名称: "抒情1563", 进行: "1 — 5 — 6m — 3m", 示例: "C — G — Am — Em", 乐理: "1564的变体，3m比4更暗。", 情绪: "温暖、治愈", 歌曲: "《小手拉大手》梁静茹", 芦苇说: "温暖的和弦，像阳光。" },
+        { id: "PL-19", 名称: "流行抒情终止二", 进行: "4 — 3m — 2m — 5 — 1", 示例: "F — Em — Dm — G — C", 乐理: "下行终止式，更柔和的结束。", 情绪: "柔和、圆满", 歌曲: "《Someone Like You》Adele", 芦苇说: "柔和句号。" },
+        { id: "PL-20", 名称: "流行歌曲主歌框架二", 进行: "6m — 5 — 4 — 3m", 示例: "Am — G — F — Em", 乐理: "下行进行，像一步一步往回走。", 情绪: "叙事、回忆", 歌曲: "《旅途》朴树", 芦苇说: "下行是往回走。" }
+    ],
+    // 2. 伤感/emo类 (15条)
+    伤感_emo: [
+        { id: "EM-01", 名称: "emo半音下行", 进行: "4M7 — 4dim7 — 3m7 — b3dim7", 示例: "FM7 — Fdim7 — Em7 — Ebdim7", 乐理: "根音每步半音下行，减七做过渡。", 情绪: "emo、孤独", 歌曲: "《Lemon》米津玄师", 芦苇说: "半音下行，心也往下掉。" },
+        { id: "EM-02", 名称: "借用小调六级过渡", 进行: "4 — b6m — 1 — 5(7)", 示例: "F — Abm — C — G7", 乐理: "Abm从C小调借用，制造心酸。", 情绪: "心酸、无奈", 歌曲: "《泡沫》邓紫棋", 芦苇说: "突如其来小调，像突如其来的难过。" },
+        { id: "EM-03", 名称: "小调色彩大调转调", 进行: "1 — b3 — b6 — 5", 示例: "C — Eb — Ab — G", 乐理: "连续借用C小调和弦，最后大调回归。", 情绪: "转折、失落", 歌曲: "《烟火里的尘埃》", 芦苇说: "转调是转情绪。" },
+        { id: "EM-04", 名称: "离调小调六级", 进行: "4 — b6m — 1 — 5(7)", 示例: "F — Abm — C — G7", 乐理: "让大调突然暗一下。", 情绪: "转折、心酸", 歌曲: "《光年之外》", 芦苇说: "离调是换个角度难过。" },
+        { id: "EM-05", 名称: "半减七过渡", 进行: "2m7b5 — 1 — 4", 示例: "Dm7b5 — C — F", 乐理: "二级半减七有强烈不解决感。", 情绪: "悬疑、过渡", 歌曲: "《黑色幽默》周杰伦", 芦苇说: "半减七是话没说完。" },
+        { id: "EM-06", 名称: "借用小调三级", 进行: "1 — b3 — 4 — 5", 示例: "C — Eb — F — G", 乐理: "b3从C小调借用，制造悲伤。", 情绪: "突然悲伤", 歌曲: "《好久不见》陈奕迅", 芦苇说: "回忆是突然的。" },
+        { id: "EM-07", 名称: "下行五度伤感", 进行: "6m — 2m — 5 — 1", 示例: "Am — Dm — G — C", 乐理: "经典II-V-I的小调版。", 情绪: "伤感但克制", 歌曲: "《安静》周杰伦", 芦苇说: "五度下行是叹气。" },
+        { id: "EM-08", 名称: "emo情感递进", 进行: "1 — 5/7 — 6m — 4/6 — 4 — 5", 示例: "C — G/B — Am — F/A — F — G", 乐理: "转位制造低音线条，情绪递进。", 情绪: "递进、心碎", 歌曲: "《有一种悲伤》A-Lin", 芦苇说: "低音是情绪的暗线。" },
+        { id: "EM-09", 名称: "日式伤感进行", 进行: "1 — 5 — 4 — 4m", 示例: "C — G — F — Fm", 乐理: "4m是从小调借来的，经典日式伤感。", 情绪: "日式伤感", 歌曲: "《First Love》宇多田光", 芦苇说: "4m是日式眼泪。" },
+        { id: "EM-10", 名称: "失恋进行", 进行: "1 — 5 — 6m — 3m — 4 — 1 — 2m — 5", 示例: "C — G — Am — Em — F — C — Dm — G", 乐理: "流行抒情的长循环。", 情绪: "失恋、遗憾", 歌曲: "《后来》刘若英", 芦苇说: "失恋是和弦在循环。" },
+        { id: "EM-11", 名称: "伤感1564小调化", 进行: "6m — 3m — 4 — 1", 示例: "Am — Em — F — C", 乐理: "1564的小调版本。", 情绪: "伤感、隐忍", 歌曲: "《南山南》马頔", 芦苇说: "小调1564是另一种哭。" },
+        { id: "EM-12", 名称: "emo4536", 进行: "4 — 5 — 3m — 6m", 示例: "F — G — Em — Am", 乐理: "卡农进行的变体。", 情绪: "emo、回忆", 歌曲: "《有一种悲伤》", 芦苇说: "4536是emo密码。" },
+        { id: "EM-13", 名称: "伤感离调", 进行: "1 — b7 — b6 — 5", 示例: "C — Bb — Ab — G", 乐理: "降七降六制造黑暗感。", 情绪: "黑暗、伤感", 歌曲: "《Creep》Radiohead", 芦苇说: "黑暗是另一种伤感。" },
+        { id: "EM-14", 名称: "半音下情绪", 进行: "1 — #1dim7 — 2m — 5", 示例: "C — C#dim7 — Dm — G", 乐理: "#1dim7做半音过渡。", 情绪: "紧张、释放", 歌曲: "《爱很简单》陶喆", 芦苇说: "半音是悬念。" },
+        { id: "EM-15", 名称: "伤感减七进行", 进行: "6m — 6m7 — 6dim7 — 5", 示例: "Am — Am7 — Adim7 — G", 乐理: "减七制造悬疑感。", 情绪: "悬疑、悲伤", 歌曲: "《黑色幽默》", 芦苇说: "减七是问号。" }
+    ],
+    // 3. 民谣/清新类 (12条)
+    民谣_清新: [
+        { id: "FL-01", 名称: "卡农变体", 进行: "4 — 5 — 3m — 6m — 2m — 5 — 1", 示例: "F — G — Em — Am — Dm — G — C", 乐理: "经典卡农进行变体。", 情绪: "温暖、推进", 歌曲: "《卡农》", 芦苇说: "卡农是循环，也是答案。" },
+        { id: "FL-02", 名称: "民谣四和弦进阶", 进行: "6m — 4 — 1 — 5", 示例: "Am — F — C — G", 乐理: "6415比1564更暗。", 情绪: "民谣、叙事", 歌曲: "《成都》赵雷", 芦苇说: "四个和弦，唱完一个故事。" },
+        { id: "FL-03", 名称: "民谣抒情常用", 进行: "3m — 6m — 4 — 1", 示例: "Em — Am — F — C", 乐理: "3m到6m下行五度。", 情绪: "温柔、抒情", 歌曲: "《董小姐》", 芦苇说: "民谣不说我爱你，说你听我讲。" },
+        { id: "FL-04", 名称: "英伦民谣标配", 进行: "3m — 6m — 2m — 5", 示例: "Em — Am — Dm — G", 乐理: "连续下行五度。", 情绪: "忧郁、英伦", 歌曲: "《Creep》Radiohead", 芦苇说: "英伦是冷里的暖。" },
+        { id: "FL-05", 名称: "民谣叙事标配", 进行: "6m — 5 — 4 — 3m", 示例: "Am — G — F — Em", 乐理: "下行进行。", 情绪: "叙事、回忆", 歌曲: "《旅途》朴树", 芦苇说: "下行是往回走。" },
+        { id: "FL-06", 名称: "民谣过渡桥段", 进行: "3m — 4 — 5 — 6m", 示例: "Em — F — G — Am", 乐理: "从三级上行到六级。", 情绪: "期待、转折", 歌曲: "《那些花儿》", 芦苇说: "桥段是等一下，我要变了。" },
+        { id: "FL-07", 名称: "清新民谣主歌", 进行: "1 — 5 — 6m — 3m", 示例: "C — G — Am — Em", 乐理: "1563比1564更温暖。", 情绪: "温暖、治愈", 歌曲: "《小手拉大手》", 芦苇说: "温暖的和弦，像阳光。" },
+        { id: "FL-08", 名称: "民谣阳光进行", 进行: "1 — 4 — 5 — 1", 示例: "C — F — G — C", 乐理: "最经典的终止式。", 情绪: "阳光、明亮", 歌曲: "《Hey Jude》", 芦苇说: "阳光是和弦在笑。" },
+        { id: "FL-09", 名称: "民谣清新4536", 进行: "4 — 5 — 3m — 6m", 示例: "F — G — Em — Am", 乐理: "卡农核心段落。", 情绪: "清新、温柔", 歌曲: "《那些年》胡夏", 芦苇说: "清新是卡农穿裙子。" },
+        { id: "FL-10", 名称: "民谣1564清新", 进行: "1 — 5 — 6m — 4", 示例: "C — G — Am — F", 乐理: "最基础的流行进行。", 情绪: "温暖、稳定", 歌曲: "《Let It Be》", 芦苇说: "1564是流行母语。" },
+        { id: "FL-11", 名称: "民谣1645", 进行: "1 — 6m — 4 — 5", 示例: "C — Am — F — G", 乐理: "1645比1564更柔和。", 情绪: "柔和、抒情", 歌曲: "《月亮代表我的心》", 芦苇说: "1645是温柔版。" },
+        { id: "FL-12", 名称: "民谣底指弹进行", 进行: "1 — 3m — 4 — 5", 示例: "C — Em — F — G", 乐理: "适合指弹吉他。", 情绪: "民谣、叙事", 歌曲: "《Tears in Heaven》", 芦苇说:"指弹是吉他在说话。" }
+    ],
+    // 4. 爵士/R&B类 (12条)
+    爵士_R_B: [
+        { id: "JZ-01", 名称: "爵士下行二五替代", 进行: "3/5 — 6m — 2m7 — 7m7b5", 示例: "E/G# — Am — Dm7 — Bm7b5", 乐理: "Bm7b5代替G7的属功能。", 情绪: "灵动、优雅", 歌曲: "《The Girl from Ipanema》", 芦苇说: "爵士是走错路但走对了。" },
+        { id: "JZ-02", 名称: "爵士吉他独奏常用", 进行: "3maj7 — 6m7 — 2m7 — 5(7)", 示例: "Emaj7 — Am7 — Dm7 — G7", 乐理: "每两个和弦间是下行五度。", 情绪: "摇曳、即兴", 歌曲: "《Autumn Leaves》", 芦苇说: "爵士是边走边想。" },
+        { id: "JZ-03", 名称: "流行R&B常用", 进行: "4 — b2maj7 — 1 — 5", 示例: "F — Dbmaj7 — C — G", 乐理: "b2maj7是那不勒斯和弦。", 情绪: "暧昧、都市", 歌曲: "《Ordinary People》", 芦苇说: "R&B是欲言又止。" },
+        { id: "JZ-04", 名称: "融合爵士编配", 进行: "2m7 — 5(7) — 1maj7 — 4", 示例: "Dm7 — G7 — Cmaj7 — F", 乐理: "II-V-I加IV。", 情绪: "推进、丰富", 歌曲: "《Spain》Chick Corea", 芦苇说: "爵士是多一层。" },
+        { id: "JZ-05", 名称: "爵士流行终止式", 进行: "2m7 — 5(7) — 1maj7", 示例: "Dm7 — G7 — Cmaj7", 乐理: "经典II-V-I终止式。", 情绪: "解决、优雅", 歌曲: "爵士标准曲", 芦苇说: "II-V-I是回家。" },
+        { id: "JZ-06", 名称: "爵士2516", 进行: "2m7 — 5(7) — 1maj7 — 6m7", 示例: "Dm7 — G7 — Cmaj7 — Am7", 乐理: "II-V-I加VI。", 情绪: "优雅、循环", 歌曲: "《Blue Bossa》", 芦苇说: "2516是爵士呼吸。" },
+        { id: "JZ-07", 名称: "爵士3625", 进行: "3m7 — 6m7 — 2m7 — 5(7)", 示例: "Em7 — Am7 — Dm7 — G7", 乐理: "连续下行五度。", 情绪: "摇曳、流动", 歌曲: "《All The Things You Are》", 芦苇说: "下行五度是爵士楼梯。" },
+        { id: "JZ-08", 名称: "爵士属七替代", 进行: "2m7 — b2maj7 — 1maj7", 示例: "Dm7 — Dbmaj7 — Cmaj7", 乐理: "b2maj7替代属七。", 情绪: "华丽、意外", 歌曲: "《Stella by Starlight》", 芦苇说: "意外是最好的记忆点。" },
+        { id: "JZ-09", 名称: "R&B暧昧进行", 进行: "1 — 2m — 3m — 4 — 5", 示例: "C — Dm — Em — F — G", 乐理: "上行音阶式进行。", 情绪: "暧昧、期待", 歌曲: "《Adorn》Miguel", 芦苇说: "上行是靠近。" },
+        { id: "JZ-10", 名称: "爵士半音趋近", 进行: "2m7 — b3m7 — 3m7 — b6m7 — 6m7", 示例: "Dm7 — Ebm7 — Em7 — Abm7 — Am7", 乐理: "半音上行趋近。", 情绪: "灵动、俏皮", 歌曲: "《Take Five》", 芦苇说: "半音是爵士脚印。" },
+        { id: "JZ-11", 名称: "R&B1635", 进行: "1 — 6m7 — 3m7 — 5(7)", 示例: "C — Am7 — Em7 — G7", 乐理: "R&B常用循环。", 情绪: "流畅、性感", 歌曲: "《That's What I Like》", 芦苇说: "R&B是流淌。" },
+        { id: "JZ-12", 名称: "爵士循环进行", 进行: "1maj7 — 2m7 — 3m7 — 4maj7", 示例: "Cmaj7 — Dm7 — Em7 — Fmaj7", 乐理: "全音阶式上行。", 情绪: "开阔、流动", 歌曲: "《So What》Miles Davis", 芦苇说: "爵士是多一层。" }
+    ],
+    // 5. 独立民谣类 (6条)
+    独立民谣: [
+        { id: "ID-01", 名称: "小众独立民谣常用", 进行: "6m — b3m — 4 — 1", 示例: "Am — Ebm — F — C", 乐理: "b3m借用小调，制造偏离感。", 情绪: "独立、孤独", 歌曲: "《The Night We Met》", 芦苇说: "小众就是不一样的难受。" },
+        { id: "ID-02", 名称: "独立民谣离调", 进行: "6m — b3m — b7 — 1", 示例: "Am — Ebm — Bb — C", 乐理: "连续两个离调和弦。", 情绪: "独立、倔强", 歌曲: "《Skinny Love》", 芦苇说: "离调是走自己的路。" },
+        { id: "ID-03", 名称: "北欧民谣常用", 进行: "b3m — b6m — 2m — 5", 示例: "Ebm — Abm — Dm — G", 乐理: "全部来自C小调。", 情绪: "冷、清、空旷", 歌曲: "《Hallelujah》", 芦苇说: "北欧民谣是冷里的暖。" },
+        { id: "ID-04", 名称: "独立民谣6-4-1-5", 进行: "6m — 4 — 1 — 5", 示例: "Am — F — C — G", 乐理: "最基础的独立民谣进行。", 情绪: "独立、真诚", 歌曲: "《Riptide》Vance Joy", 芦苇说: "简单是最真诚的。" },
+        { id: "ID-05", 名称: "独立民谣1-5-6m-4", 进行: "1 — 5 — 6m — 4", 示例: "C — G — Am — F", 乐理: "1564的独立版本。", 情绪: "独立、温暖", 歌曲: "《Ho Hey》The Lumineers", 芦苇说: "独立是另一种流行。" },
+        { id: "ID-06", 名称: "独立民谣6-2-5-1", 进行: "6m — 2m — 5 — 1", 示例: "Am — Dm — G — C", 乐理: "小调II-V-I。", 情绪: "独立、伤感", 歌曲: "《The Scientist》Coldplay", 芦苇说: "独立是不赶时间。" }
+    ],
+    // 6. 布鲁斯/摇滚类 (8条)
+    布鲁斯_摇滚: [
+        { id: "BR-01", 名称: "布鲁斯元素流行", 进行: "5 — 1 — 4 — b7sus4", 示例: "G — C — F — Bbsus4", 乐理: "b7sus4有布鲁斯的蓝调感。", 情绪: "蓝调、忧郁", 歌曲: "《Rolling in the Deep》", 芦苇说: "布鲁斯是笑着哭。" },
+        { id: "BR-02", 名称: "流行摇滚桥段", 进行: "6m — b7 — 1 — 5", 示例: "Am — Bb — C — G", 乐理: "b7借用混合利底亚。", 情绪: "反转、带劲", 歌曲: "《Viva La Vida》", 芦苇说: "桥段是等一下，我要变了。" },
+        { id: "BR-03", 名称: "混合利底亚终止", 进行: "1 — 5 — b7 — 4", 示例: "C — G — Bb — F", 乐理: "b7是混合利底亚特征。", 情绪: "力量、摇滚", 歌曲: "《Sweet Child O' Mine》", 芦苇说: "降七级是摇滚的魂。" },
+        { id: "BR-04", 名称: "12小节布鲁斯", 进行: "1 — 1 — 1 — 1 — 4 — 4 — 1 — 1 — 5 — 4 — 1 — 5", 示例: "C — C — C — C — F — F — C — C — G — F — C — G", 乐理: "标准12小节布鲁斯。", 情绪: "蓝调、即兴", 歌曲: "《Johnny B. Goode》", 芦苇说: "12小节是布鲁斯宪法。" },
+        { id: "BR-05", 名称: "摇滚1564", 进行: "1 — 5 — 6m — 4", 示例: "C — G — Am — F", 乐理: "摇滚化的1564。", 情绪: "力量、直接", 歌曲: "《Wanted Dead or Alive》", 芦苇说: "摇滚是1564加失真。" },
+        { id: "BR-06", 名称: "布鲁斯快进行", 进行: "1 — 4 — 1 — 5 — 4 — 1", 示例: "C — F — C — G — F — C", 乐理: "简化12小节。", 情绪: "蓝调、跳跃", 歌曲: "《Hound Dog》", 芦苇说: "蓝调是快乐地痛。" },
+        { id: "BR-07", 名称: "摇滚强力和弦", 进行: "1 — b7 — 4 — 1", 示例: "C5 — Bb5 — F5 — C5", 乐理: "降七级是摇滚特征。", 情绪: "力量、直接", 歌曲: "《Smoke on the Water》", 芦苇说: "强力和弦是摇滚拳头。" },
+        { id: "BR-08", 名称: "流行摇滚5-4-1-6m", 进行: "5 — 4 — 1 — 6m", 示例: "G — F — C — Am", 乐理: "从属到下属，摇滚感。", 情绪: "力量、推进", 歌曲: "《With or Without You》U2", 芦苇说: "摇滚是推进感。" }
+    ],
+    // 7. 离调/过渡类 (6条)
+    离调_过渡: [
+        { id: "MD-01", 名称: "离调华丽进行", 进行: "1M7 — b3M7 — b6M7 — 2m7/5", 示例: "CM7 — EbM7 — AbM7 — Dm7/G", 乐理: "大三度上行，大七色彩华丽。", 情绪: "华丽、期待", 歌曲: "《You Are the Sunshine...》", 芦苇说: "离调是去远方看看。" },
+        { id: "MD-02", 名称: "爵士和弦跳跃", 进行: "E/G# — Am — Dm7 — Bm7b5", 示例: "E/G# — Am — Dm7 — Bm7b5", 乐理: "低音半音上行。", 情绪: "灵动、跳跃", 歌曲: "《Wave》", 芦苇说: "跳跃是爵士的呼吸。" },
+        { id: "MD-03", 名称: "离调大七点缀", 进行: "5(7) — 1 — 4 — b2maj7", 示例: "G7 — C — F — Dbmaj7", 乐理: "b2maj7那不勒斯和弦。", 情绪: "意外、华丽", 歌曲: "《Isn't She Lovely》", 芦苇说: "意外是最好的记忆点。" },
+        { id: "MD-04", 名称: "拿波里和弦进行", 进行: "1 — b2 — 5 — 1", 示例: "C — Db — G — C", 乐理: "b2是那不勒斯和弦。", 情绪: "华丽、转折", 歌曲: "《Unchained Melody》", 芦苇说: "拿波里是意外转折。" },
+        { id: "MD-05", 名称: "增和弦过渡", 进行: "1 — 1+ — 4 — 5", 示例: "C — C+ — F — G", 乐理: "增和弦制造紧张后解决。", 情绪: "紧张、释放", 歌曲: "《Oh! Darling》The Beatles", 芦苇说: "增和弦是问号。" },
+        { id: "MD-06", 名称: "离调降三级", 进行: "1 — b3 — 4 — b6 — 5", 示例: "C — Eb — F — Ab — G", 乐理: "两个离调和弦制造色彩。", 情绪: "华丽、转折", 歌曲: "《Bohemian Rhapsody》", 芦苇说: "离调是去别处看看。" }
+    ],
+    // 8. 经典终止式类 (6条)
+    经典终止式: [
+        { id: "CL-01", 名称: "经典II-V-I", 进行: "6m — 2m7 — 5(7) — 1", 示例: "Am — Dm7 — G7 — C", 乐理: "爵士/流行核心终止式。", 情绪: "解决、圆满", 歌曲: "几乎所有流行歌", 芦苇说: "II-V-I是回家。" },
+        { id: "CL-02", 名称: "文艺复兴终止式", 进行: "4 — 5 — 3m — 6m — 2m — 5 — 1", 示例: "F — G — Em — Am — Dm — G — C", 乐理: "卡农进行。", 情绪: "圆满、治愈", 歌曲: "《卡农》", 芦苇说: "卡农是治愈。" },
+        { id: "CL-03", 名称: "小调终止式", 进行: "6m — 2m — 5 — 1M7", 示例: "Am — Dm — G — CM7", 乐理: "小调II-V-I。", 情绪: "悲伤的圆满", 歌曲: "《我愿意》王菲", 芦苇说: "悲伤也可以圆满。" },
+        { id: "CL-04", 名称: "变格终止式", 进行: "4 — 1", 示例: "F — C", 乐理: "阿门终止，教堂感。", 情绪: "庄严、圆满", 歌曲: "《Amazing Grace》", 芦苇说: "4-1是阿门。" },
+        { id: "CL-05", 名称: "假终止式", 进行: "5 — 6m", 示例: "G — Am", 乐理: "预期到1，却到6m。", 情绪: "意外、温柔", 歌曲: "《Yesterday》The Beatles", 芦苇说: "假终止是骗你眼泪。" },
+        { id: "CL-06", 名称: "流行终止式2", 进行: "4 — 5 — 1", 示例: "F — G — C", 乐理: "最基础的终止式。", 情绪: "明亮、圆满", 歌曲: "无数流行歌", 芦苇说: "4-5-1是句号。" }
+    ]
+};
+
+// ==================== 渲染表格功能 ====================
+let allItems = [];
+
+function loadData() {
+    allItems = [];
+    for (const [cat, items] of Object.entries(chordData)) {
+        items.forEach(item => {
+            allItems.push({ ...item, category: cat });
+        });
+    }
+    updateStats();
+    renderTable();
+}
+
+function updateStats() {
+    const total = allItems.length;
+    document.getElementById("totalCount").innerText = total;
+    document.getElementById("countPL").innerText = allItems.filter(i => i.category === "流行抒情").length;
+    document.getElementById("countEM").innerText = allItems.filter(i => i.category === "伤感_emo").length;
+    document.getElementById("countFL").innerText = allItems.filter(i => i.category === "民谣_清新").length;
+    document.getElementById("countJZ").innerText = allItems.filter(i => i.category === "爵士_R_B").length;
+    document.getElementById("countID").innerText = allItems.filter(i => i.category === "独立民谣").length;
+    document.getElementById("countBR").innerText = allItems.filter(i => i.category === "布鲁斯_摇滚").length;
+    document.getElementById("countMD").innerText = allItems.filter(i => i.category === "离调_过渡").length;
+    document.getElementById("countCL").innerText = allItems.filter(i => i.category === "经典终止式").length;
+    document.getElementById("progressInfo").innerHTML = `🎵 共 ${total} 条和弦模板 | 芦苇创作工坊 · 持续更新中`;
+}
+
+function renderTable() {
+    const emotionFilter = document.getElementById("emotionFilter").value;
+    const categoryFilter = document.getElementById("categoryFilter").value;
+    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+
+    let filtered = allItems.filter(item => {
+        if (categoryFilter !== "all" && item.category !== categoryFilter) return false;
+        if (emotionFilter !== "all" && !item.情绪.includes(emotionFilter)) return false;
+        if (searchTerm) {
+            const searchFields = [item.名称, item.进行, item.歌曲, item.芦苇说].join(" ").toLowerCase();
+            if (!searchFields.includes(searchTerm)) return false;
+        }
+        return true;
+    });
+
+    const tbody = document.getElementById("tableBody");
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:40px;">🎵 没有找到匹配的模板，试试其他筛选条件 ~</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(item => `
+        <tr>
+            <td style="white-space: nowrap;">${item.id}</td>
+            <td style="font-weight: 500;">${item.名称}</td>
+            <td style="font-family: monospace;">${item.进行}<br><span style="font-size:0.65rem; color:#8f9eb0;">${item.示例 || ""}</span></td>
+            <td style="max-width: 320px;">
+                ${item.乐理}
+                <div style="margin-top: 6px; font-style: italic; color: #c9b6a0;">🍃 ${item.芦苇说}</div>
+            </td>
+            <td><span class="emotion-tag">${item.情绪}</span></td>
+            <td style="font-size: 0.7rem;">${item.歌曲 || "—"}</td>
+        </tr>
+    `).join("");
+}// 筛选器事件
+document.getElementById("emotionFilter").addEventListener("change", renderTable);
+document.getElementById("categoryFilter").addEventListener("change", renderTable);
+document.getElementById("searchInput").addEventListener("input", renderTable);
+document.getElementById("resetBtn").addEventListener("click", () => {
+    document.getElementById("emotionFilter").value = "all";
+    document.getElementById("categoryFilter").value = "all";
+    document.getElementById("searchInput").value = "";
+    renderTable();
+});
+
+// 表头排序
+let sortColumn = "id";
+let sortDirection = "asc";
+document.querySelectorAll("th[data-sort]").forEach(th => {
+    th.addEventListener("click", () => {
+        const column = th.getAttribute("data-sort");
+        if (sortColumn === column) {
+            sortDirection = sortDirection === "asc" ? "desc" : "asc";
+        } else {
+            sortColumn = column;
+            sortDirection = "asc";
+        }
+        allItems.sort((a, b) => {
+            let valA = sortColumn === "id" ? a.id : (sortColumn === "name" ? a.名称 : a.情绪);
+            let valB = sortColumn === "id" ? b.id : (sortColumn === "name" ? b.名称 : b.情绪);
+            if (valA < valB) return sortDirection === "asc" ? -1 : 1;
+            if (valA > valB) return sortDirection === "asc" ? 1 : -1;
+            return 0;
+        });
+        renderTable();
+    });
+});
+
+// ==================== 和弦速查功能 ====================
+const noteMap = {
+    "C": 0, "C#": 1, "Db": 1, "D": 2, "D#": 3, "Eb": 3,
+    "E": 4, "F": 5, "F#": 6, "Gb": 6, "G": 7, "G#": 8,
+    "Ab": 8, "A": 9, "A#": 10, "Bb": 10, "B": 11
+};
+const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+const chordFormulas2 = {
+    "maj": { name: "大三和弦", intervals: [0, 4, 7], suffix: "", formula: "1 3 5" },
+    "min": { name: "小三和弦", intervals: [0, 3, 7], suffix: "m", formula: "1 b3 5" },
+    "aug": { name: "增三和弦", intervals: [0, 4, 8], suffix: "aug", formula: "1 3 #5" },
+    "dim": { name: "减三和弦", intervals: [0, 3, 6], suffix: "dim", formula: "1 b3 b5" },
+    "maj7": { name: "大七和弦", intervals: [0, 4, 7, 11], suffix: "maj7", formula: "1 3 5 7" },
+    "7": { name: "属七和弦", intervals: [0, 4, 7, 10], suffix: "7", formula: "1 3 5 b7" },
+    "m7": { name: "小七和弦", intervals: [0, 3, 7, 10], suffix: "m7", formula: "1 b3 5 b7" },
+    "m7b5": { name: "半减七和弦", intervals: [0, 3, 6, 10], suffix: "m7b5", formula: "1 b3 b5 b7" },
+    "dim7": { name: "减七和弦", intervals: [0, 3, 6, 9], suffix: "dim7", formula: "1 b3 b5 bb7" },
+    "maj9": { name: "大九和弦", intervals: [0, 4, 7, 11, 14], suffix: "maj9", formula: "1 3 5 7 9" },
+    "9": { name: "属九和弦", intervals: [0, 4, 7, 10, 14], suffix: "9", formula: "1 3 5 b7 9" },
+    "m9": { name: "小九和弦", intervals: [0, 3, 7, 10, 14], suffix: "m9", formula: "1 b3 5 b7 9" },
+    "11": { name: "属十一和弦", intervals: [0, 4, 7, 10, 14, 17], suffix: "11", formula: "1 3 5 b7 9 11" },
+    "13": { name: "属十三和弦", intervals: [0, 4, 7, 10, 14, 17, 21], suffix: "13", formula: "1 3 5 b7 9 11 13" },
+    "sus2": { name: "挂二和弦", intervals: [0, 2, 7], suffix: "sus2", formula: "1 2 5" },
+    "sus4": { name: "挂四和弦", intervals: [0, 5, 7], suffix: "sus4", formula: "1 4 5" },
+    "add9": { name: "加九和弦", intervals: [0, 4, 7, 14], suffix: "add9", formula: "1 3 5 9" },
+    "madd9": { name: "小加九和弦", intervals: [0, 3, 7, 14], suffix: "madd9", formula: "1 b3 5 9" },
+    "6": { name: "六和弦", intervals: [0, 4, 7, 9], suffix: "6", formula: "1 3 5 6" },
+    "m6": { name: "小六和弦", intervals: [0, 3, 7, 9], suffix: "m6", formula: "1 b3 5 6" },
+    "5": { name: "五和弦", intervals: [0, 7], suffix: "5", formula: "1 5" }
+};
+
+const slashChords = [
+    { name: "C/E", notes: "E C G", formula: "C大三，低音 E" },
+    { name: "C/G", notes: "G C E", formula: "C大三，低音 G" },
+    { name: "C/Bb", notes: "Bb C E G", formula: "C大三，低音 Bb" },
+    { name: "Dm/F", notes: "F D A", formula: "Dm，低音 F" },
+    { name: "Dm7/F", notes: "F D A C", formula: "Dm7，低音 F" },
+    { name: "Dm7/G", notes: "G D F A C", formula: "Dm7，低音 G (2m7/5)" },
+    { name: "Em/G", notes: "G E B", formula: "Em，低音 G" },
+    { name: "Em7/G", notes: "G E B D", formula: "Em7，低音 G" },
+    { name: "F/A", notes: "A F C", formula: "F大三，低音 A" },
+    { name: "Fm/Ab", notes: "Ab F C", formula: "Fm，低音 Ab" },
+    { name: "Fmaj7/A", notes: "A F C E", formula: "Fmaj7，低音 A" },
+    { name: "G/B", notes: "B G D", formula: "G大三，低音 B" },
+    { name: "G7/B", notes: "B G D F", formula: "G7，低音 B" },
+    { name: "Am/C", notes: "C A E", formula: "Am，低音 C" },
+    { name: "Am7/C", notes: "C A E G", formula: "Am7，低音 C" },
+    { name: "Bm/D", notes: "D B F#", formula: "Bm，低音 D" },
+    { name: "Bm7/D", notes: "D B F# A", formula: "Bm7，低音 D" },
+    { name: "Bb/D", notes: "D Bb F", formula: "Bb大三，低音 D" },
+    { name: "Bb7/D", notes: "D Bb F Ab", formula: "Bb7，低音 D" }
+];
+
+const allRoots = ["C", "C#", "Db", "D", "D#", "Eb", "E", "F", "F#", "Gb", "G", "G#", "Ab", "A", "A#", "Bb", "B"];
+const chordTypeKeys2 = ["maj", "min", "aug", "dim", "maj7", "7", "m7", "m7b5", "dim7", "maj9", "9", "m9", "11", "13", "sus2", "sus4", "add9", "madd9", "6", "m6", "5"];
+
+function getChord(root, typeKey) {
+    const formula = chordFormulas2[typeKey];
+    if (!formula) return null;
+    const rootNum = noteMap[root];
+    if (rootNum === undefined) return null;
+    const notes = formula.intervals.map(interval => {
+        const noteNum = (rootNum + interval) % 12;
+        return noteNames[noteNum];
+    });
+    const uniqueNotes = [...new Map(notes.map(n => [n, n])).values()];
+    return {
+        name: root + formula.suffix,
+        notes: uniqueNotes.join(" "),
+        formula: formula.formula,
+        category: formula.name
+    };
+}
+
+function getChordListByRoot(root) {
+    const result = {};
+    for (const typeKey of chordTypeKeys2) {
+        const chord = getChord(root, typeKey);
+        if (chord) {
+            if (!result[chord.category]) result[chord.category] = [];
+            result[chord.category].push(chord);
+        }
+    }
+    return result;
+}
+
+let currentRoot = "C";
+let lookupPanel = null;
+
+function buildChordLookupContent(root) {
+    const chordByCategory = getChordListByRoot(root);
+    let html = `
+        <div class="chord-lookup-header">
+            <h3>🎵 和弦构成音速查 · ${root}</h3>
+            <button class="chord-lookup-close" id="closeLookupBtn">✕</button>
+        </div>
+        <div class="root-selector" id="rootSelector">
+    `;
+    for (const r of allRoots) {
+        html += `<button class="root-btn ${r === root ? 'active' : ''}" data-root="${r}">${r}</button>`;
+    }
+    html += `</div><div class="chord-list">`;
+    
+    // 转位和弦
+    if (slashChords.length > 0) {
+        html += `<div class="chord-category">
+            <div class="chord-category-header" data-category="slash">
+                <div class="chord-category-title">🎸 转位/斜线和弦（${slashChords.length}个）</div>
+                <span class="collapse-icon" id="icon_slash">▼</span>
+            </div>
+            <div class="chord-category-content" id="content_slash">`;
+        slashChords.forEach(chord => {
+            html += `<div class="chord-item"><span class="chord-name">${chord.name}</span><span class="chord-notes">${chord.notes}</span><span class="chord-formula">${chord.formula}</span></div>`;
+        });
+        html += `</div></div>`;
+    }
+    
+    for (const [category, chords] of Object.entries(chordByCategory)) {
+        const categoryId = "cat_" + category.replace(/[^a-zA-Z0-9]/g, '_');
+        html += `
+            <div class="chord-category">
+                <div class="chord-category-header" data-category="${categoryId}">
+                    <div class="chord-category-title">${category}（${chords.length}个）</div>
+                    <span class="collapse-icon" id="icon_${categoryId}">▼</span>
+                </div>
+                <div class="chord-category-content" id="content_${categoryId}">
+        `;
+        chords.forEach(chord => {
+            html += `<div class="chord-item"><span class="chord-name">${chord.name}</span><span class="chord-notes">${chord.notes}</span><span class="chord-formula">${chord.formula}</span></div>`;
+        });
+        html += `</div></div>`;
+    }
+    html += `</div>`;
+    return html;
+}
+
+function bindCollapseFeatures() {
+    const headers = document.querySelectorAll('.chord-category-header');
+    headers.forEach(header => {
+        header.removeEventListener('click', header._handler);
+        const handler = () => {
+            const categoryId = header.dataset.category;
+            const content = document.getElementById(`content_${categoryId}`);
+            const icon = document.getElementById(`icon_${categoryId}`);
+            if (content && icon) {
+                if (content.classList.contains('collapsed')) {
+                    content.classList.remove('collapsed');
+                    icon.classList.remove('collapsed');
+                    icon.textContent = '▼';
+                } else {
+                    content.classList.add('collapsed');
+                    icon.classList.add('collapsed');
+                    icon.textContent = '▶';
+                }
+            }
+        };
+        header.addEventListener('click', handler);
+        header._handler = handler;
+    });
+}
+
+function bindRootButtons() {
+    document.querySelectorAll('#rootSelector .root-btn').forEach(btn => {
+        btn.removeEventListener('click', btn._handler);
+        const handler = () => {
+            const newRoot = btn.dataset.root;
+            if (newRoot && newRoot !== currentRoot) {
+                currentRoot = newRoot;
+                if (lookupPanel) {
+                    // 只改这里：刷新内容，不关闭
+                    const oldOpen = lookupPanel.classList.contains('open');
+                    lookupPanel.innerHTML = buildChordLookupContent(currentRoot);
+                    bindRootButtons();
+                    bindCollapseFeatures();
+                    const closeBtn = document.getElementById('closeLookupBtn');
+                    if (closeBtn) closeBtn.onclick = () => lookupPanel.classList.remove('open');
+                    if (oldOpen) lookupPanel.classList.add('open');
+                }
+            }
+        };
+        btn.addEventListener('click', handler);
+        btn._handler = handler;
+    });
+}
+
+function openChordLookup() {
+    if (lookupPanel) {
+        lookupPanel.classList.add('open');
+        return;
+    }
+    lookupPanel = document.createElement('div');
+    lookupPanel.className = 'chord-lookup-overlay';
+    lookupPanel.innerHTML = buildChordLookupContent(currentRoot);
+    document.body.appendChild(lookupPanel);
+    
+    bindRootButtons();
+    bindCollapseFeatures();
+    const closeBtn = document.getElementById('closeLookupBtn');
+    if (closeBtn) closeBtn.onclick = () => lookupPanel.classList.remove('open');
+    
+    lookupPanel.classList.add('open');
+}
+
+const chordLookupBtn = document.getElementById('chordLookupBtn');
+if (chordLookupBtn) {
+    chordLookupBtn.addEventListener('click', openChordLookup);
+}
+
+document.addEventListener('click', (e) => {
+    if (lookupPanel && lookupPanel.classList.contains('open')) {
+        if (!lookupPanel.contains(e.target) && e.target.id !== 'chordLookupBtn') {
+            lookupPanel.classList.remove('open');
+        }
+    }
+});
+
+loadData();
+</script>
+</body>
+</html>
