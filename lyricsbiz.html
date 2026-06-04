@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>芦苇音乐 · 歌词变现</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 20px;
+            color: #e8e9f0;
+        }
+        .home-btn {
+            position: fixed; bottom: 20px; left: 20px;
+            background: #E69A2E; border: none; border-radius: 40px;
+            padding: 8px 16px; z-index: 1000; cursor: pointer;
+            font-weight: bold; color: #2D1E0C;
+            display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3); text-decoration: none;
+        }
+        .back-to-top {
+            position: fixed; bottom: 20px; right: 20px;
+            background: #E69A2E; border: none; border-radius: 40px;
+            padding: 8px 12px; z-index: 1000; cursor: pointer;
+            font-weight: bold; color: #2D1E0C;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .hero {
+            text-align: center; padding: 40px 20px;
+            background: rgba(15,40,29,0.6); border-radius: 48px;
+            margin-bottom: 30px; border: 1px solid #F2C94C;
+        }
+        .hero h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #FFD966, #E69A2E);
+            -webkit-background-clip: text; background-clip: text;
+            color: transparent; margin-bottom: 12px;
+        }
+        .hero p { color: #AAD4B0; font-size: 0.9rem; max-width: 600px; margin: 0 auto; }
+        .hero-badge {
+            display: inline-block; background: rgba(230,154,46,0.2);
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 0.7rem; color: #E69A2E; margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 1.3rem; font-weight: bold; color: #FFD966;
+            margin-bottom: 20px; border-left: 4px solid #E69A2E;
+            padding-left: 12px; margin-top: 30px;
+        }
+        .section-title:first-of-type { margin-top: 0; }
+        .product-card {
+            background: rgba(31,62,46,0.6); border-radius: 28px;
+            padding: 28px; margin-bottom: 24px;
+            border: 1px solid rgba(242,201,76,0.15);
+            transition: all 0.2s;
+        }
+        .product-card.featured { border: 2px solid #E69A2E; background: rgba(31,62,46,0.8); }
+        .product-card.premium {
+            background: linear-gradient(135deg, rgba(46,87,62,0.9), rgba(31,62,46,0.8));
+            border: 2px solid #FFD966; box-shadow: 0 0 20px rgba(255,217,102,0.2);
+        }
+        .product-header {
+            display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 20px;
+        }
+        .product-badge {
+            background: rgba(230,154,46,0.2); padding: 4px 12px;
+            border-radius: 20px; font-size: 0.7rem; color: #E69A2E;
+        }
+        .product-badge.premium { background: #E69A2E; color: #2D1E0C; }
+        .product-price { font-size: 2rem; font-weight: bold; color: #FFD966; }
+        .product-price small { font-size: 0.8rem; color: #AAD4B0; }
+        .product-title { font-size: 1.3rem; font-weight: bold; color: #F5ECD7; margin-bottom: 12px; }
+        .product-desc { color: #AAD4B0; font-size: 0.85rem; margin-bottom: 16px; line-height: 1.5; }
+        .features-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .features-list span {
+            background: rgba(60,110,74,0.5); padding: 4px 12px;
+            border-radius: 20px; font-size: 0.7rem; color: #C8E6C9;
+        }
+        .btn-buy {
+            background: #E69A2E; border: none; padding: 14px 32px;
+            border-radius: 40px; font-size: 1rem; font-weight: bold;
+            color: #2D1E0C; cursor: pointer; transition: all 0.2s; width: 100%;
+        }
+        .btn-buy:hover { transform: translateY(-2px); background: #f0b050; }
+        .btn-buy.premium { background: #FFD966; color: #2D1E0C; font-size: 1.1rem; }
+        .modal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            z-index: 10000; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #1a3a2a; border-radius: 28px; padding: 30px;
+            max-width: 400px; width: 90%; text-align: center;
+            border: 1px solid #F2C94C;
+        }
+        .modal-content h3 { color: #FFD966; margin-bottom: 16px; }
+        .modal-content input {
+            width: 100%; padding: 12px; border-radius: 40px;
+            border: 1px solid #F2C94C; background: #2a4a3a;
+            color: #F5ECD7; font-size: 1rem; text-align: center; margin-bottom: 16px;
+        }
+        .modal-content button {
+            background: #E69A2E; border: none; padding: 10px 20px;
+            border-radius: 40px; font-weight: bold; cursor: pointer; margin: 5px;
+        }
+        .modal-content button:hover { background: #f0b050; }
+        .error-msg { color: #ff8888; font-size: 0.8rem; margin-top: 10px; }
+        .course-content { display: none; margin-top: 20px; }
+        .course-card {
+            background: rgba(31,62,46,0.6); border-radius: 20px;
+            padding: 20px; margin-bottom: 16px; border-left: 4px solid #E69A2E;
+            transition: all 0.2s;
+        }
+        .course-card:hover { background: rgba(31,62,46,0.8); }
+        .course-card h3 { color: #FFD966; margin-bottom: 12px; font-size: 1rem; }
+        .course-card p { color: #C8E6C9; font-size: 0.8rem; line-height: 1.6; }
+        .course-card.premium { border-left: 4px solid #FFD966; background: rgba(46,87,62,0.5); }
+        .module-badge {
+            display: inline-block; background: rgba(230,154,46,0.15);
+            padding: 2px 8px; border-radius: 20px;
+            font-size: 0.6rem; color: #E69A2E; margin-bottom: 8px;
+        }
+        .scroll-hint {
+            background: rgba(230,154,46,0.15); border: 1px solid #E69A2E;
+            border-radius: 16px; padding: 12px; margin: 20px 0; text-align: center;
+        }
+        .scroll-hint p { color: #FFD966; font-size: 0.85rem; }
+        .footer {
+            text-align: center; color: #b8aa78; font-size: 0.55rem;
+            margin-top: 25px; padding-top: 15px; border-top: 1px solid #F2C94C40;
+        }
+        .btn-download { background: #3C6E4A; margin-top: 10px; }
+        .btn-download:hover { background: #4d8a5e; transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+<a href="index.html" class="home-btn">🏠 返回首页</a >
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
+<div class="container">
+    <div class="hero">
+        <div class="hero-badge"> 芦苇原创 · 全网独家</div>
+        <h1>歌词变现训练营</h1>
+        <p>从0到1，写一首能卖钱的词。不是教写诗，是教“卖词”。</p>
+        <p style="font-size: 0.75rem; margin-top: 12px;"> 21天系统学习 · 4大变现渠道 · 芦苇亲改</p>
+    </div>
+    <!-- 产品1：入门引流课（9.9元） -->
+    <div class="product-card" id="introCard">
+        <div class="product-header">
+            <span class="product-badge"> 入门首选</span>
+            <div class="product-price">¥9.9</div>
+        </div>
+        <div class="product-title">《3天学会写一首能卖钱的词》</div>
+        <div class="product-desc">零基础入门 · 3天解锁变现技能 · 1次芦苇点评作业</div>
+        <div class="features-list">
+            <span>✅ 3节录播课</span>
+            <span>✅ 1次芦苇点评作业</span>
+            <span>✅ 永久回看</span>
+            <span>✅ 微信群答疑</span>
+        </div>
+        <button class="btn-buy" data-product="intro"> 立即购买 ¥9.9</button>
+    </div>
+    <!-- 产品2：核心训练营（399元） -->
+    <div class="product-card featured" id="bootcampCard">
+        <div class="product-header">
+            <span class="product-badge">⭐ 最受欢迎 · 已开3期</span>
+            <div class="product-price">¥399</div>
+        </div>
+        <div class="product-title">《歌词变现训练营 · 第1期》</div>
+        <div class="product-desc">系统学习三大变现渠道 · 21天从零到出师 · 送收歌渠道清单</div>
+        <div class="features-list">
+            <span>✅ 12节视频课</span>
+            <span>✅ 4次直播答疑</span>
+            <span>✅ 4次作业批改</span>
+            <span>✅ 永久社群</span>
+            <span>✅ 收歌渠道对接</span>
+        </div>
+        <button class="btn-buy" data-product="bootcamp"> 立即报名 ¥399</button>
+    </div>
+    <!-- 产品3：高端作词作曲录播课（999元） -->
+    <div class="product-card premium" id="premiumCard">
+        <div class="product-header">
+            <span class="product-badge premium"> 芦苇亲授 · 高阶进阶</span>
+            <div class="product-price">¥999</div>
+        </div>
+        <div class="product-title">《高端作词作曲录播课》</div>
+        <div class="product-desc">从作词到作曲，从旋律到编配，系统化提升创作能力。适合已有基础、想专业进阶的创作者。</div>
+        <div class="features-list">
+            <span>✅ 24节视频课（约30小时）</span>
+            <span>✅ 作曲基础：旋律写作、动机发展</span>
+            <span>✅ 和声进阶：七和弦、九和弦、替代和弦</span>
+            <span>✅ 编曲入门：钢琴、吉他、弦乐编配</span>
+            <span>✅ 12次芦苇直播答疑</span>
+            <span>✅ 6次作品深度批改</span>
+            <span>✅ 永久回看 + 永久社群</span>
+        </div>
+        <button class="btn-buy premium" data-product="premium"> 立即报名 ¥999</button>
+    </div>
+    <!-- 产品4：会员订阅（299元/年） -->
+    <div class="product-card" id="memberCard">
+        <div class="product-header">
+            <span class="product-badge">✨ 会员订阅</span>
+            <div class="product-price">¥299<span style="font-size: 0.8rem;">/年</span></div>
+        </div>
+        <div class="product-title">芦苇会员 · 写词人专享</div>
+        <div class="features-list">
+            <span>✅ 每月2次直播答疑</span>
+            <span>✅ 每月1次歌词批改</span>
+            <span>✅ 收歌渠道实时推送</span>
+            <span>✅ 会员专属案例库</span>
+            <span>✅ 会员专属社群</span>
+        </div>
+        <button class="btn-buy" data-product="member">⭐ 开通会员 ¥299/年</button>
+    </div>
+    <!-- 产品5：1对1改词（199元/首） -->
+    <div class="product-card" id="editCard">
+        <div class="product-header">
+            <span class="product-badge">✍️ 1对1服务</span>
+            <div class="product-price">¥199<span style="font-size: 0.8rem;">起/首</span></div>
+        </div>
+        <div class="product-title">1对1改词 · 芦苇亲改</div>
+        <div class="features-list">
+            <span>✅ 芦苇本人改词</span>
+            <span>✅ 市场定位建议</span>
+            <span>✅ 渠道推荐</span>
+            <span>✅ 24小时交付</span>
+            <span>✅ 不满意退款</span>
+        </div>
+        <button class="btn-buy" data-product="edit">✍️ 立即预约 ¥199</button>
+    </div>
+    <!-- 课程内容区域（购买后解锁显示） -->
+    <div id="introContent" class="course-content"><div class="section-title"> 引流课 · 课程大纲</div><div class="course-card"><span class="module-badge">第1课</span><h3>认知篇：什么样的歌词能卖钱？</h3><p>歌词不是诗，是产品 · 四大变现渠道 · 爆款歌词拆解</p></div><div class="course-card"><span class="module-badge">第2课</span><h3>技能篇：3个公式写出会传播的金句</h3><p>动词+难+动词 · 我+动作+结果 · 数字+名词</p></div><div class="course-card"><span class="module-badge">第3课</span><h3>实战篇：从金句到完整歌词</h3><p>歌名设计 · 主歌+副歌结构 · 歌词检查清单</p></div><div class="course-card"><h3> 引流课资源</h3><p>课程视频链接、PPT课件</p><button class="btn-buy btn-download" data-download="intro"> 下载引流课资源</button></div></div>
+    <div id="bootcampContent" class="course-content"><div class="section-title"> 歌词变现训练营 · 课程大纲</div><div class="course-card"><span class="module-badge">第1课</span><h3>下沉市场的用户画像与需求逻辑</h3><p>下沉用户的三大特征 · 听歌场景分析 · 下沉歌词的核心公式</p></div><div class="course-card"><span class="module-badge">第2课</span><h3>15秒爆款公式</h3><p>3秒定调 · 5秒金句 · 7秒情绪高潮 · 金句的五种类型</p></div><div class="course-card"><span class="module-badge">第3课</span><h3>金句的微调技术</h3><p>6种微调方法：时间锚点、加动作、加后果、改人称等</p></div><div class="course-card"><span class="module-badge">第4课</span><h3>投稿实战</h3><p>收歌渠道的四种类型 · 投稿包标准化 · 推荐语模板</p></div><div class="course-card"><span class="module-badge">第5课</span><h3>主流市场要什么？</h3><p>下沉vs主流的本质差异 · 主流歌词的3个核心要素</p></div><div class="course-card"><span class="module-badge">第6课</span><h3>主流歌词的三段式结构</h3><p>主歌A·场景铺设 · 主歌B·情绪递进 · 副歌·结论与记忆点</p></div><div class="course-card"><span class="module-badge">第7课</span><h3>画面感写作</h3><p>5种画面感技法：动词具象、名词细节、时间锚点等</p></div><div class="course-card"><span class="module-badge">第8课</span><h3>押韵与节奏</h3><p>押韵的三种方式 · 节奏设计方法 · 朗读测试</p></div><div class="course-card"><span class="module-badge">第9课</span><h3>短视频BGM的3秒法则</h3><p>算法逻辑 · 3秒定调 · 15秒高潮 · 可循环段落设计</p></div><div class="course-card"><span class="module-badge">第10课</span><h3>BGM的搜索友好型设计</h3><p>歌名即关键词 · 歌词关键词布局</p></div><div class="course-card"><span class="module-badge">第11课</span><h3>BGM变现渠道与自营账号</h3><p>卖给MCN/音乐发行公司 · 从0到1起号</p></div><div class="course-card"><span class="module-badge">第12课</span><h3>从创作者到“歌词生意人”</h3><p>定价方法论 · 版权保护 · 个人品牌 · 买家池建立</p></div><div class="course-card"><h3> 训练营课程资源下载</h3><p>视频课链接、PPT课件、作业模板、收歌渠道清单</p><button class="btn-buy btn-download" data-download="bootcamp"> 下载训练营资源</button></div></div>
+    <div id="premiumContent" class="course-content"><div class="section-title"> 高端作词作曲录播课 · 课程大纲</div><div class="course-card premium"><span class="module-badge">第1-24课</span><h3>完整作曲、和声、编曲体系</h3><p>涵盖旋律写作、七和弦、替代和弦、转调、钢琴吉他弦乐编配、词曲咬合、Demo制作等24节大课</p></div><div class="course-card premium"><h3> 高端课资源下载</h3><p>24节视频课链接、PPT课件、作业模板、乐谱素材包</p><button class="btn-buy btn-download" data-download="premium"> 下载高端课资源</button></div></div>
+    <div class="footer">
+        © 芦苇音乐 · 歌词变现训练营<br>
+        芦苇说：不是写不好，是写给等不及的人。
+    </div>
+</div>
+<!-- 会员服务界面（默认隐藏） -->
+<div id="memberContent" class="course-content" style="display:none;">
+    <div class="course-card">
+        <h3>⭐ 会员专属服务</h3>
+        <p>✅ 每月2次直播答疑</p >
+        <p>✅ 每月1次歌词批改</p >
+        <p>✅ 收歌渠道实时推送</p >
+        <p>✅ 会员专属社群</p >
+        <p style="margin-top:16px;">📱 请联系芦苇老师微信：<strong>jianjiayinyue</strong> 进入会员群</p >
+    </div>
+</div>
+
+<!-- 1对1改词服务界面（默认隐藏） -->
+<div id="editContent" class="course-content" style="display:none;">
+    <div class="course-card">
+        <h3>✍️ 1对1改词服务</h3>
+        <p>✅ 芦苇本人亲自改词</p >
+        <p>✅ 市场定位建议</p >
+        <p>✅ 渠道推荐</p >
+        <p>✅ 24小时交付</p >
+        <p>✅ 不满意退款</p >
+        <p style="margin-top:16px;">📱 请添加芦苇老师微信：<strong>jianjiayinyue</strong>，发送歌词开始一对一服务</p >
+    </div>
+</div>
+<!-- 统一付款弹窗 -->
+<div id="unlockModal" class="modal">
+    <div class="modal-content">
+        <h3>🔓 解锁课程</h3>
+        <div style="background:#2a4a3a; padding:20px; border-radius:16px; margin-bottom:16px; text-align:center;">
+            <p style="color:#FFD966; font-size:0.8rem;">👇 点击图片放大后扫码 👇</p >
+            <img src="我的收款码.jpg" id="payQrCode" style="width:150px; height:150px; margin:10px auto; display:block; border-radius:12px; cursor:pointer;">
+            <p style="color:#AAD4B0; font-size:0.65rem; margin-top:8px;">点击图片放大，长按保存</p >
+        </div>
+        <input type="text" id="unlockCode" placeholder="输入激活码">
+        <button id="unlockBtn">✅ 解锁课程</button>
+        <button id="closeModalBtn">❌ 关闭</button>
+        <div id="unlockError" class="error-msg"></div>
+        <p style="color:#AAD4B0; font-size:0.6rem; margin-top:12px;">支付后联系客服领取激活码<br>客服微信: jianjiayinyue</p >
+    </div>
+</div>
+<script>
+    const VALID_CODES = {
+        intro: "LWEI0099",
+        bootcamp: "LWEI3992024",
+        premium: "LWEI9992024",
+        member: "LWEI2992024",
+        edit: "EDIT2024"
+    };
+    let currentProduct = null;
+    function checkUnlocked(productId) {
+        return localStorage.getItem('lyrics_course_' + productId) === 'true';
+    }
+    function showUnlockModal(productId) {
+        currentProduct = productId;
+        var modal = document.getElementById('unlockModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            document.getElementById('unlockCode').value = '';
+            document.getElementById('unlockError').innerText = '';
+        } else {
+            alert('弹窗加载失败');
+        }
+    }
+    function closeModal() {
+        var modal = document.getElementById('unlockModal');
+        if (modal) modal.style.display = 'none';
+        currentProduct = null;
+    }
+    function verifyCode() {
+        var code = document.getElementById('unlockCode').value.trim();
+        if (!currentProduct) {
+            document.getElementById('unlockError').innerText = '❌ 请重新选择课程';
+            return;
+        }
+        var expectedCode = VALID_CODES[currentProduct];
+        if (!expectedCode) {
+            document.getElementById('unlockError').innerText = '❌ 课程代码错误';
+            return;
+        }
+        if (code === expectedCode) {
+            localStorage.setItem('lyrics_course_' + currentProduct, 'true');
+            closeModal();
+            location.reload();
+        } else {
+            document.getElementById('unlockError').innerText = '❌ 激活码错误';
+        }
+    }
+    function setupDownloads() {
+        document.querySelectorAll('[data-download]').forEach(btn => {
+            btn.onclick = function() {
+                var t = this.getAttribute('data-download');
+                if (t === 'intro') alert(' 引流课资源：视频链接、PPT课件');
+                else if (t === 'bootcamp') alert(' 训练营资源：视频合集、收歌渠道清单');
+                else if (t === 'premium') alert(' 高端课资源：24节视频、乐谱素材包');
+                else alert('请联系客服获取');
+            };
+        });
+    }
+    function setupQrZoom() {
+        var qr = document.getElementById('payQrCode');
+        if (qr) {
+            qr.onclick = function() {
+                var ov = document.createElement('div');
+                ov.style.position = 'fixed';
+                ov.style.top = '0';
+                ov.style.left = '0';
+                ov.style.width = '100%';
+                ov.style.height = '100%';
+                ov.style.background = 'rgba(0,0,0,0.9)';
+                ov.style.zIndex = '20000';
+                ov.style.display = 'flex';
+                ov.style.alignItems = 'center';
+                ov.style.justifyContent = 'center';
+                ov.style.cursor = 'pointer';
+                var big = document.createElement('img');
+                big.src = qr.src;
+                big.style.maxWidth = '90%';
+                big.style.maxHeight = '90%';
+                ov.appendChild(big);
+                document.body.appendChild(ov);
+                ov.onclick = function() { document.body.removeChild(ov); };
+            };
+        }
+    }
+    window.onload = function() {
+        var buyBtns = document.querySelectorAll('.btn-buy');
+        for (var i = 0; i < buyBtns.length; i++) {
+            var btn = buyBtns[i];
+            if (btn.getAttribute('data-product')) {
+                btn.onclick = (function(prod) {
+                    return function() { showUnlockModal(prod); };
+                })(btn.getAttribute('data-product'));
+            }
+        }
+        setupDownloads();
+        setupQrZoom();
+        document.getElementById('unlockBtn').onclick = verifyCode;
+        document.getElementById('closeModalBtn').onclick = closeModal;
+        document.getElementById('unlockModal').onclick = function(e) {
+            if (e.target === this) closeModal();
+        };
+        if (checkUnlocked('intro')) {
+            document.getElementById('introCard').style.display = 'none';
+            document.getElementById('introContent').style.display = 'block';
+        }
+        if (checkUnlocked('bootcamp')) {
+            document.getElementById('bootcampCard').style.display = 'none';
+            document.getElementById('bootcampContent').style.display = 'block';
+        }
+        if (checkUnlocked('premium')) {
+            document.getElementById('premiumCard').style.display = 'none';
+            document.getElementById('premiumContent').style.display = 'block';
+        }
+        if (checkUnlocked('member')) {
+            document.getElementById('memberCard').style.display = 'none';
+            if (document.getElementById('memberContent')) {
+                document.getElementById('memberContent').style.display = 'block';
+            }
+        }
+        if (checkUnlocked('edit')) {
+            document.getElementById('editCard').style.display = 'none';
+            if (document.getElementById('editContent')) {
+                document.getElementById('editContent').style.display = 'block';
+            }
+        }
+    };
+</script>
+</body>
+</html>
+

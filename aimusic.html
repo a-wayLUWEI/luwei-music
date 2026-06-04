@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>芦苇音乐 · AI音乐排行榜</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: system-ui, 'Segoe UI', sans-serif;
+            padding: 20px;
+            color: #e8e9f0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .hero {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(15, 40, 29, 0.6);
+            border-radius: 48px;
+            margin-bottom: 30px;
+            border: 1px solid #F2C94C;
+        }
+        .hero h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #FFD966, #E69A2E);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero p {
+            margin-top: 8px;
+            opacity: 0.9;
+        }
+        /* 原上传区域默认隐藏，用悬浮按钮代替 */
+        .upload-section {
+            display: none;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 40px;
+            color: #b8aa78;
+        }
+        audio {
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 30px;
+        }
+        .rank-card {
+            background: rgba(31, 62, 46, 0.7);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(2px);
+            transition: 0.2s;
+            border: 1px solid rgba(242, 201, 76, 0.3);
+        }
+        .rank-card:hover {
+            border-color: #F2C94C;
+        }
+        .rank-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFD966;
+        }
+        .song-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0 5px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: rgba(31, 62, 46, 0.6);
+            border: 1px solid #F2C94C;
+            padding: 10px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            text-align: center;
+            flex: 1;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .tab-btn.active {
+            background: #E69A2E;
+            color: #2D1E0C;
+            border-color: #E69A2E;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .action-btn {
+            background: transparent;
+            border: 1px solid #E69A2E;
+            padding: 6px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            margin-right: 10px;
+            width: auto;
+            color: #FFD966;
+            font-weight: normal;
+        }
+        .action-btn:hover {
+            background: #E69A2E;
+            color: #2D1E0C;
+        }
+        .demo-badge {
+            background: #E69A2E;
+            color: #2D1E0C;
+            font-size: 0.7rem;
+            padding: 2px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-left: 8px;
+            font-weight: bold;
+        }
+        .loading-text {
+            text-align: center;
+            padding: 40px;
+            color: #FFD966;
+        }
+        /* ========== 悬浮上传按钮样式 ========== */
+        .floating-upload-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            background: #E69A2E;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 999;
+            transition: 0.2s;
+        }
+        .floating-upload-btn:hover {
+            transform: scale(1.05);
+            background: #FFB347;
+        }
+        .floating-upload-btn span {
+            font-size: 30px;
+            font-weight: bold;
+            color: #2D1E0C;
+        }
+        /* ========== 弹窗样式 ========== */
+        .upload-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .upload-modal.active {
+            display: flex;
+        }
+        .upload-modal-content {
+            background: #1a3a2a;
+            max-width: 500px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 28px;
+            padding: 20px;
+            border: 1px solid #F2C94C;
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 32px;
+            cursor: pointer;
+            color: #F2C94C;
+            z-index: 10;
+        }
+        .close-modal:hover {
+            color: #E69A2E;
+        }
+        /* 弹窗内的表单样式 */
+        .upload-modal-content input,
+        .upload-modal-content select,
+        .upload-modal-content textarea {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border-radius: 40px;
+            border: 1px solid #F2C94C;
+            background: #2a4a3a;
+            color: #e8e9f0;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .upload-modal-content button {
+            background: #E69A2E;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            color: #2D1E0C;
+        }
+        .upload-modal-content .promise-box {
+            background: rgba(230, 154, 46, 0.1);
+            padding: 16px;
+            border-radius: 16px;
+            margin: 16px 0;
+        }
+        .upload-modal-content h3 {
+            color: #FFD966;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1> 芦苇音乐 · AI音乐排行榜</h1>
+        <p>上传你的音乐 · 点赞打榜 · 预留合作</p>
+    </div>
+    <!-- 四个榜单选项卡 -->
+    <div class="tabs">
+        <div class="tab-btn active" onclick="window.switchTab('ai', this)">🤖 纯AI作品榜</div>
+        <div class="tab-btn" onclick="window.switchTab('hybrid', this)">🤝 人机共创榜</div>
+        <div class="tab-btn" onclick="window.switchTab('original', this)">✍️ 原创作品榜</div>
+        <div class="tab-btn" onclick="window.switchTab('demo', this)"> Demo精选</div>
+    </div>
+    <!-- 四个榜单容器 -->
+    <div id="tab-ai" class="tab-content active">
+        <div id="ai-list"></div>
+    </div>
+    <div id="tab-hybrid" class="tab-content">
+        <div id="hybrid-list"></div>
+    </div>
+    <div id="tab-original" class="tab-content">
+        <div id="original-list"></div>
+    </div>
+    <div id="tab-demo" class="tab-content">
+        <div id="demo-list"></div>
+    </div>
+    <!-- 原上传区域（隐藏，被克隆到弹窗中） -->
+    <div class="upload-section">
+        <h3> 上传你的作品</h3>
+        <select id="category">
+            <option value="ai">🤖 纯AI作品榜</option>
+            <option value="hybrid">🤝 人机共创榜</option>
+            <option value="original">✍️ 原创作品榜</option>
+        </select>
+        <input type="text" id="artistName" placeholder="艺名 / 乐队名 *">
+        <input type="text" id="songTitle" placeholder="歌名 *">
+        <input type="text" id="genre" placeholder="风格 (例如: 电子/民谣/说唱)">
+        <input type="file" id="audioFile" accept="audio/*">
+        <input type="text" id="contactInfo" placeholder="联系方式（微信/邮箱）人机共创/原创必填">
+        <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <input type="checkbox" id="isDemo" style="width: 20px; margin: 0;">  标记为Demo版本（未正式发行）
+        </label>
+        <div id="hybridFields" style="display: none;">
+            <input type="text" id="melodyBy" placeholder="旋律创作 (你的艺名 / AI)">
+            <input type="text" id="lyricsBy" placeholder="歌词创作 (你的艺名 / AI)">
+            <input type="text" id="arrangementBy" placeholder="伴奏/编曲 (你的艺名 / AI)">
+        </div>
+        <div class="promise-box">
+            <label style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="promise" style="width: 18px; margin: 0;">  本人承诺信息真实有效，作品无版权争议，否则承担法律责任。
+            </label>
+        </div>
+        <button id="submitBtn">✨ 提交审核 ✨</button>
+        <div class="contact-note" style="text-align: center; margin-top: 12px;">
+            ⭐ 审核通过后将在榜单展示，点赞越多排名越前
+        </div>
+    </div>
+    <div class="footer">
+        © 芦苇音乐 · 侵权/合作请联系微信: jianjiayinyue
+    </div>
+</div>
+<!-- 悬浮按钮 -->
+<div class="floating-upload-btn" id="floatingUploadBtn">
+    <span>+</span>
+</div>
+<!-- 弹窗 -->
+<div class="upload-modal" id="uploadModal">
+    <div class="upload-modal-content">
+        <span class="close-modal" id="closeModalBtn">&times;</span>
+        <div id="modalUploadForm">
+            <!-- 表单会被克隆到这里 -->
+        </div>
+    </div>
+</div>
+<script>
+    // ==================== 1. Tab 切换函数 ====================
+    window.switchTab = function(tabId, btnElement) {
+        var allBtns = document.querySelectorAll('.tab-btn');
+        for (var i = 0; i < allBtns.length; i++) {
+            allBtns[i].classList.remove('active');
+        }
+        btnElement.classList.add('active');
+        var allContents = document.querySelectorAll('.tab-content');
+        for (var i = 0; i < allContents.length; i++) {
+            allContents[i].classList.remove('active');
+        }
+        var targetId = 'tab-' + tabId;
+        var targetContent = document.getElementById(targetId);
+        if (targetContent) {
+            targetContent.classList.add('active');
+        }
+    };
+    // ==================== 2. Supabase 配置 ====================
+    const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let allSongs = { ai: [], hybrid: [], original: [] };
+    // ==================== 3. 加载和渲染 ====================
+    async function loadSongs() {
+        for (let cat of ['ai', 'hybrid', 'original']) {
+            const container = document.getElementById(`${cat}-list`);
+            if (container) container.innerHTML = '<div class="loading-text"> 加载音乐中...</div>';
+        }
+        const demoContainer = document.getElementById('demo-list');
+        if (demoContainer) demoContainer.innerHTML = '<div class="loading-text"> 加载Demo中...</div>';
+        for (let cat of ['ai', 'hybrid', 'original']) {
+            const { data, error } = await supabaseClient
+                .from('songs')
+                .select('*')
+                .eq('category', cat)
+                .eq('status', 'active');
+            if (!error && data) {
+                allSongs[cat] = data;
+            } else {
+                allSongs[cat] = [];
+            }
+        }
+        renderAll();
+    }
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    function renderAll() {
+        for (let cat of ['ai', 'hybrid', 'original']) {
+            const container = document.getElementById(`${cat}-list`);
+            if (!container) continue;
+            const songs = allSongs[cat] || [];
+            songs.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+            if (songs.length === 0) {
+                container.innerHTML = '<div class="rank-card" style="text-align:center;">✨ 暂无作品，快来上传第一首吧 ✨</div>';
+                continue;
+            }
+            container.innerHTML = songs.map((s, idx) => {
+                let extraInfo = '';
+                if (cat === 'hybrid' || cat === 'original') {
+                    const parts = [];
+                    if (s.melody_by) parts.push(` 旋律: ${escapeHtml(s.melody_by)}`);
+                    if (s.lyrics_by) parts.push(` 词: ${escapeHtml(s.lyrics_by)}`);
+                    if (s.arrangement_by) parts.push(` 编曲: ${escapeHtml(s.arrangement_by)}`);
+                    if (parts.length) extraInfo = `<div style="font-size:0.8rem; opacity:0.8; margin: 5px 0;">${parts.join(' · ')}</div>`;
+                }
+                const demoBadge = s.is_demo ? '<span class="demo-badge">Demo</span>' : '';
+                return `
+                    <div class="rank-card">
+                        <div class="rank-number">#${idx + 1}</div>
+                        <div class="song-title">${escapeHtml(s.title)} ${demoBadge}</div>
+                        <div> ${escapeHtml(s.artist)} | ${s.genre || '未分类'} |  ${s.likes || 0} 票</div>
+                        ${extraInfo}
+                        ${s.audio_url ? `<audio controls src="${s.audio_url}" preload="metadata"></audio>` : '<div style="color:#ffaa66;">⚠️ 音频链接失效</div>'}
+                        <div style="margin-top: 12px;">
+                            <button class="action-btn" onclick="window.likeSong('${s.id}', '${cat}')"> 点赞</button>
+                            <button class="action-btn" onclick="window.interest('${escapeHtml(s.title)}', '${escapeHtml(s.artist)}')"> 预留/合作</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        const demos = [
+            ...(allSongs.hybrid || []),
+            ...(allSongs.original || [])
+        ].filter(s => s.is_demo === true);
+        demos.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+        const demoContainer = document.getElementById('demo-list');
+        if (demoContainer) {
+            if (demos.length === 0) {
+                demoContainer.innerHTML = '<div class="rank-card" style="text-align:center;"> 暂无Demo作品，标记Demo版本会在这里出现~</div>';
+            } else {
+                demoContainer.innerHTML = demos.map((s, idx) => {
+                    let catLabel = s.category === 'hybrid' ? '🤝人机共创' : '✍️原创';
+                    return `
+                        <div class="rank-card">
+                            <div class="rank-number">#${idx + 1}</div>
+                            <div class="song-title">${escapeHtml(s.title)} <span class="demo-badge">Demo</span></div>
+                            <div> ${escapeHtml(s.artist)} | ${catLabel} |  ${s.likes || 0} 票</div>
+                            ${s.audio_url ? `<audio controls src="${s.audio_url}" preload="metadata"></audio>` : ''}
+                            <div style="margin-top: 12px;">
+                                <button class="action-btn" onclick="window.likeSong('${s.id}', '${s.category}')"> 点赞</button>
+                                <button class="action-btn" onclick="window.interest('${escapeHtml(s.title)}', '${escapeHtml(s.artist)}')"> 预留/合作</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+    }
+    window.likeSong = async (id, cat) => {
+        const song = allSongs[cat]?.find(s => s.id === id);
+        if (!song) return;
+        const newLikes = (song.likes || 0) + 1;
+        await supabaseClient.from('songs').update({ likes: newLikes }).eq('id', id);
+        song.likes = newLikes;
+        renderAll();
+    };
+    window.interest = (title, artist) => {
+        alert(` 对《${title}》- ${artist} 感兴趣？\n 请添加芦苇老师微信：jianjiayinyue 协助对接版权/演出/发行。`);
+    };
+    // ==================== 4. 悬浮弹窗逻辑 ====================
+    function initFloatingButton() {
+        const floatingBtn = document.getElementById('floatingUploadBtn');
+        const modal = document.getElementById('uploadModal');
+        const closeBtn = document.getElementById('closeModalBtn');
+        if (!floatingBtn || !modal) {
+            console.error('找不到悬浮按钮或弹窗');
+            return;
+        }
+        // 打开弹窗
+        floatingBtn.onclick = function() {
+            modal.classList.add('active');
+        };
+        // 关闭弹窗（X按钮）
+        if (closeBtn) {
+            closeBtn.onclick = function() {
+                modal.classList.remove('active');
+            };
+        }
+        // 点击遮罩关闭
+        modal.onclick = function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        };
+        // 把原表单克隆到弹窗里
+        const originalForm = document.querySelector('.upload-section');
+        const modalFormContainer = document.getElementById('modalUploadForm');
+        if (originalForm && modalFormContainer) {
+            const clone = originalForm.cloneNode(true);
+            clone.style.display = 'block';
+            modalFormContainer.innerHTML = '';
+            modalFormContainer.appendChild(clone);
+            // 重新绑定弹窗内表单的提交事件和联动逻辑
+            rebindModalFormEvents(modalFormContainer, modal);
+        }
+    }
+    function rebindModalFormEvents(container, modal) {
+        // 重新绑定分类切换显示字段
+        const categorySelect = container.querySelector('#category');
+        const hybridFields = container.querySelector('#hybridFields');
+        if (categorySelect && hybridFields) {
+            function toggleFields() {
+                hybridFields.style.display = (categorySelect.value === 'hybrid' || categorySelect.value === 'original') ? 'block' : 'none';
+            }
+            categorySelect.addEventListener('change', toggleFields);
+            toggleFields();
+        }
+        // 重新绑定提交按钮
+        const submitBtn = container.querySelector('#submitBtn');
+        if (submitBtn) {
+            submitBtn.onclick = async function() {
+                // 从弹窗内获取数据
+                const category = container.querySelector('#category').value;
+                const artist = container.querySelector('#artistName').value.trim();
+                const title = container.querySelector('#songTitle').value.trim();
+                const audioFile = container.querySelector('#audioFile').files[0];
+                const genre = container.querySelector('#genre').value.trim();
+                const contactInfo = container.querySelector('#contactInfo').value.trim();
+                const isDemoChecked = container.querySelector('#isDemo').checked;
+                const promiseChecked = container.querySelector('#promise').checked;
+                if (!artist) { alert('请填写艺名'); return; }
+                if (!title) { alert('请填写歌名'); return; }
+                if (!audioFile) { alert('请选择音频文件'); return; }
+                if (!promiseChecked) { alert('请勾选承诺书'); return; }
+                if ((category === 'hybrid' || category === 'original') && !contactInfo) {
+                    alert('人机共创榜 / 原创作品榜 必须填写联系方式');
+                    return;
+                }
+                const fileExt = audioFile.name.split('.').pop();
+                const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+                const { error: uploadError } = await supabaseClient.storage.from('audio').upload(fileName, audioFile);
+                if (uploadError) {
+                    alert('音频上传失败: ' + uploadError.message);
+                    return;
+                }
+                const { data: publicUrlData } = supabaseClient.storage.from('audio').getPublicUrl(fileName);
+                const audioUrl = publicUrlData.publicUrl;
+                const newSong = {
+                    id: Date.now().toString() + '_' + Math.random().toString(36).substring(2, 6),
+                    category: category,
+                    title: title,
+                    artist: artist,
+                    genre: genre || '未分类',
+                    audio_url: audioUrl,
+                    contact: contactInfo || '',
+                    is_demo: isDemoChecked,
+                    likes: 0,
+                    status: 'pending',
+                    melody_by: container.querySelector('#melodyBy')?.value || '',
+                    lyrics_by: container.querySelector('#lyricsBy')?.value || '',
+                    arrangement_by: container.querySelector('#arrangementBy')?.value || ''
+                };
+                const { error: insertError } = await supabaseClient.from('songs').insert([newSong]);
+                if (insertError) {
+                    alert('提交失败: ' + insertError.message);
+                    return;
+                }
+                alert('✅ 提交成功！审核通过后会立刻展示在对应榜单。');
+                // 清空弹窗内的表单
+                container.querySelector('#artistName').value = '';
+                container.querySelector('#songTitle').value = '';
+                container.querySelector('#genre').value = '';
+                container.querySelector('#audioFile').value = '';
+                container.querySelector('#contactInfo').value = '';
+                container.querySelector('#isDemo').checked = false;
+                if (container.querySelector('#melodyBy')) container.querySelector('#melodyBy').value = '';
+                if (container.querySelector('#lyricsBy')) container.querySelector('#lyricsBy').value = '';
+                if (container.querySelector('#arrangementBy')) container.querySelector('#arrangementBy').value = '';
+                container.querySelector('#promise').checked = false;
+                // 关闭弹窗并刷新榜单
+                modal.classList.remove('active');
+                await loadSongs();
+            };
+        }
+    }
+    // ==================== 5. 启动 ====================
+    loadSongs();
+    initFloatingButton();
+</script>
+</body>
+</html>
+
