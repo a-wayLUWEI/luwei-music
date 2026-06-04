@@ -217,11 +217,26 @@
         <button class="login-btn" id="loginBtn" style="display:none;"> 登录</button>
         <button class="login-btn" id="logoutBtn" style="display:none;"> 退出</button>
     </div>
+<div style="text-align: center; margin: 40px 0 20px 0;">
+    <a href="aimusic.html" style="background: linear-gradient(135deg, #FFD966, #E69A2E); color: #2D1E0C; padding: 14px 32px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.1rem; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.2s;">
+        🎵 AI/人机共创/原创音乐打榜
+    </a >
+    <p style="color: #AAD4B0; font-size: 0.8rem; margin-top: 12px;">上传作品 · 点赞打榜 · 预留合作</p >
+</div>
     <!-- 学习进度提示 -->
     <div class="progress-hint" id="progressHint">
         <span> 上次学习</span>
         <span id="lastModule">暂无记录</span>
     </div>
+<!-- 模块10：歌词变现 -->
+<div class="module-card" data-module="lyricsbiz">
+    <div class="module-icon">💰</div>
+    <div class="module-info">
+        <div class="module-name">歌词变现</div>
+        <div class="module-desc">写词赚钱 · 4大渠道 · 训练营 · 1对1改词</div>
+    </div>
+    <div class="module-badge">🔥 热门</div>
+</div>
     <div class="modules-grid">
         <!-- 模块1：音乐小白学习 -->
         <div class="module-card" data-module="beginner">
@@ -286,14 +301,23 @@
             </div>
             <div class="module-badge">推荐</div>
         </div>
-        <!-- 模块8：LuWei.studio 超强版（新增） -->
+        <!-- 模块8：LuWei.studio 超强版 -->
         <div class="module-card module-card-super" data-module="studio2">
-            <div class="module-icon"></div>
+            <div class="module-icon">⚡</div>
             <div class="module-info">
                 <div class="module-name">LuWei.studio 超强版</div>
                 <div class="module-desc">250+功能 · 10大全能菜单 · AI智能框架 · 50+效果器 · 乐谱/视频/云端 · 旗舰体验</div>
             </div>
             <div class="module-badge badge-super">⭐ 旗舰版</div>
+        </div>
+        <!-- 模块9：和弦模板库加强版 -->
+        <div class="module-card" data-module="templates">
+            <div class="module-icon"></div>
+            <div class="module-info">
+                <div class="module-name">和弦模板库加强版</div>
+                <div class="module-desc">85条和弦进行 · 可筛选搜索 · 和弦构成音速查</div>
+            </div>
+            <div class="module-badge">⭐ 85条完整版</div>
         </div>
     </div>
     <div class="reed-say">
@@ -306,20 +330,22 @@
     </div>
 </div>
 <script>
-    // 模块名称映射
-    const moduleNames = {
-        'beginner': '音乐小白学习',
-        'theory': '乐理手册',
-        'style': '风格与鉴赏',
-        'creation': '创作工坊',
-        'toolbox': '芦苇工具箱',
-        'advanced': '综合闯关',
-        'studio': 'LuWei.studio 标准版',
-        'studio2': 'LuWei.studio 超强版'
-    };
+   const moduleNames = {
+    'beginner': '音乐小白学习',
+    'theory': '乐理手册',
+    'style': '风格与鉴赏',
+    'creation': '创作工坊',
+    'toolbox': '芦苇工具箱',
+    'advanced': '综合闯关',
+    'studio': 'LuWei.studio 标准版',
+    'studio2': 'LuWei.studio 超强版',
+    'templates': '和弦模板库加强版',
+    'lyricsbiz': '歌词变现',
+    'aimusic': 'AI/人机共创/原创音乐打榜'
+};
     // 更新用户界面
     function updateUserUI() {
-        const user = getCurrentUser();
+        const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
         const userNameSpan = document.getElementById('userName');
         const userScoreSpan = document.getElementById('userScore');
         const loginBtn = document.getElementById('loginBtn');
@@ -349,6 +375,7 @@
     // 跳转到模块
     function goToModule(module) {
         localStorage.setItem('last_module', module);
+        // 直接拼接 .html 跳转
         window.location.href = `${module}.html`;
     }
     // 绑定卡片点击事件
