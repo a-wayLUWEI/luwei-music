@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>审核后台 · 音乐人入驻</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #1a3a2a; font-family: system-ui, sans-serif; padding: 20px; color: #e8e9f0; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { margin-bottom: 20px; color: #FFD966; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { background: rgba(31,62,46,0.6); border: 1px solid #F2C94C; padding: 10px 20px; border-radius: 40px; cursor: pointer; text-align: center; }
+        .tab-btn.active { background: #E69A2E; color: #2D1E0C; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card { background: rgba(31,62,46,0.8); border-radius: 24px; padding: 20px; margin-bottom: 20px; }
+        button { background: #E69A2E; border: none; padding: 6px 16px; border-radius: 40px; cursor: pointer; margin-right: 10px; }
+        .reject { background: #ff8888; color: #2D1E0C; }
+        audio { margin: 10px 0; width: 100%; }
+        details { margin-top: 8px; }
+        .work-item { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 16px; margin: 10px 0; }
+        hr { border-color: #3a6a4a; margin: 16px 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1> 音乐人入驻审核后台</h1>
+    <div class="tabs">
+        <div class="tab-btn active" data-tab="musicians">待审核音乐人</div>
+        <div class="tab-btn" data-tab="works">待审核作品</div>
+    </div>
+    <div id="tab-musicians" class="tab-content active"><div id="pendingMusiciansList"></div></div>
+    <div id="tab-works" class="tab-content"><div id="pendingWorksList"></div></div>
+</div>
+<script>
+(function() {
+    const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m] || m)); }
+    async function loadPendingMusicians() {
+        const { data, error } = await supabase.from('musicians').select('*, works(*)').eq('status', 'pending');
+        const container = document.getElementById('pendingMusiciansList');
+        if (error || !data || data.length === 0) { container.innerHTML = '<div class="card">暂无待审核入驻申请</div>'; return; }
+        container.innerHTML = data.map(m => `
+            <div class="card">
+                <h3>${escapeHtml(m.name)} | ${escapeHtml(m.role)}</h3>
+                <p> ${escapeHtml(m.email || '未填')} |  ${escapeHtml(m.wechat || '未填')}</p>
+                <p>简介：${escapeHtml(m.bio)}</p>
+                <div><strong> 作品列表：</strong></div>
+                ${m.works?.map(w => `<div class="work-item"><strong>《${escapeHtml(w.title)}》</strong><audio controls src="${w.audio_url}"></audio><details><summary> 查看歌词</summary><pre style="color:#AAD4B0;">${escapeHtml(w.lyrics || '无歌词')}</pre></details></div>`).join('')}
+                <hr><button onclick="window.approveMusician('${m.id}')">✅ 通过入驻</button><button class="reject" onclick="window.rejectMusician('${m.id}')">❌ 拒绝入驻</button>
+            </div>
+        `).join('');
+    }
+    async function loadPendingWorks() {
+        const { data, error } = await supabase.from('works').select('*, musicians(name)').eq('status', 'pending');
+        const container = document.getElementById('pendingWorksList');
+        if (error || !data || data.length === 0) { container.innerHTML = '<div class="card">暂无待审核作品</div>'; return; }
+        container.innerHTML = data.map(w => `
+            <div class="card">
+                <h3>《${escapeHtml(w.title)}》</h3>
+                <p> 音乐人：${escapeHtml(w.musicians?.name || '未知')}</p>
+                <audio controls src="${w.audio_url}"></audio>
+                <details><summary> 查看歌词</summary><pre style="color:#AAD4B0;">${escapeHtml(w.lyrics || '无歌词')}</pre></details>
+                <hr><button onclick="window.approveWork('${w.id}')">✅ 通过作品</button><button class="reject" onclick="window.rejectWork('${w.id}')">❌ 拒绝作品</button>
+            </div>
+        `).join('');
+    }
+    window.approveMusician = async function(id) {
+        await supabase.from('musicians').update({ status: 'approved' }).eq('id', id);
+        await supabase.from('works').update({ status: 'active' }).eq('musician_id', id);
+        loadPendingMusicians(); alert('已通过入驻');
+    };
+    window.rejectMusician = async function(id) {
+        if (!confirm('确定拒绝吗？相关作品也会被删除。')) return;
+        await supabase.from('works').delete().eq('musician_id', id);
+        await supabase.from('musicians').delete().eq('id', id);
+        loadPendingMusicians(); alert('已拒绝');
+    };
+    window.approveWork = async function(id) {
+        await supabase.from('works').update({ status: 'active' }).eq('id', id);
+        loadPendingWorks(); alert('作品已上架');
+    };
+    window.rejectWork = async function(id) {
+        if (!confirm('确定拒绝该作品吗？')) return;
+        await supabase.from('works').delete().eq('id', id);
+        loadPendingWorks(); alert('已拒绝');
+    };
+    function initTabs() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                const tabId = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`tab-${tabId}`).classList.add('active');
+                if (tabId === 'musicians') loadPendingMusicians();
+                else loadPendingWorks();
+            };
+        });
+    }
+    initTabs();
+    loadPendingMusicians();
+})();
+</script>
+</body>
+</html>
+
