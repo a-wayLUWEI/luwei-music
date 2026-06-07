@@ -152,6 +152,9 @@
             background: #E69A2E;
             box-shadow: 0 0 10px rgba(230, 154, 46, 0.5);
         }
+.module-card {
+    text-decoration: none;
+}
         .module-card-super .module-name {
             font-size: 1.15rem;
             letter-spacing: 1px;
@@ -230,6 +233,14 @@
         <div class="module-desc">发布需求 · 投稿中标 · 版权签约 · 交易评价</div>
     </div>
     <div class="module-badge">🔥 新功能</div>
+</div>
+<div style="text-align: center; margin: 20px 0; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+    <a href="musicians.html" style="background: linear-gradient(135deg, #FFD966, #E69A2E); color: #2D1E0C; padding: 12px 28px; border-radius: 50px; text-decoration: none; font-weight: bold;">
+         优质音乐人展示区
+    </a>
+    <a href="joinmusician.html" style="background: #3C6E4A; color: #e8e9f0; padding: 12px 28px; border-radius: 50px; text-decoration: none; font-weight: bold;">
+        ✍️ 音乐人入驻申请
+    </a>
 </div>
     <!-- 学习进度提示 -->
     <div class="progress-hint" id="progressHint">
@@ -349,27 +360,29 @@
     'studio2': 'LuWei.studio 超强版',
     'templates': '和弦模板库加强版',
     'lyricsbiz': '歌词变现',
-    'aimusic': 'AI/人机共创/原创音乐打榜'
+    'aimusic': 'AI/人机共创/原创音乐打榜',
+    'musicians': '优质音乐人展示区',
+    'orders': '音乐人接单中心'
 };
     // 更新用户界面
-    function updateUserUI() {
-        const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
-        const userNameSpan = document.getElementById('userName');
-        const userScoreSpan = document.getElementById('userScore');
-        const loginBtn = document.getElementById('loginBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (user) {
-            userNameSpan.innerText = user.nickname || '芦苇同学';
-            userScoreSpan.innerText = `积分 ${user.score || 0}`;
-            loginBtn.style.display = 'none';
-            logoutBtn.style.display = 'block';
-        } else {
-            userNameSpan.innerText = '未登录';
-            userScoreSpan.innerText = '积分 0';
-            loginBtn.style.display = 'block';
-            logoutBtn.style.display = 'none';
-        }
+    async function updateUserUI() {
+    const user = await getCurrentUser();
+    const userNameSpan = document.getElementById('userName');
+    const userScoreSpan = document.getElementById('userScore');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (user) {
+        userNameSpan.innerText = user.nickname || user.email.split('@')[0];
+        userScoreSpan.innerText = `积分 ${user.score || 0}`;
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'block';
+    } else {
+        userNameSpan.innerText = '未登录';
+        userScoreSpan.innerText = '积分 0';
+        loginBtn.style.display = 'block';
+        logoutBtn.style.display = 'none';
     }
+}
     // 显示上次学习记录
     function showLastModule() {
         const last = localStorage.getItem('last_module');
