@@ -336,27 +336,17 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let allSongs = { ai: [], hybrid: [], original: [] };
     // ==================== 3. 加载和渲染 ====================
-    async function loadSongs() {
-        for (let cat of ['ai', 'hybrid', 'original']) {
-            const container = document.getElementById(`${cat}-list`);
-            if (container) container.innerHTML = '<div class="loading-text"> 加载音乐中...</div>';
-        }
-        const demoContainer = document.getElementById('demo-list');
-        if (demoContainer) demoContainer.innerHTML = '<div class="loading-text"> 加载Demo中...</div>';
-        for (let cat of ['ai', 'hybrid', 'original']) {
-            const { data, error } = await supabaseClient
-                .from('songs')
-                .select('*')
-                .eq('category', cat)
-                .eq('status', 'active');
-            if (!error && data) {
-                allSongs[cat] = data;
-            } else {
-                allSongs[cat] = [];
-            }
-        }
-        renderAll();
+   async function loadSongs() {
+    for (let cat of ['ai', 'hybrid', 'original']) {
+        const { data } = await supabase
+            .from('songs')
+            .select('*')
+            .eq('category', cat)
+            .eq('status', 'active');
+        if (data) allSongs[cat] = data;
     }
+    renderAll();
+}
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
