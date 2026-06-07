@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>入驻申请 · 优质音乐人展示区</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: system-ui, 'Segoe UI', sans-serif;
+            padding: 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(15,40,29,0.6);
+            border-radius: 48px;
+            margin-bottom: 30px;
+            border: 1px solid #F2C94C;
+        }
+        .hero h1 { font-size: 1.8rem; color: #FFD966; }
+        .form-card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 40px;
+            border: 1px solid #F2C94C;
+            background: #2a4a3a;
+            color: #e8e9f0;
+        }
+        textarea { border-radius: 20px; }
+        .promise-box {
+            background: rgba(230,154,46,0.1);
+            padding: 16px;
+            border-radius: 16px;
+            margin: 16px 0;
+        }
+        .btn-submit {
+            background: #E69A2E;
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+        }
+        .rule-box {
+            background: rgba(0,0,0,0.2);
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            color: #AAD4B0;
+        }
+        .rule-box h4 { color: #FFD966; margin-bottom: 8px; }
+        .back-link {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 8px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .work-entry { margin-bottom: 16px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 16px; }
+        .remove-work { background: #ff8888; width: auto; padding: 4px 12px; margin-top: 8px; border: none; border-radius: 40px; cursor: pointer; }
+        .add-work { background: #3C6E4A; width: auto; padding: 8px 20px; border: none; border-radius: 40px; cursor: pointer; margin-bottom: 16px; }
+        .footer { text-align: center; font-size: 0.6rem; margin-top: 30px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="musicians.html" class="back-link">← 返回展示区</a>
+    <div class="hero">
+        <h1> 音乐人入驻申请</h1>
+        <p>作词人 · 作曲人 · 编曲师 · 混音师 · 制作人</p>
+    </div>
+    <div class="form-card">
+        <div class="rule-box">
+            <h4> 入驻须知</h4>
+            <p>1. 作品必须为原创，拥有完整版权</p>
+            <p>2. 音频文件需为MP3格式（非加密、非QQ音乐下载文件）</p>
+            <p>3. 如使用AI辅助创作，需在简介中注明</p>
+            <p>4. 虚假上传将被永久拉黑并公示</p>
+            <p>5. 审核通过后作品会显示在展示区</p>
+        </div>
+        <form id="joinForm" onsubmit="return false;">
+            <input type="text" id="name" placeholder="艺名/真实姓名 *" required>
+            <select id="role" required>
+                <option value="">选择身份 *</option>
+                <option value="作词人">作词人</option>
+                <option value="作曲人">作曲人</option>
+                <option value="编曲师">编曲师</option>
+                <option value="混音师">混音师</option>
+                <option value="制作人">制作人</option>
+            </select>
+            <input type="text" id="wechat" placeholder="微信号 *（用于联系，不公开显示）" required>
+            <input type="email" id="email" placeholder="邮箱">
+            <input type="url" id="photoUrl" placeholder="照片链接（可不填，后续补充）">
+            <textarea id="bio" rows="3" placeholder="个人简介（擅长领域、从业经历等）*" required></textarea>
+            <div style="margin: 16px 0;">
+                <p style="margin-bottom: 8px;"> 请上传你的代表作品（MP3格式）</p>
+                <div id="worksList"></div>
+                <button type="button" id="addWorkBtn" class="add-work">+ 添加作品</button>
+            </div>
+            <div class="promise-box">
+                <label>
+                    <input type="checkbox" id="promise" required>
+                    ✅ 本人承诺：以上作品均为原创，拥有完整版权，音频文件来源合法。若内容不实，本人承担一切法律责任。
+                </label>
+            </div>
+            <button type="submit" id="submitBtn" class="btn-submit"> 提交审核</button>
+        </form>
+        <p class="footer">审核周期：1-3个工作日 | 联系芦苇老师微信：jianjiayinyue</p>
+    </div>
+</div>
+<script>
+    (function() {
+        // 确保 Supabase 只初始化一次
+        const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // 添加作品条目
+        window.addWorkEntry = function() {
+            const worksDiv = document.getElementById('worksList');
+            if (!worksDiv) {
+                alert('系统错误：找不到作品列表容器，请刷新页面重试');
+                return;
+            }
+            const entry = document.createElement('div');
+            entry.className = 'work-entry';
+            entry.innerHTML = `
+                <input type="text" placeholder="作品名称 *" class="work-title" required>
+                <input type="file" accept="audio/mpeg" class="work-file" required>
+                <textarea rows="2" placeholder="歌词（LRC格式，用于滚动显示）" class="work-lyrics" style="font-size:0.8rem;"></textarea>
+                <button type="button" class="remove-work">删除</button>
+            `;
+            worksDiv.appendChild(entry);
+            const removeBtn = entry.querySelector('.remove-work');
+            if (removeBtn) {
+                removeBtn.onclick = () => entry.remove();
+            }
+        };
+        // 上传音频
+        async function uploadAudio(file, musicianId, workTitle) {
+            const safeTitle = workTitle.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_');
+            const fileName = `${musicianId}/${Date.now()}_${safeTitle}.mp3`;
+            const { error } = await supabase.storage.from('audio').upload(fileName, file);
+            if (error) throw error;
+            const { data } = supabase.storage.from('audio').getPublicUrl(fileName);
+            return data.publicUrl;
+        }
+        // 提交审核
+        window.submitForm = async function() {
+            const name = document.getElementById('name').value.trim();
+            const role = document.getElementById('role').value;
+            const wechat = document.getElementById('wechat').value.trim();
+            const bio = document.getElementById('bio').value.trim();
+            if (!name || !role || !wechat || !bio) { alert('请填写完整信息'); return; }
+            if (!document.getElementById('promise').checked) { alert('请勾选承诺书'); return; }
+            const workEntries = document.querySelectorAll('.work-entry');
+            const works = [];
+            for (let entry of workEntries) {
+                const title = entry.querySelector('.work-title').value.trim();
+                const file = entry.querySelector('.work-file').files[0];
+                const lyrics = entry.querySelector('.work-lyrics').value.trim();
+                if (!title || !file) { alert('请填写完整的作品信息（名称和音频文件）'); return; }
+                works.push({ title, file, lyrics });
+            }
+            if (works.length === 0) { alert('请至少上传一个作品'); return; }
+            const musicianId = Date.now().toString();
+            const { error: mError } = await supabase.from('musicians').insert([{
+                id: musicianId, name, role, photo_url: document.getElementById('photoUrl').value.trim() || null,
+                bio, wechat, email: document.getElementById('email').value.trim() || null, status: 'pending'
+            }]);
+            if (mError) { alert('提交失败：' + mError.message); return; }
+            for (let work of works) {
+                try {
+                    const audioUrl = await uploadAudio(work.file, musicianId, work.title);
+                    await supabase.from('works').insert([{
+                        musician_id: musicianId, title: work.title, audio_url: audioUrl, lyrics: work.lyrics || null, likes: 0
+                    }]);
+                } catch (err) {
+                    alert(`作品《${work.title}》上传失败，请重试`);
+                    return;
+                }
+            }
+            alert('✅ 提交成功！芦苇老师将在1-3个工作日内审核。');
+            window.location.href = 'musicians.html';
+        };
+        // 页面加载完成后绑定按钮
+        window.onload = function() {
+            const addBtn = document.getElementById('addWorkBtn');
+            if (addBtn) {
+                addBtn.onclick = window.addWorkEntry;
+                console.log('✅ 添加作品按钮已绑定');
+            } else {
+                console.error('❌ 找不到 addWorkBtn 按钮');
+                alert('页面加载异常，请刷新重试');
+            }
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.onclick = window.submitForm;
+            }
+            // 默认显示一个空作品条目
+            if (document.getElementById('worksList')) {
+                window.addWorkEntry();
+            }
+        };
+    })();
+</script>
+</body>
+</html>
+
