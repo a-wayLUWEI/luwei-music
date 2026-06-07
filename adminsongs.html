@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI音乐排行榜 · 审核后台</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #1a3a2a; font-family: system-ui, sans-serif; padding: 20px; color: #e8e9f0; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { margin-bottom: 20px; color: #FFD966; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { background: rgba(31,62,46,0.6); border: 1px solid #F2C94C; padding: 10px 20px; border-radius: 40px; cursor: pointer; text-align: center; }
+        .tab-btn.active { background: #E69A2E; color: #2D1E0C; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card { background: rgba(31,62,46,0.8); border-radius: 24px; padding: 20px; margin-bottom: 20px; }
+        button { background: #E69A2E; border: none; padding: 6px 16px; border-radius: 40px; cursor: pointer; margin-right: 10px; }
+        .reject { background: #ff8888; color: #2D1E0C; }
+        audio { margin: 10px 0; width: 100%; }
+        details { margin-top: 8px; }
+        hr { border-color: #3a6a4a; margin: 16px 0; }
+        .badge { display: inline-block; background: #E69A2E; padding: 2px 12px; border-radius: 20px; font-size: 0.7rem; margin-left: 10px; }
+        .demobadge { background: #3C6E4A; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1> AI音乐排行榜 · 审核后台</h1>
+    <div class="tabs">
+        <div class="tab-btn active" data-tab="ai"> 纯AI作品榜</div>
+        <div class="tab-btn" data-tab="hybrid"> 人机共创榜</div>
+        <div class="tab-btn" data-tab="original"> 原创作品榜</div>
+        <div class="tab-btn" data-tab="demo"> Demo打榜</div>
+    </div>
+    <div id="tab-ai" class="tab-content active"><div id="aiList"></div></div>
+    <div id="tab-hybrid" class="tab-content"><div id="hybridList"></div></div>
+    <div id="tab-original" class="tab-content"><div id="originalList"></div></div>
+    <div id="tab-demo" class="tab-content"><div id="demoList"></div></div>
+</div>
+<script>
+(function() {
+    const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const categoryNames = { 'ai': ' 纯AI', 'hybrid': ' 人机共创', 'original': ' 原创' };
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m] || m)); }
+    async function loadCategory(category, containerId, isDemo = false) {
+        let query = supabase.from('songs').select('*').eq('status', 'pending');
+        if (category !== 'demo') query = query.eq('category', category);
+        if (isDemo) query = query.eq('is_demo', true);
+        const { data, error } = await query.order('created_at', { ascending: false });
+        const container = document.getElementById(containerId);
+        if (error || !data || data.length === 0) { container.innerHTML = '<div class="card">暂无待审核歌曲</div>'; return; }
+        container.innerHTML = data.map(s => `
+            <div class="card">
+                <h3>《${escapeHtml(s.title)}》 <span class="badge">${categoryNames[s.category] || s.category}</span>${s.is_demo ? '<span class="badge demobadge"> Demo版</span>' : ''}</h3>
+                <p> ${escapeHtml(s.artist)} | ${escapeHtml(s.genre || '未分类')}</p>
+                ${s.audio_url ? `<audio controls src="${s.audio_url}"></audio>` : '<p>❌ 无音频文件</p>'}
+                ${s.lyrics ? `<details><summary> 查看歌词</summary><pre style="color:#AAD4B0;">${escapeHtml(s.lyrics)}</pre></details>` : ''}
+                ${s.melody_by || s.lyrics_by || s.arrangement_by ? `<div><strong>创作信息：</strong> ${s.melody_by ? `旋律：${escapeHtml(s.melody_by)} ` : ''}${s.lyrics_by ? `歌词：${escapeHtml(s.lyrics_by)} ` : ''}${s.arrangement_by ? `编曲：${escapeHtml(s.arrangement_by)}` : ''}</div>` : ''}
+                ${s.contact ? `<p> ${escapeHtml(s.contact)}</p>` : ''}
+                <hr><button onclick="window.approveSong('${s.id}')">✅ 通过审核</button><button class="reject" onclick="window.rejectSong('${s.id}')">❌ 拒绝</button>
+            </div>
+        `).join('');
+    }
+    async function loadDemo() {
+        const { data, error } = await supabase.from('songs').select('*').eq('status', 'pending').eq('is_demo', true).in('category', ['hybrid', 'original']).order('created_at', { ascending: false });
+        const container = document.getElementById('demoList');
+        if (error || !data || data.length === 0) { container.innerHTML = '<div class="card">暂无待审核Demo歌曲</div>'; return; }
+        container.innerHTML = data.map(s => `
+            <div class="card">
+                <h3>《${escapeHtml(s.title)}》 <span class="badge">${categoryNames[s.category]}</span><span class="badge demobadge"> Demo版</span></h3>
+                <p> ${escapeHtml(s.artist)} | ${escapeHtml(s.genre || '未分类')}</p>
+                ${s.audio_url ? `<audio controls src="${s.audio_url}"></audio>` : '<p>❌ 无音频文件</p>'}
+                ${s.lyrics ? `<details><summary> 查看歌词</summary><pre style="color:#AAD4B0;">${escapeHtml(s.lyrics)}</pre></details>` : ''}
+                ${s.contact ? `<p> ${escapeHtml(s.contact)}</p>` : ''}
+                <hr><button onclick="window.approveSong('${s.id}')">✅ 通过审核</button><button class="reject" onclick="window.rejectSong('${s.id}')">❌ 拒绝</button>
+            </div>
+        `).join('');
+    }
+    window.approveSong = async function(id) { await supabase.from('songs').update({ status: 'active' }).eq('id', id); refreshCurrent(); alert('已通过'); };
+    window.rejectSong = async function(id) { if (!confirm('确定拒绝？')) return; await supabase.from('songs').delete().eq('id', id); refreshCurrent(); alert('已拒绝'); };
+    let currentTab = 'ai';
+    function refreshCurrent() {
+        if (currentTab === 'ai') loadCategory('ai', 'aiList');
+        else if (currentTab === 'hybrid') loadCategory('hybrid', 'hybridList');
+        else if (currentTab === 'original') loadCategory('original', 'originalList');
+        else if (currentTab === 'demo') loadDemo();
+    }
+    function initTabs() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                currentTab = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`tab-${currentTab}`).classList.add('active');
+                if (currentTab === 'ai') loadCategory('ai', 'aiList');
+                else if (currentTab === 'hybrid') loadCategory('hybrid', 'hybridList');
+                else if (currentTab === 'original') loadCategory('original', 'originalList');
+                else if (currentTab === 'demo') loadDemo();
+            };
+        });
+    }
+    initTabs();
+    loadCategory('ai', 'aiList');
+})();
+</script>
+</body>
+</html>
+
