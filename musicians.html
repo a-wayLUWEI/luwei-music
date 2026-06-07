@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>芦苇音乐 · 优质音乐人展示区</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: system-ui, 'Segoe UI', sans-serif;
+            padding: 20px;
+            color: #e8e9f0;
+        }
+        .back-link {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 8px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(15,40,29,0.6);
+            border-radius: 48px;
+            margin-bottom: 30px;
+            border: 1px solid #F2C94C;
+        }
+        .hero h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #FFD966, #E69A2E);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .join-link {
+            display: inline-block;
+            background: #3C6E4A;
+            color: #e8e9f0;
+            padding: 10px 24px;
+            border-radius: 40px;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+        .musicians-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+        .musician-card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 20px;
+            border: 1px solid rgba(242,201,76,0.3);
+            transition: all 0.3s;
+        }
+        .musician-card:hover {
+            transform: translateY(-5px);
+            border-color: #E69A2E;
+        }
+        .musician-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 16px;
+            display: block;
+            border: 3px solid #E69A2E;
+        }
+        .musician-name {
+            font-size: 1.3rem;
+            color: #FFD966;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .musician-role {
+            text-align: center;
+            color: #E69A2E;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+        .musician-bio {
+            color: #AAD4B0;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .works-title {
+            color: #FFD966;
+            font-size: 0.9rem;
+            margin: 16px 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(242,201,76,0.3);
+        }
+        .work-item {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .work-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .work-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .play-btn {
+            background: #E69A2E;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .work-likes {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .like-btn {
+            background: transparent;
+            border: 1px solid #E69A2E;
+            padding: 4px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .like-btn.liked {
+            background: #E69A2E;
+            color: #2D1E0C;
+        }
+        .comment-toggle, .lyrics-btn {
+            background: transparent;
+            border: 1px solid #AAD4B0;
+            padding: 4px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        .comments-section {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(242,201,76,0.2);
+        }
+        .comment-item {
+            font-size: 0.75rem;
+            padding: 6px 0;
+            color: #AAD4B0;
+        }
+        .comment-user {
+            color: #FFD966;
+            font-weight: bold;
+        }
+        .add-comment {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .add-comment input {
+            flex: 1;
+            padding: 6px 12px;
+            border-radius: 40px;
+            border: 1px solid #F2C94C;
+            background: #2a4a3a;
+            color: #e8e9f0;
+            font-size: 0.75rem;
+        }
+        .add-comment button {
+            background: #E69A2E;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1a3a2a;
+            border-radius: 28px;
+            padding: 20px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid #F2C94C;
+        }
+        .lyrics-container {
+            height: 350px;
+            overflow-y: auto;
+            margin: 15px 0;
+            padding: 10px;
+        }
+        .lyrics-scroll {
+            line-height: 2;
+            text-align: center;
+        }
+        .lyrics-scroll .active-line {
+            color: #E69A2E;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .lyrics-scroll p {
+            transition: all 0.3s;
+            padding: 5px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #E69A2E;
+        }
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 40px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="back-link">← 返回首页</a>
+    <div class="hero">
+        <h1> 优质音乐人展示区</h1>
+        <p>作词人 · 作曲人 · 编曲师 · 混音师 · 制作人</p>
+        <a href="joinmusician.html" class="join-link">✍️ 音乐人入驻申请</a>
+    </div>
+    <div id="musiciansGrid" class="musicians-grid">
+        <div style="text-align:center; padding:50px;">加载中...</div>
+    </div>
+    <div class="footer">© 芦苇音乐 · 优质音乐人展示区 | 作品版权归原作者所有</div>
+</div>
+<!-- 歌词弹窗 -->
+<div id="lyricsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="lyricsTitle"></h3>
+            <span class="close-modal" onclick="closeLyricsModal()">&times;</span>
+        </div>
+        <div class="lyrics-container">
+            <div id="lyricsText" class="lyrics-scroll"></div>
+        </div>
+        <audio id="lyricsAudio" controls></audio>
+    </div>
+</div>
+<script>
+    const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentUser = "user_" + Math.random().toString(36).substr(2, 8);
+    async function loadMusicians() {
+        const { data: musicians, error } = await supabase
+            .from('musicians')
+            .select('*, works(*)')
+            .eq('status', 'approved')
+            .order('created_at');
+        if (error) {
+            document.getElementById('musiciansGrid').innerHTML = '<div style="text-align:center; padding:50px;">加载失败，请刷新重试</div>';
+            return;
+        }
+        if (!musicians || musicians.length === 0) {
+            document.getElementById('musiciansGrid').innerHTML = '<div style="text-align:center; padding:50px;">暂无音乐人，欢迎入驻～</div>';
+            return;
+        }
+        renderMusicians(musicians);
+    }
+    function renderMusicians(musicians) {
+        const grid = document.getElementById('musiciansGrid');
+        grid.innerHTML = musicians.map(musician => `
+            <div class="musician-card">
+                ${musician.photo_url ? `<img src="${musician.photo_url}" class="musician-photo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27100%27 height=%27100%27%3E%3Crect width=%27100%27 height=%27100%27 fill=%27%23333%27/%3E%3Ctext x=%2750%25%27 y=%2750%25%27 text-anchor=%27middle%27 fill=%27%23E69A2E%27 dy=%27.3em%27%3E暂无照片%3C/text%3E%3C/svg%3E'">` : '<div class="musician-photo" style="background:#2a4a3a; display:flex; align-items:center; justify-content:center;"></div>'}
+                <div class="musician-name">${escapeHtml(musician.name)}</div>
+                <div class="musician-role">${escapeHtml(musician.role)}</div>
+                <div class="musician-bio">${escapeHtml(musician.bio || '暂无简介')}</div>
+                <div class="works-title"> 作品</div>
+                <div class="works-list">
+                    ${musician.works?.map(work => `
+                        <div class="work-item" data-work-id="${work.id}">
+                            <div class="work-title">${escapeHtml(work.title)}</div>
+                            <div class="work-controls">
+                                <button class="play-btn" onclick="playWork('${work.id}', '${escapeHtml(work.title)}')">▶ 播放</button>
+                                <div class="work-likes">
+                                    <span id="likes-${work.id}">${work.likes || 0}</span>
+                                    <button class="like-btn" onclick="likeWork('${work.id}')"></button>
+                                </div>
+                                <button class="comment-toggle" onclick="toggleComments('${work.id}')"> 评论</button>
+                                <button class="lyrics-btn" onclick="showLyrics('${work.id}', '${escapeHtml(work.title)}', \`${escapeHtml(work.lyrics || '').replace(/`/g, '\\`')}\`)"> 歌词</button>
+                            </div>
+                            <div id="comments-${work.id}" class="comments-section">
+                                <div id="comments-list-${work.id}" class="comments-list"></div>
+                                <div class="add-comment">
+                                    <input type="text" id="comment-input-${work.id}" placeholder="写评论...">
+                                    <button onclick="addComment('${work.id}')">发布</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('') || '<div style="color:#AAD4B0; font-size:0.8rem;">暂无作品</div>'}
+                </div>
+            </div>
+        `).join('');
+        for (let musician of musicians) {
+            for (let work of (musician.works || [])) {
+                loadComments(work.id);
+            }
+        }
+    }
+    window.playWork = async (workId, title) => {
+        const { data: work } = await supabase.from('works').select('*').eq('id', workId).single();
+        if (work) {
+            showLyrics(workId, title, work.lyrics || '暂无歌词');
+        }
+    };
+    window.showLyrics = (workId, title, lyricsText) => {
+        const modal = document.getElementById('lyricsModal');
+        document.getElementById('lyricsTitle').innerText = title;
+        const lyricsContainer = document.getElementById('lyricsText');
+        const audio = document.getElementById('lyricsAudio');
+        if (lyricsText && lyricsText !== '暂无歌词') {
+            const parsed = parseLRC(lyricsText);
+            lyricsContainer.innerHTML = parsed.map(line => `<p data-time="${line.time}">${escapeHtml(line.text)}</p>`).join('');
+        } else {
+            lyricsContainer.innerHTML = '<p style="text-align:center;">暂无滚动歌词</p>';
+        }
+        (async () => {
+            const { data: work } = await supabase.from('works').select('audio_url').eq('id', workId).single();
+            if (work && work.audio_url) {
+                audio.src = work.audio_url;
+                audio.play();
+                audio.ontimeupdate = () => {
+                    const currentTime = audio.currentTime;
+                    const lines = lyricsContainer.querySelectorAll('p[data-time]');
+                    let activeIndex = -1;
+                    for (let i = 0; i < lines.length; i++) {
+                        const lineTime = parseFloat(lines[i].getAttribute('data-time'));
+                        if (lineTime <= currentTime) activeIndex = i;
+                        else break;
+                    }
+                    lines.forEach((line, idx) => {
+                        line.classList.remove('active-line');
+                        if (idx === activeIndex) {
+                            line.classList.add('active-line');
+                            line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    });
+                };
+            }
+        })();
+        modal.style.display = 'flex';
+    };
+    window.closeLyricsModal = () => {
+        document.getElementById('lyricsModal').style.display = 'none';
+        document.getElementById('lyricsAudio').pause();
+    };
+    function parseLRC(lrcText) {
+        const lines = lrcText.split('\n');
+        const result = [];
+        const timeRegex = /\[(\d{2}):(\d{2})\.(\d{2})\]/;
+        for (let line of lines) {
+            const match = line.match(timeRegex);
+            if (match) {
+                const time = parseInt(match[1]) * 60 + parseInt(match[2]) + parseInt(match[3]) / 100;
+                const text = line.replace(timeRegex, '').trim();
+                if (text) result.push({ time, text });
+            }
+        }
+        return result;
+    }
+    window.likeWork = async (workId) => {
+        const { data: existing } = await supabase.from('likes').select().eq('work_id', workId).eq('user_id', currentUser);
+        if (existing && existing.length > 0) { alert('你已经点过赞了'); return; }
+        await supabase.from('likes').insert({ work_id: workId, user_id: currentUser });
+        const { data: work } = await supabase.from('works').select('likes').eq('id', workId).single();
+        const newLikes = (work.likes || 0) + 1;
+        await supabase.from('works').update({ likes: newLikes }).eq('id', workId);
+        document.getElementById(`likes-${workId}`).innerText = newLikes;
+    };
+    window.toggleComments = async (workId) => {
+        const div = document.getElementById(`comments-${workId}`);
+        if (div.style.display === 'none' || !div.style.display) {
+            div.style.display = 'block';
+            await loadComments(workId);
+        } else {
+            div.style.display = 'none';
+        }
+    };
+    async function loadComments(workId) {
+        const { data: comments } = await supabase.from('comments').select('*').eq('work_id', workId).order('created_at', { ascending: false });
+        const container = document.getElementById(`comments-list-${workId}`);
+        if (container) {
+            if (!comments || comments.length === 0) container.innerHTML = '<div style="color:#AAD4B0; font-size:0.7rem;">暂无评论</div>';
+            else container.innerHTML = comments.map(c => `<div class="comment-item"><span class="comment-user">${escapeHtml(c.user_id)}</span><span style="font-size:0.65rem;"> ${new Date(c.created_at).toLocaleString()}</span><div>${escapeHtml(c.content)}</div></div>`).join('');
+        }
+    }
+    window.addComment = async (workId) => {
+        const input = document.getElementById(`comment-input-${workId}`);
+        const content = input.value.trim();
+        if (!content) return;
+        await supabase.from('comments').insert({ work_id: workId, user_id: currentUser, content });
+        input.value = '';
+        await loadComments(workId);
+    };
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m] || m));
+    }
+    window.onclick = (e) => { if (e.target === document.getElementById('lyricsModal')) closeLyricsModal(); };
+    loadMusicians();
+</script>
+</body>
+</html>
+
