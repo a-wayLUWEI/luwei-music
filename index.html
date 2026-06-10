@@ -247,6 +247,27 @@
         <span> 上次学习</span>
         <span id="lastModule">暂无记录</span>
     </div>
+<a href="songwriting.html" class="module-card">
+    <div class="module-icon">✍️</div>
+    <div class="module-info">
+        <div class="module-name">芦苇独特视角 · 作词作曲学堂</div>
+        <div class="module-desc">芦苇老师亲授 · 118节系统课 · 从零到创作 · 视频课需购买</div>
+    </div>
+    <div class="module-badge">系统课</div>
+</a >
+<!-- ==================== 歌词课程入口 ==================== -->
+<div style="display: flex; gap: 16px; margin: 24px 0; flex-wrap: wrap;">
+    <a href="lyricshandbook.html" target="_blank" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #2a4a3a, #1a3a2a); border: 1px solid #F2C94C; border-radius: 28px; padding: 20px; text-align: center; text-decoration: none; transition: all 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 8px;">📖</div>
+        <div style="font-size: 1.1rem; font-weight: bold; color: #FFD966;">芦苇歌词课程</div>
+        <div style="font-size: 0.7rem; color: #AAD4B0; margin-top: 6px;">基础篇 · 初级/中级/高级/特级 + 进阶篇</div>
+    </a >
+    <a href="lyricswugong.html" target="_blank" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #2a4a3a, #1a3a2a); border: 1px solid #F2C94C; border-radius: 28px; padding: 20px; text-align: center; text-decoration: none; transition: all 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 8px;">⚔️</div>
+        <div style="font-size: 1.1rem; font-weight: bold; color: #FFD966;">芦苇歌词武功秘籍</div>
+        <div style="font-size: 0.7rem; color: #AAD4B0; margin-top: 6px;">六部秘籍 · 仙女撒花/万物复苏/众生皆苦/大爱无边/羽化成仙/回归自然</div>
+    </a >
+</div>
 <!-- 模块10：歌词变现 -->
 <div class="module-card" data-module="lyricsbiz">
     <div class="module-icon">💰</div>
@@ -302,6 +323,22 @@
             </div>
             <div class="module-badge">实用工具</div>
         </div>
+<div class="module-card" data-module="tools">
+    <div class="module-icon">🛠️</div>
+    <div class="module-info">
+        <div class="module-name">音乐工具箱推荐</div>
+        <div class="module-desc">AI 音乐生成 · 识谱 · 伴奏分离 · 练耳 · 宿主软件</div>
+    </div>
+    <div class="module-badge">免费工具</div>
+</div>
+<div class="module-card" data-module="guide">
+    <div class="module-icon">📖</div>
+    <div class="module-info">
+        <div class="module-name">以上音乐工具使用指南</div>
+        <div class="module-desc">Suno · 谱乐AI · 伴奏分离 · 宿主软件教程</div>
+    </div>
+    <div class="module-badge">教程</div>
+</div>
         <!-- 模块6：综合闯关 -->
         <div class="module-card" data-module="advanced">
             <div class="module-icon"></div>
@@ -339,6 +376,14 @@
             <div class="module-badge">⭐ 85条完整版</div>
         </div>
     </div>
+<div class="module-card" data-module="sheetmusic">
+    <div class="module-icon">🎼</div>
+    <div class="module-info">
+        <div class="module-name">乐谱导航</div>
+        <div class="module-desc">中国曲谱网 · 虫虫钢琴 · 吉他社 · IMSLP</div>
+    </div>
+    <div class="module-badge">免费</div>
+</div>
     <div class="reed-say">
         <div class="quote"> 芦苇说</div>
         <p>“从音乐小白开始，一步一步走进音乐的世界。不怕慢，就怕停。”</p>
@@ -362,7 +407,13 @@
     'lyricsbiz': '歌词变现',
     'aimusic': 'AI/人机共创/原创音乐打榜',
     'musicians': '优质音乐人展示区',
-    'orders': '音乐人接单中心'
+    'sheetmusic': '乐谱导航',
+    'tools': '音乐工具箱',
+    'guide': '工具使用指南',
+    'songwriting': '作词作曲学堂',
+    'orders': '音乐人接单中心',
+    'lyricshandbook': '芦苇歌词课程',
+    'lyricswugong': '芦苇歌词武功秘籍'
 };
     // 更新用户界面
     async function updateUserUI() {
