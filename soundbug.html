@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>音虫 SoundBug 完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .feature-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .feature-item {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px;
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+        .feature-item .emoji { font-size: 1.5rem; margin-bottom: 6px; }
+        .feature-item .name { font-weight: bold; color: #FFD966; font-size: 0.8rem; }
+        .feature-item .desc { font-size: 0.65rem; color: #AAD4B0; margin-top: 4px; }
+        .step {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+        .step .num {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🐛 音虫 SoundBug</h1>
+        <div>
+            <span class="tag">💻 电脑软件</span>
+            <span class="tag">💰 免费</span>
+            <span class="tag">🎼 AI识谱</span>
+            <span class="tag">🎹 编曲软件</span>
+            <span class="tag">📚 教学友好</span>
+        </div>
+        
+        <h2>📌 什么是音虫？</h2>
+        <p>音虫（SoundBug）是一款国产免费编曲软件，由上海市教委推荐为「空中课堂」指定教学软件。它最大的特点是：<strong>把歌曲拖进去，自动识别和弦、音高、节拍，生成简谱或MIDI</strong>。</p >
+        <p>非常适合音乐老师、零基础学生、以及需要快速扒谱的音乐人。</p >
+        
+        <h2>✨ 核心功能</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="emoji">🎼</div>
+                <div class="name">AI 识谱</div>
+                <div class="desc">音频拖进去自动生成简谱/MIDI</div>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🎹</div>
+                <div class="name">编曲功能</div>
+                <div class="desc">600+虚拟乐器、VST插件支持</div>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🎓</div>
+                <div class="name">教学友好</div>
+                <div class="desc">上海市教委指定教学软件</div>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🎵</div>
+                <div class="name">和弦识别</div>
+                <div class="desc">自动分析歌曲和弦进行</div>
+            </div>
+        </div>
+        
+        <h2>💰 收费模式</h2>
+        <p><strong>完全免费！</strong> 音虫是免费软件，可以免费下载、免费使用，没有内购，没有限制。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        <div class="step">
+            <span class="num">1</span> 打开 soundbug.com，下载安装包（Windows/Mac）
+        </div>
+        <div class="step">
+            <span class="num">2</span> 安装后打开软件
+        </div>
+        <div class="step">
+            <span class="num">3</span> 把任意歌曲拖进软件窗口
+        </div>
+        <div class="step">
+            <span class="num">4</span> 等待 AI 分析完成（约 10-30 秒）
+        </div>
+        <div class="step">
+            <span class="num">5</span> 查看自动生成的和弦、音高、节拍、简谱
+        </div>
+        <div class="step">
+            <span class="num">6</span> 可以导出为 MIDI 文件，导入其他宿主软件继续编辑
+        </div>
+        
+        <h2>💡 进阶技巧</h2>
+        <div class="tip">
+            <strong>🎼 快速扒谱</strong><br>
+            想学一首歌的旋律？拖进音虫，自动生成简谱，几秒钟就能看到音符。
+        </div>
+        <div class="tip">
+            <strong>🎸 分析和弦走向</strong><br>
+            上传歌曲后，音虫会显示整首歌的和弦进行，方便学习编曲。
+        </div>
+        <div class="tip">
+            <strong>🎹 编曲入门</strong><br>
+            内置 600+ 虚拟乐器和经典乐段，适合零基础尝试编曲。
+        </div>
+        <div class="tip">
+            <strong>🏫 教学场景</strong><br>
+            音乐老师可以用音虫快速生成教学素材，学生也可以自己探索。
+        </div>
+        
+        <h2>⚠️ 注意事项</h2>
+        <p>• 识谱准确率取决于音频质量，尽量用清晰的原曲。<br>
+        • 复杂多乐器歌曲的和弦识别可能有偏差。<br>
+        • 建议配合官方教程使用，效果更好。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 官网：soundbug.com<br>
+        • 下载地址：soundbug.com/download<br>
+        • 官方教程：soundbug.com/help</p >
+        
+        
+    </div>
+    
+    <div class="footer">
+        © 芦苇音乐 · 工具使用指南<br>
+        内容持续更新，如有错误欢迎反馈
+    </div>
+</div>
+</body>
+</html>

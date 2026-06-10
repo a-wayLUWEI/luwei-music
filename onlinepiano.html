@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>在线钢琴 Online Piano 完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .step {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+        .step .num {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+        .piano-keys {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        .key {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            width: 60px;
+            height: 80px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .key.black {
+            background: #333;
+            color: white;
+            width: 40px;
+            height: 50px;
+            margin-top: -15px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🎹 在线钢琴 Online Piano</h1>
+        <div>
+            <span class="tag">🌐 网页版</span>
+            <span class="tag">💰 免费</span>
+            <span class="tag">🎹 虚拟钢琴</span>
+            <span class="tag">🎧 学琴入门</span>
+        </div>
+        
+        <h2>📌 什么是在线钢琴？</h2>
+        <p>在线钢琴是一个完全免费的网页版虚拟钢琴工具。你可以用鼠标点击琴键，或者用电脑键盘弹奏钢琴。每个琴键都显示对应的音名（C、D、E、F、G、A、B），非常适合音乐初学者学习音高和键盘位置。</p >
+        <p>不需要注册、不需要安装软件、不需要真实钢琴，打开浏览器就能弹。</p >
+        
+        <h2>✨ 核心功能</h2>
+        <p><strong>🎹 鼠标弹奏</strong> — 点击琴键发声，显示音名<br>
+        <strong>⌨️ 键盘弹奏</strong> — 用电脑键盘按键对应琴键<br>
+        <strong>🎚️ 音色切换</strong> — 可以选择钢琴、风琴、电子琴等音色<br>
+        <strong>📝 录音功能</strong> — 可以录制你弹奏的曲子<br>
+        <strong>🎵 示范曲</strong> — 内置示范曲，听听标准弹奏</p >
+        
+        <h2>💰 收费模式</h2>
+        <p><strong>完全免费！</strong> 没有任何收费，没有内购。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        
+        <h3>第一步：打开网站</h3>
+        <div class="step">
+            <span class="num">1</span> 打开 onlinepianist.com/virtual-piano
+        </div>
+        <div class="step">
+            <span class="num">2</span> 页面会自动加载一个钢琴界面
+        </div>
+        
+        <h3>第二步：用鼠标弹奏</h3>
+        <div class="step">
+            <span class="num">1</span> 直接用鼠标点击琴键
+        </div>
+        <div class="step">
+            <span class="num">2</span> 琴键上显示音名（C、D、E 等）
+        </div>
+        <div class="step">
+            <span class="num">3</span> 试试弹「小星星」：C C G G A A G
+        </div>
+        
+        <h3>第三步：用键盘弹奏</h3>
+        <div class="step">
+            <span class="num">1</span> 查看页面上的键盘映射图
+        </div>
+        <div class="step">
+            <span class="num">2</span> 通常 QWERTY 键盘对应白键
+        </div>
+        <div class="step">
+            <span class="num">3</span> 数字键或上方字母对应黑键
+        </div>
+        <div class="step">
+            <span class="num">4</span> 按键盘上的字母/数字，钢琴发声
+        </div>
+        
+        <h3>第四步：切换音色</h3>
+        <div class="step">
+            <span class="num">1</span> 找到「音色」或「Sound」下拉菜单
+        </div>
+        <div class="step">
+            <span class="num">2</span> 选择不同的音色（钢琴、电子琴、风琴等）
+        </div>
+        <div class="step">
+            <span class="num">3</span> 音色改变后，弹奏效果不同
+        </div>
+        
+        <h3>第五步：录音</h3>
+        <div class="step">
+            <span class="num">1</span> 点击「录音」按钮
+        </div>
+        <div class="step">
+            <span class="num">2</span> 弹奏你的曲子
+        </div>
+        <div class="step">
+            <span class="num">3</span> 点击「停止」，可以回放
+        </div>
+        <div class="step">
+            <span class="num">4</span> 可以下载录音文件
+        </div>
+        
+        <h2>💡 进阶技巧</h2>
+        
+        <div class="tip">
+            <strong>🎹 电脑键盘映射（常见版本）</strong><br>
+            白键：A S D F G H J K L ; '<br>
+            黑键：W E T Y U O P<br>
+            （具体映射可能因网站不同而有差异，请查看页面上的提示）
+        </div>
+        
+        <div class="tip">
+            <strong>🎵 简单曲子练习</strong><br>
+            • 小星星：C C G G A A G | F F E E D D C<br>
+            • 两只老虎：C D E C | C D E C | E F G | E F G<br>
+            • 生日快乐：C C D C F E | C C D C G F<br>
+            • 玛丽有只小羊羔：E D C D E E E | D D D E G G
+        </div>
+        
+        <div class="tip">
+            <strong>🎧 学习音名</strong><br>
+            在线钢琴是学习音名最好的工具：<br>
+            • 白键：C D E F G A B（循环）<br>
+            • 黑键：C#/Db D#/Eb F#/Gb G#/Ab A#/Bb<br>
+            • 弹几遍，记住每个键的名字
+        </div>
+        
+        <div class="tip">
+            <strong>🎚️ 练习听音</strong><br>
+            • 让别人帮你弹一个键，你猜是什么音<br>
+            • 先猜白键，熟练后再猜黑键<br>
+            • 每天练 10 分钟，2 周后听力明显提升
+        </div>
+        
+        <h2>📌 常用和弦指法（C大调）</h2>
+        <p><strong>C 和弦</strong> — 按 C + E + G<br>
+        <strong>Dm 和弦</strong> — 按 D + F + A<br>
+        <strong>Em 和弦</strong> — 按 E + G + B<br>
+        <strong>F 和弦</strong> — 按 F + A + C<br>
+        <strong>G 和弦</strong> — 按 G + B + D<br>
+        <strong>Am 和弦</strong> — 按 A + C + E</p >
+        
+        <h2>⚠️ 注意事项</h2>
+        <p>• 在线钢琴需要浏览器播放声音，请确保设备音量已打开。<br>
+        • 不同网站的键盘映射可能不同，先查看页面上的帮助。<br>
+        • 网页钢琴无法替代真实钢琴的触感，但足够入门学习。<br>
+        • 建议配合耳机使用，听得更清楚。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 官网：onlinepianist.com/virtual-piano<br>
+        • 同类工具推荐：Piano Online、Virtual Piano</p >
+        
+        
+    </div>
+    
+    <div class="footer">
+        © 芦苇音乐 · 工具使用指南<br>
+        内容持续更新，如有错误欢迎反馈
+    </div>
+</div>
+</body>
+</html>

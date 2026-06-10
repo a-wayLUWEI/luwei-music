@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>谱乐 AI 完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .feature-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .feature-item {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        .feature-item .emoji { font-size: 1.5rem; margin-bottom: 6px; }
+        .feature-item .name { font-weight: bold; color: #FFD966; font-size: 0.8rem; }
+        .feature-item .desc { font-size: 0.65rem; color: #AAD4B0; margin-top: 4px; }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🎬 谱乐 AI</h1>
+        <div>
+            <span class="tag">📱 iOS</span>
+            <span class="tag">💰 免费+内购</span>
+            <span class="tag">🎬 AI MV</span>
+            <span class="tag">🎵 音乐生成</span>
+            <span class="tag">🎤 声音克隆</span>
+        </div>
+        
+        <h2>📌 什么是谱乐 AI？</h2>
+        <p>谱乐 AI 是一款集 AI 音乐生成、AI MV 制作、人声克隆、MIDI 转乐谱于一体的全能型 App。它支持 Suno V5.0 模型，对话式 AI 音乐创作，还能把音乐直接发行到各大平台。</p >
+        <p>最大的亮点是：<strong>用一张照片 + 一首歌，就能生成 4K 专业 MV</strong>，并且人物口型与歌词自然匹配。</p >
+        
+        <h2>✨ 核心功能</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="emoji">🎬</div>
+                <div class="name">AI MV</div>
+                <div class="desc">4K输出、一次最高10分钟、对口型自然</div>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🎵</div>
+                <div class="name">AI 音乐生成</div>
+                <div class="desc">Suno V5.0模型、对话式创作</div>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🎤</div>
+                <div class="name">人声克隆</div>
+                <div class="desc">录制声音，AI 用你的声音唱歌</div>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">📄</div>
+                <div class="name">MIDI转乐谱</div>
+                <div class="desc">上传MIDI自动生成五线谱/简谱</div>
+            </div>
+        </div>
+        
+        <h2>💰 收费模式</h2>
+        <p>谱乐 AI 采用免费 + 内购模式。基础功能免费使用，高级功能（如 4K MV 输出、声音克隆、音乐发行）需要内购解锁。具体价格以 App 内显示为准。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        <p><strong>第1步：下载安装</strong><br>在 App Store 搜索「谱乐 AI」下载安装。</p >
+        <p><strong>第2步：AI 音乐生成</strong><br>打开 App，选择「AI 写歌」，输入描述或上传歌词，选择风格，点击生成。</p >
+        <p><strong>第3步：AI MV 制作</strong><br>选择「AI MV」，上传一张照片或一段视频，选择已生成的歌曲，AI 自动生成对口型 MV。</p >
+        <p><strong>第4步：人声克隆</strong><br>选择「声音克隆」，录制 60 秒自己的声音，之后就可以用你的声音唱任何歌。</p >
+        <p><strong>第5步：MIDI 转乐谱</strong><br>上传 MIDI 文件，AI 自动生成五线谱或简谱，可导出 PDF。</p >
+        
+        <h2>💡 进阶技巧</h2>
+        <div class="tip">
+            <strong>🎬 MV 质量优化</strong><br>
+            使用正面、光线充足、面部清晰的照片，生成的 MV 口型匹配效果更好。4K 输出需要内购解锁。
+        </div>
+        <div class="tip">
+            <strong>🎤 声音克隆技巧</strong><br>
+            录制时尽量安静，说 60 秒以上完整句子，避免背景噪音。克隆后的声音可用于任何生成的歌曲。
+        </div>
+        <div class="tip">
+            <strong>📄 MIDI 转乐谱</strong><br>
+            支持复杂 MIDI 文件，生成后可导出 MusicXML 或 PDF，方便在其他软件中编辑。
+        </div>
+        
+        <h2>⚠️ 注意事项</h2>
+        <p>• 4K MV 输出为付费功能，免费版输出分辨率较低。<br>
+        • 声音克隆功能需要内购解锁。<br>
+        • 音乐发行功能需要额外付费，发行前请确认版权归属。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 下载地址：App Store 搜索「谱乐 AI」<br>
+        • 官方网站：通过 App 内查看</p >
+        
+        
+    </div>
+    
+    <div class="footer">
+        © 芦苇音乐 · 工具使用指南<br>
+        内容持续更新，如有错误欢迎反馈
+    </div>
+</div>
+</body>
+</html>

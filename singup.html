@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>唱醒 SingUp 完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .step {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+        .step .num {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+        .price-table {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #F2C94C40;
+        }
+        th { color: #FFD966; }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🎤 唱醒 SingUp</h1>
+        <div>
+            <span class="tag">📱 iOS</span>
+            <span class="tag">💰 免费+内购</span>
+            <span class="tag">🎤 AI翻唱</span>
+            <span class="tag">🎵 AI写歌</span>
+            <span class="tag">🎨 声音克隆</span>
+            <span class="tag">🎬 网易有道出品</span>
+        </div>
+        
+        <h2>📌 什么是唱醒？</h2>
+        <p>唱醒（SingUp）是由网易有道出品的 AI 翻唱 + 声音克隆 App。它的核心功能是：<strong>用 AI 替换原曲人声，保留原旋律和节奏，让你唱任何歌</strong>。</p >
+        <p>相比其他同类 App，唱醒的特点是「简单易用」，不需要训练复杂的声音模型，选一首歌就能直接生成你的翻唱版本。</p >
+        
+        <h2>✨ 核心功能</h2>
+        <p><strong>🎤 AI 翻唱</strong> — 选择一首歌，AI 自动用你选定的声音翻唱，保留原曲旋律节奏<br>
+        <strong>🎵 AI 写歌</strong> — 输入主题或歌词，AI 生成原创歌曲<br>
+        <strong>🎨 声音克隆</strong> — 训练自己的声音模型，用自己声音翻唱<br>
+        <strong>🎬 一键分享</strong> — 生成后直接分享到抖音、微信、朋友圈</p >
+        
+        <h2>💰 收费模式</h2>
+        <div class="price-table">
+            <table>
+                <tr><th>套餐</th><th>价格</th><th>说明</th></tr>
+                <tr><td>免费版</td><td>免费</td><td>每日有限次数，有水印</td>
+            </tr>
+                <td>周订阅</td><td>¥22/周</td><td>去水印、无限次生成</td>
+            </tr>
+                <td>年订阅</td><td>¥198/年</td><td>最划算，相当于 ¥16.5/月</td>
+            </tr>
+                <td>永久买断</td><td>¥398</td><td>一次性买断，终身使用</td>
+            </tr>
+        </table>
+        <p>💡 建议：先用免费版试唱几首歌，满意后再订阅。年订阅比周订阅划算很多。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        
+        <h3>第一步：下载安装</h3>
+        <div class="step">
+            <span class="num">1</span> 在 App Store 搜索「唱醒」或「SingUp」
+        </div>
+        <div class="step">
+            <span class="num">2</span> 下载安装，打开 App
+        </div>
+        
+        <h3>第二步：AI 翻唱（最简单）</h3>
+        <div class="step">
+            <span class="num">1</span> 点击首页「AI 翻唱」
+        </div>
+        <div class="step">
+            <span class="num">2</span> 搜索你想唱的歌名（如「七里香」）
+        </div>
+        <div class="step">
+            <span class="num">3</span> 选择要使用的声音（默认有几种音色可选）
+        </div>
+        <div class="step">
+            <span class="num">4</span> 点击「生成」，等待 10-20 秒
+        </div>
+        <div class="step">
+            <span class="num">5</span> 试听！听到 AI 唱这首歌！
+        </div>
+        
+        <h3>第三步：声音克隆（用你自己的声音）</h3>
+        <div class="step">
+            <span class="num">1</span> 点击「声音克隆」或「我的声音」
+        </div>
+        <div class="step">
+            <span class="num">2</span> 录制 30-60 秒自己的声音
+        </div>
+        <div class="step">
+            <span class="num">3</span> 等待训练完成（约 1-2 分钟）
+        </div>
+        <div class="step">
+            <span class="num">4</span> 选择一首歌，选择「我的声音」
+        </div>
+        <div class="step">
+            <span class="num">5</span> 生成！听到自己的声音唱歌！
+        </div>
+        
+        <h3>第四步：AI 写歌</h3>
+        <div class="step">
+            <span class="num">1</span> 点击「AI 写歌」
+        </div>
+        <div class="step">
+            <span class="num">2</span> 输入主题（如「毕业季的感伤」）
+        </div>
+        <div class="step">
+            <span class="num">3</span> 或直接粘贴你写的歌词
+        </div>
+        <div class="step">
+            <span class="num">4</span> 选择风格（流行/民谣/摇滚/古风）
+        </div>
+        <div class="step">
+            <span class="num">5</span> 点击生成，AI 自动谱曲演唱
+        </div>
+        
+        <h2>💡 进阶技巧</h2>
+        
+        <div class="tip">
+            <strong>🎤 声音克隆效果优化</strong><br>
+            • 安静环境下录音，避免背景噪音<br>
+            • 录制 30 秒以上完整句子<br>
+            • 用正常说话的音量和语速<br>
+            • 尽量包含不同音高变化<br>
+            • 付费后效果更好（免费版有音质限制）
+        </div>
+        
+        <div class="tip">
+            <strong>🎵 翻唱选歌技巧</strong><br>
+            • 流行歌曲效果最好（训练数据多）<br>
+            • 快歌比慢歌更自然<br>
+            • 中英文歌曲都支持<br>
+            • 冷门歌曲可能需要等待或选择其他版本
+        </div>
+        
+        <div class="tip">
+            <strong>🎬 分享到抖音/朋友圈</strong><br>
+            生成后点击「分享」，可以直接导出视频（带歌词字幕）<br>
+            视频自带「唱醒」水印（免费版），付费后可去除
+        </div>
+        
+        <div class="tip">
+            <strong>🎚️ 调音选项</strong><br>
+            生成后如果感觉音调不对，可以用内置调音工具：<br>
+            • 升调/降调：上下调整半音<br>
+            • 速度：加快或放慢<br>
+            • 混响：增加空间感
+        </div>
+        
+        <h2>⚠️ 注意事项</h2>
+        <p>• 免费版生成的音频带有「唱醒」水印，订阅后可去除。<br>
+        • 每日免费次数有限，重度使用建议订阅。<br>
+        • 翻唱他人歌曲仅限个人娱乐，请勿用于商业用途。<br>
+        • 声音克隆功能需要订阅解锁。<br>
+        • 网易有道出品，数据安全相对有保障。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 下载地址：App Store 搜索「唱醒」或「SingUp」<br>
+        • 官方网站：singup.youdao.com<br>
+        • 官方教程：App 内有帮助页面</p >
+        
+        
+    </div>
+    
+    <div class="footer">
+        © 芦苇音乐 · 工具使用指南<br>
+        内容持续更新，如有错误欢迎反馈
+    </div>
+</div>
+</body>
+</html>
