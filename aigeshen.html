@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI歌神 完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .step {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+        .step .num {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+        .price-table {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #F2C94C40;
+        }
+        th { color: #FFD966; }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🎵 AI歌神</h1>
+        <div>
+            <span class="tag">📱 iOS</span>
+            <span class="tag">💰 免费+内购</span>
+            <span class="tag">🎵 AI写歌</span>
+            <span class="tag">🎤 AI翻唱</span>
+            <span class="tag">🎨 三种创作模式</span>
+        </div>
+        
+        <h2>📌 什么是AI歌神？</h2>
+        <p>AI歌神是一款AI音乐创作App，提供三种创作入口：图片生乐、灵感生乐、歌词生乐。你可以用一张照片、一段文字描述、或者一段歌词，让AI自动生成完整的歌曲。</p >
+        <p>它适合想要快速写歌、找灵感的音乐爱好者，以及短视频创作者。</p >
+        
+        <h2>✨ 核心功能</h2>
+        <p><strong>🖼️ 图片生乐</strong> — 上传一张照片，AI根据画面情绪生成歌曲<br>
+        <strong>💡 灵感生乐</strong> — 输入文字描述（如「夏日的海边」），AI生成歌曲<br>
+        <strong>📝 歌词生乐</strong> — 粘贴你的歌词，AI自动谱曲演唱<br>
+        <strong>🎤 AI翻唱</strong> — 用AI声音翻唱热门歌曲<br>
+        <strong>🎚️ 风格选择</strong> — 流行、摇滚、电子、古风、民谣</p >
+        
+        <h2>💰 收费模式</h2>
+        <div class="price-table">
+            <table>
+                <tr><th>套餐</th><th>价格</th><th>说明</th></tr>
+                <tr><td>免费版</td><td>免费</td><td>每日有限次数，有水印</td></tr>
+                <tr><td>周订阅</td><td>¥18/周</td><td>去水印、无限次生成</td></tr>
+                <tr><td>月订阅</td><td>¥58/月</td><td>推荐，性价比高</td></tr>
+                <tr><td>终身买断</td><td>¥168</td><td>一次付费，终身使用</td></tr>
+            </table>
+        </div>
+        <p>💡 建议：先用免费版体验，喜欢再订阅。终身买断最划算。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        
+        <h3>第一步：下载安装</h3>
+        <div class="step"><span class="num">1</span> 在App Store搜索「AI歌神」</div>
+        <div class="step"><span class="num">2</span> 下载安装，打开App</div>
+        
+        <h3>第二步：图片生乐</h3>
+        <div class="step"><span class="num">1</span> 点击「图片生乐」</div>
+        <div class="step"><span class="num">2</span> 从相册选一张照片或现场拍摄</div>
+        <div class="step"><span class="num">3</span> AI自动分析画面情绪和内容</div>
+        <div class="step"><span class="num">4</span> 选择风格，点击生成</div>
+        <div class="step"><span class="num">5</span> 等待10-20秒，听到专属歌曲</div>
+        
+        <h3>第三步：灵感生乐</h3>
+        <div class="step"><span class="num">1</span> 点击「灵感生乐」</div>
+        <div class="step"><span class="num">2</span> 输入描述，如「一首轻快的夏日海边歌曲」</div>
+        <div class="step"><span class="num">3</span> 选择风格（流行/摇滚/电子/古风）</div>
+        <div class="step"><span class="num">4</span> 点击生成，等待完成</div>
+        
+        <h3>第四步：歌词生乐</h3>
+        <div class="step"><span class="num">1</span> 点击「歌词生乐」</div>
+        <div class="step"><span class="num">2</span> 粘贴你写的歌词</div>
+        <div class="step"><span class="num">3</span> 选择曲风</div>
+        <div class="step"><span class="num">4</span> AI自动谱曲演唱</div>
+        
+        <h2>💡 进阶技巧</h2>
+        
+        <div class="tip">
+            <strong>🖼️ 图片生乐技巧</strong><br>
+            • 使用情绪明确的照片（笑容、风景、日落效果更好）<br>
+            • 可以选择多张同主题照片，AI学习更准确<br>
+            • 适合为旅行视频、Vlog配乐
+        </div>
+        
+        <div class="tip">
+            <strong>📝 歌词生乐技巧</strong><br>
+            • 歌词建议有押韵和节奏感<br>
+            • 4-8句短歌词比长诗效果更好<br>
+            • 可以指定主歌、副歌结构
+        </div>
+        
+        <div class="tip">
+            <strong>🎵 三种模式的适用场景</strong><br>
+            • 图片生乐：旅行Vlog、活动视频配乐<br>
+            • 灵感生乐：快速写歌、找创作灵感<br>
+            • 歌词生乐：把你的诗变成歌、作品发表
+        </div>
+        
+        <h2>⚠️ 注意事项</h2>
+        <p>• 免费版生成的歌曲有水印，订阅后可去除。<br>
+        • 每日免费次数有限，重度使用建议订阅。<br>
+        • 生成的歌曲版权归用户所有，可商业使用（订阅后）。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 下载地址：App Store 搜索「AI歌神」</p >
+        
+        
+    </div>
+    <div class="footer">© 芦苇音乐 · 工具使用指南</div>
+</div>
+</body>
+</html>
