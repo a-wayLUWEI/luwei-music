@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>音乐工具箱 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo { font-size: 3rem; margin-bottom: 10px; }
+        .title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            font-size: 0.8rem;
+            color: #AAD4B0;
+        }
+        .category {
+            margin-bottom: 30px;
+        }
+        .category-title {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin-bottom: 12px;
+            padding-left: 8px;
+            border-left: 4px solid #E69A2E;
+        }
+        .tools-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .tool-card {
+            background: #0f281dcc;
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            border: 1px solid #F2C94C;
+            padding: 16px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: inherit;
+        }
+        .tool-card:hover {
+            background: #1a3a2a;
+            transform: translateX(5px);
+        }
+        .tool-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            background: #2a4a3a;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tool-info { flex: 1; }
+        .tool-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 4px;
+        }
+        .tool-desc {
+            font-size: 0.7rem;
+            color: #C8E6C9;
+            margin-bottom: 4px;
+        }
+        .tool-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .tag {
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: #2a4a3a;
+            color: #AAD4B0;
+        }
+        .tag.free { background: #2e7d32; color: white; }
+        .tag.paid { background: #E69A2E; color: #2D1E0C; }
+        .tag.inner { background: #3C6E4A; color: white; }
+        .tool-link {
+            font-size: 0.8rem;
+            color: #E69A2E;
+            font-weight: bold;
+            background: rgba(230,154,46,0.2);
+            padding: 6px 14px;
+            border-radius: 30px;
+            white-space: nowrap;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="back-link">← 返回首页</a>
+    <div class="header">
+        <div class="logo">🛠️</div>
+        <div class="title">音乐工具箱</div>
+        <div class="subtitle">免费实用工具 · 持续更新</div>
+    </div>
+    <!-- 分类数据 - 你以后只需要修改这里 -->
+    <div id="toolsContainer"></div>
+    <div class="footer">
+        © 芦苇音乐 · 音乐工具箱<br>
+        部分工具为第三方服务，使用时请遵守各自条款
+    </div>
+</div>
+<script>
+    // ==================== 工具数据（你以后只改这里） ====================
+    const toolsData = [
+        // 一、AI 音乐生成
+        { category: "🤖 AI 音乐生成", icon: "", items: [
+            { name: "Suno", desc: "一句话生成完整歌曲，支持中文，效果最惊艳", tags: ["付费", "网页"], url: "https://suno.com" },
+            { name: "谱乐 AI", desc: "AI MV、MIDI转乐谱、人声克隆、音乐发行", tags: ["免费", "内购", "iOS"], url: "https://apps.apple.com/cn/app/谱乐-ai/id6737531324" },
+            { name: "MuseAI", desc: "照片生成MV、AI翻唱、声音克隆", tags: ["免费", "内购", "iOS"], url: "https://apps.apple.com/cn/app/museai/id6479859972" },
+            { name: "Vemus未音", desc: "文字生成歌曲、AI拍MV、风格Remix", tags: ["免费", "内购", "安卓"], url: "https://a.app.qq.com/o/simple.jsp?pkgname=com.vemus.music" }
+        ]},
+        // 二、AI MV / 视频生成
+        { category: " AI MV / 视频生成", icon: "", items: [
+            { name: "谱乐 AI", desc: "4K输出、最长10分钟、对口型自然", tags: ["免费", "内购", "iOS"], url: "https://apps.apple.com/cn/app/谱乐-ai/id6737531324" },
+            { name: "MuseAI", desc: "一张照片生成专业MV，口型匹配", tags: ["免费", "内购", "iOS"], url: "https://apps.apple.com/cn/app/museai/id6479859972" },
+            { name: "Vemus未音", desc: "一张照片生成演唱会视频", tags: ["免费", "内购", "安卓"], url: "https://a.app.qq.com/o/simple.jsp?pkgname=com.vemus.music" }
+        ]},
+        // 三、AI 识谱 / 伴奏分离
+        { category: " AI 识谱 / 伴奏分离", icon: "", items: [
+            { name: "SoundBug 音虫", desc: "音频拖进去自动识别和弦/音高/节拍，生成简谱", tags: ["免费", "网页"], url: "https://www.soundbug.com" },
+            { name: "VocalRemover", desc: "一键消除人声，保留伴奏", tags: ["免费", "网页"], url: "https://vocalremover.org" },
+            { name: "LALAL.AI", desc: "人声/鼓/贝斯/钢琴单独分离", tags: ["免费", "试用", "网页"], url: "https://lalal.ai" },
+            { name: "音悦宝", desc: "智能AI识谱、变调、转五线谱", tags: ["免费", "iOS"], url: "https://apps.apple.com/cn/app/音悦宝/id6445908190" },
+            { name: "GreatPan", desc: "238种乐器音色，海量曲谱跟学", tags: ["免费", "安卓"], url: "https://a.app.qq.com/o/simple.jsp?pkgname=com.greatpan.app" }
+        ]},
+        // 四、宿主软件
+        { category: "️ 宿主软件 (DAW)", icon: "", items: [
+            { name: "FL Studio", desc: "电子音乐首选，上手快，资源丰富", tags: ["付费", "Win/Mac"], url: "https://www.flstudiochina.com" },
+            { name: "Studio One", desc: "内置音频分离，适合乐队编曲", tags: ["付费", "Win/Mac"], url: "https://www.presonus.com/products/studio-one" },
+            { name: "GarageBand", desc: "Mac用户首选，音色丰富，新手友好", tags: ["免费", "Mac"], url: "https://www.apple.com/cn/mac/garageband/" },
+            { name: "Cakewalk", desc: "完整专业DAW，可做整张专辑", tags: ["免费", "Win"], url: "https://www.bandlab.com/products/cakewalk" },
+            { name: "Audacity", desc: "录音/修音神器，轻量级", tags: ["免费", "全平台"], url: "https://www.audacityteam.org" },
+            { name: "音虫 SoundBug", desc: "国产免费编曲软件，教学友好", tags: ["免费", "Win/Mac"], url: "https://www.soundbug.com" }
+        ]},
+        // 五、AI 歌手 / 声音克隆
+        { category: " AI 歌手 / 声音克隆", icon: "️", items: [
+            { name: "Suno", desc: "AI音乐生成，支持用自己的声音", tags: ["付费", "网页"], url: "https://suno.com" },
+            { name: "TrackLab", desc: "录制60秒声音即可克隆，用自己声音唱歌", tags: ["免费", "内购", "iOS"], url: "https://apps.apple.com/cn/app/tracklab/id6738685112" },
+            { name: "唱醒 SingUp", desc: "AI翻唱、声音克隆、AI写歌", tags: ["免费", "内购", "iOS"], url: "https://apps.apple.com/cn/app/唱醒-ai/id6461905171" },
+            { name: "AI 歌神", desc: "AI写歌、作曲、翻唱", tags: ["免费", "内购", "iOS"], url: "https://apps.apple.com/cn/app/ai歌神/id6453098072" }
+        ]},
+        // 六、练耳 / 乐理 / 节奏训练
+        { category: " 练耳 / 乐理 / 节奏", icon: "", items: [
+            { name: "Rhythm Trainer", desc: "听节奏、选答案、打分", tags: ["免费", "网页"], url: "https://rhythm-trainer.com" },
+            { name: "ReadRhythm", desc: "视奏训练，练习读节奏型", tags: ["免费", "网页"], url: "https://readrhythm.com" },
+            { name: "ChordChord", desc: "输入和弦，自动推荐下一组", tags: ["免费", "网页"], url: "https://chordchord.com" },
+            { name: "五度圈", desc: "交互式五度圈，关系调一目了然", tags: ["免费", "网页"], url: "https://www.musicca.com/circle-of-fifths" },
+            { name: "音悦宝", desc: "全乐器教学、智能识谱、名师课程", tags: ["免费", "iOS"], url: "https://apps.apple.com/cn/app/音悦宝/id6445908190" }
+        ]},
+        // 七、在线乐器 / 指法图
+        { category: " 在线乐器 / 指法图", icon: "", items: [
+            { name: "Online Piano", desc: "网页钢琴，显示琴键对应的音名", tags: ["免费", "网页"], url: "https://www.onlinepianist.com/virtual-piano" },
+            { name: "Chord Bank", desc: "吉他和弦指法图", tags: ["免费", "网页"], url: "https://www.chordbank.com" },
+            { name: "Ableton 音乐课", desc: "互动教程，讲节奏/和弦/旋律", tags: ["免费", "网页"], url: "https://learningmusic.ableton.com" }
+        ]}
+    ];
+    // ==================== 渲染页面 ====================
+    const container = document.getElementById('toolsContainer');
+    toolsData.forEach(cat => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category';
+        categoryDiv.innerHTML = `<div class="category-title">${cat.icon} ${cat.category}</div><div class="tools-grid" id="grid-${cat.category.replace(/\s/g, '')}"></div>`;
+        container.appendChild(categoryDiv);
+        const grid = categoryDiv.querySelector('.tools-grid');
+        cat.items.forEach(tool => {
+            const tagHtml = tool.tags.map(t => {
+                if (t === '免费') return `<span class="tag free">${t}</span>`;
+                if (t === '付费' || t === '内购') return `<span class="tag paid">${t}</span>`;
+                return `<span class="tag">${t}</span>`;
+            }).join('');
+            const card = document.createElement('a');
+            card.href = tool.url;
+            card.target = '_blank';
+            card.className = 'tool-card';
+            card.innerHTML = `
+                <div class="tool-icon">${cat.icon}</div>
+                <div class="tool-info">
+                    <div class="tool-name">${tool.name}</div>
+                    <div class="tool-desc">${tool.desc}</div>
+                    <div class="tool-tags">${tagHtml}</div>
+                </div>
+                <div class="tool-link">打开 →</div>
+            `;
+            grid.appendChild(card);
+        });
+    });
+</script>
+</body>
+</html>
+

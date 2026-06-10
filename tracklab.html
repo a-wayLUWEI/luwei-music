@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>TrackLab 完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .step {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+        .step .num {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+        .price-table {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #F2C94C40;
+        }
+        th { color: #FFD966; }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🎙️ TrackLab 声音克隆</h1>
+        <div>
+            <span class="tag">📱 iOS</span>
+            <span class="tag">💰 免费+内购</span>
+            <span class="tag">🎤 声音克隆</span>
+            <span class="tag">🎵 AI写歌</span>
+            <span class="tag">🎧 AI翻唱</span>
+        </div>
+        
+        <h2>📌 什么是 TrackLab？</h2>
+        <p>TrackLab 是一款专注于「声音克隆」的 AI 音乐 App。它的核心功能是：<strong>录制 60 秒你自己的声音，AI 就能用你的声音唱任何歌曲</strong>。</p >
+        <p>除此之外，它还支持 AI 写歌、AI 翻唱、歌词生成等功能。非常适合想做个人专属 AI 歌手、或者想用自己声音翻唱歌曲的用户。</p >
+        
+        <h2>✨ 核心功能</h2>
+        <p><strong>🎤 声音克隆</strong> — 录制 60 秒自己的声音，训练专属音色模型，用你的声音唱任何歌<br>
+        <strong>🎵 AI 写歌</strong> — 描述概念或上传歌词，AI 自动生成完整歌曲<br>
+        <strong>🎧 AI 翻唱</strong> — 用克隆的声音翻唱任意歌曲<br>
+        <strong>📝 歌词生成</strong> — 输入主题，AI 自动写歌词<br>
+        <strong>🎚️ 调音编辑</strong> — 简单调整音高、节奏</p >
+        
+        <h2>💰 收费模式</h2>
+        <div class="price-table">
+            <table>
+                <tr><th>套餐</th><th>价格</th><th>说明</th></tr>
+                <tr><td>免费版</td><td>免费</td><td>基础功能，有水印，声音克隆有限制</td></tr>
+                <tr><td>周订阅</td><td>¥38/周</td><td>去水印、声音克隆解锁</td></tr>
+                <tr><td>月订阅</td><td>¥58/月</td><td>推荐，性价比最高</td></tr>
+                <tr><td>年订阅</td><td>¥398/年</td><td>最划算，相当于 ¥33/月</td></tr>
+            </table>
+        </div>
+        <p>💡 建议：先用免费版体验声音克隆效果，满意后再订阅。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        
+        <h3>第一步：下载安装</h3>
+        <div class="step">
+            <span class="num">1</span> 在 App Store 搜索「TrackLab」
+        </div>
+        <div class="step">
+            <span class="num">2</span> 下载安装，打开 App
+        </div>
+        
+        <h3>第二步：声音克隆（核心功能）</h3>
+        <div class="step">
+            <span class="num">1</span> 点击「声音克隆」或「Create Voice」
+        </div>
+        <div class="step">
+            <span class="num">2</span> 点击「开始录音」，录制 60 秒自己的声音
+        </div>
+        <div class="step">
+            <span class="num">3</span> 建议朗读一段完整的文字，比如一段歌词或诗
+        </div>
+        <div class="step">
+            <span class="num">4</span> 录音结束后，点击「训练」，等待 1-2 分钟
+        </div>
+        <div class="step">
+            <span class="num">5</span> 训练完成后，你的专属声音模型就生成了
+        </div>
+        
+        <h3>第三步：用你的声音唱歌</h3>
+        <div class="step">
+            <span class="num">1</span> 选择「AI 翻唱」或「AI 写歌」
+        </div>
+        <div class="step">
+            <span class="num">2</span> 选择你刚克隆的声音模型
+        </div>
+        <div class="step">
+            <span class="num">3</span> 输入歌曲描述或上传歌词
+        </div>
+        <div class="step">
+            <span class="num">4</span> 点击生成，等待 10-20 秒
+        </div>
+        <div class="step">
+            <span class="num">5</span> 试听！听到自己的声音在唱歌！
+        </div>
+        
+        <h3>第四步：导出分享</h3>
+        <div class="step">
+            <span class="num">1</span> 点击下载按钮，保存音频文件
+        </div>
+        <div class="step">
+            <span class="num">2</span> 可以分享到微信、朋友圈、抖音等平台
+        </div>
+        
+        <h2>💡 进阶技巧</h2>
+        
+        <div class="tip">
+            <strong>🎤 声音克隆效果优化</strong><br>
+            • 在安静环境下录音，避免背景噪音<br>
+            • 录制 60 秒以上完整句子（不要只念几个字）<br>
+            • 用正常说话的音量和语速<br>
+            • 尽量包含不同音高（说话时带一些情绪变化）<br>
+            • 如果效果不理想，可以重新录制再训练
+        </div>
+        
+        <div class="tip">
+            <strong>🎵 写歌提示词技巧</strong><br>
+            • 简单：「一首关于夏天的流行歌」<br>
+            • 详细：「一首中文流行歌，女生演唱，轻快节奏，关于青春和梦想」<br>
+            • 上传歌词：把你写的歌词粘贴进去，AI 会配曲
+        </div>
+        
+        <div class="tip">
+            <strong>🎧 翻唱其他歌曲</strong><br>
+            想用你的声音唱周杰伦的歌？<br>
+            选择「AI 翻唱」，输入歌曲名（如「七里香」），AI 会自动生成你的版本。<br>
+            ⚠️ 翻唱他人歌曲请勿用于商业用途，注意版权。
+        </div>
+        
+        <div class="tip">
+            <strong>🎚️ 调音技巧</strong><br>
+            生成后如果感觉音调不对，可以用内置的调音工具微调：<br>
+            • 音高：上下调整半音<br>
+            • 节奏：加快或放慢<br>
+            • 混响：增加空间感
+        </div>
+        
+        <h2>⚠️ 注意事项</h2>
+        <p>• 免费版生成的音频带有水印，订阅后可去除。<br>
+        • 声音克隆需要内购解锁，免费版只能试用。<br>
+        • 克隆的声音模型只在你自己的账号内使用，不会被分享给其他人。<br>
+        • 使用他人歌曲翻唱时请注意版权，建议仅用于个人娱乐。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 下载地址：App Store 搜索「TrackLab」<br>
+        • 官方网站：tracklab.ai<br>
+        • 官方教程：App 内有帮助页面</p >
+        
+        
+    </div>
+    
+    <div class="footer">
+        © 芦苇音乐 · 工具使用指南<br>
+        内容持续更新，如有错误欢迎反馈
+    </div>
+</div>
+</body>
+</html>

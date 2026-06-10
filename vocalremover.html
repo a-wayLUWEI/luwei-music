@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>VocalRemover 完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .step {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+        .step .num {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🎧 VocalRemover 伴奏分离</h1>
+        <div>
+            <span class="tag">🌐 网页版</span>
+            <span class="tag">💰 免费</span>
+            <span class="tag">🎤 人声消除</span>
+            <span class="tag">🎸 伴奏提取</span>
+        </div>
+        
+        <h2>📌 什么是 VocalRemover？</h2>
+        <p>VocalRemover 是一个完全免费的在线工具，可以一键从歌曲中分离人声和伴奏。你上传任何 MP3 或 WAV 文件，它会自动识别并提取：</p >
+        <p>• 🎤 纯人声（清唱版）<br>• 🎸 纯伴奏（无人声版）</p >
+        <p>不需要安装任何软件，直接在浏览器里操作，完全免费，没有次数限制。</p >
+        
+        <h2>✨ 核心功能</h2>
+        <p><strong>🎵 人声消除</strong> — 去掉人声，保留伴奏，适合练习唱歌、制作背景音乐<br>
+        <strong>🎤 人声提取</strong> — 提取纯人声，适合做翻唱、混音、人声分析<br>
+        <strong>📊 音频剪辑</strong> — 简单的裁剪功能<br>
+        <strong>🎚️ 音调调节</strong> — 升降调，适配不同歌手</p >
+        
+        <h2>💰 收费模式</h2>
+        <p><strong>完全免费！</strong> 没有任何隐藏收费，也没有次数限制。网页版直接使用，不需要注册账号。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        <div class="step">
+            <span class="num">1</span> 打开 vocalremover.org
+        </div>
+        <div class="step">
+            <span class="num">2</span> 点击「选择文件」，上传你的歌曲（MP3 或 WAV）
+        </div>
+        <div class="step">
+            <span class="num">3</span> 等待 10-30 秒（AI 自动处理）
+        </div>
+        <div class="step">
+            <span class="num">4</span> 预览分离结果（人声版 + 伴奏版）
+        </div>
+        <div class="step">
+            <span class="num">5</span> 点击下载，保存到本地
+        </div>
+        
+        <h2>💡 进阶技巧</h2>
+        <div class="tip">
+            <strong>🎵 制作伴奏</strong><br>
+            想练歌但找不到伴奏？上传原曲，一键消除人声，几秒钟就能得到伴奏。
+        </div>
+        <div class="tip">
+            <strong>🎤 提取人声做翻唱</strong><br>
+            提取纯人声后，可以导入宿主软件（如 FL Studio）重新混音，制作自己的翻唱版本。
+        </div>
+        <div class="tip">
+            <strong>🎚️ 升降调功能</strong><br>
+            分离后如果感觉调子不对，可以用网站的「音调调节」功能，上下调整半音。
+        </div>
+        <div class="tip">
+            <strong>📱 手机也能用</strong><br>
+            手机浏览器直接打开网站，同样可以上传和处理歌曲。
+        </div>
+        
+        <h2>⚠️ 注意事项</h2>
+        <p>• 分离质量取决于原始音频质量，录音越清晰效果越好。<br>
+        • 文件大小建议不超过 50MB，过大的文件处理时间较长。<br>
+        • 网站不会保存你的文件，隐私安全。<br>
+        • 分离后的伴奏可能包含轻微人声残留，属于正常现象。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 官网：vocalremover.org<br>
+        • 同类工具推荐：LALAL.AI（付费，效果更好）、Ultimate Vocal Remover（本地软件，免费）</p >
+        
+        
+    </div>
+    
+    <div class="footer">
+        © 芦苇音乐 · 工具使用指南<br>
+        内容持续更新，如有错误欢迎反馈
+    </div>
+</div>
+</body>
+</html>
