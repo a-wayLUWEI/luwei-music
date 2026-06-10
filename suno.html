@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Suno 完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .price-table {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #F2C94C40;
+        }
+        th { color: #FFD966; }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🎵 Suno AI 音乐生成</h1>
+        <div>
+            <span class="tag">🌐 网页版</span>
+            <span class="tag">💰 付费</span>
+            <span class="tag">🤖 AI音乐</span>
+            <span class="tag">🎤 人声克隆</span>
+        </div>
+        
+        <h2>📌 什么是 Suno？</h2>
+        <p>Suno 是目前全球最火的 AI 音乐生成平台。你只需要输入一段文字描述，比如「一首轻快的夏日流行歌，关于海边的回忆」，它就能在几秒内生成一首完整的歌曲——包括旋律、和声、节奏、甚至人声演唱。</p >
+        <p>Suno 支持中文、英文、日文等多种语言，生成效果被公认为行业顶尖。最新版本 v5.5 进一步强化了个人化功能。</p >
+        
+        <h2>💰 收费模式</h2>
+        <div class="price-table">
+            <tr><th>套餐</th><th>月度定价</th><th>积分/歌曲</th><th>商业使用</th></tr>
+            <tr><td>免费版</td><td>$0</td><td>每日 50 积分（约10首）</td><td>❌ 不支持</td></tr>
+            <tr><td>Creator</td><td>$10.83/月</td><td>18,000 积分（约900首）</td><td>✅ 支持</td></tr>
+            <tr><td>Studio</td><td>$29.58/月</td><td>54,000 积分（约2700首）</td><td>✅ 支持</td></tr>
+            <tr><td>Unlimited</td><td>$90/月</td><td>无限次生成</td><td>✅ 支持</td></tr>
+            </table>
+        </div>
+        <p>💡 建议：新手先用免费版体验，熟悉后再升级 Creator 版（性价比最高）。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        <p><strong>第1步：注册账号</strong><br>打开 suno.com，点击右上角「Sign Up」，用 Google、Discord 或邮箱注册。</p >
+        <p><strong>第2步：开始创作</strong><br>在输入框输入歌曲描述，例如：「一首中文流行歌，关于青春和梦想，轻快节奏」</p >
+        <p><strong>第3步：选择风格</strong><br>可以手动添加风格标签，如 pop、rock、electronic、jazz 等。</p >
+        <p><strong>第4步：生成</strong><br>点击「Create」，等待 10-20 秒，会生成两个版本供你选择。</p >
+        <p><strong>第5步：下载</strong><br>试听满意后，点击下载按钮保存 MP3。</p >
+        
+        <h2>💡 进阶技巧</h2>
+        <div class="tip">
+            <strong>🎧 我的品味 (My Taste)</strong><br>
+            免费功能。AI 会学习你喜欢的音乐风格和情绪，越用越懂你，自动推荐你喜欢的音乐方向。
+        </div>
+        <div class="tip">
+            <strong>🎤 声音克隆 (Voices)</strong><br>
+            付费功能。你可以上传或录制自己的声音，让 AI 用你自己的声音来演唱生成的歌曲。
+        </div>
+        <div class="tip">
+            <strong>📀 自定义模型 (Custom Models)</strong><br>
+            付费功能。上传至少 6 首你的原创音乐，AI 学习你的编曲风格，量身打造专属模型。
+        </div>
+        
+        <h2>⚠️ 版权提醒</h2>
+        <p>• <strong>免费版：</strong>生成的歌曲不能用于商业用途，版权归 Suno 所有。<br>
+        • <strong>付费版：</strong>生成的歌曲拥有商业使用权，但 Suno 不认为您是歌曲的「所有者」。<br>
+        • <strong>声音克隆：</strong>使用前需勾选协议，授权 Suno 将你的声音数据用于训练通用模型。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 官网：suno.com<br>
+        • 官方教程：suno.com/help<br>
+        • 社区作品：suno.com/feed</p >
+        
+        
+    </div>
+    
+    <div class="footer">
+        © 芦苇音乐 · 工具使用指南<br>
+        内容持续更新，如有错误欢迎反馈
+    </div>
+</div>
+</body>
+</html>
