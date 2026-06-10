@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MuseAI 完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .feature-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .feature-item {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px;
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+        .feature-item .emoji { font-size: 1.5rem; margin-bottom: 6px; }
+        .feature-item .name { font-weight: bold; color: #FFD966; font-size: 0.8rem; }
+        .feature-item .desc { font-size: 0.65rem; color: #AAD4B0; margin-top: 4px; }
+        .price-table {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #F2C94C40;
+        }
+        th { color: #FFD966; }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🎬 MuseAI</h1>
+        <div>
+            <span class="tag">📱 iOS</span>
+            <span class="tag">💰 免费+内购</span>
+            <span class="tag">🎬 AI MV</span>
+            <span class="tag">🎵 音乐生成</span>
+            <span class="tag">🎤 声音克隆</span>
+            <span class="tag">🎨 热歌改编</span>
+        </div>
+        
+        <h2>📌 什么是 MuseAI？</h2>
+        <p>MuseAI 是一款集 AI 音乐生成、AI MV 制作、AI 翻唱、声音克隆于一体的全能型 App。最大的亮点是：<strong>用一张照片 + 一首歌，就能生成专业对口型 MV</strong>，人物口型与歌词自然匹配。</p >
+        <p>此外，MuseAI 还支持「热歌改编」功能，可以把任意歌曲改编成你喜欢的风格（摇滚、电子、古风等）。</p >
+        
+        <h2>✨ 核心功能</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="emoji">🎬</div>
+                <div class="name">AI MV</div>
+                <div class="desc">一张照片生成专业MV，口型匹配</div>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🎵</div>
+                <div class="name">AI 写歌</div>
+                <div class="desc">一句话生成完整歌曲</div>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🎤</div>
+                <div class="name">AI 翻唱</div>
+                <div class="desc">用任何声音翻唱任何歌曲</div>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🎨</div>
+                <div class="name">热歌改编</div>
+                <div class="desc">改变歌曲风格（摇滚/电子/古风）</div>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🎙️</div>
+                <div class="name">声音克隆</div>
+                <div class="desc">训练专属音色卡片</div>
+            </div>
+        </div>
+        
+        <h2>💰 收费模式</h2>
+        <div class="price-table">
+            <table>
+                <tr><th>套餐</th><th>价格</th><th>说明</th></tr>
+                <tr><td>免费版</td><td>免费</td><td>基础功能，有水印</td></tr>
+                <tr><td>月度订阅</td><td>¥38/月</td><td>去水印、高级功能</td></tr>
+                <tr><td>年度订阅</td><td>¥68/月（年付）</td><td>更划算，含所有功能</td></tr>
+            </table>
+        </div>
+        <p>💡 建议：先用免费版体验，喜欢再订阅。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        <p><strong>第1步：下载安装</strong><br>在 App Store 搜索「MuseAI」下载安装。</p >
+        <p><strong>第2步：AI 写歌</strong><br>打开 App，选择「AI 写歌」，输入描述（如「一首浪漫的情歌，男生演唱」），选择风格，点击生成。</p >
+        <p><strong>第3步：AI MV 制作</strong><br>选择「AI MV」，上传一张照片，选择已生成的歌曲，AI 自动生成对口型 MV。</p >
+        <p><strong>第4步：热歌改编</strong><br>选择「热歌改编」，输入原歌曲名，选择目标风格（摇滚/电子/古风/爵士），AI 自动改编。</p >
+        <p><strong>第5步：声音克隆</strong><br>选择「声音克隆」，录制自己的声音，训练专属音色卡片，之后用你的声音唱歌。</p >
+        
+        <h2>💡 进阶技巧</h2>
+        <div class="tip">
+            <strong>🎬 MV 质量优化</strong><br>
+            使用正面、光线充足、面部清晰的照片，生成的 MV 口型匹配效果更好。
+        </div>
+        <div class="tip">
+            <strong>🎤 声音克隆技巧</strong><br>
+            录制 60 秒以上完整句子，避免背景噪音。克隆后的音色可用于任何生成的歌曲。
+        </div>
+        <div class="tip">
+            <strong>🎨 热歌改编玩法</strong><br>
+            尝试把流行歌改编成古风或电子风格，会有意想不到的效果，适合短视频配乐。
+        </div>
+        
+        <h2>⚠️ 注意事项</h2>
+        <p>• 免费版生成的 MV 带有水印，付费后可去除。<br>
+        • 声音克隆需要订阅付费。<br>
+        • 改编他人歌曲请勿用于商业用途，注意版权问题。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 下载地址：App Store 搜索「MuseAI」<br>
+        • 官方网站：https://museai.com（以 App 内信息为准）</p >
+        
+        
+    </div>
+    
+    <div class="footer">
+        © 芦苇音乐 · 工具使用指南<br>
+        内容持续更新，如有错误欢迎反馈
+    </div>
+</div>
+</body>
+</html>
