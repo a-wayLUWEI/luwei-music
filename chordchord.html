@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ChordChord 和弦推荐完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .step {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+        .step .num {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+        .chord-table {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #F2C94C40;
+        }
+        th { color: #FFD966; }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🎸 ChordChord 和弦推荐</h1>
+        <div>
+            <span class="tag">🌐 网页版</span>
+            <span class="tag">💰 免费</span>
+            <span class="tag">🎸 和弦推荐</span>
+            <span class="tag">🎹 编曲助手</span>
+        </div>
+        
+        <h2>📌 什么是 ChordChord？</h2>
+        <p>ChordChord 是一个智能和弦推荐工具。你输入几个和弦，它会根据音乐理论自动推荐接下来可以用的和弦进行。非常适合写歌、编曲、即兴伴奏时使用。</p >
+        <p>它完全免费、无需注册、打开网页就能用，是音乐创作者的「灵感小助手」。</p >
+        
+        <h2>✨ 核心功能</h2>
+        <p><strong>🎸 和弦推荐</strong> — 输入已有和弦，AI 推荐下一步<br>
+        <strong>🎹 多种风格</strong> — 流行、爵士、古典、电子等风格可选<br>
+        <strong>🎧 试听功能</strong> — 点击播放，听和弦进行的声音<br>
+        <strong>📝 导出 MIDI</strong> — 可以导出 MIDI 文件，导入宿主软件</p >
+        
+        <h2>💰 收费模式</h2>
+        <p><strong>完全免费！</strong> 所有功能免费使用，没有内购。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        
+        <h3>第一步：打开网站</h3>
+        <div class="step">
+            <span class="num">1</span> 打开 chordchord.com
+        </div>
+        <div class="step">
+            <span class="num">2</span> 页面会自动加载，无需注册
+        </div>
+        
+        <h3>第二步：输入你的和弦</h3>
+        <div class="step">
+            <span class="num">1</span> 在输入框中输入和弦（如 C、G、Am、F）
+        </div>
+        <div class="step">
+            <span class="num">2</span> 可以输入 2-4 个已有和弦
+        </div>
+        <div class="step">
+            <span class="num">3</span> 选择音乐风格（流行/爵士/古典/电子）
+        </div>
+        
+        <h3>第三步：获取推荐</h3>
+        <div class="step">
+            <span class="num">1</span> 点击「Generate」或「推荐」
+        </div>
+        <div class="step">
+            <span class="num">2</span> AI 会推荐 3-5 个接下来可以用的和弦
+        </div>
+        <div class="step">
+            <span class="num">3</span> 点击每个推荐和弦可以试听效果
+        </div>
+        
+        <h3>第四步：试听和导出</h3>
+        <div class="step">
+            <span class="num">1</span> 点击「Play」播放整个和弦进行
+        </div>
+        <div class="step">
+            <span class="num">2</span> 满意后点击「Export MIDI」下载 MIDI 文件
+        </div>
+        <div class="step">
+            <span class="num">3</span> 导入 FL Studio、Logic 等软件继续编曲
+        </div>
+        
+        <h2>💡 进阶技巧</h2>
+        
+        <div class="tip">
+            <strong>🎸 常用和弦进行（流行歌）</strong><br>
+            • C - G - Am - F（万能和弦）<br>
+            • G - D - Em - C（摇滚常用）<br>
+            • Am - F - C - G（伤感抒情）<br>
+            • Dm - G - C - Am（爵士感）
+        </div>
+        
+        <div class="tip">
+            <strong>🎹 如何用 ChordChord 写歌</strong><br>
+            1. 先确定一个调（比如 C 大调）<br>
+            2. 输入 1-2 个和弦作为开头<br>
+            3. 用 ChordChord 推荐接下来的和弦<br>
+            4. 把推荐的和弦组合成 4-8 个小节的进行<br>
+            5. 在这个和弦进行上写旋律
+        </div>
+        
+        <div class="tip">
+            <strong>🎧 和弦试听技巧</strong><br>
+            每个和弦都有不同的「情绪」：<br>
+            • 大和弦（C、G、D）：明亮、快乐<br>
+            • 小和弦（Am、Em、Dm）：忧伤、温柔<br>
+            • 七和弦（G7、C7）：紧张、需要解决<br>
+            选择推荐时，考虑你想要的情绪。
+        </div>
+        
+        <div class="tip">
+            <strong>📝 导出 MIDI 的用途</strong><br>
+            • 导入 FL Studio、Logic、Cubase 等宿主软件<br>
+            • 作为编曲的和弦轨道<br>
+            • 加快写歌速度，不用手动输入和弦
+        </div>
+        
+        <h2>📌 常用和弦速查表</h2>
+        <div class="chord-table">
+            <table>
+                <tr><th>调式</th><th>1级</th><th>2级</th><th>3级</th><th>4级</th><th>5级</th><th>6级</th></tr>
+                <tr><td>C大调</td><td>C</td><td>Dm</td><td>Em</td><td>F</td><td>G</td><td>Am</td></tr>
+                <tr><td>G大调</td><td>G</td><td>Am</td><td>Bm</td><td>C</td><td>D</td><td>Em</td></tr>
+                <tr><td>D大调</td><td>D</td><td>Em</td><td>F#m</td><td>G</td><td>A</td><td>Bm</td></tr>
+                <tr><td>A大调</td><td>A</td><td>Bm</td><td>C#m</td><td>D</td><td>E</td><td>F#m</td></tr>
+                <tr><td>E大调</td><td>E</td><td>F#m</td><td>G#m</td><td>A</td><td>B</td><td>C#m</td></tr>
+                <tr><td>F大调</td><td>F</td><td>Gm</td><td>Am</td><td>Bb</td><td>C</td><td>Dm</td></tr>
+            </table>
+        </div>
+        
+        <h2>⚠️ 注意事项</h2>
+        <p>• 推荐结果仅供参考，不一定非要按推荐来。<br>
+        • 不要过度依赖工具，培养自己的和声感更重要。<br>
+        • 建议结合五度圈学习，理解和弦之间的关系。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 官网：chordchord.com<br>
+        • 同类工具推荐：AutoChords、Chordify</p >
+        
+        
+    </div>
+    
+    <div class="footer">
+        © 芦苇音乐 · 工具使用指南<br>
+        内容持续更新，如有错误欢迎反馈
+    </div>
+</div>
+</body>
+</html>
