@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>和声基础教程 · 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 25px;
+            color: #FFD966;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .basic-card {
+            background: rgba(31,62,46,0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 32px;
+            border: 1px solid #F2C94C;
+            padding: 40px;
+        }
+        .module-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFD966;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .module-subtitle {
+            font-size: 0.9rem;
+            color: #AAD4B0;
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #F2C94C40;
+        }
+        .section { margin: 40px 0; }
+        .section-h2 {
+            font-size: 1.35rem;
+            color: #FFD966;
+            margin: 25px 0 15px;
+            padding-left: 12px;
+            border-left: 4px solid #E69A2E;
+        }
+        .section-h3 {
+            font-size: 1.05rem;
+            color: #F2C94C;
+            margin: 18px 0 10px;
+        }
+        .content-text {
+            font-size: 0.9rem;
+            line-height: 1.75;
+            margin: 12px 0;
+            text-indent: 2em;
+        }
+        .content-list {
+            margin: 12px 0 12px 2.5em;
+        }
+        .content-list li {
+            margin: 6px 0;
+            font-size: 0.88rem;
+            color: #C8E6C9;
+        }
+        .chord-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0;
+            font-size: 0.8rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .chord-table th, .chord-table td {
+            border: 1px solid #F2C94C40;
+            padding: 10px 8px;
+            text-align: center;
+            color: #F5ECD7;
+        }
+        .chord-table th {
+            background: #2a4a3a;
+            color: #FFD966;
+            font-weight: 600;
+        }
+        .case-box {
+            background: #1f3e2e;
+            border-left: 3px solid #E69A2E;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin: 15px 0;
+        }
+        .case-box p {
+            margin: 6px 0;
+            font-size: 0.85rem;
+            color: #F5ECD7;
+        }
+        .chord-mark {
+            color: #FFD966;
+            font-weight: 500;
+            background: rgba(230,154,46,0.15);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+        .reed-talk {
+            background: rgba(230,154,46,0.08);
+            border-radius: 20px;
+            padding: 20px 26px;
+            margin: 25px 0 20px;
+            border-left: 4px solid #E69A2E;
+        }
+        .talk-title {
+            font-size: 0.9rem;
+            color: #FFD966;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .talk-content {
+            font-size: 0.88rem;
+            color: #D4C5A3;
+            line-height: 1.8;
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 0.65rem;
+            color: #b8aa78;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #F2C94C40;
+        }
+        @media (max-width: 768px) {
+            .basic-card { padding: 24px; }
+            .chord-table { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="back-link">← 返回首页</a>
+    <div class="basic-card">
+        <h1 class="module-title">和声基础教程</h1>
+        <p class="module-subtitle">六大调式详解 · 和弦编配 · 走向库</p>
+
+        <!-- 一、大小调六大调式详解 -->
+        <div class="section">
+            <h2 class="section-h2">一、大小调六大调式详解</h2>
+            <p class="content-text">核心：大小调各分3种，区别只在Ⅵ、Ⅶ级音的升降变化，主音、调号、主干音程框架不变。</p>
+
+            <h3 class="section-h3">1. 大调类（全全半全全全半）</h3>
+            <ul class="content-list">
+                <li><span class="chord-mark">自然大调</span>：无升降，明亮开阔。例：C D E F G A B</li>
+                <li><span class="chord-mark">和声大调</span>：降Ⅵ级，幽暗伤感。例：C D E F G ♭A B</li>
+                <li><span class="chord-mark">旋律大调</span>：下行降Ⅵ、降Ⅶ，柔和婉转。例：C D E F G ♭A ♭B</li>
+            </ul>
+
+            <h3 class="section-h3">2. 小调类（全半全全半全全）</h3>
+            <ul class="content-list">
+                <li><span class="chord-mark">自然小调</span>：无升降，暗淡忧郁。例：A B C D E F G</li>
+                <li><span class="chord-mark">和声小调</span>：升Ⅶ级，张力强、最常用。例：A B C D E F ♯G</li>
+                <li><span class="chord-mark">旋律小调</span>：上行升Ⅵ、Ⅶ，下行还原。例：A B C D E ♯F ♯G</li>
+            </ul>
+
+            <div class="reed-talk">
+                <div class="talk-title">芦苇说 · 调式记忆</div>
+                <div class="talk-content">自然调式是底色，和声调式是戏剧感，旋律调式是流畅度。不必死背，记住一个口诀：小调升7是灵魂，大调降6添伤感。</div>
+            </div>
+        </div>
+
+        <!-- 二、大调体系编配（C大调） -->
+        <div class="section">
+            <h2 class="section-h2">二、大调体系编配（C大调）</h2>
+
+            <h3 class="section-h3">2.1 自然大调</h3>
+            <p class="content-text">基础和弦：C、Dm、Em、F、G、Am</p>
+            <div class="case-box">
+                <p>经典走向：<span class="chord-mark">C → F → G → C</span></p>
+            </div>
+
+            <h3 class="section-h3">2.2 和声大调（降Ⅵ级 → ♭A）</h3>
+            <ul class="content-list">
+                <li>特色和弦：<span class="chord-mark">♭A（♭VI）</span></li>
+                <li>常用进行：<span class="chord-mark">C → F → G → ♭A</span>（色彩突暗）</li>
+                <li>避坑：♭A 后优先接 V(G) 或 I(C)</li>
+            </ul>
+
+            <h3 class="section-h3">2.3 旋律大调（下行降Ⅵ、Ⅶ）</h3>
+            <ul class="content-list">
+                <li>特色和弦：<span class="chord-mark">♭A（♭VI）、♭B（♭VII）</span></li>
+                <li>下行进行：<span class="chord-mark">G → ♭B → ♭A → F → C</span></li>
+            </ul>
+        </div>
+
+        <!-- 三、小调体系编配（a小调） -->
+        <div class="section">
+            <h2 class="section-h2">三、小调体系编配（a小调）</h2>
+
+            <h3 class="section-h3">3.1 自然小调</h3>
+            <p class="content-text">基础和弦：Am、C、Dm、Em、F、G</p>
+
+            <h3 class="section-h3">3.2 和声小调（升Ⅶ级 → ♯G）⭐ 最常用</h3>
+            <ul class="content-list">
+                <li>核心变化：<span class="chord-mark">v(Em) → V(E)</span>（大三属和弦）</li>
+                <li>万能进行：<span class="chord-mark">Am → F → E → Am</span></li>
+            </ul>
+
+            <h3 class="section-h3">3.3 旋律小调</h3>
+            <ul class="content-list">
+                <li>流行简化：上行保留属和弦E，下行切回自然小调</li>
+            </ul>
+
+            <div class="reed-talk">
+                <div class="talk-title">芦苇说 · 小调核心</div>
+                <div class="talk-content">90%的流行小调歌曲用的其实是和声小调——只改一个音，把属和弦从小三变成大三，情绪立刻被拉起来。你听那些让你心口一紧的歌，大概率是E而不是Em。</div>
+            </div>
+        </div>
+
+        <!-- 四、流行常用调式走向库 -->
+        <div class="section">
+            <h2 class="section-h2">四、流行常用调式走向库</h2>
+
+            <h3 class="section-h3">4.1 自然大调</h3>
+            <div class="case-box">
+                <p><span class="chord-mark">C大调</span>：C → G → Am → F（万能卡农）</p>
+                <p><span class="chord-mark">G大调</span>：G → D → Em → C</p>
+                <p><span class="chord-mark">F大调</span>：F → C → Dm → Bb</p>
+                <p><span class="chord-mark">D大调</span>：D → A → Bm → G</p>
+            </div>
+
+            <h3 class="section-h3">4.2 自然小调（清冷/遗憾主力）</h3>
+            <div class="case-box">
+                <p><span class="chord-mark">Am小调</span>：Am → F → C → G（爆款小调走向）</p>
+                <p><span class="chord-mark">Bm小调</span>：Bm → G → D → A</p>
+                <p><span class="chord-mark">Dm小调</span>：Dm → Bb → F → C</p>
+            </div>
+
+            <h3 class="section-h3">4.3 中国民族调式（古风/国风/清冷核心）⭐</h3>
+            <div class="case-box">
+                <p><span class="chord-mark">A羽调（五声）</span>：Am → C → G → F（国风清冷万能走向）</p>
+                <p><span class="chord-mark">G徵调（五声）</span>：G → C → D → G</p>
+                <p><span class="chord-mark">C宫调（五声）</span>：C → G → F → C</p>
+            </div>
+
+            <div class="reed-talk">
+                <div class="talk-title">芦苇说 · 清冷走向</div>
+                <div class="talk-content">你的曲风需要的不是复杂，是“空”。A羽调五声走向 Am→C→G→F，没有半音的拉扯，没有属七的紧迫，像风吹过芦苇，声音散了，情绪还在。</div>
+            </div>
+        </div>
+
+        <!-- 五、和弦编配速查表 -->
+        <div class="section">
+            <h2 class="section-h2">五、和弦编配速查表</h2>
+            <table class="chord-table">
+                <tr><th>风格</th><th>推荐调式</th><th>核心走向</th></tr>
+                <tr><td>温柔抒情</td><td>C大调 / G大调</td><td>C→G→Am→F</td></tr>
+                <tr><td>清冷遗憾</td><td>Am小调 / Bm小调</td><td>Am→F→C→G</td></tr>
+                <tr><td>国风古风</td><td>A羽调（五声）</td><td>Am→C→G→F</td></tr>
+                <tr><td>低沉纯音乐</td><td>Dm小调 / Bb大调</td><td>Dm→Bb→F→C</td></tr>
+            </table>
+        </div>
+    </div>
+    <div class="footer-note">© 芦苇音乐 · 和声基础教程 | 先基础 · 后进阶</div>
+</div>
+</body>
+</html>

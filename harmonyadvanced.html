@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>和声进阶精讲 · 芦苇音乐学堂</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 25px;
+            color: #FFD966;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .harmony-card {
+            background: rgba(31,62,46,0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 32px;
+            border: 1px solid #F2C94C;
+            padding: 40px;
+        }
+        .module-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFD966;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .module-subtitle {
+            font-size: 0.9rem;
+            color: #AAD4B0;
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #F2C94C40;
+        }
+        .section {
+            margin: 45px 0;
+        }
+        .section-h2 {
+            font-size: 1.4rem;
+            color: #FFD966;
+            margin: 30px 0 15px;
+            padding-left: 12px;
+            border-left: 4px solid #E69A2E;
+        }
+        .section-h3 {
+            font-size: 1.1rem;
+            color: #F2C94C;
+            margin: 20px 0 10px;
+        }
+        .content-text {
+            font-size: 0.92rem;
+            line-height: 1.75;
+            margin: 12px 0;
+            color: #e8e9f0;
+            text-indent: 2em;
+        }
+        .content-list {
+            margin: 12px 0 12px 2.5em;
+        }
+        .content-list li {
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: #C8E6C9;
+        }
+        .chord-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.8rem;
+            background: rgba(0,0,0,0.25);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .chord-table th, .chord-table td {
+            border: 1px solid #F2C94C40;
+            padding: 10px 8px;
+            text-align: center;
+            color: #F5ECD7;
+        }
+        .chord-table th {
+            background: #2a4a3a;
+            color: #FFD966;
+            font-weight: 600;
+        }
+        .case-box {
+            background: #1f3e2e;
+            border-left: 3px solid #E69A2E;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin: 15px 0;
+        }
+        .case-box p {
+            margin: 6px 0;
+            font-size: 0.85rem;
+            color: #F5ECD7;
+        }
+        .chord-mark {
+            color: #FFD966;
+            font-weight: 500;
+            background: rgba(230,154,46,0.15);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+        .reed-talk {
+            background: rgba(230,154,46,0.08);
+            border-radius: 20px;
+            padding: 20px 26px;
+            margin: 25px 0 20px;
+            border-left: 4px solid #E69A2E;
+        }
+        .reed-talk .talk-title {
+            font-size: 0.9rem;
+            color: #FFD966;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .reed-talk .talk-content {
+            font-size: 0.88rem;
+            color: #D4C5A3;
+            line-height: 1.8;
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 0.65rem;
+            color: #b8aa78;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #F2C94C40;
+        }
+        @media (max-width: 768px) {
+            .harmony-card { padding: 24px; }
+            .chord-table { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="back-link">← 返回首页</a>
+    <div class="harmony-card">
+        <h1 class="module-title">和声进阶精讲</h1>
+        <p class="module-subtitle">和弦结构 · 功能逻辑 · 编配思维 · 听觉训练</p>
+
+        <!-- ========== 模块一：和声底层逻辑 ========== -->
+        <div class="section">
+            <h2 class="section-h2">一、和声底层逻辑</h2>
+
+            <h3 class="section-h3">1.1 三度叠置</h3>
+            <p class="content-text">现代和声的核心规则：以根音为起点，每次向上叠加三度（大三度或小三度）。</p>
+            <ul class="content-list">
+                <li>根音 + 三度 + 五音 → <span class="chord-mark">三和弦</span></li>
+                <li>三和弦 + 七音 → <span class="chord-mark">七和弦</span></li>
+                <li>七和弦 + 九音 → <span class="chord-mark">九和弦</span></li>
+                <li>九和弦 + 十一音 → <span class="chord-mark">十一和弦</span></li>
+                <li>十一和弦 + 十三音 → <span class="chord-mark">十三和弦</span></li>
+            </ul>
+            <div class="reed-talk">
+                <div class="talk-title">芦苇说 · 叠置逻辑</div>
+                <div class="talk-content">每叠一个三度，就像往房间多开一扇窗。三和弦是四面白墙，干净但不透气。七和弦是开了第一扇窗，风吹进来了。九和弦是第二扇，你能看见树了。十一和弦是第三扇，你看见了远山。十三和弦是屋顶也打开了——你看见了整片天空。但别忘了，好和声不是窗越多越好，而是每一扇窗开对位置。</div>
+            </div>
+
+            <h3 class="section-h3">1.2 三大功能组</h3>
+            <p class="content-text">功能和声的核心模型：<span class="chord-mark">T（主功能）→ S（下属功能）→ D（属功能）→ T</span></p>
+            <ul class="content-list">
+                <li><span class="chord-mark">T（主功能）</span>：I级、VI级，稳定、归家感，用于开头/结尾</li>
+                <li><span class="chord-mark">S（下属功能）</span>：IV级、II级，舒缓和声，用于叙事铺垫</li>
+                <li><span class="chord-mark">D（属功能）</span>：V级、VII级、属七，张力强，用于推动/转折</li>
+            </ul>
+            <div class="reed-talk">
+                <div class="talk-title">芦苇说 · 功能组</div>
+                <div class="talk-content">T-S-D-T 不是公式，是情绪的呼吸。T是你坐在家里，不说话。S是你站起来，走到窗边。D是你推开窗，风吹进来。T是你关窗，回到椅子上。清冷曲风为什么会“悬着”？因为我们故意让S和D之间拉得很长，或者让D迟迟不解决。情绪卡在半空中，就是欲言又止。</div>
+            </div>
+
+            <h3 class="section-h3">1.3 音程色彩字典</h3>
+            <table class="chord-table">
+                <tr><th>音程</th><th>色彩</th><th>典型情绪</th><th>曲风对应</th></tr>
+                <tr><td>小二度</td><td>刺耳、紧张</td><td>悬疑、压迫</td><td>电影配乐、情绪突变</td></tr>
+                <tr><td>大二度</td><td>自然、中性</td><td>流畅、叙述</td><td>民歌、流行主歌</td></tr>
+                <tr><td>小三度</td><td>暗、柔、孤</td><td>忧伤、清冷</td><td>小调抒情、国风</td></tr>
+                <tr><td>大三度</td><td>亮、暖、开</td><td>希望、治愈</td><td>大调流行、励志</td></tr>
+                <tr><td>纯四度</td><td>空、远</td><td>空旷、留白</td><td>民谣、纯音乐前奏</td></tr>
+                <tr><td>增四度</td><td>诡异、拉扯</td><td>不安、悬疑</td><td>爵士、实验桥段</td></tr>
+                <tr><td>纯五度</td><td>稳、正</td><td>力量、坚定</td><td>摇滚副歌、军歌</td></tr>
+                <tr><td>大七度</td><td>飘、梦</td><td>梦幻、疏离</td><td>大七和弦、氛围</td></tr>
+            </table>
+        </div>
+
+        <!-- ========== 模块二：和弦分类完整版 ========== -->
+        <div class="section">
+            <h2 class="section-h2">二、和弦分类完整版</h2>
+
+            <h3 class="section-h3">2.1 三和弦（基础）</h3>
+            <table class="chord-table">
+                <tr><th>类型</th><th>构造</th><th>C调举例</th><th>色彩</th><th>使用频率</th></tr>
+                <tr><td>大三</td><td>大三+小三</td><td>C</td><td>明亮、积极</td><td>极高</td></tr>
+                <tr><td>小三</td><td>小三+大三</td><td>Am</td><td>阴暗、内省</td><td>极高</td></tr>
+                <tr><td>增三</td><td>大三+大三</td><td>C+</td><td>扩张、紧张</td><td>极低</td></tr>
+                <tr><td>减三</td><td>小三+小三</td><td>Bdim</td><td>收缩、压抑</td><td>低</td></tr>
+            </table>
+
+            <h3 class="section-h3">2.2 七和弦（进阶主力）</h3>
+            <table class="chord-table">
+                <tr><th>类型</th><th>标记</th><th>C调</th><th>音色</th><th>用法</th></tr>
+                <tr><td>大七</td><td>Maj7</td><td>CM7</td><td>空灵、温柔</td><td>前奏、主歌、氛围</td></tr>
+                <tr><td>小七</td><td>m7</td><td>Am7</td><td>忧郁、慵懒</td><td>叙事、慢板</td></tr>
+                <tr><td>属七</td><td>7</td><td>G7</td><td>紧张、推力</td><td>副歌、转折、解决</td></tr>
+                <tr><td>半减七</td><td>m7b5</td><td>Bm7b5</td><td>压抑、悲凉</td><td>小调桥段、悬疑</td></tr>
+                <tr><td>减七</td><td>dim7</td><td>Cdim7</td><td>对称、极紧</td><td>过渡、转调</td></tr>
+            </table>
+
+            <h3 class="section-h3">2.3 挂留和弦 Sus</h3>
+            <p class="content-text">去掉三音，用二度或四度替换，制造“悬停感”。</p>
+            <ul class="content-list">
+                <li><span class="chord-mark">Sus2</span>：根音 + 大二度 + 五音，极简清冷。例：Csus2（C-D-G）</li>
+                <li><span class="chord-mark">Sus4</span>：根音 + 纯四度 + 五音，悠远犹豫。例：Csus4（C-F-G）</li>
+                <li><span class="chord-mark">7sus4</span>：属七+挂四，张力更复杂。例：G7sus4（G-C-D-F）</li>
+            </ul>
+
+            <h3 class="section-h3">2.4 加音和弦 Add</h3>
+            <p class="content-text">保留三和弦，额外增加一个装饰音。</p>
+            <ul class="content-list">
+                <li><span class="chord-mark">Add9</span>：加九音，饱满文艺。例：Cadd9（C-E-G-D）</li>
+                <li><span class="chord-mark">Add11</span>：加十一音，轻盈透亮。例：Fadd11（F-A-C-Bb）</li>
+                <li><span class="chord-mark">6和弦</span>：加六音，温暖复古。例：C6（C-E-G-A）</li>
+            </ul>
+
+            <h3 class="section-h3">2.5 延伸和弦（高阶）</h3>
+            <ul class="content-list">
+                <li><span class="chord-mark">属九（9）</span>：G9（G-B-D-F-A），华丽、现代，R&B常用</li>
+                <li><span class="chord-mark">属十一（11）</span>：G11，更空更悬，适合慢板铺底</li>
+                <li><span class="chord-mark">属十三（13）</span>：G13，爵士终极收束音色</li>
+                <li><span class="chord-mark">大九（Maj9）</span>：CM9，梦幻松弛，爵士主和弦首选</li>
+            </ul>
+
+            <div class="reed-talk">
+                <div class="talk-title">芦苇说 · 和弦层次</div>
+                <div class="talk-content">和弦每往上叠一个音，就像在夜里多看见一颗星。三和弦是月亮，够亮，但孤单。七和弦是月亮旁的第一颗星，你开始觉得夜空不是空的。九和弦是第二颗、第三颗——你看见了北斗。延伸和弦不是你主动加进去的，是你听见旋律需要它，它自己来的。好编曲不是会叠和弦，是知道什么时候该停。宁可少叠一颗星，不要堆到满天都是。</div>
+            </div>
+        </div>
+
+        <!-- ========== 模块三：和弦替代体系 ========== -->
+        <div class="section">
+            <h2 class="section-h2">三、和弦替代体系</h2>
+
+            <h3 class="section-h3">3.1 三全音替代（Tritone Substitution）</h3>
+            <p class="content-text">属七和弦被它增四度（三全音）距离的另一个属七替代。保留三全音张力，但低音变化。</p>
+            <div class="case-box">
+                <p><span class="chord-mark">G7 → Db7</span>（共有的三全音：B-F）</p>
+                <p>原进行：Dm7 → G7 → Cmaj7</p>
+                <p>替代后：Dm7 → Db7 → Cmaj7（低音更顺，爵士味）</p>
+            </div>
+
+            <h3 class="section-h3">3.2 关系替代</h3>
+            <p class="content-text">用III级或VI级替代I级。共享两个共同音，和声更柔。</p>
+            <div class="case-box">
+                <p><span class="chord-mark">C → Em</span>（共享E和G）</p>
+                <p><span class="chord-mark">C → Am</span>（共享C和E）</p>
+            </div>
+
+            <h3 class="section-h3">3.3 调式替代</h3>
+            <p class="content-text">同一根音，不同调式对应的和弦。如C大三被C大七或C利底亚替代。</p>
+            <div class="case-box">
+                <p>C大调主和弦 → <span class="chord-mark">CM7、CM9、C△#11</span>（利底亚色彩）</p>
+            </div>
+
+            <div class="reed-talk">
+                <div class="talk-title">芦苇说 · 替代思维</div>
+                <div class="talk-content">和弦替代不是炫技，是换一种方式说同一句话。G7是“我走了”，Db7是“我走了”但走得更轻。C是“我好想你”，Em是“我好想你”但没说出口。替代是语气的变化，不是意思的变化。会替代的人，不是会更多和弦，是会更好地说话。</div>
+            </div>
+        </div>
+
+        <!-- ========== 模块四：调式和声 ========== -->
+        <div class="section">
+            <h2 class="section-h2">四、调式和声</h2>
+
+            <h3 class="section-h3">4.1 教会调式速查</h3>
+            <table class="chord-table">
+                <tr><th>调式</th><th>特征音</th><th>色彩</th><th>代表曲风</th></tr>
+                <tr><td>Ionian</td><td>-</td><td>明亮、自然</td><td>标准大调流行</td></tr>
+                <tr><td>Dorian</td><td>升VI</td><td>忧郁但带一丝光</td><td>爵士、Funk</td></tr>
+                <tr><td>Phrygian</td><td>降II</td><td>黑暗、异域</td><td>弗拉明戈、金属</td></tr>
+                <tr><td>Lydian</td><td>升IV</td><td>梦幻、飘</td><td>电影配乐、前奏</td></tr>
+                <tr><td>Mixolydian</td><td>降VII</td><td>摇滚、蓝调感</td><td>摇滚、布鲁斯</td></tr>
+                <tr><td>Aeolian</td><td>降III降VI降VII</td><td>伤感、内省</td><td>小调抒情</td></tr>
+                <tr><td>Locrian</td><td>降II降V</td><td>极不稳定</td><td>几乎不用</td></tr>
+            </table>
+
+            <h3 class="section-h3">4.2 调式和声的用法</h3>
+            <ul class="content-list">
+                <li>在同一个根音上切换调式，和声色彩会剧烈变化</li>
+                <li>例：C大调主歌 → 桥段短暂切换到C多利亚（Ab→A），撕裂感</li>
+                <li>国风五声调式避免半音，多用纯四/五度跳进，少用属七</li>
+            </ul>
+
+            <div class="reed-talk">
+                <div class="talk-title">芦苇说 · 调式</div>
+                <div class="talk-content">调式是光的颜色。Ionian是正午，Dorian是黄昏前，Phrygian是深夜，Lydian是凌晨天快亮的时候。学会调式不是让你换音阶，是让你选一束光。光选对了，和声自动有了情绪。</div>
+            </div>
+        </div>
+
+        <!-- ========== 模块五：实战编配案例 ========== -->
+        <div class="section">
+            <h2 class="section-h2">五、实战编配案例</h2>
+
+            <h3 class="section-h3">5.1 C大调（温柔抒情）</h3>
+            <div class="case-box">
+                <p>基础：<span class="chord-mark">C → G → Am → F</span></p>
+                <p>大七升级：<span class="chord-mark">CM7 → G → Am7 → FM7</span></p>
+                <p>挂留留白：<span class="chord-mark">Csus2 → Gsus4 → Am7 → Fadd9</span></p>
+                <p>属七张力：<span class="chord-mark">C → G7 → Am → F</span></p>
+                <p>大九华丽：<span class="chord-mark">CM9 → G9 → Am9 → FM9</span></p>
+            </div>
+
+            <h3 class="section-h3">5.2 Am小调（清冷遗憾）</h3>
+            <div class="case-box">
+                <p>基础：<span class="chord-mark">Am → F → C → G</span></p>
+                <p>小七柔和：<span class="chord-mark">Am7 → FM7 → Cmaj7 → G7</span></p>
+                <p>极简空灵：<span class="chord-mark">Asus2 → F → C → Gsus2</span></p>
+                <p>情绪拉扯：<span class="chord-mark">Am7 → FM7 → Cmaj7 → E7</span></p>
+            </div>
+
+            <h3 class="section-h3">5.3 爵士II-V-I</h3>
+            <div class="case-box">
+                <p>C大调：<span class="chord-mark">Dm7 → G7 → Cmaj7</span></p>
+                <p>三全音替代：<span class="chord-mark">Dm7 → Db7 → Cmaj7</span></p>
+                <p>延伸版：<span class="chord-mark">Dm9 → G13 → Cmaj9</span></p>
+            </div>
+
+            <div class="reed-talk">
+                <div class="talk-title">芦苇说 · 走向</div>
+                <div class="talk-content">好走向不是“对的”，是“自然”的。C-G-Am-F是直的，CM7-G-Am7-FM7是轻的，Csus2-Gsus4-Am7-Fadd9是慢的。同一句话，三种语气。和弦走向是你编曲的语气。语气对了，旋律不需要说太多。</div>
+            </div>
+        </div>
+
+        <!-- ========== 模块六：听觉训练 ========== -->
+        <div class="section">
+            <h2 class="section-h2">六、听觉训练</h2>
+            <ul class="content-list">
+                <li>大三 vs 小三：C → Cm，从亮到暗，听中间那个音的变化</li>
+                <li>大七 vs 小七：Cmaj7 → Cm7，从空灵到忧郁</li>
+                <li>属七解决：G7 → C，感受“拉到家的张力释放”</li>
+                <li>挂留解决：Csus4 → C，从“悬”到“落”</li>
+                <li>替代听觉：Dm7 → G7 → Cmaj7 vs Dm7 → Db7 → Cmaj7，低音更顺</li>
+            </ul>
+            <div class="reed-talk">
+                <div class="talk-title">芦苇说 · 练耳</div>
+                <div class="talk-content">耳朵比乐理更重要。你能听出G7到C的“回家感”，比你能写出G7标记更重要。不要背和弦——去听和弦。听它们的呼吸、张力、颜色。耳朵会了，手自然会跟上来。</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-note">© 芦苇音乐 · 和声进阶精讲 | 持续更新中</div>
+</div>
+</body>
+</html>

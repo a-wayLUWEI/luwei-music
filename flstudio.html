@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>FL Studio 完全使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #FFD966;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #FFD966;
+            margin: 25px 0 10px 0;
+            padding-left: 8px;
+            border-left: 3px solid #E69A2E;
+        }
+        h3 {
+            font-size: 1rem;
+            color: #FFD966;
+            margin: 15px 0 8px 0;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #C8E6C9;
+        }
+        .tag {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+            margin-bottom: 10px;
+        }
+        .tip {
+            background: rgba(230,154,46,0.15);
+            border-left: 3px solid #E69A2E;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 12px 28px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #f0b050;
+            transform: translateY(-2px);
+        }
+        .step {
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+        .step .num {
+            display: inline-block;
+            background: #E69A2E;
+            color: #2D1E0C;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+        .price-table {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #F2C94C40;
+        }
+        th { color: #FFD966; }
+        .footer {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 30px;
+            color: #b8aa78;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    ← 返回工具指南
+    
+    <div class="card">
+        <h1>🍎 FL Studio（水果）</h1>
+        <div>
+            <span class="tag">💻 Win/Mac</span>
+            <span class="tag">💰 付费</span>
+            <span class="tag">🎹 宿主软件</span>
+            <span class="tag">🎧 电子音乐</span>
+            <span class="tag">⭐ 全球顶级</span>
+        </div>
+        
+        <h2>📌 什么是 FL Studio？</h2>
+        <p>FL Studio（昵称「水果」）是全球最受欢迎的宿主软件之一，尤其适合电子音乐、嘻哈、流行编曲。它以「钢琴卷帘」和「步进音序器」闻名，上手快、功能强，从业余爱好者到专业制作人都在用。</p >
+        <p>最新版本为 FL Studio 25，在 2026 年发布，新增了 AI 辅助编曲、智能和弦生成等功能。</p >
+        
+        <h2>✨ 核心功能</h2>
+        <p><strong>🎹 钢琴卷帘</strong> — 全球最好用的 MIDI 编辑器，写旋律、和弦、鼓点都非常直观<br>
+        <strong>🥁 步进音序器</strong> — 快速做鼓节奏，电子音乐必备<br>
+        <strong>🎧 海量合成器</strong> — 自带 Sytrus、Harmor、Flex 等几十款高质量合成器<br>
+        <strong>🔌 VST 插件支持</strong> — 可安装第三方音源和效果器<br>
+        <strong>🎚️ 混音台</strong> — 专业级混音，支持 125 个音轨<br>
+        <strong>🤖 AI 辅助</strong> — FL Studio 25 新增 AI 和弦生成、旋律建议</p >
+        
+        <h2>💰 收费模式</h2>
+        <div class="price-table">
+            <table>
+                <tr><th>版本</th><th>价格</th><th>功能</th></tr>
+                <tr><td>Fruity Edition</td><td>$99</td><td>基础版，步进音序器 + 基础合成器</td></tr>
+                <tr><td>Producer Edition</td><td>$199</td><td>最推荐！钢琴卷帘 + 音频录制 + 完整合成器</td></tr>
+                <tr>万辆Signature Bundle</td><td>$299</td><td>旗舰版，含更多插件和效果器</td></tr>
+                <tr>万辆All Plugins Edition</td><td>$499</td><td>全部插件，专业制作人首选</td></tr>
+            </table>
+        </div>
+        <p>💡 建议：新手可以从 Producer Edition 开始，功能最全且价格合理。<strong>FL Studio 提供终身免费更新</strong>，买一次用一辈子。</p >
+        
+        <h2>📖 快速上手指南</h2>
+        
+        <h3>第一步：下载安装</h3>
+        <div class="step">
+            <span class="num">1</span> 打开 flstudiochina.com（官方中文网）
+        </div>
+        <div class="step">
+            <span class="num">2</span> 点击「下载」，选择 Windows 或 Mac 版本
+        </div>
+        <div class="step">
+            <span class="num">3</span> 安装后打开，先选择试用模式（可免费试用，无法保存工程）
+        </div>
+        
+        <h3>第二步：认识界面</h3>
+        <p><strong>顶部工具栏</strong> — 播放、录制、设置<br>
+        <strong>左边栏</strong> — 音色库、插件列表<br>
+        <strong>中间区域</strong> — 步进音序器（做鼓）<br>
+        <strong>底部区域</strong> — 钢琴卷帘（写旋律）<br>
+        <strong>右边区域</strong> — 混音台</p >
+        
+        <h3>第三步：做一个简单的 Beat</h3>
+        <div class="step">
+            <span class="num">1</span> 在步进音序器中，点亮第 1、5、9、13 格（底鼓）
+        </div>
+        <div class="step">
+            <span class="num">2</span> 点亮第 3、7、11、15 格（军鼓）
+        </div>
+        <div class="step">
+            <span class="num">3</span> 点亮第 2、4、6、8、10、12、14、16 格（踩镲）
+        </div>
+        <div class="step">
+            <span class="num">4</span> 点击空格键播放，听到节奏了！
+        </div>
+        
+        <h3>第四步：写一段旋律</h3>
+        <div class="step">
+            <span class="num">1</span> 右键点击步进音序器，选择「钢琴卷帘」
+        </div>
+        <div class="step">
+            <span class="num">2</span> 在网格上点击，放入音符
+        </div>
+        <div class="step">
+            <span class="num">3</span> 常用的流行旋律：C - D - E - G - A - G - E
+        </div>
+        <div class="step">
+            <span class="num">4</span> 点击播放，听旋律效果
+        </div>
+        
+        <h3>第五步：导出歌曲</h3>
+        <div class="step">
+            <span class="num">1</span> 文件 → 导出 → MP3 或 WAV
+        </div>
+        <div class="step">
+            <span class="num">2</span> 选择质量（推荐 320kbps）
+        </div>
+        <div class="step">
+            <span class="num">3</span> 点击开始，保存到电脑
+        </div>
+        
+        <h2>💡 进阶技巧</h2>
+        
+        <div class="tip">
+            <strong>🎹 快捷键大全（效率翻倍）</strong><br>
+            • 空格：播放/暂停<br>
+            • Ctrl + C：复制<br>
+            • Ctrl + V：粘贴<br>
+            • Ctrl + Z：撤销<br>
+            • Ctrl + S：保存（一定要常用！）<br>
+            • F5：打开播放列表<br>
+            • F6：打开步进音序器<br>
+            • F7：打开钢琴卷帘
+        </div>
+        
+        <div class="tip">
+            <strong>🎶 和弦进行模板</strong><br>
+            • 流行歌常用：C - G - Am - F<br>
+            • 伤感抒情：Am - F - C - G<br>
+            • 电子音乐：C - Em - Am - G<br>
+            在钢琴卷帘中把这些和弦写出来，旋律就有了骨架。
+        </div>
+        
+        <div class="tip">
+            <strong>🥁 鼓组编排技巧</strong><br>
+            底鼓通常在每小节第1、5、9、13拍<br>
+            军鼓在第3、7、11、15拍<br>
+            踩镲可以连续在第2、4、6、8、10、12、14、16拍<br>
+            这是 4/4 拍最基础的写法。
+        </div>
+        
+        <div class="tip">
+            <strong>🔌 推荐免费插件</strong><br>
+            • Vital — 免费的强大合成器<br>
+            • Spitfire LABS — 高品质免费音色库<br>
+            • Valhalla Supermassive — 免费混响效果器<br>
+            • TDR Nova — 免费动态均衡器
+        </div>
+        
+        <div class="tip">
+            <strong>🎧 学习资源推荐</strong><br>
+            • 官方教程：FL Studio 自带「帮助」菜单<br>
+            • B站：搜索「FL Studio 教程」有大量免费教学<br>
+            • YouTube：In The Mix、Busy Works Beats 频道
+        </div>
+        
+        <h2>📌 常见问题</h2>
+        <p><strong>Q: 试用版有什么限制？</strong><br>
+        A: 试用版可以全功能使用，但无法保存工程文件。试用满意后购买即可。</p >
+        <p><strong>Q: Mac 和 Windows 版本有区别吗？</strong><br>
+        A: 功能完全一样，只是快捷键略有不同（Ctrl 和 Cmd）。</p >
+        <p><strong>Q: 多久更新一次？</strong><br>
+        A: FL Studio 提供终身免费更新，买一次永远不会过期。</p >
+        <p><strong>Q: 新手多久能学会？</strong><br>
+        A: 跟着教程，1 周能做简单 Beat，1 个月能做完整歌曲。</p >
+        
+        <h2>🔗 相关资源</h2>
+        <p>• 官网：flstudiochina.com<br>
+        • 下载地址：flstudiochina.com/download<br>
+        • 官方教程：flstudiochina.com/help<br>
+        • 社区：B站搜索「FL Studio 教程」</p >
+        
+        
+    </div>
+    
+    <div class="footer">
+        © 芦苇音乐 · 工具使用指南<br>
+        内容持续更新，欢迎指正
+    </div>
+</div>
+</body>
+</html>

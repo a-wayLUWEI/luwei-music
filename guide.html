@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>工具使用指南 - 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: system-ui, sans-serif;
+            padding: 40px 20px;
+            color: #e8e9f0;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .back-link { color: #FFD966; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .card {
+            background: rgba(31,62,46,0.7);
+            border-radius: 28px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .guide-item {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .guide-item:hover { background: rgba(0,0,0,0.4); transform: translateX(5px); }
+        .guide-title { font-size: 1.1rem; font-weight: bold; color: #FFD966; margin-bottom: 6px; }
+        .guide-desc { font-size: 0.75rem; color: #AAD4B0; }
+        .footer { text-align: center; font-size: 0.6rem; margin-top: 30px; color: #b8aa78; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="back-link">← 返回首页</a>
+    <div class="card">
+        <h2 style="margin-bottom: 20px;"> 工具使用指南</h2>
+        <div id="guideList"></div>
+    </div>
+    <div class="footer">持续更新 · 欢迎推荐好工具</div>
+</div>
+<script>
+    const guides = [
+    { title: "Suno AI 音乐生成", desc: "一句话生成完整歌曲", url: "suno.html" },
+    { title: "谱乐 AI", desc: "AI MV、MIDI转乐谱、人声克隆", url: "puyue.html" },
+    { title: "MuseAI", desc: "照片生成MV、AI翻唱", url: "museai.html" },
+    { title: "VocalRemover 伴奏分离", desc: "一键消除人声", url: "vocalremover.html" },
+    { title: "SoundBug 音虫", desc: "AI识别和弦/音高/节拍", url: "soundbug.html" },
+    { title: "FL Studio 入门", desc: "电子音乐首选宿主软件", url: "flstudio.html" },
+    { title: "TrackLab 声音克隆", desc: "录制60秒，用自己声音唱歌", url: "tracklab.html" },
+    { title: "唱醒 SingUp", desc: "AI翻唱、声音克隆", url: "singup.html" },
+    { title: "Rhythm Trainer", desc: "节奏训练，听节奏选答案", url: "rhythmtrainer.html" },
+    { title: "ChordChord", desc: "和弦进行推荐", url: "chordchord.html" },
+    { title: "Online Piano", desc: "网页钢琴，显示音名", url: "onlinepiano.html" },
+    { title: "AI歌神", desc: "图片生乐、灵感生乐、歌词生乐", url: "aigeshen.html" },
+    { title: "ReadRhythm 读节奏", desc: "看谱打节奏，实时评分", url: "readrhythm.html" },
+    { title: "ToneGym 听力训练", desc: "练耳大师，游戏化学音乐", url: "tonegym.html" }
+];
+    const container = document.getElementById('guideList');
+    guides.forEach(g => {
+        const div = document.createElement('div');
+        div.className = 'guide-item';
+        div.onclick = () => window.location.href = g.url;
+        div.innerHTML = `
+            <div class="guide-title"> ${g.title}</div>
+            <div class="guide-desc">${g.desc}</div>
+        `;
+        container.appendChild(div);
+    });
+</script>
+</body>
+</html>
+
