@@ -2495,7 +2495,7 @@
     <div class="category-grid" id="advancedNewCats"></div>
     <div id="advancedNewPanel" class="content-area">
         <!-- 第一招 占位符 -->
-        <div class="content-card">
+  <div id="advancedNew_1" class="content-card">
     <h3>📚 第一招 · 写歌词的三个原则</h3>
     <div class="points">
         <span class="point">🎯 节奏感</span>
@@ -2550,7 +2550,7 @@
     </div>
 </div>
         <!-- 第二招 占位符 -->
-<div class="content-card">
+<div id="advancedNew_2" class="content-card">
     <h3>📚 第二招 · 从三个维度讲歌词写作</h3>
     <div class="points">
         <span class="point">🎯 写词要领</span>
@@ -2606,7 +2606,7 @@
     </div>
 </div>
         <!-- 第三招 占位符 -->
-<div class="content-card">
+<div id="advancedNew_3" class="content-card">
     <h3>📚 第三招 · 从语言上讲歌词写作</h3>
     <div class="points">
         <span class="point">🎯 用词准确</span>
@@ -2660,7 +2660,7 @@
     </div>
 </div>
         <!-- 第四招 占位符 -->
-<div class="content-card">
+<div id="advancedNew_4" class="content-card">
     <h3>📚 第四招 · 从意境上讲歌词写作</h3>
     <div class="points">
         <span class="point">🎯 造境</span>
@@ -2725,7 +2725,7 @@
     </div>
 </div>
         <!-- 第五招 占位符 -->
-<div class="content-card">
+<div id="advancedNew_5" class="content-card">
     <h3>📚 第五招 · 从句式上讲歌词写作</h3>
     <div class="points">
         <span class="point">🎯 长句与短句</span>
@@ -2805,7 +2805,7 @@
     </div>
 </div>
         <!-- 第六招 占位符 -->
-<div class="content-card">
+<div id="advancedNew_6" class="content-card">
     <h3>📚 第六招 · 从歌词结构上讲歌词写作</h3>
     <div class="points">
         <span class="point">🎯 递进关系</span>
@@ -2875,7 +2875,7 @@
     </div>
 </div>
         <!-- 第七招 占位符 -->
-<div class="content-card">
+<div id="advancedNew_7" class="content-card">
     <h3>📚 第七招 · 我们能当词作家吗？</h3>
     <div class="points">
         <span class="point">🎯 为什么要学习写歌词</span>
@@ -2926,7 +2926,7 @@
     </div>
 </div>
         <!-- 第八招 占位符 -->
-<div class="content-card">
+<div id="advancedNew_8" class="content-card">
     <h3>📚 第八招 · 歌词的三个特点分析</h3>
     <div class="points">
         <span class="point">🎯 语言特点</span>
@@ -2981,7 +2981,7 @@
     </div>
 </div>
         <!-- 第九招 占位符 -->
-<div class="content-card">
+<div id="advancedNew_9" class="content-card">
     <h3>📚 第九招 · 为自己的歌词起好名字</h3>
     <div class="points">
         <span class="point">🎯 歌名的重要性</span>
@@ -3042,7 +3042,7 @@
     </div>
 </div>
         <!-- 第十招 占位符 -->
-<div class="content-card">
+<div id="advancedNew_10" class="content-card">
     <h3>📚 第十招 · 从修改粉丝歌词中获得经验</h3>
     <div class="points">
         <span class="point">🎯 常见问题总结</span>
@@ -3215,10 +3215,126 @@ buildAdvancedNewButtons();
     const plants = ["松树:高洁长寿","梅花:傲雪坚韧","丁香:忧愁相思","竹子:虚心有节","莲花:清廉高洁","牡丹:雍容富贵","玫瑰:爱情美丽","菊花:隐逸淡泊"];
     const structures = ["起承转合","顺承递进","问答呼应","分述并列","一字一词一句法","时间顺序","空间顺序","情景交融","回忆倒叙","回旋反复","条例口号法"];
 
-    document.getElementById('showRhymeBtn').onclick = () => document.getElementById('toolDisplay').innerHTML = `<div style="display:grid; gap:6px;">${rhyme.map(r=>`<div style="background:#2a4a3a; padding:6px 12px; border-radius:12px; color:#F5ECD7;">${r}</div>`).join('')}</div><div class="placeholder" style="margin-top:10px;"> 芦苇说：韵辙是情绪的调色盘。</div>`;
-    document.getElementById('showRhetoricBtn').onclick = () => document.getElementById('toolDisplay').innerHTML = `<div style="display:flex; flex-wrap:wrap; gap:6px;">${rhetoric.map(r=>`<span style="background:#2a4a3a; padding:4px 12px; border-radius:30px; color:#F5ECD7;">✍️ ${r}</span>`).join('')}</div><div class="placeholder" style="margin-top:10px;"> 芦苇说：二十般武艺，不必样样精通，但要几招拿手。</div>`;
-    document.getElementById('showPlantBtn').onclick = () => document.getElementById('toolDisplay').innerHTML = `<div style="display:flex; flex-wrap:wrap; gap:6px;">${plants.map(p=>`<span style="background:#2a4a3a; padding:4px 12px; border-radius:30px; color:#F5ECD7;"> ${p}</span>`).join('')}</div><div class="placeholder" style="margin-top:10px;"> 芦苇说：一花一世界，一词一乾坤。</div>`;
-    document.getElementById('showStructBtn').onclick = () => document.getElementById('toolDisplay').innerHTML = `<div style="display:flex; flex-wrap:wrap; gap:6px;">${structures.map(s=>`<span style="background:#2a4a3a; padding:4px 12px; border-radius:30px; color:#F5ECD7;">️ ${s}</span>`).join('')}</div><div class="placeholder" style="margin-top:10px;"> 芦苇说：结构是骨架，情绪是血肉。</div>`;
+   // ==================== 韵律十三辙 · 常用字库（每辙50-100字） ====================
+const rhymeWords = {
+    "发花辙": "啊、巴、八、吧、把、爸、罢、爬、怕、妈、麻、马、骂、拿、那、拉、啦、喇、咖、卡、哈、蛤、家、佳、加、假、价、嫁、架、霞、下、夏、虾、瞎、娃、挖、瓦、袜、瓜、挂、刮、刷、抓、爪、花、话、画、化、华、滑、划",
+    "梭波辙": "哥、歌、鸽、戈、格、隔、革、个、各、课、可、克、刻、客、科、棵、颗、河、和、合、盒、何、喝、荷、贺、乐、了、勒、则、责、泽、择、色、塞、涩、车、扯、彻、撤、社、设、舍、射、涉、蛇、舌、折、者、这、热、惹、特、德、得、么",
+    "乜学辙": "也、夜、业、叶、页、爷、野、冶、咽、谢、些、写、血、雪、学、穴、解、姐、借、戒、界、阶、皆、接、节、结、截、杰、洁、劫、别、憋、蹩、灭、蔑、列、烈、裂、猎、劣、略、掠、觉、角、决、绝、倔、确、却、雀、缺、约、月、越、岳、阅",
+    "一七辙": "一、衣、医、依、意、义、艺、易、忆、亿、你、泥、尼、呢、拟、逆、腻、里、李、理、力、立、利、丽、离、礼、黎、历、励、奇、起、气、期、七、齐、骑、棋、器、系、西、希、喜、戏、细、席、习、夕、惜、洗、弟、地、第、低、底、提、题、体、替、踢",
+    "姑苏辙": "不、布、步、部、普、扑、铺、仆、母、木、目、慕、幕、暮、夫、父、福、服、扶、府、负、附、复、苦、库、哭、酷、路、鹿、露、炉、鲁、陆、录、绿、主、住、注、助、祝、竹、逐、族、足、苏、素、诉、速、宿、图、土、兔、突、度、渡、独、读、毒",
+    "怀来辙": "爱、白、百、摆、败、拜、拍、排、派、来、赖、菜、采、彩、才、财、猜、在、再、载、快、块、外、歪、怀、坏、海、还、孩、害、该、改、盖、开、凯、慨、带、待、代、袋、戴、太、态、台、抬、胎",
+    "灰堆辙": "飞、非、菲、废、费、肥、回、会、汇、灰、辉、毁、悔、雷、累、泪、类、内、北、贝、备、背、被、妹、美、每、梅、眉、没、配、陪、培、赔、对、队、推、退、腿、最、罪、醉、嘴、岁、随、虽、碎、翠、脆、催",
+    "遥条辙": "好、到、道、导、岛、倒、刀、高、告、考、靠、老、劳、牢、闹、脑、少、小、笑、校、叫、脚、交、角、较、表、标、票、飘、妙、苗、条、调、跳、挑、鸟、尿、桥、巧、瞧、了、跑、抱、饱、保、包、报、猫、毛、冒、帽",
+    "由求辙": "走、凑、手、首、受、收、州、洲、舟、周、邹、后、厚、候、猴、流、留、六、柳、刘、楼、口、扣、头、投、透、牛、秋、求、球、由、有、又、友、优、游、酒、就、九、旧、久、救、究、秀、修、羞、休、油、邮",
+    "言前辙": "天、田、甜、填、年、念、连、联、脸、恋、变、便、遍、边、编、偏、篇、片、面、棉、眠、钱、前、千、签、间、见、建、件、健、剑、先、现、显、限、线、县、全、权、圈、卷、倦、劝、原、员、圆、远、愿、院",
+    "人辰辙": "人、仁、认、任、忍、春、纯、唇、存、村、论、轮、伦、根、跟、很、狠、恨、恩、门、们、闷、问、文、闻、吻、温、心、新、信、辛、亲、青、清、情、请、轻、金、今、紧、仅、进、近、尽、民、名、明、命、品、平",
+    "江阳辙": "光、广、逛、黄、皇、慌、荒、王、往、忘、望、忙、盲、茫、方、房、放、访、帮、旁、胖、庞、张、长、涨、掌、账、丈、商、上、尚、伤、想、响、向、像、相、香、乡、阳、杨、洋、养、样、量、亮、凉、粮、两",
+    "中东辙": "风、封、逢、缝、奉、梦、蒙、猛、盟、空、孔、控、红、洪、轰、东、冬、董、懂、动、通、同、铜、童、统、痛、龙、隆、笼、弄、中、钟、众、种、重、松、送、宋、从、丛、总、纵、兄、凶、胸、用、永、勇、拥"
+};
+
+document.getElementById('showRhymeBtn').onclick = () => {
+    let html = '<div style="display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto;">';
+    for (const [key, words] of Object.entries(rhymeWords)) {
+        html += `
+            <div style="background: #1a3a2a; border-radius: 12px; padding: 10px;">
+                <div style="color: #FFD966; font-weight: bold; margin-bottom: 6px;">📖 ${key}</div>
+                <div style="color: #C8E6C9; font-size: 0.75rem; line-height: 1.5; word-break: break-all;">${words}</div>
+            </div>
+        `;
+    }
+    html += '</div><div class="placeholder" style="margin-top: 10px;">💬 芦苇说：韵辙是情绪的调色盘。常用字越熟练，押韵越自然。</div>';
+    document.getElementById('toolDisplay').innerHTML = html;
+};
+// ==================== 20种修辞 · 详细解释 ====================
+const rhetoricDetail = {
+    "平铺直叙": "直接叙述，不修饰，不渲染。如：『今天天气很好，我出门散步。』",
+    "比喻": "把一物比作另一物，使抽象变具体。如：『月光像流水』。分明喻、暗喻、借喻。",
+    "起兴": "先说其他事物，再引出要说的内容。如：『关关雎鸠，在河之洲。窈窕淑女，君子好逑。』",
+    "排比": "结构相同的句子成串排列，增强气势。如：『山朗润起来了，水涨起来了，太阳的脸红起来了。』",
+    "对偶": "字数相等、结构相同的两句，表达相关意思。如：『两个黄鹂鸣翠柳，一行白鹭上青天。』",
+    "反复": "同一词语或句子重复出现，强调情感。如：『归来吧，归来吧，浪迹天涯的游子。』",
+    "夸张": "有意夸大或缩小，增强感染力。如：『白发三千丈，缘愁似个长。』",
+    "比拟": "把物当作人或把人当作物写。如：『蝴蝶翩翩起舞』（拟人）、『我是一棵小草』（拟物）。",
+    "反问": "用疑问形式表达确定意思。如：『难道你不觉得美吗？』",
+    "重叠": "字或词语的重复，增强韵律。如：『寻寻觅觅，冷冷清清，凄凄惨惨戚戚。』",
+    "顶针": "前一句结尾作为后一句开头。如：『月光下，下着雨，雨打在窗上。』",
+    "衬托": "用一物衬托另一物，突出主体。如：『红花虽好，还需绿叶扶持。』",
+    "对比": "把两个相反的事物放在一起比较。如：『朱门酒肉臭，路有冻死骨。』",
+    "递进": "层层深入，越来越重。如：『等了一天，等了一周，等了一个月，等了一年。』",
+    "序列": "按时间、空间、数量等顺序排列。如：『春、夏、秋、冬』『一、二、三、四』",
+    "设问": "先提问，再自己回答。如：『问君能有几多愁？恰似一江春水向东流。』",
+    "借代": "借一物代替另一物。如：『巾帼不让须眉』（巾帼代指女子，须眉代指男子）。",
+    "用典": "引用古籍中的故事或词句。如：『东风不与周郎便，铜雀春深锁二乔。』",
+    "通感": "五种感官互通。如：『月光很凉』『声音很甜』『风里有旧时光的味道』",
+    "衬词": "语气词，增强节奏感。如：『呀、啦、哦、嗯、啊』"
+};
+
+document.getElementById('showRhetoricBtn').onclick = () => {
+    let html = '<div style="display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto;">';
+    for (const [key, desc] of Object.entries(rhetoricDetail)) {
+        html += `
+            <div style="background: #1a3a2a; border-radius: 12px; padding: 10px;">
+                <div style="color: #FFD966; font-weight: bold; margin-bottom: 4px;">✍️ ${key}</div>
+                <div style="color: #C8E6C9; font-size: 0.75rem; line-height: 1.4;">${desc}</div>
+            </div>
+        `;
+    }
+    html += '</div><div class="placeholder" style="margin-top: 10px;">💬 芦苇说：二十般武艺，不必样样精通，但要几招拿手。练熟了，就是你的绝招。</div>';
+    document.getElementById('toolDisplay').innerHTML = html;
+};
+// ==================== 植物意象 · 文化内涵 ====================
+const plantDetail = {
+    "松树": "高洁、长寿、坚贞。孔子：『岁寒，然后知松柏之后凋也。』象征君子品格，不畏严寒。",
+    "梅花": "傲雪、坚韧、君子。『梅花香自苦寒来』象征不屈不挠的精神，花中四君子之首。",
+    "丁香": "忧愁、相思、纯洁。戴望舒《雨巷》中『丁香一样的姑娘』，象征愁怨和等待。",
+    "竹子": "虚心、有节、刚柔并济。『宁可食无肉，不可居无竹』，象征气节和谦逊。",
+    "莲花": "清廉、高洁、和合。『出淤泥而不染，濯清涟而不妖』，象征君子的清白品格。",
+    "牡丹": "雍容、富贵、圆满。『唯有牡丹真国色』，象征繁荣昌盛，国色天香。",
+    "玫瑰": "爱情、美丽、嫉妒。红玫瑰代表热恋，黄玫瑰代表嫉妒，白玫瑰代表纯洁。",
+    "菊花": "隐逸、淡泊、傲霜。陶渊明『采菊东篱下』，象征不争不抢、超然物外。"
+};
+
+document.getElementById('showPlantBtn').onclick = () => {
+    let html = '<div style="display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto;">';
+    for (const [key, desc] of Object.entries(plantDetail)) {
+        html += `
+            <div style="background: #1a3a2a; border-radius: 12px; padding: 10px;">
+                <div style="color: #FFD966; font-weight: bold; margin-bottom: 4px;">🌺 ${key}</div>
+                <div style="color: #C8E6C9; font-size: 0.75rem; line-height: 1.4;">${desc}</div>
+            </div>
+        `;
+    }
+    html += '</div><div class="placeholder" style="margin-top: 10px;">💬 芦苇说：一花一世界，一词一乾坤。借花写心，借景抒情。</div>';
+    document.getElementById('toolDisplay').innerHTML = html;
+};
+// ==================== 歌词结构11法 · 详细说明 ====================
+const structDetail = {
+    "起承转合": "起：开端；承：承接；转：转折；合：收束。如白居易《赋得古原草送别》。",
+    "顺承递进": "情绪从平缓开始，层层递进，高潮爆发。适用于二段体和三段体。如周杰伦《龙卷风》。",
+    "问答呼应": "前面提问，后面呼应。如《青藏高原》：『是谁带来远古的呼唤』『那是一条神奇的天路』。",
+    "分述并列": "每段分述一种情绪，各段并列。如王菲《天空》、芦苇《花雨》。",
+    "一字一词一句法": "用一个字、一个词或一句话作为段落开头，重复排列。如方文山『你发如雪』。",
+    "时间顺序": "按时间顺序写，如春夏秋冬、童年青年中年。用时间节点承载情感。",
+    "空间顺序": "按空间移动写，从近到远，从外到内。如尤静波《很多年以后》。",
+    "情景交融": "借景抒情，景中藏情，情中见景。如方文山《菊花台》：『菊花残，满地伤』。",
+    "回忆倒叙": "从回忆开始，倒叙故事。如陈奕迅《你的背包》。",
+    "回旋反复": "句式重复，内容微调，情绪回旋。如孟庭苇《你看你看月亮的脸》。",
+    "条例口号法": "简短有力的句子，节奏强烈。如《好汉歌》《男儿当自强》。注意口号要为情绪服务。"
+};
+
+document.getElementById('showStructBtn').onclick = () => {
+    let html = '<div style="display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto;">';
+    for (const [key, desc] of Object.entries(structDetail)) {
+        html += `
+            <div style="background: #1a3a2a; border-radius: 12px; padding: 10px;">
+                <div style="color: #FFD966; font-weight: bold; margin-bottom: 4px;">🏛️ ${key}</div>
+                <div style="color: #C8E6C9; font-size: 0.75rem; line-height: 1.4;">${desc}</div>
+            </div>
+        `;
+    }
+    html += '</div><div class="placeholder" style="margin-top: 10px;">💬 芦苇说：结构是骨架，情绪是血肉。骨架不正，血肉再好也站不稳。</div>';
+    document.getElementById('toolDisplay').innerHTML = html;
+};
     document.getElementById('showRhymeBtn').click();
 
     // 折叠
