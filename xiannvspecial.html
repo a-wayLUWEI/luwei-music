@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>芦苇歌词 · 仙女撒花专题篇 · 二十二招深度技法</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 20px;
+            min-height: 100vh;
+            color: #F5ECD7;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .header { text-align: center; margin-bottom: 28px; }
+        .header h1 { color: #FFD966; font-size: 2rem; margin-bottom: 8px; }
+        .header p { color: #AAD4B0; font-size: 0.85rem; }
+        
+        .section {
+            background: #0f281dcc;
+            border-radius: 32px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid #F2C94C40;
+        }
+        .section-title {
+            color: #FFD966;
+            font-size: 1.3rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 4px solid #E69A2E;
+            padding-left: 14px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+        .category-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .category-btn {
+            background: #3C6E4A;
+            border: none;
+            border-radius: 40px;
+            padding: 6px 16px;
+            color: white;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .category-btn:hover { background: #E69A2E; color: #2D1E0C; }
+        
+        .content-area {
+            background: #172d23a0;
+            border-radius: 20px;
+            padding: 16px;
+            max-height: 650px;
+            overflow-y: auto;
+            display: none;
+        }
+        .content-area.open { display: block; }
+        
+        .content-card {
+            background: #1f3e2e;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #F2C94C;
+        }
+        .content-card h3 { color: #FFD966; font-size: 1.3rem; margin-bottom: 16px; }
+        .content-card h4 { color: #FFD966; font-size: 1rem; margin: 16px 0 8px 0; }
+        .content-card p { line-height: 1.65; margin-bottom: 12px; color: #E8E0C8; font-size: 0.9rem; }
+        
+        .points { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .point { background: #2a4a3a; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; color: #FFD966; }
+        
+        .poem {
+            background: #1a3a2a;
+            padding: 16px 20px;
+            border-radius: 20px;
+            margin: 16px 0;
+            color: #D4C5A3;
+            border-left: 3px solid #E69A2E;
+            line-height: 1.7;
+            font-style: normal;
+        }
+        .poem .section-label {
+            color: #FFD966;
+            font-weight: bold;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            font-style: normal;
+        }
+        
+        .reed-box {
+            background: linear-gradient(135deg, #2a4a3a, #1a3a2a);
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-left: 4px solid #FFD966;
+        }
+        .reed-title { color: #FFD966; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; }
+        .reed-item { font-style: italic; margin-bottom: 8px; line-height: 1.5; color: #F5ECD7; }
+        
+        .exercise {
+            background: #1f3e2e80;
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 20px;
+            border: 1px solid #F2C94C30;
+        }
+        .exercise h4 { color: #FFD966; margin-bottom: 8px; font-size: 0.9rem; }
+        
+        .listen-note { color: #AAD4B0; font-size: 0.8rem; margin-top: 8px; font-style: italic; }
+        
+        @media (max-width: 700px) {
+            .section-title { font-size: 1rem; }
+            .content-card { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1> 仙女撒花 · 专题篇</h1>
+        <p>二十二招深度技法 · 芦苇独创 + 经典结构</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title" data-target="specialPanel"> 二十二招深度技法 ▼</div>
+        <div class="category-grid" id="specialCats"></div>
+        <div id="specialPanel" class="content-area">
+            
+            <!-- ==================== 专题前言 ==================== -->
+            <div class="content-card">
+                <h3>二十二招深度技法</h3>
+                <p style="font-style: italic; color: #AAD4B0;">芦苇·歌词写作武功秘籍 · 仙女撒花专题篇</p>
+                <p>这二十二招分两类：</p>
+                <ul style="color: #E8E0C8; margin-left: 20px; line-height: 1.6;">
+                    <li><strong>第51-61招</strong>：芦苇独创技法——通感炼字、意象置换、声音入词、物象人格化、时间折叠、空间跳跃、留白爆破、矛盾修辞、数字入词、对话独白、逆向立意。</li>
+                    <li><strong>第62-72招</strong>：经典结构技法——起承转合、顺承递进、问答呼应、分述并列、一字一词一句、时间顺序、空间顺序、情景交融、回忆倒叙、回旋反复、条例口号。</li>
+                </ul>
+                <p class="listen-note"> 芦苇说：前50招是「方法」，这22招是「心法」。方法可以学，心法要靠悟。悟到了，招招都是绝招。</p>
+            </div>
+
+            <!-- 第51招 · 通感炼字法 -->
+            <div class="content-card" id="special_51">
+                <h3> 第51招 · 通感炼字法</h3>
+                <div class="points"><span class="point"> 通感转移</span><span class="point"> 炼字精粹</span><span class="point"> 陌生化表达</span></div>
+                <p><strong>核心说明：</strong>通感是把一种感官的感觉转移到另一种感官。炼字是把一个字用出别人用不出的效果。两者结合，歌词就有了「陌生感」和「惊艳感」。</p>
+                <p><strong>技巧要点：</strong>视觉→触觉：「月光很凉」；听觉→视觉：「她的声音很甜」；嗅觉→情感：「风里有旧时光的味道」；炼字：一个「割」字胜过「伤害」。</p>
+                <div class="poem">
+                     《月光凉》<br>
+                    【主歌一】<br>
+                    月光凉得像水，漫过我的骨缝<br>
+                    夜色重得像山，压在胸口喘不动<br>
+                    你的声音很甜，甜到舌尖发苦<br>
+                    你的话很刺眼，刺得我不敢睁眼<br><br>
+                    【主歌二】<br>
+                    笑声很亮，亮得我无处可藏<br>
+                    沉默很重，重得我一夜没睡<br>
+                    风里有旧时光的味道，像你留下的衬衫<br>
+                    空气里有你的气息，像你还没走远<br><br>
+                    【副歌一】<br>
+                    时间一刀一刀地割，割完了不疼<br>
+                    记忆一滴一滴地漏，漏完了就空<br>
+                    等待一寸一寸地长，长得没有尽头<br>
+                    思念一口一口地吞，吞得喘不过气<br><br>
+                    【副歌二】<br>
+                    割完了，天就亮了<br>
+                    漏完了，心就空了<br>
+                    天亮了，月光散了<br>
+                    心空了，你也不在了<br>
+                    不在了，就算了<br>
+                    算了，就过去了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「看见声音，听见颜色。通感炼字，是让平凡的词长出翅膀。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用通感写一句「孤独」，不要写「孤独」二字。<br>2. 换一个字，让一句普通的歌词变惊艳。</p></div>
+            </div>
+
+            <!-- 第52招 · 意象置换法 -->
+            <div class="content-card" id="special_52">
+                <h3> 第52招 · 意象置换法</h3>
+                <div class="points"><span class="point"> 旧瓶新酒</span><span class="point"> 功能替代</span><span class="point"> 情感替代</span></div>
+                <p><strong>核心说明：</strong>把常见的意象换成不常见的，旧瓶装新酒。写思念，不写「月亮」，写「那盏忘了关的灯」；写离别，不写「眼泪」，写「行李箱的轮子声」。</p>
+                <p><strong>技巧要点：</strong>找到意象的「功能替代品」和「情感替代品」；新旧意象之间要有逻辑关联。</p>
+                <div class="poem">
+                      《那盏灯》<br>
+                    【主歌一】<br>
+                    那盏忘了关的灯，亮了三年<br>
+                    不是灯泡耐用，是我舍不得灭<br>
+                    它照着墙上的照片，照着你没带走的外套<br>
+                    照着我没说出口的那句再见<br><br>
+                    【主歌二】<br>
+                    门口的石阶，磨平了棱角<br>
+                    不是石头不硬，是我等了太久<br>
+                    数过一千零一夜的月亮，听过一千零一次的门响<br>
+                    每一次都以为是你的脚步声<br><br>
+                    【副歌一】<br>
+                    你的牙刷还在杯子里，你的毛巾还挂着<br>
+                    你的拖鞋还在门口，你的位置还空着<br>
+                    我什么都没动，怕你回来找不到<br>
+                    动了就没了，没了就真的走了<br><br>
+                    【副歌二】<br>
+                    行李箱的轮子声，从楼道响到门口<br>
+                    听了三年，每一遍都是别人的归途<br>
+                    你走了之后，我再也没听过那种声音<br>
+                    不是听不见，是不敢听了<br>
+                    听了会疼，疼了会哭<br>
+                    哭了也没用，你也不回来
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「意象置换，是让读者愣了一下，然后说：对，就是这个感觉。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 写「等待」，不写「等」字，换一个意象。<br>2. 写「离别」，不写「走」字，用声音或物品代替。</p></div>
+            </div>
+
+            <!-- 第53招 · 声音入词法 -->
+            <div class="content-card" id="special_53">
+                <h3> 第53招 · 声音入词法</h3>
+                <div class="points"><span class="point"> 拟声自然</span><span class="point"> 节奏情绪</span><span class="point"> 重复强化</span></div>
+                <p><strong>核心说明：</strong>把声音写进歌词。不是写「听到了什么」，而是让声音本身成为歌词的一部分。</p>
+                <p><strong>技巧要点：</strong>拟声词要自然；用声音的节奏写情绪的节奏；声音可以重复，重复就是情绪。</p>
+                <div class="poem">
+                     《滴答，滴答》<br>
+                    【主歌一】<br>
+                    滴答，滴答，雨在窗上说话<br>
+                    一声一声，敲着我的耳朵<br>
+                    敲了一夜，敲到了天亮<br>
+                    敲得我心慌，敲得我发慌<br><br>
+                    【主歌二】<br>
+                    滴答，滴答，钟在墙上走路<br>
+                    一秒一秒，踩着我的孤独<br>
+                    从白天踩到黑夜，从月初踩到月底<br>
+                    踩得我睡不着，踩得我哭不出<br><br>
+                    【副歌一】<br>
+                    咯吱，咯吱，门在风里叹气<br>
+                    一下一下，像在喊你的名字<br>
+                    我跑过去开门，门外只有风<br>
+                    我跑过去关门，门缝夹住手指<br><br>
+                    【副歌二】<br>
+                    咚，咚，咚，有人敲门<br>
+                    我屏住呼吸，不敢出声<br>
+                    门开了，门外没有人<br>
+                    风停了，雨停了，钟停了<br>
+                    只有我的心还在跳<br>
+                    咚，咚，咚，像在敲一扇不会开的门
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「声音是情绪的骨头。听见了，就信了。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用雨声写一段孤独的歌词。<br>2. 用脚步声写一段等待的歌词。</p></div>
+            </div>
+
+            <!-- 第54招 · 物象人格化 -->
+            <div class="content-card" id="special_54">
+                <h3> 第54招 · 物象人格化</h3>
+                <div class="points"><span class="point"> 人设标签</span><span class="point"> 物有台词</span><span class="point"> 情绪呼应</span></div>
+                <p><strong>核心说明：</strong>把物写成有性格的人。不是简单的拟人，是给物一个「人设」。</p>
+                <p><strong>技巧要点：</strong>给物一个「性格标签」；让物有自己的「台词」；物的性格要和人的情绪呼应。</p>
+                <div class="poem">
+                      《空椅子》<br>
+                    【主歌一】<br>
+                    那把椅子空着，它很孤独<br>
+                    它不是没人坐，是坐它的人走了<br>
+                    它记得你的体温，记得你的重量<br>
+                    记得你坐的时候，总是靠着右边<br><br>
+                    【主歌二】<br>
+                    那盏灯亮着，它很倔强<br>
+                    它不是不累，是它怕黑<br>
+                    它怕一灭，你就找不到回家的路<br>
+                    它怕一灭，我就只能一个人待着<br><br>
+                    【副歌一】<br>
+                    灯说：我不灭，她就还记得回来<br>
+                    灯说：我不灭，他就还有希望<br>
+                    灯亮了一整夜，亮了一年<br>
+                    亮到灯泡发烫，亮到电线发软<br><br>
+                    【副歌二】<br>
+                    那扇门关着，它很委屈<br>
+                    它不是不想开，是开的人不来了<br>
+                    它记得你的指纹，记得你的力度<br>
+                    它问我：你还回来吗<br>
+                    我说不知道<br>
+                    它就不问了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「万物有灵。你信了，它就活了。它活了，你的词就深了。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 给「路灯」一个人设，写一段歌词。<br>2. 给「旧书」一个人设，写一段歌词。</p></div>
+            </div>
+
+            <!-- 第55招 · 时间折叠法 -->
+            <div class="content-card" id="special_55">
+                <h3> 第55招 · 时间折叠法</h3>
+                <div class="points"><span class="point"> 一秒一生</span><span class="point"> 场景连接</span><span class="point"> 对比张力</span></div>
+                <p><strong>核心说明：</strong>把不同的时间叠在一起写。过去和现在同时出现，回忆和现实交错。一秒钟可以写一生。</p>
+                <p><strong>技巧要点：</strong>用「同一场景」或「同一物品」连接不同时间；时间折叠要有对比。</p>
+                <div class="poem">
+                      《同一张床》<br>
+                    【主歌一】<br>
+                    同一张床，左边是你，右边是我<br>
+                    那时候你说被子太小，两个人挤着睡<br>
+                    你抢被子，我抢不过你<br>
+                    你把脚伸过来，凉得我一哆嗦<br><br>
+                    【主歌二】<br>
+                    同一张床，左边空着，右边是我<br>
+                    现在被子很大，我一个人盖<br>
+                    我抢什么，没有人跟我抢了<br>
+                    我不冷了，被子都给我了<br><br>
+                    【副歌一】<br>
+                    你走了几年了，我记不清了<br>
+                    床还是那张床，窗还是那扇窗<br>
+                    伞还是那把伞，我还是那个人<br>
+                    只是你不在，什么都不一样了<br><br>
+                    【副歌二】<br>
+                    东西没变，人变了<br>
+                    人变了，东西就没意义了<br>
+                    没意义了，我还留着干什么<br>
+                    留着，等你回来拿<br>
+                    你不回来，我不扔<br>
+                    不扔，就有希望<br>
+                    有希望，就能等
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「时间折叠，是把一辈子放进一秒钟。放得进去，就是好词。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用一个物品连接过去和现在，写一段歌词。<br>2. 用「以前……现在……」对比写一段歌词。</p></div>
+            </div>
+
+            <!-- 第56招 · 空间跳跃法 -->
+            <div class="content-card" id="special_56">
+                <h3> 第56招 · 空间跳跃法</h3>
+                <div class="points"><span class="point"> 心跟着飞</span><span class="point"> 感官连接</span><span class="point"> 情绪连接</span></div>
+                <p><strong>核心说明：</strong>在不同的空间之间跳跃。从屋内跳到屋外，从城市跳到乡村。跳跃要有逻辑。</p>
+                <p><strong>技巧要点：</strong>用「同一感官」或「同一情绪」连接不同空间；跳跃要有目的。</p>
+                <div class="poem">
+                     《这里，那里》<br>
+                    【主歌一】<br>
+                    这里的雨下个不停，滴滴答答<br>
+                    那里的天晴了很久，云都散了<br>
+                    这里的我在等一个人，等了三年<br>
+                    那里的你早已忘了，忘了回来<br><br>
+                    【主歌二】<br>
+                    这里的夜里没有星星，只有路灯<br>
+                    那里的夜晚星光灿烂，你看到了吗<br>
+                    这里的我看着同一个月亮，看了三年<br>
+                    那里的你抬头的时候，会想起我吗<br><br>
+                    【副歌一】<br>
+                    同一片天空，你在那头，我在这头<br>
+                    同一场雨，你淋不到，我淋透了<br>
+                    同一个月亮，你看着，我看着<br>
+                    同一道光，照着你，照着我<br><br>
+                    【副歌二】<br>
+                    这里的雨停了，天晴了<br>
+                    那里的天阴了，要下雨了<br>
+                    这里的我不等了，不等了<br>
+                    那里的你，还好吗<br>
+                    不等了，就好<br>
+                    不疼了，就活了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「空间跳跃写的不是空间，是距离。心里的距离，比地理的距离更远。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用「这里」和「那里」对比写一段歌词。<br>2. 在现实和梦境之间跳跃写一段歌词。</p></div>
+            </div>
+
+            <!-- 第57招 · 留白爆破法 -->
+            <div class="content-card" id="special_57">
+                <h3> 第57招 · 留白爆破法</h3>
+                <div class="points"><span class="point"> 蓄力释放</span><span class="point"> 短促有力</span><span class="point"> 收放自如</span></div>
+                <p><strong>核心说明：</strong>平时留白，关键时刻「爆破」——突然一句写满、写透、写到极致。留白是蓄力，爆破是释放。</p>
+                <p><strong>技巧要点：</strong>前面要淡；爆破要狠；爆破后要收。</p>
+                <div class="poem">
+                     《不归》<br>
+                    【主歌一】<br>
+                    等了一天，等了两天<br>
+                    等了一周，等了一个月<br>
+                    等了一年<br>
+                    等了你一辈子<br><br>
+                    【主歌二】<br>
+                    打了一次，打了两次<br>
+                    打了十次，打了一百次<br>
+                    打了一千次<br>
+                    一个都没接<br><br>
+                    【副歌一】<br>
+                    哭了一夜，哭了两夜<br>
+                    哭了一周，哭了一个月<br>
+                    哭了一年<br>
+                    眼泪干了<br><br>
+                    【副歌二】<br>
+                    走了一天，走了两天<br>
+                    走了一周，走了一个月<br>
+                    走了一年<br>
+                    走到你门口<br>
+                    门关着，灯灭了，人走了<br>
+                    不敲了，不等了，不哭了，不想了<br>
+                    不疼了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「留白是弓，爆破是箭。弓拉得越满，箭射得越远。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用数字递进结构写一段爆破歌词。<br>2. 写一段多个爆破的歌词。</p></div>
+            </div>
+
+            <!-- 第58招 · 矛盾修辞法 -->
+            <div class="content-card" id="special_58">
+                <h3> 第58招 · 矛盾修辞法</h3>
+                <div class="points"><span class="point"> 熟悉的陌生感</span><span class="point"> 张力美学</span><span class="point"> 情感反差</span></div>
+                <p><strong>核心说明：</strong>把两个矛盾的词放在一起。熟悉的陌生感、甜蜜的忧伤、热闹的孤独——矛盾产生张力。</p>
+                <p><strong>技巧要点：</strong>形容词+名词的矛盾；动词+宾语的矛盾；情绪的矛盾。</p>
+                <div class="poem">
+                      《热闹的孤独》<br>
+                    【主歌一】<br>
+                    热闹的孤独，最深的孤独<br>
+                    明亮的黑暗，最黑的黑暗<br>
+                    我在人群里，一个人站着<br>
+                    别人在笑，我也在笑<br>
+                    笑着笑着，笑不出来了<br><br>
+                    【主歌二】<br>
+                    甜蜜的忧伤，最疼的忧伤<br>
+                    温暖的离别，最冷的离别<br>
+                    你走的那天，还笑着说再见<br>
+                    我笑着送你，笑着挥手<br>
+                    笑着笑着，眼泪掉下来了<br><br>
+                    【副歌一】<br>
+                    熟悉的陌生，最远的距离<br>
+                    短暂的永远，最长的等待<br>
+                    你站在我面前，我却认不出你<br>
+                    你的脸还是那张脸，人不是那个人了<br><br>
+                    【副歌二】<br>
+                    清醒的沉醉，最深的陷阱<br>
+                    理智的疯狂，最痛的明白<br>
+                    我知道你不回来了，我还在等<br>
+                    等成了习惯，等成了病<br>
+                    不矛盾了，就不是人了<br>
+                    不矛盾了，就不疼了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「两个词打架，打出来的不是输赢，是张力。张力越大，词越深。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 写一对矛盾词，扩展成一段歌词。<br>2. 写「熟悉的陌生感」主题的歌词。</p></div>
+            </div>
+
+            <!-- 第59招 · 数字入词法 -->
+            <div class="content-card" id="special_59">
+                <h3> 第59招 · 数字入词法</h3>
+                <div class="points"><span class="point"> 数字有温度</span><span class="point"> 时间刻度</span><span class="point"> 痛感量化</span></div>
+                <p><strong>核心说明：</strong>把数字写进歌词。不是数数，是让数字有情感。数字是时间的刻度，也是痛感的刻度。</p>
+                <p><strong>技巧要点：</strong>数字要具体；数字要重复；数字要递进；数字要对比。</p>
+                <div class="poem">
+                     《三年》<br>
+                    【主歌一】<br>
+                    三年，一千零九十五天<br>
+                    第一天哭了，第二天忍着<br>
+                    第三天忘了吃饭，第四天忘了睡觉<br>
+                    第一周忘了你的声音，第一个月忘了你的脸<br><br>
+                    【主歌二】<br>
+                    三年，十二个季节<br>
+                    春天你说你会回来，夏天我等<br>
+                    秋天叶子落了，冬天雪下了<br>
+                    春天又来了，你没来<br><br>
+                    【副歌一】<br>
+                    三年，三万两千个电话<br>
+                    第一次没人接，第二次关机<br>
+                    第三次停机，第十次空号<br>
+                    第一百次，我还在拨<br>
+                    第一百次，不是你的声音<br>
+                    挂了，就再也没打过<br><br>
+                    【副歌二】<br>
+                    三年，一句话<br>
+                    「我等你」说了三年<br>
+                    说了三百遍，说了三千遍<br>
+                    说到第三年，你说「别等了」<br>
+                    三个字，三年<br>
+                    我等你，别等了<br>
+                    六个字，一辈子<br>
+                    一辈子，三个字就够了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「『三年』比『很久』痛，『第一百零一次』比『很多次』痛。越具体，越真实。越真实，越痛。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用「第一天、第二天……第七天」的数字递进结构写一段歌词。<br>2. 用「第一次、第二次……第一百次」的数字递进结构写一段歌词。</p></div>
+            </div>
+
+            <!-- 第60招 · 对话独白法 -->
+            <div class="content-card" id="special_60">
+                <h3> 第60招 · 对话独白法</h3>
+                <div class="points"><span class="point"> 对着空气说话</span><span class="point"> 问而不答</span><span class="point"> 沉默回响</span></div>
+                <p><strong>核心说明：</strong>整首歌词像一个人在对话。不是写独白，是写对话——但对方没有回答。沉默是最好的回答。</p>
+                <p><strong>技巧要点：</strong>全篇用「你」字贯穿；问句要有层次；沉默要藏在句子之间的空隙里。</p>
+                <div class="poem">
+                      《你没回答》<br>
+                    【主歌一】<br>
+                    你在那边还习惯吗<br>
+                    冬天会不会太冷<br>
+                    你走的时候没带厚衣服<br>
+                    我后来寄了，你收到了吗<br><br>
+                    【主歌二】<br>
+                    你窗台上那盆花<br>
+                    我帮你浇了三年水<br>
+                    今年它开花了<br>
+                    你回来看吗<br><br>
+                    【副歌一】<br>
+                    你走的那天，我在机场站了很久<br>
+                    你过了安检回头看了一下<br>
+                    你是在看我吗<br>
+                    你不说，我不知道<br><br>
+                    【副歌二】<br>
+                    我现在在哪，和谁在一起<br>
+                    过得好不好，你都不问<br>
+                    你不问，我就不说<br>
+                    我不说，你也不知道<br>
+                    你不知道，就算了<br>
+                    算了，就不问了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「对话独白，是让你对着空气说话。说着说着，空气就变成了那个人。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 写一段对话独白歌词，对方全程沉默。<br>2. 结尾用对方的沉默作为回答。</p></div>
+            </div>
+
+            <!-- 第61招 · 逆向立意法 -->
+            <div class="content-card" id="special_61">
+                <h3> 第61招 · 逆向立意法</h3>
+                <div class="points"><span class="point"> 反过来想</span><span class="point"> 反向立意</span><span class="point"> 情理之中意料之外</span></div>
+                <p><strong>核心说明：</strong>从反面想主题。别人写「坚持」，你写「放弃的尊严」；别人写「思念」，你写「遗忘的自由」。</p>
+                <p><strong>技巧要点：</strong>先想常规立意，然后反转；反转要有道理；不说破道理，用意象说话。</p>
+                <div class="poem">
+                      《不回头》<br>
+                    【主歌一】<br>
+                    不是每一条河都要回到源头<br>
+                    不是每一种告别都要说出口<br>
+                    船停了，桨收了，人走了<br>
+                    岸还在，只是不再回头<br><br>
+                    【主歌二】<br>
+                    不是每一个故事都要有结局<br>
+                    不是每一次等待都要有终点<br>
+                    读到一半，合上了<br>
+                    剩下的，不看了<br>
+                    不看，就不欠结局<br><br>
+                    【副歌一】<br>
+                    不是每一次春天都会叫醒同一棵树<br>
+                    有的醒了，有的没醒<br>
+                    没醒的，不是死了<br>
+                    是累了<br>
+                    累了，就睡吧<br><br>
+                    【副歌二】<br>
+                    不是每一天的黄昏都值得等<br>
+                    等到了，天黑了<br>
+                    等不到，也黑了<br>
+                    黑就黑吧<br>
+                    黑了，就不用等了<br>
+                    不等了，风就停了<br>
+                    月亮还在，人不在<br>
+                    人不在，就不用等了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「逆向立意，是让读者看见另一条路。那条路不是错的，只是很少有人走。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 从「思念」的反面写一段歌词。<br>2. 从「坚持」的反面写一段歌词。</p></div>
+            </div>
+
+            <!-- 第62招 · 起承转合法 -->
+            <div class="content-card" id="special_62">
+                <h3> 第62招 · 起承转合法</h3>
+                <div class="points"><span class="point"> 起：开端</span><span class="point"> 承：承接</span><span class="point"> 转：转折</span><span class="point"> 合：收束</span></div>
+                <p><strong>核心说明：</strong>起是开端，承是承接，转是转折，合是收束。四句说完一个完整的意思。</p>
+                <p><strong>技巧要点：</strong>起要平直，承要春容，转要变化，合要渊永。</p>
+                <div class="poem">
+                     《秋日书》<br>
+                    【主歌一】<br>
+                    那年的银杏叶落在你的肩上<br>
+                    你说秋天太短，来不及收藏<br>
+                    后来叶子黄了又黄，人去了远方<br>
+                    只有风记得，你来过一场<br><br>
+                    【主歌二】<br>
+                    旧信箱里塞满了没寄出的信<br>
+                    每一封都写着同一句问候<br>
+                    后来邮筒拆了，地址也模糊了<br>
+                    那些话，就留在那年深秋<br><br>
+                    【副歌一】<br>
+                    你送我那张唱片，早已不转了<br>
+                    唱针停在第三首歌的副歌<br>
+                    后来机器坏了，修也修不好<br>
+                    就不修了，有些声音，停了就停了<br><br>
+                    【副歌二】<br>
+                    我学会了你泡茶的方式<br>
+                    龙井要八十度的水，不能盖盖子<br>
+                    后来茶凉了，我再也没喝过<br>
+                    有些习惯，不是戒不掉，是不想戒了<br>
+                    不想戒了，就不戒了<br>
+                    不戒了，就记着
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「起承转合如四季，起是春，承是夏，转是秋，合是冬。缺一季，年不成年。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用起承转合的结构写4句歌词。<br>2. 将4句扩展成16句，每组之间要有递进或并列关系。</p></div>
+            </div>
+
+            <!-- 第63招 · 顺承递进法 -->
+            <div class="content-card" id="special_63">
+                <h3> 第63招 · 顺承递进法</h3>
+                <div class="points"><span class="point"> 情绪平缓</span><span class="point"> 层层递进</span><span class="point"> 高潮爆发</span></div>
+                <p><strong>核心说明：</strong>情绪从平缓开始，中间过渡，高潮起伏不断。A段叙事，B段爆发。</p>
+                <p><strong>技巧要点：</strong>A段要藏，B段要放。藏的时候要深，放的时候要狠。</p>
+                <div class="poem">
+                     《旧信》<br>
+                    【主歌一】<br>
+                    抽屉深处有一封信，纸已经泛黄<br>
+                    邮戳模糊了，看不清是哪一年的秋天<br>
+                    字迹是你的，写得很慢，像在犹豫<br>
+                    有些话写了又划掉，划掉了又写<br><br>
+                    【主歌二】<br>
+                    最后留下的，只有一句「近来可好」<br>
+                    一句「近来可好」，写了三遍<br>
+                    每一遍都比上一遍轻<br>
+                    轻到像怕吵醒什么<br><br>
+                    【副歌一】<br>
+                    后来我知道你在犹豫什么了<br>
+                    后来我知道划掉的是什么了<br>
+                    后来我知道那三遍「近来可好」<br>
+                    每一遍都是一个说不出口的「我想你」<br><br>
+                    【副歌二】<br>
+                    第一遍是怕<br>
+                    第二遍是等<br>
+                    第三遍是算了<br>
+                    算了，就算了<br>
+                    信没寄出去，你没收到<br>
+                    我也没等到<br>
+                    没等到，也过了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「顺承递进，是让情绪爬山。越爬越高，到顶才能喊。不到顶，喊不出来。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用顺承递进法写一首歌词，A段叙事，B段抒情。<br>2. 注意A段要「藏」，B段要「放」。</p></div>
+            </div>
+
+            <!-- 第64招 · 问答呼应法 -->
+            <div class="content-card" id="special_64">
+                <h3> 第64招 · 问答呼应法</h3>
+                <div class="points"><span class="point"> 前面提问</span><span class="point"> 后面呼应</span><span class="point"> 自问自答</span></div>
+                <p><strong>核心说明：</strong>前面提问，后面呼应。问的时候要把读者拉进来，答的时候要让读者意外又合理。</p>
+                <p><strong>技巧要点：</strong>问句要短；问句要有层次；答句要收得住。</p>
+                <div class="poem">
+                      《问》<br>
+                    【主歌一】<br>
+                    月亮啊月亮，你照过多少人<br>
+                    照过离别的站台，照过归来的门<br>
+                    照过少年白了头，照过少女等成了尘<br>
+                    月亮啊月亮，你累不累<br><br>
+                    【主歌二】<br>
+                    流水啊流水，你带走多少封信<br>
+                    带走没说出口的话，带走没寄出的心<br>
+                    带走春天的花瓣，带走秋天的银杏<br>
+                    流水啊流水，你去哪里<br><br>
+                    【副歌一】<br>
+                    我问天，天有多高<br>
+                    我问地，地有多老<br>
+                    我问风，风往哪跑<br>
+                    风说：我不知道<br><br>
+                    【副歌二】<br>
+                    我问你，你还回来吗<br>
+                    你沉默，像月亮一样不说话<br>
+                    我问自己，还等吗<br>
+                    我等不到答案，就不等了<br>
+                    不等了，风就停了<br>
+                    月亮还在，人不在<br>
+                    人不在，就不用等了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「问答呼应，是让读者跟着你问。问着问着，就找到答案了。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用问答呼应法写一首歌词，主歌问物，副歌问人。<br>2. 问句不超过七个字。</p></div>
+            </div>
+
+            <!-- 第65招 · 分述并列法 -->
+            <div class="content-card" id="special_65">
+                <h3> 第65招 · 分述并列法</h3>
+                <div class="points"><span class="point"> 分述情绪</span><span class="point"> 并列结构</span><span class="point"> 移步换景</span></div>
+                <p><strong>核心说明：</strong>每一段分述一种情绪，各段情绪并列，没有哪一段更起伏。像并排的画。</p>
+                <p><strong>技巧要点：</strong>每段独立；句式统一；情绪并列；意象成组。</p>
+                <div class="poem">
+                     《画》<br>
+                    【主歌一】<br>
+                    画一片海，海是蓝的，天是灰的<br>
+                    画一艘船，船是空的，帆是破的<br>
+                    画一个人，站在岸边，望着远方<br>
+                    远方没有船回来，只有浪<br><br>
+                    【主歌二】<br>
+                    画一座山，山是青的，雾是白的<br>
+                    画一条路，路是弯的，人是单的<br>
+                    画一棵树，叶子落尽，等春天来<br>
+                    春天来了树绿了，树下的人不在了<br><br>
+                    【主歌三】<br>
+                    画一扇窗，窗是开的，帘是动的<br>
+                    画一盏灯，灯是亮的，影是单的<br>
+                    画一个人，坐在窗前，等天亮<br>
+                    天亮了灯灭了，等的人没来<br><br>
+                    【副歌】<br>
+                    画了一整夜，天亮了<br>
+                    画里的人，不出来<br>
+                    画里的人，不会老<br>
+                    画里的人，不回答<br>
+                    我把画收起来，收进抽屉最深处<br>
+                    和我一起，等下一个不眠的夜
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「每段都是一扇窗。推开不同的窗，看见不同的风景。风景不一样，但窗是同一个。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用分述并列法写一首歌词，4段主歌，每段句式相同。<br>2. 每段的意象要属于同一组。</p></div>
+            </div>
+
+            <!-- 第66招 · 一字一词一句法 -->
+            <div class="content-card" id="special_66">
+                <h3> 第66招 · 一字一词一句法</h3>
+                <div class="points"><span class="point"> 一字开篇</span><span class="point"> 一词统领</span><span class="point"> 一句回环</span></div>
+                <p><strong>核心说明：</strong>用一个字、一个词或一句话作为段落的开头，然后同样排列下去。像钉子，钉一次不够，钉两次、三次，情绪就钉在听众心里了。</p>
+                <p><strong>技巧要点：</strong>重复中要有变化；重复三次最佳。</p>
+                <div class="poem">
+                     《等》<br>
+                    【主歌一】<br>
+                    等风吹过来，吹散你的名字<br>
+                    等雨落下来，洗净你的痕迹<br>
+                    等花开败了，落满你的脚印<br>
+                    等雪停了，盖住你的消息<br>
+                    等了很久，久到忘了在等什么<br><br>
+                    【主歌二】<br>
+                    忘了你的声音，忘了你的脸<br>
+                    忘了你说过的话，忘了你的誓言<br>
+                    忘了你的生日，忘了你的名字怎么写<br>
+                    忘了为什么忘不了<br>
+                    忘了之后，还是忘不了<br><br>
+                    【副歌一】<br>
+                    怕天黑，天黑了你不在<br>
+                    怕天亮，天亮了你还不在<br>
+                    怕下雨，雨中没有人送伞<br>
+                    怕天晴，晴天里没有你的影子<br>
+                    怕听见你的名字，怕听不见<br>
+                    怕你回来，怕你不回来<br><br>
+                    【副歌二】<br>
+                    念一个人的名字，念了一千遍<br>
+                    念成了一句咒语，念成了一场病<br>
+                    念着念着，名字变了味道<br>
+                    念着念着，人变成了符号<br>
+                    念到最后一遍，突然不想念了<br>
+                    不念了，名字还是那个名字<br>
+                    人已经不是那个人了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「一字一词一句法，像钉子，钉一次不够，钉两次、三次，情绪就钉在听众心里了。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用一个字统领整段，写8句歌词。<br>2. 用「忘了」或「记得」作为每句的开头，写8句歌词。</p></div>
+            </div>
+
+            <!-- 第67招 · 时间顺序法 -->
+            <div class="content-card" id="special_67">
+                <h3> 第67招 · 时间顺序法</h3>
+                <div class="points"><span class="point"> 时间刻度</span><span class="point"> 季节流转</span><span class="point"> 人生阶段</span></div>
+                <p><strong>核心说明：</strong>按照时间顺序写歌词，如春夏秋冬、早中晚、童年青年中年老年。</p>
+                <p><strong>技巧要点：</strong>选择有意义的节点；每个节点要有画面；节点之间要有留白。</p>
+                <div class="poem">
+                           《一年》<br>
+                    【主歌一·春】<br>
+                    桃花开了，你来的那天<br>
+                    燕子衔着泥，筑巢在屋檐<br>
+                    你说春天太短，要抓紧时间<br>
+                    把名字写在花瓣上，许了愿<br><br>
+                    【主歌二·夏】<br>
+                    荷花开的时候，你走了<br>
+                    没说是哪一列火车，没说是哪一天<br>
+                    只说夏天太长，等不起<br>
+                    我站在月台上，数了一整天的蝉鸣<br><br>
+                    【副歌一·秋】<br>
+                    银杏叶黄了，落了一地<br>
+                    铺成一条金色的路，通往哪里<br>
+                    我不知道你在哪里<br>
+                    只能把这些叶子一片一片捡起来<br>
+                    夹在书里，书里的字被叶子染黄了<br><br>
+                    【副歌二·冬】<br>
+                    雪下的时候，我一个人<br>
+                    窗外的梅花开了，你不在<br>
+                    煮了一壶茶，喝着喝着就凉了<br>
+                    写了一封信，写着写着就不寄了<br>
+                    不寄了，就收起来<br>
+                    收起来，就不想了<br>
+                    不想了，冬天就过去了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「时间顺序，是让读者跟着时间走。走完一圈，就过了一生。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用春夏秋冬顺序写一首歌词。<br>2. 每个季节选一个代表性意象。</p></div>
+            </div>
+
+            <!-- 第68招 · 空间顺序法 -->
+            <div class="content-card" id="special_68">
+                <h3> 第68招 · 空间顺序法</h3>
+                <div class="points"><span class="point"> 从近到远</span><span class="point"> 从外到内</span><span class="point"> 移步换景</span></div>
+                <p><strong>核心说明：</strong>按照空间顺序写歌词，从近到远，从外到内，从高到低。空间的移动也是情绪的移动。</p>
+                <p><strong>技巧要点：</strong>空间移动要有逻辑；每到一个空间写一个细节；开头和结尾可以是同一个空间。</p>
+                <div class="poem">
+                         《旧居》<br>
+                    【主歌一】<br>
+                    走到门口，钥匙还在原来的地方<br>
+                    锁孔生锈了，转了好久才开<br>
+                    门推开的声响，像一声叹息<br>
+                    你在门后挂外套的钩子，空着<br><br>
+                    【主歌二】<br>
+                    走进客厅，沙发还是那张沙发<br>
+                    你坐过的位置，凹下去的那个坑还在<br>
+                    坑里有一根你的头发，白的<br>
+                    你什么时候有了白头发，我不知道<br><br>
+                    【副歌一】<br>
+                    从门口走到窗口，十三步<br>
+                    从窗口走到门口，十三步<br>
+                    走了六年，还在走<br>
+                    走到门口，门关了<br>
+                    走到窗口，窗也关了<br>
+                    哪都去不了，就坐在中间<br><br>
+                    【副歌二】<br>
+                    窗台上那盆花，枯了<br>
+                    你忘了浇水，我也忘了<br>
+                    我们都忘了<br>
+                    枯了就枯了，我不扔<br>
+                    枯花也有枯花的美<br>
+                    像我这样，枯着
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「空间顺序，是让读者跟着你走。走一遍，就知道你心里装了什么。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用空间顺序法写一首歌词，从大到小或从小到大。<br>2. 开头和结尾可以是同一个空间，形成闭环。</p></div>
+            </div>
+
+            <!-- 第69招 · 情景交融法 -->
+            <div class="content-card" id="special_69">
+                <h3> 第69招 · 情景交融法</h3>
+                <div class="points"><span class="point"> 借景抒情</span><span class="point"> 物我合一</span><span class="point"> 情景并茂</span></div>
+                <p><strong>核心说明：</strong>借景抒情，将景物与情感交融。不直说情绪，让景物替你说。</p>
+                <p><strong>技巧要点：</strong>景中藏情；情中见景；情景并茂；景物选择要准。</p>
+                <div class="poem">
+                      《晚风》<br>
+                    【主歌一】<br>
+                    晚风把梧桐叶吹落了<br>
+                    一片一片，落在空椅子上<br>
+                    椅子等了一下午，等的人没来<br>
+                    叶子替她坐了，坐了又走了<br>
+                    椅子还是空着<br><br>
+                    【主歌二】<br>
+                    街灯亮了，黄黄的，晕晕的<br>
+                    照着一个人的影子，拉得很长<br>
+                    影子比她走得快，走在前面等她<br>
+                    她走影子也走，她停影子也停<br>
+                    甩不掉，就不甩了<br><br>
+                    【副歌一】<br>
+                    风知道她为什么走这条路<br>
+                    路灯知道她在等谁<br>
+                    落叶知道她来过<br>
+                    空椅子知道她坐了很久<br>
+                    只有他不知道<br><br>
+                    【副歌二】<br>
+                    后来风停了，叶子扫走了<br>
+                    路灯灭了，影子不见了<br>
+                    椅子被搬走了，这条路重修了<br>
+                    什么都没留下，像她没来过<br>
+                    像她没等过，像她没疼过<br>
+                    没疼过，就好了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「情景交融，是让读者分不清哪句是景、哪句是情。分不清，就成了。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用情景交融法写一首歌词，景中藏情。<br>2. 结尾用「好了」「算了」「过了」等轻词收住。</p></div>
+            </div>
+
+            <!-- 第70招 · 回忆倒叙法 -->
+            <div class="content-card" id="special_70">
+                <h3> 第70招 · 回忆倒叙法</h3>
+                <div class="points"><span class="point"> 从回忆开始</span><span class="point"> 倒叙故事</span><span class="point"> 回到现在</span></div>
+                <p><strong>核心说明：</strong>从回忆开始，倒叙故事。先写现在，再写过去。像翻开一本旧相册，从最后一页往前翻。</p>
+                <p><strong>技巧要点：</strong>从现在切入过去；用细节写回忆；过去和现在要有对比；结尾回到现在。</p>
+                <div class="poem">
+                       《旧照片》<br>
+                    【主歌一·现在】<br>
+                    翻到一张旧照片，边角已经泛黄<br>
+                    你在左边，我在右边<br>
+                    背景是那年冬天的海边<br>
+                    海浪很大，风也很大<br>
+                    你的头发被吹乱了<br>
+                    你笑的时候，眼睛眯成一条线<br><br>
+                    【主歌二·过去】<br>
+                    那年你把我冰凉的手，塞进你的口袋<br>
+                    口袋里有一张电影票根，是《花样年华》<br>
+                    你看不懂，你说王家卫太慢<br>
+                    慢到像我们，慢到以为不会结束<br>
+                    后来真的结束了<br>
+                    慢的，反而先结束了<br><br>
+                    【副歌一】<br>
+                    照片里的你还在笑，照片外的你不见了<br>
+                    海还是那片海，风还是那阵风<br>
+                    只是海边的人换了<br>
+                    我站在同一个位置，拍了同一张照片<br>
+                    左边是空的<br>
+                    空的，就不一样了<br><br>
+                    【副歌二】<br>
+                    后来我学会了一个人去海边<br>
+                    不再伸手，不再等谁帮我暖<br>
+                    风还是很大，吹乱我的头发<br>
+                    我不笑了，眼睛也不眯了<br>
+                    照片收进抽屉最深处<br>
+                    不翻，就不想了<br>
+                    不想了，就不疼了<br>
+                    不疼了，就真的过去了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「回忆倒叙，是让读者跟着你翻相册。翻到最后，发现自己也老了。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用回忆倒叙法写一首歌词，从现在切入过去。<br>2. 用一个物品带出回忆，结尾回到现在。</p></div>
+            </div>
+
+            <!-- 第71招 · 回旋反复法 -->
+            <div class="content-card" id="special_71">
+                <h3> 第71招 · 回旋反复法</h3>
+                <div class="points"><span class="point"> 情绪回旋</span><span class="point"> 节奏反复</span><span class="point"> 句式统一</span></div>
+                <p><strong>核心说明：</strong>情绪回旋，节奏反复。同一句式反复出现，但内容有微妙变化。像转圈，转着转着就记住了。</p>
+                <p><strong>技巧要点：</strong>句式不变；内容微调；情绪可以递进；重复三次最佳。</p>
+                <div class="poem">
+                     《月亮》<br>
+                    【主歌一】<br>
+                    月亮圆的时候，你在哪<br>
+                    月亮缺的时候，你想谁<br>
+                    月亮弯的时候，你睡着了吗<br>
+                    月亮被云遮住的时候，你看见了吗<br><br>
+                    【主歌二】<br>
+                    月亮圆的时候，我在这里<br>
+                    月亮缺的时候，我还在等<br>
+                    月亮弯的时候，我醒着<br>
+                    月亮被云遮住的时候，我在想你<br><br>
+                    【副歌一】<br>
+                    你发如雪，凄美了离别<br>
+                    我焚香感动了谁<br>
+                    你发如雪，纷飞了眼泪<br>
+                    我等待苍老了谁<br><br>
+                    【副歌二】<br>
+                    月如钩，寂寞了西楼<br>
+                    我举杯饮尽了愁<br>
+                    月如钩，消瘦了等候<br>
+                    我抬头看见了秋<br><br>
+                    【尾段】<br>
+                    月亮还是那个月亮<br>
+                    看月亮的人不一样了<br>
+                    不一样了，就不看了<br>
+                    不看了，就不想了<br>
+                    不想了，就好了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「回旋反复，是让读者跟着你转圈。转三圈，就记住了。忘不掉的那种记住。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用回旋反复法写一首歌词，句式相同，内容微调。<br>2. 结尾用一段短句破格收住。</p></div>
+            </div>
+
+            <!-- 第72招 · 条例口号法 -->
+            <div class="content-card" id="special_72">
+                <h3> 第72招 · 条例口号法</h3>
+                <div class="points"><span class="point"> 简短有力</span><span class="point"> 节奏强烈</span><span class="point"> 情绪呐喊</span></div>
+                <p><strong>核心说明：</strong>用简短有力的句子作为歌词的核心。每句不超过7个字，节奏强烈，情绪饱满。</p>
+                <p><strong>技巧要点：</strong>句子要短；节奏要强；韵脚要响；可以加语气词；不要讲道理。</p>
+                <div class="poem">
+                      《行路》<br>
+                    【主歌一】<br>
+                    天没亮就出发<br>
+                    路在脚下，不问多远<br>
+                    风再大也不怕<br>
+                    雨再大也不躲<br>
+                    一个人，一盏灯<br>
+                    一程山水一程歌<br><br>
+                    【主歌二】<br>
+                    山高我也要翻<br>
+                    水远我也要过<br>
+                    天黑我就点灯<br>
+                    天亮我就赶路<br>
+                    不问山那边是什么<br>
+                    到了就知道了<br><br>
+                    【副歌一】<br>
+                    走吧，走吧，天会亮的<br>
+                    走吧，走吧，路会有的<br>
+                    走吧，走吧，会到的<br>
+                    走吧，走吧，不怕的<br><br>
+                    【副歌二】<br>
+                    风吹过来，我不低头<br>
+                    雨落下来，我不回头<br>
+                    跌倒了自己爬起来<br>
+                    痛了自己忍着<br>
+                    忍一忍，就过去了<br>
+                    过去了，就更强了<br><br>
+                    【尾段】<br>
+                    行路人，不问归期<br>
+                    行路人，不惧风雨<br>
+                    行路人，只管走<br>
+                    走到哪，哪就是家<br>
+                    家在心里，路在脚下<br>
+                    这就够了
+                </div>
+                <div class="reed-box"><div class="reed-title"> 本招芦苇说</div><div class="reed-item">「条例口号法，是让读者跟着你喊。喊着喊着，就信了。信了，就有了力量。」</div></div>
+                <div class="exercise"><h4>✍️ 课后练习</h4><p>1. 用条例口号法写一首歌词，每句不超过7个字，押开口大的韵。<br>2. 副歌可以用重复的短句。</p></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // 招数名称列表
+    const specialList = [
+        "第51招 · 通感炼字法", "第52招 · 意象置换法", "第53招 · 声音入词法",
+        "第54招 · 物象人格化", "第55招 · 时间折叠法", "第56招 · 空间跳跃法",
+        "第57招 · 留白爆破法", "第58招 · 矛盾修辞法", "第59招 · 数字入词法",
+        "第60招 · 对话独白法", "第61招 · 逆向立意法", "第62招 · 起承转合法",
+        "第63招 · 顺承递进法", "第64招 · 问答呼应法", "第65招 · 分述并列法",
+        "第66招 · 一字一词一句法", "第67招 · 时间顺序法", "第68招 · 空间顺序法",
+        "第69招 · 情景交融法", "第70招 · 回忆倒叙法", "第71招 · 回旋反复法",
+        "第72招 · 条例口号法"
+    ];
+
+    // 构建按钮
+    function buildButtons() {
+        const container = document.getElementById('specialCats');
+        if (!container) return;
+        container.innerHTML = specialList.map((item, idx) => 
+            `<button class="category-btn" data-idx="${idx}">${item}</button>`
+        ).join('');
+        container.querySelectorAll('.category-btn').forEach(btn => {
+            btn.onclick = () => {
+                const idx = parseInt(btn.dataset.idx);
+                const targetId = `special_${idx + 51}`;
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+        });
+    }
+
+    // 折叠功能
+    function initCollapse() {
+        const titles = document.querySelectorAll('.section-title');
+        titles.forEach(title => {
+            const targetId = title.getAttribute('data-target');
+            const target = document.getElementById(targetId);
+            if (target && targetId === 'specialPanel') {
+                target.classList.add('open');
+                title.innerHTML = title.innerHTML.replace('▼', '▲');
+            }
+            title.onclick = () => {
+                const tid = title.getAttribute('data-target');
+                const targ = document.getElementById(tid);
+                if (targ) {
+                    if (targ.classList.contains('open')) {
+                        targ.classList.remove('open');
+                        title.innerHTML = title.innerHTML.replace('▲', '▼');
+                    } else {
+                        targ.classList.add('open');
+                        title.innerHTML = title.innerHTML.replace('▼', '▲');
+                    }
+                }
+            };
+        });
+    }
+
+    buildButtons();
+    initCollapse();
+</script>
+</body>
+</html>
