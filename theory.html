@@ -75,26 +75,19 @@
             .chord-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js"></script>
-    <script src="api.js"></script>
-    <script src="sync.js"></script>
+<script src="theoryScore.js"></script>
 </head>
 <body>
+<script src="checkAuth.js"></script>
 <button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="container">
-    <div class="user-bar" id="userBar">
-        <div class="user-info">
-            <div class="user-avatar">🎵</div>
-            <div>
-                <div class="user-name" id="userName">加载中...</div>
-                <div class="user-score" id="userScore">积分 0</div>
-            </div>
-        </div>
-        <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
-        <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
+<div class="user-bar">
+    <div class="user-info">
+        <div class="user-avatar">📖</div>
+        <div style="color: #FFD966;">本模块积分：<span id="theoryScore">0</span></div>
     </div>
+</div>
     <div class="header">
         <h1>📖 芦苇乐理手册</h1>
         <p>从零开始，系统学习音乐理论 · 完全和弦词典 · 和弦连接指南</p>
@@ -205,67 +198,18 @@
 </div>
 
 <script>
-// ==================== 用户界面与后端融合 ====================
-let currentUserData = null;
-
-async function updateUserUI() {
-    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
-    const userNameSpan = document.getElementById('userName');
-    const userScoreSpan = document.getElementById('userScore');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    
-    if (user) {
-        userNameSpan.innerText = user.nickname || '芦苇同学';
-        // 从 API 获取真实积分
-        let score = user.score || 0;
-        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
-            const apiScore = await window.API.getUserScore();
-            if (apiScore !== undefined) score = apiScore;
+// ==================== 积分系统 ====================
+// addStudyPoints 已在 theoryScore.js 中定义
+// 确保积分函数可用
+if (typeof addStudyPoints !== 'function') {
+    function addStudyPoints(amount, reason) {
+        if (typeof addTheoryScore === 'function') {
+            addTheoryScore(amount, reason);
+        } else {
+            console.log(`+${amount} 积分：${reason}`);
         }
-        userScoreSpan.innerText = `积分 ${score}`;
-        if(loginBtn) loginBtn.style.display = 'none';
-        if(logoutBtn) logoutBtn.style.display = 'block';
-        currentUserData = user;
-    } else {
-        userNameSpan.innerText = '未登录';
-        userScoreSpan.innerText = '积分 0';
-        if(loginBtn) loginBtn.style.display = 'block';
-        if(logoutBtn) logoutBtn.style.display = 'none';
-        currentUserData = null;
     }
 }
-
-async function addStudyPoints(amount, reason) {
-    if (!currentUserData) return;
-    if (typeof window.API !== 'undefined' && window.API.addScore) {
-        await window.API.addScore(amount, reason);
-        updateUserUI();
-    }
-}
-
-if(document.getElementById('loginBtn')) {
-    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
-}
-if(document.getElementById('logoutBtn')) {
-    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
-}
-
-window.onLoginSuccess = async function(user) {
-    currentUserData = user;
-    await updateUserUI();
-    if (typeof pullFromCloud === 'function') {
-        await pullFromCloud();
-    }
-};
-
-// 页面加载时拉取云端数据
-(async function() {
-    await updateUserUI();
-    if (typeof pullFromCloud === 'function' && currentUserData) {
-        await pullFromCloud();
-    }
-})();
 
 // ==================== 学习目标 ====================
 function updateGoalProgress() {
@@ -1106,7 +1050,12 @@ buildConnectionUI();
 buildChordTable();
 buildScaleCategories();
 initCollapse();
-updateUserUI();
+// 初始化积分显示
+if (typeof initTheoryScore === 'function') {
+    initTheoryScore();
+} else {
+    console.log('theoryScore.js 未加载，积分显示可能有问题');
+}
 </script>
 </body>
 </html>
