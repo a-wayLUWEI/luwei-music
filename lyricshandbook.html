@@ -113,24 +113,10 @@
         .progress-text { font-size: 0.7rem; color: #AAD4B0; margin-top: 6px; }
         @media (max-width: 700px) { .section-title { font-size: 1rem; } }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js"></script>
-    <script src="api.js"></script>
-    <script src="sync.js"></script>
 </head>
 <body>
+<script src="checkAuth.js"></script>
 <div class="container">
-    <div class="user-bar">
-        <div class="user-info">
-            <div class="user-avatar">✍️</div>
-            <div>
-                <div class="user-name" id="userName">词人·芦苇</div>
-                <div class="user-score" id="userScore">灵感 0</div>
-            </div>
-        </div>
-        <button class="login-btn" style="display:none;">登录</button>
-        <button class="logout-btn" style="display:none;">退出</button>
-    </div>
     <div class="header">
         <h1> 芦苇歌词课程手册</h1>
         <p>初级 · 中级 · 高级 · 特级 | 基础篇 · 芦苇说</p>
@@ -3355,7 +3341,6 @@ document.getElementById('showStructBtn').onclick = () => {
     });
 
     let points = 0;
-    document.getElementById('userScore').innerText = `灵感 ${points}`;
     const tips = ["歌词是听得见的诗，诗是看得见的歌。","押韵不是镣铐，是舞步。","情绪是聚光灯，思想是背景板。","写爱情不难，写人人都以为是自己的爱情，才难。"];
     document.getElementById('dailyTip').innerText = tips[Math.floor(Math.random() * tips.length)];
 </script>
