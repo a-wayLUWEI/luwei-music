@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芦苇音乐 · 管理后台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+            color: #1a1a2e;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .admin-header h1 { font-size: 22px; font-weight: 700; }
+        .admin-header h1 span { color: #4FC3F7; }
+        .admin-header .stats {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+        }
+        .admin-header .stats .num {
+            font-weight: 700;
+            font-size: 18px;
+            color: #4FC3F7;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: white;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .tabs button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #666;
+            transition: 0.25s;
+        }
+        .tabs button:hover { background: #f5f5f5; }
+        .tabs button.active {
+            background: #1a1a2e;
+            color: white;
+            box-shadow: 0 2px 8px rgba(26,26,46,0.25);
+        }
+        .tabs button .badge {
+            display: inline-block;
+            background: #e53935;
+            color: white;
+            font-size: 11px;
+            border-radius: 50%;
+            padding: 0 7px;
+            line-height: 18px;
+            min-width: 18px;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+        .tabs button.active .badge { background: #FFD54F; color: #1a1a2e; }
+
+        .panel { display: none; animation: fadeIn 0.3s ease; }
+        .panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card-list { display: flex; flex-direction: column; gap: 16px; }
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            transition: 0.2s;
+            border-left: 4px solid #ddd;
+        }
+        .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .card.pending-musician { border-left-color: #FFB300; }
+        .card.pending-work { border-left-color: #FFB300; }
+        .card.approved { border-left-color: #4CAF50; }
+        .card.rejected { border-left-color: #e53935; }
+
+        .card .info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+            min-width: 200px;
+        }
+        .card .info .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e0e0e0;
+            flex-shrink: 0;
+        }
+        .card .info .details .name { font-weight: 600; font-size: 16px; }
+        .card .info .details .sub {
+            font-size: 13px;
+            color: #888;
+            margin-top: 2px;
+        }
+        .card .info .details .sub .tag {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-right: 6px;
+        }
+        .card .info .details .sub .tag.pending-tag {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .card .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .card .actions button {
+            padding: 6px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .btn-approve { background: #4CAF50; color: white; }
+        .btn-approve:hover { background: #388E3C; }
+        .btn-reject { background: #e53935; color: white; }
+        .btn-reject:hover { background: #c62828; }
+        .btn-view { background: #e3f2fd; color: #0d47a1; }
+        .btn-view:hover { background: #bbdefb; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            background: white;
+            border-radius: 14px;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 520px;
+            width: 92%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal h3 { font-size: 20px; margin-bottom: 16px; }
+        .modal .detail-row {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .modal .detail-row .label { width: 80px; color: #888; flex-shrink: 0; }
+        .modal .detail-row .value { flex: 1; word-break: break-all; }
+        .modal .close-modal {
+            margin-top: 20px;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #f0f0f0;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+        }
+        .modal .close-modal:hover { background: #e0e0e0; }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 999;
+            pointer-events: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .toast.show { opacity: 1; }
+        .toast.success { background: #2e7d32; }
+        .toast.error { background: #c62828; }
+
+        @media (max-width: 600px) {
+            .admin-header { flex-direction: column; align-items: stretch; text-align: center; }
+            .admin-header .stats { justify-content: center; flex-wrap: wrap; gap: 12px; }
+            .card { flex-direction: column; align-items: stretch; }
+            .card .info { min-width: unset; }
+            .card .actions { justify-content: flex-end; }
+            .tabs button { font-size: 13px; padding: 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <header class="admin-header">
+        <h1> <span>芦苇音乐</span> · 管理后台</h1>
+        <div class="stats">
+            <span>待审音乐人 <span class="num" id="pendingMusicianCount">0</span></span>
+            <span>待审作品 <span class="num" id="pendingWorkCount">0</span></span>
+            <span>已入驻 <span class="num" id="approvedMusicianCount">0</span></span>
+        </div>
+        <button class="btn-approve" onclick="logout()" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);padding:8px 20px;border-radius:8px;cursor:pointer;">退出登录</button>
+    </header>
+
+    <div class="tabs">
+        <button class="active" data-tab="musicians" onclick="switchTab('musicians')">
+             音乐人审核 <span class="badge" id="musicianBadge">0</span>
+        </button>
+        <button data-tab="works" onclick="switchTab('works')">
+             作品审核 <span class="badge" id="workBadge">0</span>
+        </button>
+        <button data-tab="all" onclick="switchTab('all')">
+             全部音乐人
+        </button>
+    </div>
+
+    <div id="panel-musicians" class="panel active">
+        <div class="card-list" id="musicianList"></div>
+    </div>
+
+    <div id="panel-works" class="panel">
+        <div class="card-list" id="workList"></div>
+    </div>
+
+    <div id="panel-all" class="panel">
+        <div class="card-list" id="allMusicianList"></div>
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="workModal">
+    <div class="modal">
+        <h3> 作品详情</h3>
+        <div id="workDetail">
+            <div class="detail-row"><span class="label">作品名</span><span class="value" id="detailTitle">-</span></div>
+            <div class="detail-row"><span class="label">音乐人</span><span class="value" id="detailMusician">-</span></div>
+            <div class="detail-row"><span class="label">歌词</span><span class="value" id="detailLyrics" style="white-space:pre-wrap;">-</span></div>
+            <div class="detail-row"><span class="label">音频</span><span class="value"><audio controls style="width:100%;max-width:280px;" id="detailAudio"></audio></span></div>
+        </div>
+        <button class="close-modal" onclick="closeWorkModal()">关闭</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+let currentTab = 'musicians';
+
+function showToast(msg, type = '') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast show ' + type;
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function formatDate(str) {
+    if (!str) return '-';
+    return new Date(str).toLocaleDateString('zh-CN');
+}
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+    if (tab === 'musicians') loadPendingMusicians();
+    else if (tab === 'works') loadPendingWorks();
+    else if (tab === 'all') loadAllMusicians();
+}
+
+// ===== 加载待审核音乐人 =====
+async function loadPendingMusicians() {
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/musicians?status=eq.pending&order=created_at.asc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const data = await resp.json();
+        document.getElementById('pendingMusicianCount').textContent = data.length;
+        document.getElementById('musicianBadge').textContent = data.length;
+        renderMusicianList(data);
+    } catch (e) {
+        console.error(e);
+        showToast('加载失败', 'error');
+    }
+}
+
+function renderMusicianList(list) {
+    const container = document.getElementById('musicianList');
+    if (!list || list.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="icon"></div><p>暂无待审核的音乐人</p></div>`;
+        return;
+    }
+    container.innerHTML = list.map(m => `
+        <div class="card pending-musician" data-id="${m.id}">
+            <div class="info">
+                <img class="avatar" src="${m.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2252%22 height=%2252%22%3E%3Crect width=%2252%22 height=%2252%22 fill=%22%23e0e0e0%22/%3E%3Ctext x=%2226%22 y=%2234%22 text-anchor=%22middle%22 font-size=%2224%22 fill=%22%23999%22%3E%3C/text%3E%3C/svg%3E'}" alt="头像">
+                <div class="details">
+                    <div class="name">${m.artist_name || m.name || '未命名'}</div>
+                    <div class="sub">
+                        <span class="tag pending-tag">⏳ 待审核</span>
+                        ${m.role || '音乐人'} · ${formatDate(m.created_at)}
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn-view" onclick="viewMusician('${m.id}')"> 查看</button>
+                <button class="btn-approve" onclick="approveMusician('${m.id}')">✅ 通过</button>
+                <button class="btn-reject" onclick="rejectMusician('${m.id}')">❌ 拒绝</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ===== 加载待审核作品 =====
+async function loadPendingWorks() {
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/works?status=eq.pending&order=created_at.asc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const data = await resp.json();
+        document.getElementById('pendingWorkCount').textContent = data.length;
+        document.getElementById('workBadge').textContent = data.length;
+        renderWorkList(data);
+    } catch (e) {
+        console.error(e);
+        showToast('加载失败', 'error');
+    }
+}
+
+function renderWorkList(list) {
+    const container = document.getElementById('workList');
+    if (!list || list.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="icon"></div><p>暂无待审核的作品</p></div>`;
+        return;
+    }
+    container.innerHTML = list.map(w => `
+        <div class="card pending-work" data-id="${w.id}">
+            <div class="info">
+                <img class="avatar" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2252%22 height=%2252%22%3E%3Crect width=%2252%22 height=%2252%22 fill=%22%23e0e0e0%22/%3E%3Ctext x=%2226%22 y=%2234%22 text-anchor=%22middle%22 font-size=%2224%22 fill=%22%23999%22%3E%3C/text%3E%3C/svg%3E'" alt="作品">
+                <div class="details">
+                    <div class="name">${w.title || '未命名作品'}</div>
+                    <div class="sub">
+                        <span class="tag pending-tag">⏳ 待审核</span>
+                        音乐人 ID: ${w.musician_id || '未知'} · ${formatDate(w.created_at)}
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn-view" onclick="viewWork('${w.id}')"> 试听</button>
+                <button class="btn-approve" onclick="approveWork('${w.id}')">✅ 通过</button>
+                <button class="btn-reject" onclick="rejectWork('${w.id}')">❌ 下架</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ===== 加载全部音乐人 =====
+async function loadAllMusicians() {
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/musicians?order=created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const data = await resp.json();
+        const approved = data.filter(m => m.status === 'approved');
+        document.getElementById('approvedMusicianCount').textContent = approved.length;
+        renderAllMusicianList(data);
+    } catch (e) {
+        console.error(e);
+        showToast('加载失败', 'error');
+    }
+}
+
+function renderAllMusicianList(list) {
+    const container = document.getElementById('allMusicianList');
+    if (!list || list.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="icon"></div><p>暂无音乐人</p></div>`;
+        return;
+    }
+    container.innerHTML = list.map(m => {
+        const statusMap = {
+            'approved': '✅ 已入驻',
+            'pending': '⏳ 审核中',
+            'rejected': '❌ 已拒绝'
+        };
+        const statusClass = m.status === 'approved' ? 'approved' : (m.status === 'pending' ? 'pending-musician' : 'rejected');
+        return `
+            <div class="card ${statusClass}" data-id="${m.id}">
+                <div class="info">
+                    <img class="avatar" src="${m.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2252%22 height=%2252%22%3E%3Crect width=%2252%22 height=%2252%22 fill=%22%23e0e0e0%22/%3E%3Ctext x=%2226%22 y=%2234%22 text-anchor=%22middle%22 font-size=%2224%22 fill=%22%23999%22%3E%3C/text%3E%3C/svg%3E'}" alt="头像">
+                    <div class="details">
+                        <div class="name">${m.artist_name || m.name || '未命名'}</div>
+                        <div class="sub">
+                            <span class="tag">${m.role || '音乐人'}</span>
+                            ${statusMap[m.status] || '未知状态'} · ${formatDate(m.created_at)}
+                        </div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn-view" onclick="viewMusician('${m.id}')"> 查看</button>
+                    ${m.status !== 'approved' ? `<button class="btn-approve" onclick="approveMusician('${m.id}')">✅ 通过</button>` : ''}
+                    ${m.status === 'approved' ? `<button class="btn-reject" onclick="rejectMusician('${m.id}')"> 取消入驻</button>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ===== 审核操作 =====
+async function approveMusician(id) {
+    if (!confirm('确定通过该音乐人的入驻申请吗？')) return;
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/musicians?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'approved' })
+        });
+        if (resp.ok) {
+            showToast('✅ 已通过入驻申请', 'success');
+            refreshCurrentTab();
+        } else {
+            throw new Error('操作失败');
+        }
+    } catch (e) {
+        showToast('❌ ' + e.message, 'error');
+    }
+}
+
+async function rejectMusician(id) {
+    if (!confirm('确定拒绝该音乐人的入驻申请吗？')) return;
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/musicians?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'rejected' })
+        });
+        if (resp.ok) {
+            showToast('已拒绝', 'success');
+            refreshCurrentTab();
+        } else {
+            throw new Error('操作失败');
+        }
+    } catch (e) {
+        showToast('❌ ' + e.message, 'error');
+    }
+}
+
+async function approveWork(id) {
+    if (!confirm('确定通过该作品吗？')) return;
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/works?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'approved' })
+        });
+        if (resp.ok) {
+            showToast('✅ 作品已通过', 'success');
+            refreshCurrentTab();
+        } else {
+            throw new Error('操作失败');
+        }
+    } catch (e) {
+        showToast('❌ ' + e.message, 'error');
+    }
+}
+
+async function rejectWork(id) {
+    if (!confirm('确定下架该作品吗？')) return;
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/works?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'rejected' })
+        });
+        if (resp.ok) {
+            showToast('已下架', 'success');
+            refreshCurrentTab();
+        } else {
+            throw new Error('操作失败');
+        }
+    } catch (e) {
+        showToast('❌ ' + e.message, 'error');
+    }
+}
+
+// ===== 查看详情 =====
+async function viewMusician(id) {
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/musicians?id=eq.${id}`, { headers: { 'apikey': SUPABASE_KEY } });
+        const data = await resp.json();
+        const m = data[0];
+        if (!m) return showToast('未找到该音乐人', 'error');
+        alert(` 音乐人详情\n\n昵称：${m.artist_name || m.name || '未命名'}\n角色：${m.role || '未填写'}\n简介：${m.bio || '未填写'}\n状态：${m.status === 'approved' ? '✅已入驻' : m.status === 'pending' ? '⏳审核中' : '❌已拒绝'}\n申请时间：${formatDate(m.created_at)}`);
+    } catch (e) {
+        showToast('加载失败', 'error');
+    }
+}
+
+async function viewWork(id) {
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/works?id=eq.${id}`, { headers: { 'apikey': SUPABASE_KEY } });
+        const data = await resp.json();
+        const w = data[0];
+        if (!w) return showToast('未找到该作品', 'error');
+        document.getElementById('detailTitle').textContent = w.title || '未命名';
+        document.getElementById('detailMusician').textContent = w.musician_id || '未知';
+        document.getElementById('detailLyrics').textContent = w.lyrics || '未填写';
+        document.getElementById('detailAudio').src = w.audio_url || '';
+        document.getElementById('workModal').classList.add('show');
+    } catch (e) {
+        showToast('加载失败', 'error');
+    }
+}
+
+function closeWorkModal() {
+    document.getElementById('workModal').classList.remove('show');
+    document.getElementById('detailAudio').pause();
+}
+
+function refreshCurrentTab() {
+    if (currentTab === 'musicians') loadPendingMusicians();
+    else if (currentTab === 'works') loadPendingWorks();
+    else if (currentTab === 'all') loadAllMusicians();
+    loadAllMusicians();
+}
+
+function logout() {
+    if (confirm('确定退出吗？')) {
+        localStorage.removeItem('admin_token');
+        window.location.href = 'login.html';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadPendingMusicians();
+    loadAllMusicians();
+    document.getElementById('workModal').addEventListener('click', function(e) {
+        if (e.target === this) closeWorkModal();
+    });
+});
+
+setInterval(refreshCurrentTab, 30000);
+</script>
+</body>
+</html>
