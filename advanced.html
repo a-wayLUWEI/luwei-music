@@ -39,26 +39,24 @@
             .cat-btn { padding: 6px 12px; font-size: 0.7rem; }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js"></script>
-    <script src="api.js"></script>
-    <script src="sync.js"></script>
 </head>
 <body>
+<script src="checkAuth.js"></script>
+<script src="advancedScore.js"></script>
+</body>
 <button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="container">
     <div class="user-bar" id="userBar">
         <div class="user-info">
-            <div class="user-avatar">🎵</div>
+            <div class="user-avatar">🎵</div><div style="color: #FFD966;">本模块积分：<span id="advancedScore">0</span></div>
             <div>
-                <div class="user-name" id="userName">加载中...</div>
-                <div class="user-score" id="userScore">积分 0</div>
             </div>
         </div>
         <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
         <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
     </div>
+
     <div class="header">
         <h1>🏆 综合闯关</h1>
         <p>音程 · 节奏 · 旋律 · 调式 · 和声 · 配器 · 声乐 · 爵士</p>
@@ -211,58 +209,123 @@
 // ==================== 用户界面 ====================
 let currentUserData = null;
 
-async function updateUserUI() {
-    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
-    const userNameSpan = document.getElementById('userName');
-    const userScoreSpan = document.getElementById('userScore');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    
-    if (user) {
-        userNameSpan.innerText = user.nickname || '芦苇同学';
-        let score = user.score || 0;
-        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
-            const apiScore = await window.API.getUserScore();
-            if (apiScore !== undefined) score = apiScore;
-        }
-        userScoreSpan.innerText = `积分 ${score}`;
-        if(loginBtn) loginBtn.style.display = 'none';
-        if(logoutBtn) logoutBtn.style.display = 'block';
-        currentUserData = user;
-    } else {
-        userNameSpan.innerText = '未登录';
-        userScoreSpan.innerText = '积分 0';
-        if(loginBtn) loginBtn.style.display = 'block';
-        if(logoutBtn) logoutBtn.style.display = 'none';
-        currentUserData = null;
+// 从 localStorage 读取当前登录用户
+function loadCurrentUser() {
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+        try {
+            currentUserData = JSON.parse(userStr);
+        } catch(e) {}
     }
 }
 
-async function addScore(amount, reason) {
-    if (!currentUserData) return;
+// ==================== 积分明细记录 ====================
+function addPointsLog(amount, reason, type) {
+    let userId = null;
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+        try {
+            const u = JSON.parse(userStr);
+            userId = u.user_id;
+        } catch(e) {}
+    }
+    if (!userId) return;
+    
+    const logKey = `points_log_${userId}`;
+    let logs = [];
+    const existing = localStorage.getItem(logKey);
+    if (existing) {
+        try { logs = JSON.parse(existing); } catch(e) {}
+    }
+    logs.push({
+        time: new Date().toLocaleString(),
+        reason: reason,
+        amount: Math.abs(amount),
+        type: type
+    });
+    if (logs.length > 500) logs.shift();
+    localStorage.setItem(logKey, JSON.stringify(logs));
+}
+
+// ==================== 加分函数 ====================
+async function addModuleScore(amount, reason) {
+    console.log('addModuleScore 被调用', { amount, reason, currentUserData });
+    
+    if (!currentUserData) {
+        loadCurrentUser();
+    }
+    
+    if (!currentUserData) {
+        const guestKey = 'guest_advanced_score';
+        const current = parseInt(localStorage.getItem(guestKey) || '0');
+        localStorage.setItem(guestKey, current + amount);
+        displayModuleScore();
+        return;
+    }
+    
+    // ✅ 记录积分明细
+    addPointsLog(amount, reason || '综合闯关通关', 'earn');
+    
     if (typeof window.API !== 'undefined' && window.API.addScore) {
         await window.API.addScore(amount, reason);
         updateUserUI();
+    } else {
+        const key = `${currentUserData.user_id}_advanced_score`;
+        const current = parseInt(localStorage.getItem(key) || '0');
+        localStorage.setItem(key, current + amount);
+        displayModuleScore();
     }
 }
 
-if(document.getElementById('loginBtn')) {
-    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
-}
-if(document.getElementById('logoutBtn')) {
-    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
+// 获取当前模块积分
+function getModuleScore() {
+    if (currentUserData && typeof window.API !== 'undefined' && window.API.getScore) {
+        const key = currentUserData ? `${currentUserData.user_id}_advanced_score` : 'guest_advanced_score';
+        return parseInt(localStorage.getItem(key) || '0');
+    }
+    const key = currentUserData ? `${currentUserData.user_id}_advanced_score` : 'guest_advanced_score';
+    return parseInt(localStorage.getItem(key) || '0');
 }
 
+function displayModuleScore() {
+    const el = document.getElementById('advancedScore');
+    if (el) el.innerText = getModuleScore();
+}
+
+// 登录成功回调
 window.onLoginSuccess = async function(user) {
     currentUserData = user;
-    await updateUserUI();
     if (typeof pullFromCloud === 'function') {
         await pullFromCloud();
     }
+    displayModuleScore();
 };
 
-updateUserUI();
+// 退出登录
+window.logout = function() {
+    currentUserData = null;
+    localStorage.removeItem('currentUser');
+    displayModuleScore();
+    if (typeof location !== 'undefined') location.reload();
+};
 
+// 初始化
+loadCurrentUser();
+displayModuleScore();
+
+// 绑定按钮事件
+if(document.getElementById('loginBtn')) {
+    document.getElementById('loginBtn').addEventListener('click', () => { 
+        if(typeof showLoginModal === 'function') showLoginModal(); 
+        else alert('请从 index.html 登录');
+    });
+}
+if(document.getElementById('logoutBtn')) {
+    document.getElementById('logoutBtn').addEventListener('click', () => { 
+        if(typeof logout === 'function') logout();
+        else window.logout();
+    });
+}
 // ==================== 折叠面板功能 ====================
 document.querySelectorAll('.section-title').forEach(title => {
     title.addEventListener('click', () => {
@@ -334,10 +397,10 @@ function createQuizSystem(bankData, containerId, quizPanelId, totalLevels, level
         if (streak >= 8) {
             const feed = document.getElementById(`${containerId}_Feed`);
             if (feed) feed.innerHTML = `✅ 恭喜通过第${currentLevel}关！进入下一关 ➡️`;
+addModuleScore(10, `通过${levelName}第${currentLevel}关`);
             completed = true;
             currentLevel++;
             saveProgress();
-            addScore(20, `通关${levelName}第${currentLevel-1}关`);
             setTimeout(() => loadLevel(), 1500);
             return;
         }
@@ -365,7 +428,6 @@ function createQuizSystem(bankData, containerId, quizPanelId, totalLevels, level
                         streak++;
                         const feed = document.getElementById(`${containerId}_Feed`);
                         if (feed) feed.innerHTML = `✅ 正确！ ${streak}/8`;
-                        addScore(5, `${levelName}答题正确`);
                         nextQuestion();
                     } else {
                         streak = 0;
