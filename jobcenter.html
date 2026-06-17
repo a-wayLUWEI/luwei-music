@@ -256,6 +256,7 @@
     </style>
 </head>
 <body>
+<script src="checkAuth.js"></script>
 <div class="container">
     <div class="header">
         <div class="title">
@@ -383,6 +384,7 @@
             if (tabId === 'mytenders') loadMyTenders();
         };
     });
+
     // ========== 需求广场 ==========
     async function loadSquare() {
         const { data, error } = await supabaseClient
@@ -413,12 +415,19 @@
             </div>
         `).join('');
     }
-    function statusMap(s) {
-        if (s === 'bidding') return '招标中';
-        if (s === 'selected') return '已选中音乐人';
-        if (s === 'completed') return '已完成';
-        return s;
-    }
+function statusMap(s) {
+    if (s === 'bidding') return '招标中';
+    if (s === 'selected') return '已选中音乐人';
+    if (s === 'completed') return '已完成';
+    return s || '未知';
+}
+
+function bidStatusMap(s) {
+    if (s === 'pending') return '待选中';
+    if (s === 'selected') return '已中标';
+    if (s === 'rejected') return '未选中';
+    return s || '待审核';
+}
     window.openBidModal = (tenderId) => {
         if (!currentUser) { alert('请先登录'); return; }
         currentTenderForBid = tenderId;
@@ -447,81 +456,111 @@
         }
     };
     // ========== 我的投稿 ==========
-    async function loadMyBids() {
-        if (!currentUser) { document.getElementById('myBidsList').innerHTML = '<div class="empty-tip">请先登录</div>'; return; }
-        const { data, error } = await supabaseClient
-            .from('submissions')
-            .select('*, tenders(title, publisher_name, status)')
-            .eq('musician_id', currentUser.id);
-        if (error) return;
-        if (!data.length) {
-            document.getElementById('myBidsList').innerHTML = '<div class="empty-tip">暂无投稿记录</div>';
-            return;
-        }
-        document.getElementById('myBidsList').innerHTML = data.map(s => `
+async function loadMyBids() {
+    if (!currentUser) { 
+        document.getElementById('myBidsList').innerHTML = '<div class="empty-tip">请先登录</div>'; 
+        return; 
+    }
+    
+    const { data: submissions, error } = await supabaseClient
+        .from('submissions')
+        .select('*')
+        .eq('musician_id', currentUser.id);
+    
+    if (error) {
+        console.error(error);
+        return;
+    }
+    
+    if (!submissions || !submissions.length) {
+        document.getElementById('myBidsList').innerHTML = '<div class="empty-tip">暂无投稿记录</div>';
+        return;
+    }
+    
+    // 获取投稿对应的需求详情
+    const tenderIds = submissions.map(s => s.tender_id);
+    const { data: tenders } = await supabaseClient
+        .from('tenders')
+        .select('id, title, publisher_name, status')
+        .in('id', tenderIds);
+    
+    const tenderMap = {};
+    if (tenders) {
+        tenders.forEach(t => { tenderMap[t.id] = t; });
+    }
+    
+    document.getElementById('myBidsList').innerHTML = submissions.map(s => {
+        const tender = tenderMap[s.tender_id] || {};
+        return `
             <div class="card">
-                <div class="card-title"> ${escapeHtml(s.tenders?.title || '未知')}</div>
-                <div class="card-info">发布者：${escapeHtml(s.tenders?.publisher_name || '匿名')} | 状态：${bidStatusMap(s.status)}</div>
-                <div class="card-desc"> ${escapeHtml(s.message || '无留言')}</div>
-                ${s.status === 'selected' ? '<span class="badge winner-badge"> 已中标！</span>' : ''}
+                <div class="card-title">${escapeHtml(tender.title || '未知')}</div>
+                <div class="card-info">发布者：${escapeHtml(tender.publisher_name || '匿名')} | 状态：${bidStatusMap(s.status)}</div>
+                <div class="card-desc">🎵 试听：${escapeHtml(s.demo_url)}</div>
+                <div class="card-desc">💬 留言：${escapeHtml(s.message || '无留言')}</div>
+                ${s.status === 'selected' ? '<span class="badge winner-badge">🎉 已中标！</span>' : ''}
             </div>
-        `).join('');
-    }
-    function bidStatusMap(s) {
-        if (s === 'pending') return '待选中';
-        if (s === 'selected') return '已中标';
-        if (s === 'rejected') return '未选中';
-        return s;
-    }
-    // ========== 我的发布 ==========
-    async function loadMyTenders() {
-        if (!currentUser) { document.getElementById('myTendersList').innerHTML = '<div class="empty-tip">请先登录</div>'; return; }
-        const { data, error } = await supabaseClient
-            .from('tenders')
-            .select('*')
-            .eq('publisher_id', currentUser.id)
-            .order('created_at', { ascending: false });
-        if (error) return;
-        if (!data.length) {
-            document.getElementById('myTendersList').innerHTML = '<div class="empty-tip">暂无发布记录</div>';
-            return;
-        }
-        document.getElementById('myTendersList').innerHTML = data.map(t => `
-            <div class="card">
-                <div class="card-title">${escapeHtml(t.title)}</div>
-                <div class="card-info"> ${t.budget}元 | 状态：${statusMap(t.status)}</div>
-                <div class="card-desc">${escapeHtml(t.description).substring(0, 80)}</div>
-                ${t.status === 'selected' ? `<button onclick="checkSubmissions('${t.id}')"> 查看投稿</button>` : ''}
-                ${t.status === 'bidding' ? `<button onclick="viewSubmissions('${t.id}')"> 查看投稿并选人</button>` : ''}
-            </div>
-        `).join('');
-    }
+        `;
+    }).join('');
+}
     window.viewSubmissions = async (tenderId) => {
-        const { data } = await supabaseClient.from('submissions').select('*').eq('tender_id', tenderId);
-        if (!data.length) { alert('暂无投稿'); return; }
-        let msg = ' 投稿列表：\n\n';
-        data.forEach((s, i) => {
-            msg += `${i+1}. ${s.musician_name}\n   试听：${s.demo_url}\n   留言：${s.message}\n   状态：${s.status}\n   回复"select ${s.id}"选中\n\n`;
-        });
-        const reply = prompt(msg + '输入 select + 投稿ID 选中中标');
-        if (reply && reply.startsWith('select')) {
-            const subId = reply.split(' ')[1];
-            const sub = data.find(s => s.id === subId);
-            if (sub) {
-                await supabaseClient.from('tenders').update({
+    if (!currentUser) { alert('请先登录'); return; }
+    
+    const { data: submissions, error } = await supabaseClient
+        .from('submissions')
+        .select('*')
+        .eq('tender_id', tenderId);
+    
+    if (error) {
+        console.error(error);
+        alert('查询失败');
+        return;
+    }
+    
+    if (!submissions || !submissions.length) {
+        alert('暂无投稿');
+        return;
+    }
+    
+    let msg = '📋 投稿列表：\n\n';
+    submissions.forEach((s, i) => {
+        msg += `${i+1}. 投稿人：${s.musician_name}\n   试听：${s.demo_url}\n   留言：${s.message}\n   状态：${s.status}\n   输入 select ${s.id} 选中\n\n`;
+    });
+    
+    const reply = prompt(msg + '输入 select + 投稿ID 选中中标');
+    if (reply && reply.startsWith('select')) {
+        const subId = reply.split(' ')[1];
+        const selected = submissions.find(s => s.id === subId);
+        if (selected) {
+            // 更新需求状态
+            await supabaseClient
+                .from('tenders')
+                .update({
                     status: 'selected',
-                    winner_id: sub.musician_id,
-                    winner_name: sub.musician_name,
-                    selected_at: new Date(),
-                    winner_response: 'pending'
-                }).eq('id', tenderId);
-                await supabaseClient.from('submissions').update({ status: 'selected' }).eq('id', subId);
-                await supabaseClient.from('submissions').update({ status: 'rejected' }).eq('tender_id', tenderId).neq('id', subId);
-                alert('已选中 ' + sub.musician_name);
-                loadMyTenders();
-            }
+                    winner_id: selected.musician_id,
+                    winner_name: selected.musician_name,
+                    selected_at: new Date()
+                })
+                .eq('id', tenderId);
+            
+            // 更新选中投稿的状态
+            await supabaseClient
+                .from('submissions')
+                .update({ status: 'selected' })
+                .eq('id', subId);
+            
+            // 更新其他投稿为 rejected
+            await supabaseClient
+                .from('submissions')
+                .update({ status: 'rejected' })
+                .eq('tender_id', tenderId)
+                .neq('id', subId);
+            
+            alert('已选中 ' + selected.musician_name);
+            loadMyTenders();
+            loadSquare();
         }
-    };
+    }
+};
     window.startWork = async (tenderId) => {
         await supabaseClient.from('tenders').update({ winner_response: 'accepted' }).eq('id', tenderId);
         alert('已确认开始创作，进入合同阶段');
@@ -607,6 +646,60 @@
     };
     loadUser();
     loadSquare();
+async function loadMyTenders() {
+    if (!currentUser) { 
+        document.getElementById('myTendersList').innerHTML = '<div class="empty-tip">请先登录</div>'; 
+        return; 
+    }
+    
+    const { data, error } = await supabaseClient
+        .from('tenders')
+        .select('*')
+        .eq('publisher_id', currentUser.id)
+        .order('created_at', { ascending: false });
+    
+    if (error) {
+        console.error(error);
+        return;
+    }
+    
+    if (!data || !data.length) {
+        document.getElementById('myTendersList').innerHTML = '<div class="empty-tip">暂无发布记录</div>';
+        return;
+    }
+    
+    document.getElementById('myTendersList').innerHTML = data.map(t => `
+        <div class="card">
+            <div class="card-title">${escapeHtml(t.title)}</div>
+            <div class="card-info">💰 ${t.budget}元 | 状态：${statusMap(t.status)}</div>
+            <div class="card-desc">${escapeHtml(t.description).substring(0, 80)}</div>
+            ${t.status === 'selected' ? `<button onclick="checkSubmissions('${t.id}')">📋 查看投稿</button>` : ''}
+            ${t.status === 'bidding' ? `<button onclick="viewSubmissions('${t.id}')">👥 查看投稿并选人</button>` : ''}
+        </div>
+    `).join('');
+}
+window.checkSubmissions = async (tenderId) => {
+    const { data: submissions, error } = await supabaseClient
+        .from('submissions')
+        .select('*')
+        .eq('tender_id', tenderId)
+        .eq('status', 'selected');
+    
+    if (error) {
+        console.error(error);
+        alert('查询失败');
+        return;
+    }
+    
+    if (!submissions || !submissions.length) {
+        alert('暂无已选中的投稿');
+        return;
+    }
+    
+    const winner = submissions[0];
+    alert(`🎉 中标音乐人：${winner.musician_name}\n试听链接：${winner.demo_url}\n留言：${winner.message}\n\n联系后可以开始创作啦！`);
+};
+
 </script>
 </body>
 </html>
