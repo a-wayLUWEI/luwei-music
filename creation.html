@@ -45,26 +45,12 @@
             .chord-progress { font-size: 0.7rem; }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js"></script>
-    <script src="api.js"></script>
-    <script src="sync.js"></script>
 </head>
 <body>
+<script src="checkAuth.js"></script>
 <button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="container">
-    <div class="user-bar" id="userBar">
-        <div class="user-info">
-            <div class="user-avatar">✍️</div>
-            <div>
-                <div class="user-name" id="userName">加载中...</div>
-                <div class="user-score" id="userScore">积分 0</div>
-            </div>
-        </div>
-        <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
-        <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
-    </div>
     <div class="header">
         <h1>✍️ 创作工坊</h1>
         <p>写歌 · 填词 · 和弦模板 · 灵感库 · 投稿</p>
@@ -118,60 +104,6 @@
 </div>
 
 <script>
-// ==================== 用户界面 ====================
-let currentUserData = null;
-
-async function updateUserUI() {
-    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
-    const userNameSpan = document.getElementById('userName');
-    const userScoreSpan = document.getElementById('userScore');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    
-    if (user) {
-        userNameSpan.innerText = user.nickname || '芦苇同学';
-        let score = user.score || 0;
-        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
-            const apiScore = await window.API.getUserScore();
-            if (apiScore !== undefined) score = apiScore;
-        }
-        userScoreSpan.innerText = `积分 ${score}`;
-        if(loginBtn) loginBtn.style.display = 'none';
-        if(logoutBtn) logoutBtn.style.display = 'block';
-        currentUserData = user;
-    } else {
-        userNameSpan.innerText = '未登录';
-        userScoreSpan.innerText = '积分 0';
-        if(loginBtn) loginBtn.style.display = 'block';
-        if(logoutBtn) logoutBtn.style.display = 'none';
-        currentUserData = null;
-    }
-}
-
-async function addScore(amount, reason) {
-    if (!currentUserData) return;
-    if (typeof window.API !== 'undefined' && window.API.addScore) {
-        await window.API.addScore(amount, reason);
-        updateUserUI();
-    }
-}
-
-if(document.getElementById('loginBtn')) {
-    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
-}
-if(document.getElementById('logoutBtn')) {
-    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
-}
-
-window.onLoginSuccess = async function(user) {
-    currentUserData = user;
-    await updateUserUI();
-    if (typeof pullFromCloud === 'function') {
-        await pullFromCloud();
-    }
-};
-
-updateUserUI();
 
 // ==================== 折叠面板 ====================
 document.querySelectorAll('.section-title').forEach(title => {
@@ -321,37 +253,22 @@ const megaInspirationDB = {
 let myInspirations = [];
 
 function loadMyInspirations() {
-    const user = currentUserData;
-    if (!user) {
-        myInspirations = JSON.parse(localStorage.getItem("my_inspirations_temp") || "[]");
-        return;
-    }
-    const userId = user.user_id;
-    const saved = localStorage.getItem(`my_inspirations_${userId}`);
-    myInspirations = saved ? JSON.parse(saved) : [];
+    myInspirations = JSON.parse(localStorage.getItem("my_inspirations_temp") || "[]");
 }
 
 function saveMyInspirations() {
-    const user = currentUserData;
-    if (!user) {
-        localStorage.setItem("my_inspirations_temp", JSON.stringify(myInspirations));
-        return;
-    }
-    const userId = user.user_id;
-    localStorage.setItem(`my_inspirations_${userId}`, JSON.stringify(myInspirations));
-    if (typeof syncToCloud === 'function') syncToCloud();
+    localStorage.setItem("my_inspirations_temp", JSON.stringify(myInspirations));
 }
 
 function addToMyInspirations(content, category) {
     if (!myInspirations.some(item => item.content === content)) {
         myInspirations.push({ content, category, time: new Date().toLocaleString() });
         saveMyInspirations();
-        addScore(2, "收藏灵感素材");
+        // addScore(2, "收藏灵感素材");  // 删除这行
         return true;
     }
     return false;
 }
-
 function showInspirationContent(category) {
     if (category === 'my') {
         if (myInspirations.length === 0) {
@@ -496,6 +413,44 @@ document.getElementById("submitLyricBtn")?.addEventListener("click", () => {
     document.getElementById("submitFeedback").innerHTML = "📧 已打开邮箱，发送即可～";
     addScore(5, "提交歌词投稿");
 });
+
+// ==================== 积分备用函数（防止报错） ====================
+function addScore(amount, reason) {
+    try {
+        // 尝试调用全局的 addScore
+        if (typeof window.addScore === 'function') {
+            return window.addScore(amount, reason);
+        }
+        // 如果 index 的 API 方法存在
+        if (window.API && typeof window.API.addScoreForIndex === 'function') {
+            return window.API.addScoreForIndex(amount, reason);
+        }
+        // 如果 auth.js 的 getCurrentUser 存在
+        const user = localStorage.getItem('currentUser');
+        if (user) {
+            const userId = JSON.parse(user).user_id;
+            if (userId) {
+                const key = `${userId}creationScore`;
+                const current = parseInt(localStorage.getItem(key) || '0');
+                localStorage.setItem(key, current + amount);
+                console.log(`✅ 积分 +${amount} (${reason})`);
+                return true;
+            }
+        }
+        // 兜底：游客模式
+        const guestKey = 'guest_creation_score';
+        const current = parseInt(localStorage.getItem(guestKey) || '0');
+        localStorage.setItem(guestKey, current + amount);
+        console.log(`✅ 游客积分 +${amount} (${reason})`);
+        return true;
+    } catch(e) {
+        console.warn('积分记录失败:', e);
+        return false;
+    }
+}
+
+// 将 addScore 挂到 window 上
+window.addScore = addScore;
 
 // ==================== 初始化 ====================
 function bindCategoryButtons() {
