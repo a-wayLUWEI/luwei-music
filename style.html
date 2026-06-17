@@ -33,39 +33,35 @@
         .feedback { color: #C8E6C9; font-size: 0.75rem; text-align: center; margin-top: 8px; }
         .badge { display: inline-block; background: #E69A2E; color: #2D1E0C; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; margin-top: 8px; }
         .artist-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 16px; max-height: 250px; overflow-y: auto; padding: 8px; }
+        .completed-badge { margin-left: 4px; font-size: 0.7rem; }
         @media (max-width: 768px) {
             .category-btn, .artist-btn { padding: 6px 12px; font-size: 0.7rem; }
             .section-title { font-size: 1rem; }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js"></script>
-    <script src="api.js"></script>
-    <script src="sync.js"></script>
+    <script src="styleScore.js"></script>
+    <script src="styleAchievement.js"></script>
 </head>
 <body>
-<button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
+<script src="checkAuth.js"></script>
+<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="container">
     <div class="user-bar" id="userBar">
         <div class="user-info">
-            <div class="user-avatar">🎵</div>
+            <div class="user-avatar"></div><div style="color: #FFD966;">本模块积分：<span id="styleScore">0</span></div>
             <div>
-                <div class="user-name" id="userName">加载中...</div>
-                <div class="user-score" id="userScore">积分 0</div>
             </div>
         </div>
-        <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
-        <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
     </div>
     <div class="header">
-        <h1>🎧 风格与鉴赏</h1>
+        <h1> 风格与鉴赏</h1>
         <p>探索音乐风格 · 聆听大师经典</p>
     </div>
 
-    <!-- 风格闯关（15种风格）-->
+    <!-- 风格闯关 -->
     <div class="section">
-        <div class="section-title">🎸 风格闯关</div>
+        <div class="section-title"> 风格闯关</div>
         <div class="category-grid" id="styleList"></div>
         <div id="styleQuizPanel" class="quiz-panel">
             <div class="feedback">✨ 点击上方风格开始闯关～</div>
@@ -73,36 +69,39 @@
         <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题通关 ✨</div>
     </div>
 
-    <!-- 大师鉴赏（100+位华语歌手）-->
+    <!-- 大师鉴赏 -->
     <div class="section">
-        <div class="section-title">🌟 大师鉴赏 · 华语流行音乐</div>
+        <div class="section-title"> 大师鉴赏 · 华语流行音乐</div>
         <div class="artist-grid" id="masterList"></div>
         <div id="masterQuizPanel" class="quiz-panel">
             <div class="feedback">✨ 点击歌手开始鉴赏闯关～</div>
         </div>
         <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对6题得勋章 ✨</div>
     </div>
-<!-- 网络歌手·独立音乐人·翻唱团新生代 -->
-<div class="section" id="netstarSection">
-    <div class="section-title"> 网络歌手 · 独立音乐人 · 翻唱团新生代</div>
-    <div class="artist-grid" id="netstarList"></div>
-    <div id="netstarQuizPanel" class="quiz-panel">
-        <div class="feedback">✨ 点击歌手开始闯关～</div>
+
+    <!-- 网络歌手 -->
+    <div class="section" id="netstarSection">
+        <div class="section-title"> 网络歌手 · 独立音乐人 · 翻唱团新生代</div>
+        <div class="artist-grid" id="netstarList"></div>
+        <div id="netstarQuizPanel" class="quiz-panel">
+            <div class="feedback">✨ 点击歌手开始闯关～</div>
+        </div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题通关 ✨</div>
     </div>
-    <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题通关 ✨</div>
-</div>
-<!-- 下沉苦情歌 · 芦苇创作课 -->
-<div class="section">
-    <div class="section-title">🌧️ 下沉苦情歌 · 芦苇创作课</div>
-    <div class="category-grid" id="sinkCategoryList"></div>
-    <div id="sinkQuizPanel" class="quiz-panel">
-        <div class="feedback">✨ 点击分类开始创作课～</div>
+
+    <!-- 下沉苦情歌 -->
+    <div class="section">
+        <div class="section-title">️ 下沉苦情歌 · 芦苇创作课</div>
+        <div class="category-grid" id="sinkCategoryList"></div>
+        <div id="sinkQuizPanel" class="quiz-panel">
+            <div class="feedback">✨ 点击分类开始创作课～</div>
+        </div>
+        <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题解锁「下沉词人」勋章 ✨</div>
     </div>
-    <div style="font-size:0.65rem; text-align:center; margin-top:12px; color:#AAD4B0;">✨ 连续答对5题解锁「下沉词人」勋章 ✨</div>
-</div>
+
     <!-- 民歌闯关 -->
     <div class="section">
-        <div class="section-title">🏮 中国民族歌曲 · 芦苇通关</div>
+        <div class="section-title"> 中国民族歌曲 · 芦苇通关</div>
         <div class="category-grid" id="folkList"></div>
         <div id="folkQuizPanel" class="quiz-panel">
             <div class="feedback">✨ 点击上方单元开始闯关～</div>
@@ -112,7 +111,7 @@
 
     <!-- 古风鉴赏 -->
     <div class="section">
-        <div class="section-title">🍃 流行性古风抒情歌 · 芦苇鉴赏</div>
+        <div class="section-title"> 流行性古风抒情歌 · 芦苇鉴赏</div>
         <div class="category-grid" id="gufengList"></div>
         <div id="gufengQuizPanel" class="quiz-panel">
             <div class="feedback">✨ 点击歌曲开始鉴赏闯关～</div>
@@ -125,46 +124,12 @@
 // ==================== 用户界面 ====================
 let currentUserData = null;
 
-async function updateUserUI() {
-    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
-    const userNameSpan = document.getElementById('userName');
-    const userScoreSpan = document.getElementById('userScore');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    
-    if (user) {
-        userNameSpan.innerText = user.nickname || '芦苇同学';
-        let score = user.score || 0;
-        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
-            const apiScore = await window.API.getUserScore();
-            if (apiScore !== undefined) score = apiScore;
-        }
-        userScoreSpan.innerText = `积分 ${score}`;
-        if(loginBtn) loginBtn.style.display = 'none';
-        if(logoutBtn) logoutBtn.style.display = 'block';
-        currentUserData = user;
-    } else {
-        userNameSpan.innerText = '未登录';
-        userScoreSpan.innerText = '积分 0';
-        if(loginBtn) loginBtn.style.display = 'block';
-        if(logoutBtn) logoutBtn.style.display = 'none';
-        currentUserData = null;
-    }
-}
-
 async function addScore(amount, reason) {
     if (!currentUserData) return;
     if (typeof window.API !== 'undefined' && window.API.addScore) {
         await window.API.addScore(amount, reason);
         updateUserUI();
     }
-}
-
-if(document.getElementById('loginBtn')) {
-    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
-}
-if(document.getElementById('logoutBtn')) {
-    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
 }
 
 window.onLoginSuccess = async function(user) {
@@ -175,35 +140,78 @@ window.onLoginSuccess = async function(user) {
     }
 };
 
-updateUserUI();
+// ==================== 通关处理函数（使用AchievementManager防止重复加分） ====================
 
-// ==================== 保存通关记录 ====================
-function saveStyleComplete(style) {
-    if (!currentUserData) return;
-    const userId = currentUserData.user_id;
-    localStorage.setItem(`style_${style}_${userId}`, "true");
-    if (typeof syncToCloud === 'function') syncToCloud();
+// 风格闯关完成
+function handleStyleComplete(style) {
+    const isFirstTime = AchievementManager.markCompleted('style', style);
+    if (isFirstTime) {
+        if (typeof addStyleScore === 'function') {
+            addStyleScore(30, `通关风格：${style}`);
+        }
+        return true;
+    }
+    return false;
 }
 
-function saveMasterComplete(artist) {
-    if (!currentUserData) return;
-    const userId = currentUserData.user_id;
-    localStorage.setItem(`master_${artist}_${userId}`, "true");
-    if (typeof syncToCloud === 'function') syncToCloud();
+// 大师鉴赏完成
+function handleMasterComplete(artist) {
+    const isFirstTime = AchievementManager.markCompleted('master', artist);
+    if (isFirstTime) {
+        if (typeof addStyleScore === 'function') {
+            addStyleScore(50, `通关大师：${artist}`);
+        }
+        return true;
+    }
+    return false;
 }
 
-function saveFolkComplete(unit) {
-    if (!currentUserData) return;
-    const userId = currentUserData.user_id;
-    localStorage.setItem(`folk_${unit}_${userId}`, "true");
-    if (typeof syncToCloud === 'function') syncToCloud();
+// 民歌闯关完成
+function handleFolkComplete(unit) {
+    const isFirstTime = AchievementManager.markCompleted('folk', unit);
+    if (isFirstTime) {
+        if (typeof addStyleScore === 'function') {
+            addStyleScore(30, `通关民歌：${unit}`);
+        }
+        return true;
+    }
+    return false;
 }
 
-function saveGufengComplete(song) {
-    if (!currentUserData) return;
-    const userId = currentUserData.user_id;
-    localStorage.setItem(`gufeng_${song}_${userId}`, "true");
-    if (typeof syncToCloud === 'function') syncToCloud();
+// 古风鉴赏完成
+function handleGufengComplete(song) {
+    const isFirstTime = AchievementManager.markCompleted('gufeng', song);
+    if (isFirstTime) {
+        if (typeof addStyleScore === 'function') {
+            addStyleScore(30, `通关古风：${song}`);
+        }
+        return true;
+    }
+    return false;
+}
+
+// 网络歌手完成
+function handleNetstarComplete(artist) {
+    const isFirstTime = AchievementManager.markCompleted('netstar', artist);
+    if (isFirstTime) {
+        if (typeof addStyleScore === 'function') {
+            addStyleScore(50, `通关网络歌手：${artist}`);
+        }
+        return true;
+    }
+    return false;
+}
+
+// 下沉创作课完成
+function handleSinkComplete(artist) {
+    const isFirstTime = AchievementManager.markCompleted('sink', artist);
+    if (isFirstTime) {
+        if (typeof addStyleScore === 'function') {
+            addStyleScore(50, `通关下沉创作课：${artist}`);
+        }
+        return true;
+    }
+    return false;
 }
 
 // ==================== 风格题库（15种风格）====================
@@ -5630,325 +5638,6 @@ const gufengSongs = [
     }
 ];
 
-
-// ==================== 闯关逻辑 ====================
-let currentStyle = null, styleStreak = 0, styleQuestions = [];
-let currentArtist = null, masterStreak = 0, masterQuestions = [], masterIdx = 0;
-let currentFolkUnit = null, folkStreak = 0, folkQuestions = [];
-let currentGufengIndex = 0, gufengStreak = 0, gufengQuestions = [];
-
-// 风格闯关
-function loadStyle(style) {
-    if (!styleBank[style]) { alert(`《${style}》风格题库完善中～`); return; }
-    currentStyle = style;
-    styleStreak = 0;
-    styleQuestions = [...styleBank[style]].sort(() => 0.5 - Math.random()).slice(0, 5);
-    document.getElementById("styleQuizPanel").innerHTML = `
-        <div style="color:#F2C94C; margin-bottom:8px">🎸 ${style} · 连续答对5题通关</div>
-        <div id="styleQ"></div>
-        <div id="styleFeed" class="feedback"></div>
-    `;
-    nextStyleQuestion();
-}
-function nextStyleQuestion() {
-    if (styleStreak >= styleQuestions.length) {
-        document.getElementById("styleFeed").innerHTML = "🏆 获得风格勋章！";
-        saveStyleComplete(currentStyle);
-        addScore(30, `通关风格：${currentStyle}`);
-        return;
-    }
-    const q = styleQuestions[styleStreak];
-    document.getElementById("styleQ").innerHTML = `
-        <div class="lyric-question">${q.q}</div>
-        <div class="lyric-options" id="styleOpts"></div>
-    `;
-    const optsDiv = document.getElementById("styleOpts");
-    optsDiv.innerHTML = "";
-    q.opts.forEach((opt, i) => {
-        const btn = document.createElement("button");
-        btn.className = "lyric-opt-btn";
-        btn.innerText = opt;
-        btn.onclick = () => {
-            if (i === q.ans) {
-                styleStreak++;
-                document.getElementById("styleFeed").innerHTML = `✅ 正确！${styleStreak}/${styleQuestions.length}`;
-                addScore(5, `${currentStyle}答题正确`);
-                nextStyleQuestion();
-            } else {
-                styleStreak = 0;
-                document.getElementById("styleFeed").innerHTML = `❌ 错误！正确答案：${q.opts[q.ans]}。 ${q.exp}`;
-                nextStyleQuestion();
-            }
-        };
-        optsDiv.appendChild(btn);
-    });
-}
-
-// 大师鉴赏
-function loadMaster(artist) {
-    if (!masterBank[artist]) { alert(`《${artist}》题库完善中～`); return; }
-    masterStreak = 0;
-    currentArtist = artist;
-    masterQuestions = [...masterBank[artist]].sort(() => 0.5 - Math.random()).slice(0, 6);
-    masterIdx = 0;
-    document.getElementById("masterQuizPanel").innerHTML = `
-        <div style="color:#F2C94C; margin-bottom:8px">🌟 ${artist} · 连续答对6题得勋章</div>
-        <div id="masterQ"></div>
-        <div id="masterFeed" class="feedback"></div>
-    `;
-    nextMaster();
-}
-function nextMaster() {
-    if (masterStreak >= 6) {
-        document.getElementById("masterFeed").innerHTML = "🏆 芦苇大师勋章！";
-        saveMasterComplete(currentArtist);
-        addScore(50, `通关大师：${currentArtist}`);
-        return;
-    }
-    if (masterIdx >= masterQuestions.length) {
-        masterQuestions = [...masterBank[currentArtist]].sort(() => 0.5 - Math.random()).slice(0, 6);
-        masterIdx = 0;
-    }
-    const q = masterQuestions[masterIdx++];
-    document.getElementById("masterQ").innerHTML = `
-        <div class="lyric-question">${q.q}</div>
-        <div class="lyric-options" id="masterOpts"></div>
-    `;
-    const optsDiv = document.getElementById("masterOpts");
-    optsDiv.innerHTML = "";
-    q.opts.forEach((opt, i) => {
-        const btn = document.createElement("button");
-        btn.className = "lyric-opt-btn";
-        btn.innerText = opt;
-        btn.onclick = () => {
-            if (i === q.ans) {
-                masterStreak++;
-                document.getElementById("masterFeed").innerHTML = `✅ 正确！${masterStreak}/6`;
-                addScore(5, `${currentArtist}鉴赏答题正确`);
-                nextMaster();
-            } else {
-                masterStreak = 0;
-                masterIdx = 0;
-                masterQuestions = [...masterBank[currentArtist]].sort(() => 0.5 - Math.random()).slice(0, 6);
-                document.getElementById("masterFeed").innerHTML = `❌ 错误！重新开始`;
-                nextMaster();
-            }
-        };
-        optsDiv.appendChild(btn);
-    });
-}
-
-// 民歌闯关
-function loadFolkUnit(unitName, unitData) {
-    currentFolkUnit = unitName;
-    folkStreak = 0;
-    folkQuestions = [...unitData].sort(() => 0.5 - Math.random()).slice(0, 5);
-    document.getElementById("folkQuizPanel").innerHTML = `
-        <div style="color:#F2C94C; margin-bottom:8px">🏮 ${unitName} · 连续答对5题通关</div>
-        <div id="folkQ"></div>
-        <div id="folkFeed" class="feedback"></div>
-    `;
-    nextFolkQuestion();
-}
-function nextFolkQuestion() {
-    if (folkStreak >= folkQuestions.length) {
-        document.getElementById("folkFeed").innerHTML = "🏆 获得「民歌通晓」勋章！";
-        saveFolkComplete(currentFolkUnit);
-        addScore(30, `通关民歌：${currentFolkUnit}`);
-        return;
-    }
-    const q = folkQuestions[folkStreak];
-    document.getElementById("folkQ").innerHTML = `
-        <div class="lyric-question">${q.q}</div>
-        <div class="lyric-options" id="folkOpts"></div>
-    `;
-    const optsDiv = document.getElementById("folkOpts");
-    optsDiv.innerHTML = "";
-    q.opts.forEach((opt, i) => {
-        const btn = document.createElement("button");
-        btn.className = "lyric-opt-btn";
-        btn.innerText = opt;
-        btn.onclick = () => {
-            if (i === q.ans) {
-                folkStreak++;
-                document.getElementById("folkFeed").innerHTML = `✅ 正确！${folkStreak}/${folkQuestions.length}`;
-                addScore(5, `${currentFolkUnit}答题正确`);
-                nextFolkQuestion();
-            } else {
-                folkStreak = 0;
-                document.getElementById("folkFeed").innerHTML = `❌ 错误！重新开始`;
-                nextFolkQuestion();
-            }
-        };
-        optsDiv.appendChild(btn);
-    });
-}
-
-// 古风鉴赏
-function loadGufeng(index) {
-    const song = gufengSongs[index];
-    currentGufengIndex = index;
-    gufengStreak = 0;
-    gufengQuestions = [...song.questions].sort(() => 0.5 - Math.random()).slice(0, 5);
-    document.getElementById("gufengQuizPanel").innerHTML = `
-        <div style="color:#F2C94C; margin-bottom:8px">🍃 ${song.name}（${song.artist}）· 连续答对5题通关</div>
-        <div id="gufengQ"></div>
-        <div id="gufengFeed" class="feedback"></div>
-    `;
-    nextGufengQuestion();
-}
-function nextGufengQuestion() {
-    if (gufengStreak >= gufengQuestions.length) {
-        document.getElementById("gufengFeed").innerHTML = "🏆 获得「古风鉴赏家」勋章！";
-        saveGufengComplete(gufengSongs[currentGufengIndex].name);
-        addScore(30, `通关古风：${gufengSongs[currentGufengIndex].name}`);
-        return;
-    }
-    const q = gufengQuestions[gufengStreak];
-    document.getElementById("gufengQ").innerHTML = `
-        <div class="lyric-question">${q.q}</div>
-        <div class="lyric-options" id="gufengOpts"></div>
-    `;
-    const optsDiv = document.getElementById("gufengOpts");
-    optsDiv.innerHTML = "";
-    q.opts.forEach((opt, i) => {
-        const btn = document.createElement("button");
-        btn.className = "lyric-opt-btn";
-        btn.innerText = opt;
-        btn.onclick = () => {
-            if (i === q.ans) {
-                gufengStreak++;
-                document.getElementById("gufengFeed").innerHTML = `✅ 正确！${gufengStreak}/${gufengQuestions.length}`;
-                addScore(5, `古风鉴赏答题正确`);
-                nextGufengQuestion();
-            } else {
-                gufengStreak = 0;
-                document.getElementById("gufengFeed").innerHTML = `❌ 错误！重新开始`;
-                nextGufengQuestion();
-            }
-        };
-        optsDiv.appendChild(btn);
-    });
-}
-// ==================== 网络歌手闯关逻辑 ====================
-let currentNetstar = null;
-let netstarStreak = 0;
-let netstarQuestions = [];
-let netstarBankFull = netstarBank; // 直接引用上面定义的题库
-// 构建网络歌手列表UI
-function buildNetstarUI() {
-    const container = document.getElementById("netstarList");
-    if (!container) return;
-    
-    // 完整150位歌手名单（按分类排列）
-    const allNetstarNames = [
-        // ===== 一、网络热歌原唱型（30位）=====
-        "庄心妍", "王琪", "大欢", "海来阿木", "梦然", "花僮", "柯柯柯啊", "承桓", "小阿七", "队长",
-        "七叔（叶泽浩）", "零一九零贰", "洛先生", "不够", "王靖雯", "杨小壮", "半吨兄弟", "陈子晴", "侯泽润",
-        "卢卢快闭嘴", "王天阳", "言瑾羽", "袁小葳", "戴羽彤", "玥夏", "曲肖冰", "棉子", "傅梦彤", "小乐哥（王唯乐）", "王韵", "寂悸",
-        
-        // ===== 二、独立音乐人/民谣新生代（15位）=====
-        "沈以诚", "房东的猫", "Fine乐团", "颜人中", "徐秉龙", "柳爽", "宿羽阳", "太一", "陈婧霏", "钱润玉",
-        "裘德", "吕彦良", "余佳运", "刘思鉴", "焦迈奇",
-        
-        // ===== 三、彩铃时代老牌网络歌手（16位）=====
-        "郑源", "欢子", "冷漠", "六哲", "高安", "姜玉阳", "曾春年", "易欣", "陈瑞", "龙梅子",
-        "胡杨林", "王麟", "慕容晓晓", "崔子格", "门丽", "黑龙",
-        
-        // ===== 四、早期网络三巨头（10位）=====
-        "许嵩", "汪苏泷", "徐良", "本兮", "阿悄", "单色凌", "小贱", "星弟", "乔洋", "孙子涵",
-        
-        // ===== 五、翻唱团/厂牌/短视频翻唱红人（20位）=====
-        "听潮阁", "不跑调小队", "小石头和孩子们", "半吨兄弟", "Uu（刘梦妤）", "阿梨粤", "程佳佳", "麦小兜", "胡66", "贺一航",
-        "艾辰", "赵乃吉", "刘至佳", "joysaaaa", "吴炳文", "蔡鹤峰", "三块木头", "九姨太", "林宝馨", "王子健", "泽典", "陈亦洺",
-        
-        // ===== 六、古风/二次元赛道（8位）=====
-        "等什么君", "阿yueyue", "平生不晚", "M哥", "要不要买菜", "不止一两", "糯米Nomi",
-        
-        // ===== 七、L（桃籽）团队/音匠厂牌系（8位）=====
-        "L（桃籽）", "任夏", "黄静美", "熊磊", "冯海波", "周林枫", "何文宇", "张俊波",
-        
-        // ===== 八、其他常见网络歌手（约30位）=====
-        "唐艺", "红蔷薇", "洋澜一", "魏佳艺", "苏谭谭", "于冬然", "吕口口", "李蕊儿", "江小城", "马健涛",
-        "半阳", "落笔", "张健", "晨熙", "王雨桐", "赵芷彤", "陈语淇", "一只白羊", "指尖笑", "云汐",
-        "覆予", "逸霄", "粥粥", "薯片公主", "孙亦航", "王忻辰", "陈默之", "江子岸", "新地", "白允y", "山止川行", "苏晗", "周诗颖", "王若熙", "贺仙人", "刘瑞琦", "曾沛慈"
-    ];
-    
-    // 去重（有些名字可能在多个分类里重复了）
-    const uniqueNames = [...new Set(allNetstarNames)];
-    
-    uniqueNames.forEach(name => {
-        const btn = document.createElement("button");
-        btn.className = "artist-btn";
-        btn.innerText = name;
-        btn.onclick = () => loadNetstar(name);
-        container.appendChild(btn);
-    });
-}
-// 加载网络歌手闯关
-function loadNetstar(artist) {
-    const questions = netstarBankFull[artist];
-    if (!questions || questions.length === 0) {
-        document.getElementById("netstarQuizPanel").innerHTML = `
-            <div class="feedback">✨ 《${artist}》芦苇老师正在创作中，敬请期待～</div>
-        `;
-        return;
-    }
-    currentNetstar = artist;
-    netstarStreak = 0;
-    netstarQuestions = [...questions].sort(() => 0.5 - Math.random()).slice(0, 5);
-    document.getElementById("netstarQuizPanel").innerHTML = `
-        <div style="color:#F2C94C; margin-bottom:8px"> ${artist} · 连续答对5题通关</div>
-        <div id="netstarQ"></div>
-        <div id="netstarFeed" class="feedback"></div>
-    `;
-    nextNetstarQuestion();
-}
-function nextNetstarQuestion() {
-    if (netstarStreak >= netstarQuestions.length) {
-        document.getElementById("netstarFeed").innerHTML = " 获得「网络新生代」勋章！";
-        addScore(50, `通关网络歌手：${currentNetstar}`);
-        return;
-    }
-    const q = netstarQuestions[netstarStreak];
-    document.getElementById("netstarQ").innerHTML = `
-        <div class="lyric-question">${q.q}</div>
-        <div class="lyric-options" id="netstarOpts"></div>
-        <div id="netstarInsight" style="margin-top:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:16px; font-size:0.75rem; color:#C8E6C9; display:none;"></div>
-    `;
-    const optsDiv = document.getElementById("netstarOpts");
-    optsDiv.innerHTML = "";
-    q.opts.forEach((opt, i) => {
-        const btn = document.createElement("button");
-        btn.className = "lyric-opt-btn";
-        btn.innerText = opt;
-        btn.onclick = () => {
-            if (i === q.ans) {
-                netstarStreak++;
-                const insightDiv = document.getElementById("netstarInsight");
-                insightDiv.style.display = "block";
-                insightDiv.innerHTML = `<div style="margin-bottom:6px;">✅ 正确！${netstarStreak}/${netstarQuestions.length}</div>
-                                        <div style="color:#FFD966; margin-bottom:6px;"> ${q.insight || "芦苇心得："}</div>
-                                        <div style="font-style:italic; color:#D9C9B5;"> ${q.luwei || "芦苇说：好歌不在技巧，在走心。"}</div>`;
-                addScore(5, `${currentNetstar}闯关答题正确`);
-                nextNetstarQuestion();
-            } else {
-                netstarStreak = 0;
-                const insightDiv = document.getElementById("netstarInsight");
-                insightDiv.style.display = "block";
-                insightDiv.innerHTML = `<div style="margin-bottom:6px;">❌ 错误！正确答案：${q.opts[q.ans]}</div>
-                                        <div> ${q.exp}</div>
-                                        <div style="margin-top:8px; color:#FFD966;"> ${q.insight || "芦苇心得："}</div>
-                                        <div style="font-style:italic; color:#D9C9B5;"> ${q.luwei || "芦苇说：好歌不在技巧，在走心。"}</div>`;
-                setTimeout(() => nextNetstarQuestion(), 2000);
-            }
-        };
-        optsDiv.appendChild(btn);
-    });
-}
-// 初始化
-buildNetstarUI();
-
 // ==================== 下沉苦情歌 · 芦苇创作课 ====================
 const sinkCreatorBank = {
     // ========== 短视频新生代女歌手 ==========
@@ -6551,19 +6240,327 @@ const sinkCreatorBank = {
 ]
 };
 
-// 下沉分类配置
+// ==================== 下沉分类配置 ====================
 const sinkCategories = [
-    { name: "🎤 短视频新生代女歌手", artists: ["洋澜一", "魏佳艺", "苏谭谭", "于冬然", "吕口口", "李蕊儿", "江小城", "阿悠悠", "唐艺", "红蔷薇"] },
-    { name: "🎤 短视频新生代男歌手", artists: ["王琪", "大欢", "马健涛", "半阳", "落笔", "张健", "晨熙"] },
-    { name: "🎤 彩铃时代老牌男歌手", artists: ["郑源", "欢子", "冷漠", "六哲", "高安", "姜玉阳"] },
-    { name: "🎤 下沉古风赛道歌手", artists: ["等什么君", "阿yueyue", "平生不晚", "M哥"] }
+    { name: " 短视频新生代女歌手", artists: ["洋澜一", "魏佳艺", "苏谭谭", "于冬然", "吕口口", "李蕊儿", "江小城", "阿悠悠", "唐艺", "红蔷薇"] },
+    { name: " 短视频新生代男歌手", artists: ["王琪", "大欢", "马健涛", "半阳", "落笔", "张健", "晨熙"] },
+    { name: " 彩铃时代老牌男歌手", artists: ["郑源", "欢子", "冷漠", "六哲", "高安", "姜玉阳"] },
+    { name: " 下沉古风赛道歌手", artists: ["等什么君", "阿yueyue", "平生不晚", "M哥"] }
 ];
-let currentSinkCategory = null;
-let currentSinkArtist = null;
-let sinkStreak = 0;
-let sinkQuestions = [];
-let sinkIdx = 0;
-// 构建下沉分类UI
+
+// ==================== 闯关逻辑 ====================
+let currentStyle = null, styleStreak = 0, styleQuestions = [];
+let currentArtist = null, masterStreak = 0, masterQuestions = [], masterIdx = 0;
+let currentFolkUnit = null, folkStreak = 0, folkQuestions = [];
+let currentGufengIndex = 0, gufengStreak = 0, gufengQuestions = [];
+let currentNetstar = null, netstarStreak = 0, netstarQuestions = [];
+let currentSinkCategory = null, currentSinkArtist = null, sinkStreak = 0, sinkQuestions = [], sinkIdx = 0;
+
+// ========== 风格闯关 ==========
+function loadStyle(style) {
+    if (!styleBank[style]) { alert(`《${style}》风格题库完善中～`); return; }
+    currentStyle = style;
+    styleStreak = 0;
+    styleQuestions = [...styleBank[style]].sort(() => 0.5 - Math.random()).slice(0, 5);
+    document.getElementById("styleQuizPanel").innerHTML = `
+        <div style="color:#F2C94C; margin-bottom:8px"> ${style} · 连续答对5题通关</div>
+        <div id="styleQ"></div>
+        <div id="styleFeed" class="feedback"></div>
+    `;
+    nextStyleQuestion();
+}
+function nextStyleQuestion() {
+    if (styleStreak >= styleQuestions.length) {
+        document.getElementById("styleFeed").innerHTML = " 获得风格勋章！";
+        const isFirst = handleStyleComplete(currentStyle);
+        if (!isFirst) {
+            document.getElementById("styleFeed").innerHTML = " 已通关过本风格！积分不重复累加。";
+        }
+        return;
+    }
+    const q = styleQuestions[styleStreak];
+    document.getElementById("styleQ").innerHTML = `
+        <div class="lyric-question">${q.q}</div>
+        <div class="lyric-options" id="styleOpts"></div>
+    `;
+    const optsDiv = document.getElementById("styleOpts");
+    optsDiv.innerHTML = "";
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "lyric-opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (i === q.ans) {
+                styleStreak++;
+                document.getElementById("styleFeed").innerHTML = `✅ 正确！${styleStreak}/${styleQuestions.length}`;
+                addScore(5, `${currentStyle}答题正确`);
+                nextStyleQuestion();
+            } else {
+                styleStreak = 0;
+                document.getElementById("styleFeed").innerHTML = `❌ 错误！正确答案：${q.opts[q.ans]}。 ${q.exp}`;
+                nextStyleQuestion();
+            }
+        };
+        optsDiv.appendChild(btn);
+    });
+}
+
+// ========== 大师鉴赏 ==========
+function loadMaster(artist) {
+    if (!masterBank[artist]) { alert(`《${artist}》题库完善中～`); return; }
+    masterStreak = 0;
+    currentArtist = artist;
+    masterQuestions = [...masterBank[artist]].sort(() => 0.5 - Math.random()).slice(0, 6);
+    masterIdx = 0;
+    document.getElementById("masterQuizPanel").innerHTML = `
+        <div style="color:#F2C94C; margin-bottom:8px"> ${artist} · 连续答对6题得勋章</div>
+        <div id="masterQ"></div>
+        <div id="masterFeed" class="feedback"></div>
+    `;
+    nextMaster();
+}
+function nextMaster() {
+    if (masterStreak >= 6) {
+        document.getElementById("masterFeed").innerHTML = " 芦苇大师勋章！";
+        const isFirst = handleMasterComplete(currentArtist);
+        if (!isFirst) {
+            document.getElementById("masterFeed").innerHTML = " 已通关过该大师！积分不重复累加。";
+        }
+        return;
+    }
+    if (masterIdx >= masterQuestions.length) {
+        masterQuestions = [...masterBank[currentArtist]].sort(() => 0.5 - Math.random()).slice(0, 6);
+        masterIdx = 0;
+    }
+    const q = masterQuestions[masterIdx++];
+    document.getElementById("masterQ").innerHTML = `
+        <div class="lyric-question">${q.q}</div>
+        <div class="lyric-options" id="masterOpts"></div>
+    `;
+    const optsDiv = document.getElementById("masterOpts");
+    optsDiv.innerHTML = "";
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "lyric-opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (i === q.ans) {
+                masterStreak++;
+                document.getElementById("masterFeed").innerHTML = `✅ 正确！${masterStreak}/6`;
+                addScore(5, `${currentArtist}鉴赏答题正确`);
+                nextMaster();
+            } else {
+                masterStreak = 0;
+                masterIdx = 0;
+                masterQuestions = [...masterBank[currentArtist]].sort(() => 0.5 - Math.random()).slice(0, 6);
+                document.getElementById("masterFeed").innerHTML = `❌ 错误！重新开始`;
+                nextMaster();
+            }
+        };
+        optsDiv.appendChild(btn);
+    });
+}
+
+// ========== 民歌闯关 ==========
+function loadFolkUnit(unitName, unitData) {
+    currentFolkUnit = unitName;
+    folkStreak = 0;
+    folkQuestions = [...unitData].sort(() => 0.5 - Math.random()).slice(0, 5);
+    document.getElementById("folkQuizPanel").innerHTML = `
+        <div style="color:#F2C94C; margin-bottom:8px"> ${unitName} · 连续答对5题通关</div>
+        <div id="folkQ"></div>
+        <div id="folkFeed" class="feedback"></div>
+    `;
+    nextFolkQuestion();
+}
+function nextFolkQuestion() {
+    if (folkStreak >= folkQuestions.length) {
+        document.getElementById("folkFeed").innerHTML = " 获得「民歌通晓」勋章！";
+        const isFirst = handleFolkComplete(currentFolkUnit);
+        if (!isFirst) {
+            document.getElementById("folkFeed").innerHTML = " 已通关过本单元！积分不重复累加。";
+        }
+        return;
+    }
+    const q = folkQuestions[folkStreak];
+    document.getElementById("folkQ").innerHTML = `
+        <div class="lyric-question">${q.q}</div>
+        <div class="lyric-options" id="folkOpts"></div>
+    `;
+    const optsDiv = document.getElementById("folkOpts");
+    optsDiv.innerHTML = "";
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "lyric-opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (i === q.ans) {
+                folkStreak++;
+                document.getElementById("folkFeed").innerHTML = `✅ 正确！${folkStreak}/${folkQuestions.length}`;
+                addScore(5, `${currentFolkUnit}答题正确`);
+                nextFolkQuestion();
+            } else {
+                folkStreak = 0;
+                document.getElementById("folkFeed").innerHTML = `❌ 错误！重新开始`;
+                nextFolkQuestion();
+            }
+        };
+        optsDiv.appendChild(btn);
+    });
+}
+
+// ========== 古风鉴赏 ==========
+function loadGufeng(index) {
+    const song = gufengSongs[index];
+    currentGufengIndex = index;
+    gufengStreak = 0;
+    gufengQuestions = [...song.questions].sort(() => 0.5 - Math.random()).slice(0, 5);
+    document.getElementById("gufengQuizPanel").innerHTML = `
+        <div style="color:#F2C94C; margin-bottom:8px"> ${song.name}（${song.artist}）· 连续答对5题通关</div>
+        <div id="gufengQ"></div>
+        <div id="gufengFeed" class="feedback"></div>
+    `;
+    nextGufengQuestion();
+}
+function nextGufengQuestion() {
+    if (gufengStreak >= gufengQuestions.length) {
+        document.getElementById("gufengFeed").innerHTML = " 获得「古风鉴赏家」勋章！";
+        const isFirst = handleGufengComplete(gufengSongs[currentGufengIndex].name);
+        if (!isFirst) {
+            document.getElementById("gufengFeed").innerHTML = " 已通关过该古风曲目！积分不重复累加。";
+        }
+        return;
+    }
+    const q = gufengQuestions[gufengStreak];
+    document.getElementById("gufengQ").innerHTML = `
+        <div class="lyric-question">${q.q}</div>
+        <div class="lyric-options" id="gufengOpts"></div>
+    `;
+    const optsDiv = document.getElementById("gufengOpts");
+    optsDiv.innerHTML = "";
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "lyric-opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (i === q.ans) {
+                gufengStreak++;
+                document.getElementById("gufengFeed").innerHTML = `✅ 正确！${gufengStreak}/${gufengQuestions.length}`;
+                addScore(5, `古风鉴赏答题正确`);
+                nextGufengQuestion();
+            } else {
+                gufengStreak = 0;
+                document.getElementById("gufengFeed").innerHTML = `❌ 错误！重新开始`;
+                nextGufengQuestion();
+            }
+        };
+        optsDiv.appendChild(btn);
+    });
+}
+
+// ========== 网络歌手闯关 ==========
+function buildNetstarUI() {
+    const container = document.getElementById("netstarList");
+    if (!container) return;
+    const allNetstarNames = [
+        // ===== 网络热歌原唱型 =====
+        "庄心妍", "王琪", "大欢", "海来阿木", "梦然", "花僮", "柯柯柯啊", "承桓", "小阿七", "队长",
+        "七叔（叶泽浩）", "零一九零贰", "洛先生", "不够", "王靖雯", "杨小壮", "半吨兄弟", "陈子晴", "侯泽润",
+        "卢卢快闭嘴", "王天阳", "言瑾羽", "袁小葳", "戴羽彤", "玥夏", "曲肖冰", "棉子", "傅梦彤", "小乐哥",
+        // ===== 独立音乐人/民谣新生代 =====
+        "沈以诚", "房东的猫", "Fine乐团", "颜人中", "徐秉龙", "柳爽", "宿羽阳", "太一", "陈婧霏", "钱润玉",
+        "裘德", "吕彦良", "余佳运", "刘思鉴", "焦迈奇",
+        // ===== 彩铃时代老牌网络歌手 =====
+        "郑源", "欢子", "冷漠", "六哲", "高安", "姜玉阳", "曾春年", "易欣", "陈瑞", "龙梅子",
+        "胡杨林", "王麟", "慕容晓晓", "崔子格", "门丽", "黑龙",
+        // ===== 早期网络三巨头 =====
+        "许嵩", "汪苏泷", "徐良", "本兮", "阿悄", "单色凌", "小贱", "星弟", "乔洋", "孙子涵",
+        // ===== 翻唱团/厂牌/短视频翻唱红人 =====
+        "听潮阁", "不跑调小队", "小石头和孩子们", "Uu（刘梦妤）", "阿梨粤", "程佳佳", "麦小兜", "胡66", "贺一航",
+        "艾辰", "赵乃吉", "刘至佳", "joysaaaa", "吴炳文", "蔡鹤峰", "三块木头", "九姨太", "林宝馨", "王子健",
+        // ===== 古风/二次元赛道 =====
+        "等什么君", "阿yueyue", "平生不晚", "M哥", "要不要买菜", "不止一两", "糯米Nomi",
+        // ===== L（桃籽）团队/音匠厂牌系 =====
+        "L（桃籽）", "任夏", "黄静美", "熊磊", "冯海波", "周林枫", "何文宇", "张俊波",
+        // ===== 其他常见网络歌手 =====
+        "唐艺", "红蔷薇", "洋澜一", "魏佳艺", "苏谭谭", "于冬然", "吕口口", "李蕊儿", "江小城", "马健涛",
+        "半阳", "落笔", "张健", "晨熙", "王雨桐", "赵芷彤", "陈语淇", "一只白羊", "指尖笑", "云汐",
+        "覆予", "逸霄", "粥粥", "薯片公主", "孙亦航", "王忻辰", "陈默之", "江子岸", "新地", "白允y"
+    ];
+    const uniqueNames = [...new Set(allNetstarNames)];
+    uniqueNames.forEach(name => {
+        const btn = document.createElement("button");
+        btn.className = "artist-btn";
+        btn.innerText = name;
+        btn.onclick = () => loadNetstar(name);
+        container.appendChild(btn);
+    });
+}
+function loadNetstar(artist) {
+    const questions = netstarBank[artist];
+    if (!questions || questions.length === 0) {
+        document.getElementById("netstarQuizPanel").innerHTML = `
+            <div class="feedback">✨ 《${artist}》芦苇老师正在创作中，敬请期待～</div>
+        `;
+        return;
+    }
+    currentNetstar = artist;
+    netstarStreak = 0;
+    netstarQuestions = [...questions].sort(() => 0.5 - Math.random()).slice(0, 5);
+    document.getElementById("netstarQuizPanel").innerHTML = `
+        <div style="color:#F2C94C; margin-bottom:8px"> ${artist} · 连续答对5题通关</div>
+        <div id="netstarQ"></div>
+        <div id="netstarFeed" class="feedback"></div>
+    `;
+    nextNetstarQuestion();
+}
+function nextNetstarQuestion() {
+    if (netstarStreak >= netstarQuestions.length) {
+        document.getElementById("netstarFeed").innerHTML = " 获得「网络新生代」勋章！";
+        const isFirst = handleNetstarComplete(currentNetstar);
+        if (!isFirst) {
+            document.getElementById("netstarFeed").innerHTML = " 已通关过该网络歌手！积分不重复累加。";
+        }
+        return;
+    }
+    const q = netstarQuestions[netstarStreak];
+    document.getElementById("netstarQ").innerHTML = `
+        <div class="lyric-question">${q.q}</div>
+        <div class="lyric-options" id="netstarOpts"></div>
+        <div id="netstarInsight" style="margin-top:12px; padding:12px; background:rgba(255,255,255,0.05); border-radius:16px; font-size:0.75rem; color:#C8E6C9; display:none;"></div>
+    `;
+    const optsDiv = document.getElementById("netstarOpts");
+    optsDiv.innerHTML = "";
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "lyric-opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (i === q.ans) {
+                netstarStreak++;
+                const insightDiv = document.getElementById("netstarInsight");
+                insightDiv.style.display = "block";
+                insightDiv.innerHTML = `<div style="margin-bottom:6px;">✅ 正确！${netstarStreak}/${netstarQuestions.length}</div>
+                                        <div style="color:#FFD966; margin-bottom:6px;"> ${q.insight || "芦苇心得："}</div>
+                                        <div style="font-style:italic; color:#D9C9B5;"> ${q.luwei || "芦苇说：好歌不在技巧，在走心。"}</div>`;
+                addScore(5, `${currentNetstar}闯关答题正确`);
+                nextNetstarQuestion();
+            } else {
+                netstarStreak = 0;
+                const insightDiv = document.getElementById("netstarInsight");
+                insightDiv.style.display = "block";
+                insightDiv.innerHTML = `<div style="margin-bottom:6px;">❌ 错误！正确答案：${q.opts[q.ans]}</div>
+                                        <div> ${q.exp}</div>
+                                        <div style="margin-top:8px; color:#FFD966;"> ${q.insight || "芦苇心得："}</div>
+                                        <div style="font-style:italic; color:#D9C9B5;"> ${q.luwei || "芦苇说：好歌不在技巧，在走心。"}</div>`;
+                setTimeout(() => nextNetstarQuestion(), 2000);
+            }
+        };
+        optsDiv.appendChild(btn);
+    });
+}
+
+// ========== 下沉创作课 ==========
 function buildSinkUI() {
     const container = document.getElementById("sinkCategoryList");
     if (!container) return;
@@ -6575,11 +6572,10 @@ function buildSinkUI() {
         container.appendChild(catBtn);
     });
 }
-// 加载分类下的歌手列表
 function loadSinkCategory(category) {
     currentSinkCategory = category;
     const panel = document.getElementById("sinkQuizPanel");
-    let artistsHtml = `<div style="color:#F2C94C; margin-bottom:12px"> ${category.name}</div>`;
+    let artistsHtml = `<div style="color:#F2C94C; margin-bottom:12px">️ ${category.name}</div>`;
     artistsHtml += `<div class="artist-grid" id="sinkArtistGrid"></div>`;
     panel.innerHTML = artistsHtml;
     const grid = document.getElementById("sinkArtistGrid");
@@ -6591,7 +6587,6 @@ function loadSinkCategory(category) {
         grid.appendChild(btn);
     });
 }
-// 加载歌手题库
 function loadSinkArtist(artist) {
     if (!sinkCreatorBank[artist]) {
         document.getElementById("sinkQuizPanel").innerHTML = `<div class="feedback">✨ 《${artist}》题库创作中，敬请期待～</div>`;
@@ -6611,8 +6606,11 @@ function loadSinkArtist(artist) {
 }
 function nextSinkQuestion() {
     if (sinkStreak >= sinkQuestions.length) {
-        document.getElementById("sinkFeed").innerHTML = " 获得「下沉词人」勋章！";
-        addScore(50, `通关下沉创作课：${currentSinkArtist}`);
+        document.getElementById("sinkFeed").innerHTML = "️ 获得「下沉词人」勋章！";
+        const isFirst = handleSinkComplete(currentSinkArtist);
+        if (!isFirst) {
+            document.getElementById("sinkFeed").innerHTML = "️ 已通关过该创作者课！积分不重复累加。";
+        }
         return;
     }
     const q = sinkQuestions[sinkStreak];
@@ -6644,7 +6642,7 @@ function nextSinkQuestion() {
                 const insightDiv = document.getElementById("sinkInsight");
                 insightDiv.style.display = "block";
                 insightDiv.innerHTML = `<div style="margin-bottom:6px;">❌ 错误！正确答案：${q.opts[q.ans]}</div>
-                                        <div>${q.exp}</div>
+                                        <div> ${q.exp}</div>
                                         <div style="margin-top:8px; color:#FFD966;"> ${q.insight || "芦苇心得："}</div>
                                         <div style="font-style:italic; color:#D9C9B5;"> ${q.luwei || "芦苇说：用心写词，用情动人。"}</div>`;
                 setTimeout(() => nextSinkQuestion(), 2000);
@@ -6653,11 +6651,8 @@ function nextSinkQuestion() {
         optsDiv.appendChild(btn);
     });
 }
-// 初始化下沉板块UI
-buildSinkUI();
 
-
-// ==================== 构建UI ====================
+// ========== 构建UI ==========
 function buildStyleUI() {
     const container = document.getElementById("styleList");
     const styles = ["摇滚", "R&B", "爵士", "民谣", "蓝调", "放克", "电子", "嘻哈", "金属", "雷鬼", "灵魂乐", "福音", "世界音乐", "拉丁", "乡村"];
@@ -6672,7 +6667,7 @@ function buildStyleUI() {
 
 function buildMasterUI() {
     const container = document.getElementById("masterList");
-    const artists = ["周杰伦", "田馥甄", "邓紫棋", "林俊杰", "陈奕迅", "王菲", "张惠妹", "孙燕姿", "五月天", "S.H.E", "梁静茹", "徐佳莹", "杨丞琳", "张靓颖", "张碧晨", "那英", "单依纯", "窦靖童", "周兴哲", "JOYCE就以斯","薛之谦", "王力宏", "汪苏泷", "许嵩", "王源", "李荣浩", "周深", "陶喆", "张杰", "方大同", "BEYONG", "蔡健雅", "毛不易", "蔡依林", "陈粒", "赵雷", "张韶涵", "梁博", "周传雄", "莫文蔚", "张学友", "徐良", "鹿晗", "王心凌", "王杰", "任然", "胡彦斌", "张信哲", "张惠妹", "王赫野", "刘德华", "刘宇宁","宋祖儿", "陈楚生", "时代少年团", "林忆莲", "杨宗纬", "萧亚轩", "刘若英", "李健", "凤凰传奇", "程响", "蔡徐坤", "林宥嘉", "张敬轩", "潘玮柏", "古巨基", "海来阿木", "张艺兴", "鞠婧祎", "庄心妍", "朴树","苏打绿", "华晨宇", "易烊千玺", "侧田", "痛仰乐队", "沈佳润", "吴莫愁", "黄霄云", "杨幂",];
+    const artists = ["周杰伦", "田馥甄", "邓紫棋", "林俊杰", "陈奕迅", "王菲", "张惠妹", "孙燕姿", "五月天", "S.H.E", "梁静茹", "徐佳莹", "杨丞琳", "张靓颖", "张碧晨", "那英", "单依纯", "窦靖童", "周兴哲", "JOYCE就以斯","薛之谦", "王力宏", "汪苏泷", "许嵩", "王源", "李荣浩", "周深", "陶喆", "张杰", "方大同", "Beyond", "蔡健雅", "毛不易", "蔡依林", "陈粒", "赵雷", "张韶涵", "梁博", "周传雄", "莫文蔚", "张学友", "徐良", "鹿晗", "王心凌", "王杰", "任然", "胡彦斌", "张信哲", "张惠妹", "王赫野", "刘德华", "刘宇宁","宋祖儿", "陈楚生", "时代少年团", "林忆莲", "杨宗纬", "萧亚轩", "刘若英", "李健", "凤凰传奇", "程响", "蔡徐坤", "林宥嘉", "张敬轩", "潘玮柏", "古巨基", "海来阿木", "张艺兴", "鞠婧祎", "庄心妍", "朴树","苏打绿", "华晨宇", "易烊千玺", "侧田", "痛仰乐队", "沈佳润", "吴莫愁", "黄霄雲", "杨幂"];
     artists.forEach(artist => {
         const btn = document.createElement("button");
         btn.className = "artist-btn";
@@ -6686,17 +6681,17 @@ function buildFolkUI() {
     const container = document.getElementById("folkList");
     const unit1 = document.createElement("button");
     unit1.className = "category-btn";
-    unit1.innerText = "🏔️ 民歌地域猜猜看";
+    unit1.innerText = "️ 民歌地域猜猜看";
     unit1.onclick = () => loadFolkUnit("民歌地域猜猜看", folkUnit1);
     container.appendChild(unit1);
     const unit2 = document.createElement("button");
     unit2.className = "category-btn";
-    unit2.innerText = "💭 民歌情绪与场景";
+    unit2.innerText = " 民歌情绪与场景";
     unit2.onclick = () => loadFolkUnit("民歌情绪与场景", folkUnit2);
     container.appendChild(unit2);
     const unit3 = document.createElement("button");
     unit3.className = "category-btn";
-    unit3.innerText = "🎵 民歌与流行歌的改编";
+    unit3.innerText = " 民歌与流行歌的改编";
     unit3.onclick = () => loadFolkUnit("民歌与流行歌的改编", folkUnit3);
     container.appendChild(unit3);
 }
@@ -6712,12 +6707,16 @@ function buildGufengUI() {
     });
 }
 
-// 初始化
-updateUserUI();
+// ========== 初始化 ==========
 buildStyleUI();
 buildMasterUI();
 buildFolkUI();
 buildGufengUI();
+buildNetstarUI();
+buildSinkUI();
+
+console.log(' 芦苇·风格与鉴赏模块加载完成');
+console.log(` 已获得成就数：${AchievementManager.getTotalCount()}`);
 </script>
 </body>
 </html>
