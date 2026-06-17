@@ -239,6 +239,8 @@
     </style>
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="checkAuth.js"></script>
 <div class="container">
     <div class="hero">
         <h1> 芦苇音乐 · AI音乐排行榜</h1>
@@ -330,20 +332,121 @@
             targetContent.classList.add('active');
         }
     };
-    // ==================== 2. Supabase 配置 ====================
-    const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let allSongs = { ai: [], hybrid: [], original: [] };
+// ==================== Supabase 配置 ====================
+const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+// 创建 Supabase 客户端（兼容多种加载方式）
+let supabaseClient = null;
+
+// 方法1：直接使用全局 supabase
+if (typeof supabase !== 'undefined' && supabase.createClient) {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('✅ Supabase 客户端已创建 (全局 supabase)');
+}
+// 方法2：使用 window.supabase
+else if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('✅ Supabase 客户端已创建 (window.supabase)');
+}
+// 方法3：手动加载（备用）
+else {
+    console.warn('⚠️ Supabase 未加载，尝试动态加载...');
+    // 如果还没加载，尝试用 script 加载
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    script.onload = function() {
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase 客户端已创建 (动态加载)');
+            loadSongs(); // 重新加载
+        }
+    };
+    script.onerror = function() {
+        console.error('❌ Supabase 加载失败，请检查网络');
+        // 使用备用空对象防止页面崩溃
+        supabaseClient = createFallbackClient();
+    };
+    document.head.appendChild(script);
+}
+
+// 如果 supabaseClient 仍然为 null，使用备用
+if (!supabaseClient) {
+    supabaseClient = createFallbackClient();
+}
+
+function createFallbackClient() {
+    console.warn('⚠️ 使用备用 Supabase 客户端（仅演示）');
+    return {
+        from: function(table) {
+            return {
+                select: function() {
+                    return {
+                        eq: function() {
+                            return Promise.resolve({ data: [], error: null });
+                        }
+                    };
+                },
+                insert: function() {
+                    return Promise.resolve({ error: null });
+                },
+                update: function() {
+                    return {
+                        eq: function() {
+                            return Promise.resolve({ error: null });
+                        }
+                    };
+                }
+            };
+        },
+        storage: {
+            from: function() {
+                return {
+                    upload: function() {
+                        return Promise.resolve({ error: null });
+                    },
+                    getPublicUrl: function() {
+                        return { publicUrl: '' };
+                    }
+                };
+            }
+        }
+    };
+}
+
+let allSongs = { ai: [], hybrid: [], original: [] };
+
     // ==================== 3. 加载和渲染 ====================
-   async function loadSongs() {
+async function loadSongs() {
+    // 检查 supabaseClient 是否可用
+    if (!supabaseClient || !supabaseClient.from) {
+        console.error('❌ supabaseClient 不可用，请刷新页面');
+        for (let cat of ['ai', 'hybrid', 'original']) {
+            const container = document.getElementById(`${cat}-list`);
+            if (container) {
+                container.innerHTML = '<div class="rank-card" style="text-align:center;">⚠️ 数据库连接失败，请刷新页面重试</div>';
+            }
+        }
+        return;
+    }
+
     for (let cat of ['ai', 'hybrid', 'original']) {
-        const { data } = await supabase
-            .from('songs')
-            .select('*')
-            .eq('category', cat)
-            .eq('status', 'active');
-        if (data) allSongs[cat] = data;
+        try {
+            const { data, error } = await supabaseClient
+                .from('songs')
+                .select('*')
+                .eq('category', cat)
+                .eq('status', 'active');
+            if (error) {
+                console.error('加载失败:', error);
+                allSongs[cat] = [];
+            } else {
+                allSongs[cat] = data || [];
+            }
+        } catch(e) {
+            console.error('加载异常:', e);
+            allSongs[cat] = [];
+        }
     }
     renderAll();
 }
