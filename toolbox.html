@@ -60,26 +60,12 @@
             .stat-value { font-size: 1rem; }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js"></script>
-    <script src="api.js"></script>
-    <script src="sync.js"></script>
 </head>
 <body>
+<script src="checkAuth.js"></script>
 <button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="container">
-    <div class="user-bar" id="userBar">
-        <div class="user-info">
-            <div class="user-avatar">🛠️</div>
-            <div>
-                <div class="user-name" id="userName">加载中...</div>
-                <div class="user-score" id="userScore">积分 0</div>
-            </div>
-        </div>
-        <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
-        <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
-    </div>
     <div class="header">
         <h1>🛠️ 芦苇工具箱</h1>
         <p>计时 · 节拍 · 练耳 · 打卡 · 作品 · 笔记 · 统计 · 搜索</p>
@@ -251,60 +237,6 @@
 </div>
 
 <script>
-// ==================== 用户界面 ====================
-let currentUserData = null;
-
-async function updateUserUI() {
-    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
-    const userNameSpan = document.getElementById('userName');
-    const userScoreSpan = document.getElementById('userScore');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    
-    if (user) {
-        userNameSpan.innerText = user.nickname || '芦苇同学';
-        let score = user.score || 0;
-        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
-            const apiScore = await window.API.getUserScore();
-            if (apiScore !== undefined) score = apiScore;
-        }
-        userScoreSpan.innerText = `积分 ${score}`;
-        if(loginBtn) loginBtn.style.display = 'none';
-        if(logoutBtn) logoutBtn.style.display = 'block';
-        currentUserData = user;
-    } else {
-        userNameSpan.innerText = '未登录';
-        userScoreSpan.innerText = '积分 0';
-        if(loginBtn) loginBtn.style.display = 'block';
-        if(logoutBtn) logoutBtn.style.display = 'none';
-        currentUserData = null;
-    }
-}
-
-async function addScore(amount, reason) {
-    if (!currentUserData) return;
-    if (typeof window.API !== 'undefined' && window.API.addScore) {
-        await window.API.addScore(amount, reason);
-        updateUserUI();
-    }
-}
-
-if(document.getElementById('loginBtn')) {
-    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
-}
-if(document.getElementById('logoutBtn')) {
-    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
-}
-
-window.onLoginSuccess = async function(user) {
-    currentUserData = user;
-    await updateUserUI();
-    if (typeof pullFromCloud === 'function') {
-        await pullFromCloud();
-    }
-};
-
-updateUserUI();
 
 // ==================== 折叠面板 ====================
 document.querySelectorAll('.tool-title').forEach(title => {
@@ -328,6 +260,20 @@ document.querySelectorAll('.tool-title').forEach(title => {
     }
 });
 
+// ==================== 全局备用变量/函数 ====================
+// 防止 currentUserData 未定义
+let currentUserData = null;
+
+// 备用 addScore（空函数，不报错就行）
+function addScore(amount, reason) {
+    console.log(`📊 积分 +${amount} (${reason}) - 当前页面未启用积分`);
+    return true;
+}
+
+// 挂到 window 上
+window.addScore = addScore;
+window.currentUserData = currentUserData;
+
 // ==================== 1. 学习计时器 ====================
 (function() {
     let studyStartTime = Date.now();
@@ -335,59 +281,48 @@ document.querySelectorAll('.tool-title').forEach(title => {
     let todayStudySeconds = 0;
     
     function getTodayDateStr() { return new Date().toDateString(); }
-    function getTotalStudyMinutes() { 
-        const user = currentUserData;
-        if (user) return parseInt(localStorage.getItem(`total_study_minutes_${user.user_id}`) || "0");
-        return parseInt(localStorage.getItem("total_study_minutes") || "0");
+function getTotalStudyMinutes() { 
+    return parseInt(localStorage.getItem("total_study_minutes") || "0");
+}
+function getTotalStudyDays() {
+    let firstVisit = localStorage.getItem("first_visit_date");
+    if (!firstVisit) { localStorage.setItem("first_visit_date", getTodayDateStr()); return 1; }
+    return Math.floor((new Date() - new Date(firstVisit)) / (1000*60*60*24)) + 1;
+}
+function getWeekStudyMinutes() {
+    let weekRecords = JSON.parse(localStorage.getItem("daily_study_records") || "{}");
+    let total = 0, today = new Date();
+    for (let i = 0; i < 7; i++) {
+        let date = new Date(today); date.setDate(today.getDate() - i);
+        total += weekRecords[date.toDateString()] || 0;
     }
-    function getTotalStudyDays() {
-        const user = currentUserData;
-        const key = user ? `first_visit_date_${user.user_id}` : "first_visit_date";
-        let firstVisit = localStorage.getItem(key);
-        if (!firstVisit) { localStorage.setItem(key, getTodayDateStr()); return 1; }
-        return Math.floor((new Date() - new Date(firstVisit)) / (1000*60*60*24)) + 1;
+    return total;
+}
+function saveTodayStudyTime() {
+    let currentSeconds = Math.floor((Date.now() - studyStartTime) / 1000);
+    todayStudySeconds = currentSeconds;
+    localStorage.setItem(`today_study_seconds`, todayStudySeconds.toString());
+    localStorage.setItem(`timer_last_date`, getTodayDateStr());
+    let lastAcc = localStorage.getItem(`last_accumulated_date`);
+    let today = getTodayDateStr();
+    let todayMinutes = Math.floor(todayStudySeconds / 60);
+    if (lastAcc !== today && todayMinutes > 0) {
+        let existing = getTotalStudyMinutes();
+        localStorage.setItem(`total_study_minutes`, (existing + todayMinutes).toString());
+        localStorage.setItem(`last_accumulated_date`, today);
+        let daily = JSON.parse(localStorage.getItem(`daily_study_records`) || "{}");
+        daily[today] = (daily[today] || 0) + todayMinutes;
+        localStorage.setItem(`daily_study_records`, JSON.stringify(daily));
+        // addScore(todayMinutes, "学习时长积累");  // 注释掉这行
     }
-    function getWeekStudyMinutes() {
-        const user = currentUserData;
-        const prefix = user ? `daily_study_records_${user.user_id}` : "daily_study_records";
-        let weekRecords = JSON.parse(localStorage.getItem(prefix) || "{}");
-        let total = 0, today = new Date();
-        for (let i = 0; i < 7; i++) {
-            let date = new Date(today); date.setDate(today.getDate() - i);
-            total += weekRecords[date.toDateString()] || 0;
-        }
-        return total;
-    }
-    function saveTodayStudyTime() {
-        let currentSeconds = Math.floor((Date.now() - studyStartTime) / 1000);
-        todayStudySeconds = currentSeconds;
-        const user = currentUserData;
-        const prefix = user ? `_${user.user_id}` : "";
-        localStorage.setItem(`today_study_seconds${prefix}`, todayStudySeconds.toString());
-        localStorage.setItem(`timer_last_date${prefix}`, getTodayDateStr());
-        let lastAcc = localStorage.getItem(`last_accumulated_date${prefix}`);
-        let today = getTodayDateStr();
-        let todayMinutes = Math.floor(todayStudySeconds / 60);
-        if (lastAcc !== today && todayMinutes > 0) {
-            let existing = getTotalStudyMinutes();
-            localStorage.setItem(`total_study_minutes${prefix}`, (existing + todayMinutes).toString());
-            localStorage.setItem(`last_accumulated_date${prefix}`, today);
-            let dailyKey = `daily_study_records${prefix}`;
-            let daily = JSON.parse(localStorage.getItem(dailyKey) || "{}");
-            daily[today] = (daily[today] || 0) + todayMinutes;
-            localStorage.setItem(dailyKey, JSON.stringify(daily));
-            addScore(todayMinutes, "学习时长积累");
-        }
-    }
-    function initTodayStudyTime() {
-        const user = currentUserData;
-        const prefix = user ? `_${user.user_id}` : "";
-        let saved = localStorage.getItem(`timer_last_date${prefix}`);
-        let savedSeconds = parseInt(localStorage.getItem(`today_study_seconds${prefix}`) || "0");
-        if (saved === getTodayDateStr()) todayStudySeconds = savedSeconds;
-        else { todayStudySeconds = 0; localStorage.setItem(`timer_last_date${prefix}`, getTodayDateStr()); localStorage.setItem(`today_study_seconds${prefix}`, "0"); }
-        studyStartTime = Date.now() - (todayStudySeconds * 1000);
-    }
+}
+function initTodayStudyTime() {
+    let saved = localStorage.getItem(`timer_last_date`);
+    let savedSeconds = parseInt(localStorage.getItem(`today_study_seconds`) || "0");
+    if (saved === getTodayDateStr()) todayStudySeconds = savedSeconds;
+    else { todayStudySeconds = 0; localStorage.setItem(`timer_last_date`, getTodayDateStr()); localStorage.setItem(`today_study_seconds`, "0"); }
+    studyStartTime = Date.now() - (todayStudySeconds * 1000);
+}
     function updateTimerDisplay() {
         let elapsed = Math.floor((Date.now() - studyStartTime) / 1000);
         let hours = Math.floor(elapsed / 3600), minutes = Math.floor((elapsed % 3600) / 60), seconds = elapsed % 60;
@@ -539,12 +474,13 @@ document.querySelectorAll(".tuner-note").forEach(btn => {
 // ==================== 6. 打卡功能 ====================
 (function() {
     let checkinData = { streak:0, totalDays:0, lastDate:null, totalScore:0 };
-    function loadData() { 
-        const user = currentUserData;
-        const key = user ? `checkin_data_${user.user_id}` : "checkin_data_v2";
-        let saved = localStorage.getItem(key); 
-        if(saved) checkinData = JSON.parse(saved); 
-    }
+function loadData() { 
+    let saved = localStorage.getItem("checkin_data_v2"); 
+    if(saved) checkinData = JSON.parse(saved); 
+}
+function saveData() { 
+    localStorage.setItem("checkin_data_v2", JSON.stringify(checkinData)); 
+}
     function saveData() { 
         const user = currentUserData;
         const key = user ? `checkin_data_${user.user_id}` : "checkin_data_v2";
@@ -576,7 +512,6 @@ document.querySelectorAll(".tuner-note").forEach(btn => {
         checkinData.totalScore += reward;
         saveData(); updateUI();
         alert(`✅ 打卡成功！\n连续打卡：${newStreak}天\n获得积分：+${reward}`);
-        await addScore(reward, "每日打卡");
     }
     loadData(); updateUI();
     document.getElementById("checkinBtn")?.addEventListener("click", doCheckin);
@@ -584,9 +519,7 @@ document.querySelectorAll(".tuner-note").forEach(btn => {
 
 // ==================== 7. 我的作品 ====================
 function loadWorks() {
-    const user = currentUserData;
-    const userId = user?.user_id || "guest";
-    const works = JSON.parse(localStorage.getItem(`user_works_${userId}`) || "[]");
+    const works = JSON.parse(localStorage.getItem(`user_works_guest`) || "[]");
     const container = document.getElementById("worksList");
     if (container) {
         container.innerHTML = works.map((w, i) => `
@@ -599,9 +532,9 @@ function loadWorks() {
         `).join("");
         document.querySelectorAll(".work-delete").forEach(btn => {
             btn.addEventListener("click", () => {
-                const worksArr = JSON.parse(localStorage.getItem(`user_works_${userId}`) || "[]");
+                const worksArr = JSON.parse(localStorage.getItem(`user_works_guest`) || "[]");
                 worksArr.splice(parseInt(btn.dataset.idx), 1);
-                localStorage.setItem(`user_works_${userId}`, JSON.stringify(worksArr));
+                localStorage.setItem(`user_works_guest`, JSON.stringify(worksArr));
                 loadWorks();
             });
         });
@@ -612,24 +545,20 @@ document.getElementById("saveWorkBtn")?.addEventListener("click", () => {
     const title = document.getElementById("workTitle").value;
     const content = document.getElementById("workContent").value;
     if (!title || !content) { alert("请填写标题和内容"); return; }
-    const user = currentUserData;
-    const userId = user?.user_id || "guest";
-    const works = JSON.parse(localStorage.getItem(`user_works_${userId}`) || "[]");
+    const works = JSON.parse(localStorage.getItem(`user_works_guest`) || "[]");
     works.unshift({ title, content, date: new Date().toLocaleString() });
     if (works.length > 30) works.pop();
-    localStorage.setItem(`user_works_${userId}`, JSON.stringify(works));
+    localStorage.setItem(`user_works_guest`, JSON.stringify(works));
     document.getElementById("workTitle").value = "";
     document.getElementById("workContent").value = "";
     loadWorks();
-    addScore(3, "保存作品");
+    // addScore(3, "保存作品");  // 注释掉
     alert("✅ 作品已保存");
 });
 
 // ==================== 8. 我的学习笔记 ====================
 function loadNotes() {
-    const user = currentUserData;
-    const userId = user?.user_id || "guest";
-    const notes = JSON.parse(localStorage.getItem(`study_notes_${userId}`) || "[]");
+    const notes = JSON.parse(localStorage.getItem(`study_notes_guest`) || "[]");
     const container = document.getElementById("savedNotesDisplay");
     if (container) {
         container.innerHTML = notes.map((note, idx) => `
@@ -641,9 +570,9 @@ function loadNotes() {
         `).join("");
         document.querySelectorAll(".note-delete").forEach(btn => {
             btn.addEventListener("click", () => {
-                const notesArr = JSON.parse(localStorage.getItem(`study_notes_${userId}`) || "[]");
+                const notesArr = JSON.parse(localStorage.getItem(`study_notes_guest`) || "[]");
                 notesArr.splice(parseInt(btn.dataset.idx), 1);
-                localStorage.setItem(`study_notes_${userId}`, JSON.stringify(notesArr));
+                localStorage.setItem(`study_notes_guest`, JSON.stringify(notesArr));
                 loadNotes();
             });
         });
@@ -652,15 +581,13 @@ function loadNotes() {
 document.getElementById("saveNotesBtn")?.addEventListener("click", () => {
     const content = document.getElementById("studyNotesInput").value;
     if (!content.trim()) { alert("请填写笔记内容"); return; }
-    const user = currentUserData;
-    const userId = user?.user_id || "guest";
-    const notes = JSON.parse(localStorage.getItem(`study_notes_${userId}`) || "[]");
+    const notes = JSON.parse(localStorage.getItem(`study_notes_guest`) || "[]");
     notes.unshift({ content: content, date: new Date().toLocaleString() });
     if (notes.length > 30) notes.pop();
-    localStorage.setItem(`study_notes_${userId}`, JSON.stringify(notes));
+    localStorage.setItem(`study_notes_guest`, JSON.stringify(notes));
     document.getElementById("studyNotesInput").value = "";
     loadNotes();
-    addScore(2, "保存学习笔记");
+    // addScore(2, "保存学习笔记");  // 注释掉
     alert("✅ 笔记已保存");
 });
 
@@ -735,31 +662,29 @@ updateLastLearnInfo();
 
 // ==================== 12. 学习统计 ====================
 function updateStatsPanel() {
-    const user = currentUserData;
     let scoreSpan = document.getElementById("statsTotalScore");
-    if(scoreSpan) scoreSpan.innerText = user?.score || "0";
+    if(scoreSpan) scoreSpan.innerText = "0";
+    
     let completed = 0;
-    const userId = user?.user_id || "guest";
-    for(let i=0; i<29; i++) if(localStorage.getItem(`level_${i}_${userId}`) === "true") completed++;
+    for(let i=0; i<29; i++) if(localStorage.getItem(`level_${i}_guest`) === "true") completed++;
     let percent = Math.round((completed / 29) * 100);
     let progSpan = document.getElementById("statsProgressPercent");
     if(progSpan) progSpan.innerText = percent + "%";
+    
     let daysSpan = document.getElementById("statsStudyDays");
     if(daysSpan) {
-        const key = user ? `first_visit_date_${user.user_id}` : "first_visit_date";
-        let first = localStorage.getItem(key);
-        if(!first) { localStorage.setItem(key, new Date().toDateString()); daysSpan.innerText = "1"; }
+        let first = localStorage.getItem("first_visit_date");
+        if(!first) { localStorage.setItem("first_visit_date", new Date().toDateString()); daysSpan.innerText = "1"; }
         else daysSpan.innerText = Math.floor((new Date() - new Date(first)) / (1000*60*60*24)) + 1;
     }
-    let totalMin = 0;
-    if (user) totalMin = parseInt(localStorage.getItem(`total_study_minutes_${user.user_id}`) || "0");
-    else totalMin = parseInt(localStorage.getItem("total_study_minutes") || "0");
+    
+    let totalMin = parseInt(localStorage.getItem("total_study_minutes") || "0");
     let minSpan = document.getElementById("statsTotalMinutes");
     if(minSpan) minSpan.innerText = Math.floor(totalMin/60)>0 ? `${Math.floor(totalMin/60)}h${totalMin%60}m` : `${totalMin}分钟`;
+    
     let extra = document.getElementById("statsExtra");
     if(extra) {
-        const key = user ? `checkin_data_${user.user_id}` : "checkin_data_v2";
-        let checkin = JSON.parse(localStorage.getItem(key) || "{}");
+        let checkin = JSON.parse(localStorage.getItem("checkin_data_v2") || "{}");
         extra.innerHTML = `🎯 通关率：${percent}% &nbsp;|&nbsp; 📅 累计打卡：${checkin.totalDays || 0}天 &nbsp;|&nbsp; 🔥 连续：${checkin.streak || 0}天`;
     }
 }
@@ -797,7 +722,6 @@ setInterval(updateStatsPanel, 5000);
 // 初始化
 loadWorks();
 loadNotes();
-updateUserUI();
 </script>
 </body>
 </html>
