@@ -1,0 +1,394 @@
+<!-- join.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐人入驻申请</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 440px;
+        }
+        h1 { font-size: 24px; }
+        .sub { color: #888; font-size: 14px; margin: 4px 0 24px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+
+        /* 头像上传区域 */
+        .avatar-upload {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .avatar-upload .preview {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px dashed #ddd;
+            background: #f8f9fa;
+            flex-shrink: 0;
+        }
+        .avatar-upload .preview.has-image {
+            border: 2px solid #4CAF50;
+        }
+        .avatar-upload .upload-btn {
+            padding: 8px 18px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+        .avatar-upload .upload-btn:hover { background: #e0e0e0; }
+        .avatar-upload .file-input { display: none; }
+        .avatar-upload .hint { font-size: 12px; color: #999; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-submit:hover { background: #388E3C; }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .result-box {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .result-box.show { display: block; }
+        .result-box .label { font-size: 13px; color: #555; }
+        .result-box .id-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+            word-break: break-all;
+            margin: 4px 0 10px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+        .result-box .btn-copy {
+            padding: 6px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .result-box .btn-copy:hover { background: #388E3C; }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 999;
+        }
+        .toast.show { opacity: 1; }
+        .toast.success { background: #2e7d32; }
+        .toast.error { background: #c62828; }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1> 音乐人入驻</h1>
+        <p class="sub">填写资料提交申请，审核通过后即可上传作品</p>
+
+        <form id="joinForm">
+            <div class="form-group">
+                <label>歌手昵称 *</label>
+                <input type="text" id="name" placeholder="例：芦苇" required>
+            </div>
+
+            <div class="form-group">
+                <label>音乐人角色 *</label>
+                <select id="role" required>
+                    <option value="">请选择</option>
+                    <option value="作词人">✍️ 作词人</option>
+                    <option value="作曲人"> 作曲人</option>
+                    <option value="编曲师"> 编曲师</option>
+                    <option value="混音师">️ 混音师</option>
+                    <option value="制作人"> 制作人</option>
+                    <option value="歌手"> 歌手</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>个人简介</label>
+                <textarea id="bio" placeholder="简单介绍一下自己..." rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>头像</label>
+                <div class="avatar-upload">
+                    <img class="preview" id="avatarPreview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Crect width='72' height='72' fill='%23f0f2f5'/%3E%3Ctext x='36' y='42' text-anchor='middle' font-size='28' fill='%23ccc'%3E%3C/text%3E%3C/svg%3E" alt="头像预览">
+                    <div>
+                        <button type="button" class="upload-btn" onclick="document.getElementById('avatarInput').click()">选择图片</button>
+                        <input type="file" id="avatarInput" class="file-input" accept="image/*">
+                        <div class="hint">建议 1:1 比例，不超过 2MB</div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">提交入驻申请</button>
+        </form>
+
+        <div class="result-box" id="resultBox">
+            <div class="label">✅ 申请提交成功！你的音乐人 ID：</div>
+            <div class="id-value" id="newId">-</div>
+            <button class="btn-copy" onclick="copyId()"> 复制 ID</button>
+            <p style="font-size:13px;color:#888;margin-top:8px;">
+                ⏳ 等待审核（1-3个工作日）<br>
+                审核通过后，用这个 ID 登录个人中心
+            </p>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+        let selectedFile = null;
+        let generatedId = null;
+
+        // ========== Toast ==========
+        function showToast(msg, type = '') {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = 'toast show ' + type;
+            clearTimeout(el._timer);
+            el._timer = setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // ========== 生成 ID ==========
+        function generateId() {
+            return Date.now().toString() + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        }
+
+        // ========== 头像预览 ==========
+        document.getElementById('avatarInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('图片不能超过 2MB', 'error');
+                this.value = '';
+                return;
+            }
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const img = document.getElementById('avatarPreview');
+                img.src = ev.target.result;
+                img.classList.add('has-image');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // ========== 上传头像到 Supabase Storage ==========
+        async function uploadAvatar(file, musicianId) {
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `avatars/${musicianId}.${fileExt}`;
+
+                const resp = await fetch(
+                    `${SUPABASE_URL}/storage/v1/object/avatars/${fileName}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Content-Type': file.type
+                        },
+                        body: file
+                    }
+                );
+
+                if (!resp.ok) {
+                    const err = await resp.text();
+                    console.error('上传失败:', err);
+                    return null;
+                }
+
+                // 返回公开 URL
+                return `${SUPABASE_URL}/storage/v1/object/public/avatars/${fileName}`;
+            } catch (e) {
+                console.error('上传头像异常:', e);
+                return null;
+            }
+        }
+
+        // ========== 提交表单 ==========
+        document.getElementById('joinForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const role = document.getElementById('role').value;
+            const bio = document.getElementById('bio').value.trim();
+
+            if (!name) { showToast('请输入歌手昵称', 'error'); return; }
+            if (!role) { showToast('请选择音乐人角色', 'error'); return; }
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span>提交中...';
+
+            try {
+                // 1. 先生成 ID
+                const newId = generateId();
+
+                // 2. 如果有头像，先上传
+                let avatarUrl = null;
+                if (selectedFile) {
+                    showToast('⏳ 上传头像中...', '');
+                    avatarUrl = await uploadAvatar(selectedFile, newId);
+                    if (avatarUrl) {
+                        showToast('✅ 头像上传成功', 'success');
+                    } else {
+                        showToast('⚠️ 头像上传失败，可稍后补充', 'error');
+                    }
+                }
+
+                // 3. 提交入驻申请
+                const data = {
+                    id: newId,
+                    name: name,
+                    role: role,
+                    bio: bio || '',
+                    avatar_url: avatarUrl,
+                    status: 'pending'
+                };
+
+                const resp = await fetch(`${SUPABASE_URL}/rest/v1/musicians`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!resp.ok) {
+                    const err = await resp.text();
+                    throw new Error('提交失败: ' + err);
+                }
+
+                const result = await resp.json();
+                generatedId = result[0]?.id || newId;
+
+                if (generatedId) {
+                    document.getElementById('newId').textContent = generatedId;
+                    document.getElementById('resultBox').classList.add('show');
+                    document.getElementById('joinForm').reset();
+                    document.getElementById('avatarPreview').src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'72\' height=\'72\' viewBox=\'0 0 72 72\'%3E%3Crect width=\'72\' height=\'72\' fill=\'%23f0f2f5\'/%3E%3Ctext x=\'36\' y=\'42\' text-anchor=\'middle\' font-size=\'28\' fill=\'%23ccc\'%3E%3C/text%3E%3C/svg%3E';
+                    document.getElementById('avatarPreview').classList.remove('has-image');
+                    selectedFile = null;
+                    showToast('✅ 申请提交成功！', 'success');
+                } else {
+                    throw new Error('未获取到 ID');
+                }
+
+            } catch (e) {
+                console.error(e);
+                showToast('❌ ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '提交入驻申请';
+            }
+        });
+
+        // ========== 复制 ID ==========
+        function copyId() {
+            const id = document.getElementById('newId').textContent;
+            if (!id || id === '-') return;
+            navigator.clipboard.writeText(id).then(() => {
+                showToast('✅ 已复制到剪贴板', 'success');
+            }).catch(() => {
+                const input = document.createElement('input');
+                input.value = id;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast('✅ 已复制到剪贴板', 'success');
+            });
+        }
+    </script>
+</body>
+</html>

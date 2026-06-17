@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>芦苇音乐</title>
+    <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f5;
+    color: #1a1a2e;
+    padding: 20px 20px 100px;
+}
+.container { max-width: 900px; margin: 0 auto; }
+.heart {
+    color: #bbb;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #e8e8e8;
+    margin-bottom: 24px;
+}
+.header h1 {
+    font-size: 28px;
+    background: linear-gradient(90deg, #3a3a3a, #aaa, #3a3a3a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 100%;
+    animation: flowText 4s ease-in-out infinite alternate;
+}
+.header .sub {
+    font-size: 14px;
+    background: linear-gradient(90deg, #f5f5f5, #aaa, #666);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 100%;
+    animation: flow 4s ease-in-out infinite alternate;
+}
+
+.back-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 0;
+    font-weight: 600;
+}
+.back-btn:hover { color: #666; }
+
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #bbb;
+}
+
+.artist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+}
+.artist-card {
+    background: linear-gradient(135deg, #e8e8e8, #888888, #e8e8e8);
+    background-size: 200% 200%;
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    border: 1px solid #d5d5d5;
+    transition: 0.3s;
+    animation: cardFlow 5s ease-in-out infinite alternate;
+}
+.artist-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    border-color: #bbb;
+}
+.artist-card .avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 10px;
+    background: #d0d0d0;
+    border: 2px solid #ccc;
+}
+.artist-card .name { font-weight: 700; font-size: 15px; color: #3a3a3a; }
+.artist-card .role { font-size: 13px; color: #999; margin-top: 2px; }
+.artist-card .count { font-size: 12px; color: #888; margin-top: 6px; font-weight: 600; }
+
+.song-list { display: flex; flex-direction: column; gap: 8px; }
+.song-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: #f5f5f5;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    border: 1px solid #e8e8e8;
+}
+.song-item:hover { border-color: #ccc; background: #f0f0f0; }
+.song-item .play-btn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: #d5d5d5;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+.song-item .play-btn:hover { background: #bbb; }
+.song-item .info { flex: 1; }
+.song-item .info .title { font-weight: 600; font-size: 15px; color: #3a3a3a; }
+.song-item .info .meta { font-size: 13px; color: #bbb; }
+.song-item .likes { color: #bbb; font-size: 13px; }
+.song-item .info .meta .heart {
+    color: #bbb;
+}
+
+.player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #f5f5f5;
+    padding: 12px 20px;
+    box-shadow: 0 -2px 20px rgba(0,0,0,0.04);
+    display: none;
+    border-top: 1px solid #e8e8e8;
+}
+.player.show { display: block; }
+.player .info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.player .info .name { font-weight: 600; font-size: 15px; color: #3a3a3a; flex: 1; }
+.player .info .artist { font-size: 13px; color: #bbb; }
+.player audio { width: 100%; max-width: 400px; }
+
+.loading { text-align: center; padding: 40px; color: #ccc; }
+.empty { text-align: center; padding: 40px; color: #ccc; }
+.hidden { display: none !important; }
+
+.song-item .idx { color: #ddd; font-size: 14px; width: 28px; text-align: center; }
+@keyframes flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+/* CD 唱片旋转 */
+.cd-icon {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: conic-gradient(#ddd, #999, #ddd, #777, #ddd);
+    margin-right: 8px;
+    vertical-align: middle;
+    box-shadow: 0 0 6px rgba(0,0,0,0.08);
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes flowText {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+@keyframes cardFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+<h1>
+    <span class="cd-icon"></span>
+    芦苇音乐
+</h1>
+<span class="sub">在芦苇深处，治愈自己的思念。</span>
+    </div>
+
+    <button class="back-btn" id="backBtn" onclick="showArtists()">← 返回歌手列表</button>
+
+    <div id="artistSection">
+        <div class="section-title"> 入驻歌手</div>
+        <div class="artist-grid" id="artistGrid"></div>
+    </div>
+
+    <div id="songSection" class="hidden">
+        <div class="section-title" id="songSectionTitle"> 歌曲列表</div>
+        <div class="song-list" id="songList"></div>
+    </div>
+
+</div>
+
+<div class="player" id="player">
+    <div class="info">
+        <div>
+            <div class="name" id="playerName">歌名</div>
+            <div class="artist" id="playerArtist">歌手</div>
+        </div>
+        <audio controls id="audioPlayer"></audio>
+    </div>
+</div>
+
+<script>
+// ===== 配置 =====
+const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+let allArtists = [];
+let allSongs = [];
+
+// ===== 加载歌手 =====
+async function loadArtists() {
+    const grid = document.getElementById('artistGrid');
+    grid.innerHTML = '<div class="loading">加载中...</div>';
+
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/musicians?status=eq.approved&order=created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        allArtists = await resp.json();
+
+        if (!allArtists || allArtists.length === 0) {
+            grid.innerHTML = '<div class="empty">暂无入驻歌手</div>';
+            return;
+        }
+
+        const wResp = await fetch(
+            `${SUPABASE_URL}/rest/v1/works?status=eq.approved&select=musician_id`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const works = await wResp.json();
+        const count = {};
+        works.forEach(w => count[w.musician_id] = (count[w.musician_id] || 0) + 1);
+
+        grid.innerHTML = allArtists.map(a => {
+            const avatar = a.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2272%22 height=%2272%22%3E%3Crect width=%2272%22 height=%2272%22 fill=%22%23c8e6c9%22/%3E%3Ctext x=%2236%22 y=%2244%22 text-anchor=%22middle%22 font-size=%2232%22 fill=%22%234CAF50%22%3E%3C/text%3E%3C/svg%3E';
+            return `
+                <div class="artist-card" onclick="showSongs('${a.id}')">
+                    <img class="avatar" src="${avatar}" alt="${a.artist_name || a.name}">
+                    <div class="name">${a.artist_name || a.name || '未命名'}</div>
+                    <div class="role">${a.role || '音乐人'}</div>
+                    <div class="count"> ${count[a.id] || 0} 首歌</div>
+                </div>
+            `;
+        }).join('');
+
+    } catch (e) {
+        grid.innerHTML = '<div class="empty">加载失败，请刷新</div>';
+    }
+}
+
+// ===== 显示歌手的歌曲 =====
+async function showSongs(artistId) {
+    const artist = allArtists.find(a => a.id === artistId);
+    if (!artist) return;
+
+    document.getElementById('artistSection').classList.add('hidden');
+    document.getElementById('songSection').classList.remove('hidden');
+    document.getElementById('backBtn').style.display = 'inline-block';
+    document.getElementById('songSectionTitle').textContent = ` ${artist.artist_name || artist.name} 的歌曲`;
+
+    const list = document.getElementById('songList');
+    list.innerHTML = '<div class="loading">加载中...</div>';
+
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/works?musician_id=eq.${artistId}&status=eq.approved&order=created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        allSongs = await resp.json();
+
+        if (!allSongs || allSongs.length === 0) {
+            list.innerHTML = '<div class="empty">暂无已审核的歌曲</div>';
+            return;
+        }
+
+        list.innerHTML = allSongs.map((s, i) => `
+            <div class="song-item" onclick="playSong('${s.id}')">
+                <span style="color:#bbb;font-size:14px;width:28px;text-align:center;">${String(i+1).padStart(2,'0')}</span>
+                <button class="play-btn" onclick="event.stopPropagation();playSong('${s.id}')">▶</button>
+                <div class="info">
+                    <div class="title">${s.title || '未命名'}</div>
+<span class="likes"><span class="heart">❤️</span> ${s.likes || 0}</span>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (e) {
+        list.innerHTML = '<div class="empty">加载失败</div>';
+    }
+}
+
+// ===== 返回 =====
+function showArtists() {
+    document.getElementById('artistSection').classList.remove('hidden');
+    document.getElementById('songSection').classList.add('hidden');
+    document.getElementById('backBtn').style.display = 'none';
+    document.getElementById('player').classList.remove('show');
+    document.getElementById('audioPlayer').pause();
+}
+
+// ===== 播放 =====
+function playSong(songId) {
+    const song = allSongs.find(s => s.id === songId);
+    if (!song) return;
+
+    document.getElementById('playerName').textContent = song.title || '未命名';
+    document.getElementById('playerArtist').textContent = '歌手';
+    document.getElementById('audioPlayer').src = song.audio_url || '';
+    document.getElementById('player').classList.add('show');
+
+    setTimeout(() => {
+        document.getElementById('audioPlayer').play();
+    }, 100);
+}
+
+// ===== 启动 =====
+loadArtists();
+</script>
+</body>
+</html>

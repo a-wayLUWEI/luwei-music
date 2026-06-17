@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>个人中心 · 芦苇音乐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        /* 返回按钮 */
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #E69A2E;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 16px;
+            z-index: 1000;
+            cursor: pointer;
+            font-weight: bold;
+            color: #2D1E0C;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        /* 用户卡片 */
+        .user-card {
+            background: linear-gradient(135deg, #0f281dcc, #1a3a2a);
+            backdrop-filter: blur(4px);
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid #F2C94C;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: #E69A2E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        .user-info {
+            flex: 1;
+        }
+        .user-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 4px;
+        }
+        .user-email {
+            font-size: 0.8rem;
+            color: #AAD4B0;
+            margin-bottom: 8px;
+        }
+        .user-points {
+            display: inline-block;
+            background: #E69A2E;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #2D1E0C;
+            font-size: 0.9rem;
+        }
+        .logout-btn {
+            background: #3C6E4A;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #0f281dcc;
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            padding: 16px 8px;
+            text-align: center;
+            border: 1px solid #F2C94C;
+        }
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #FFD966;
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            color: #AAD4B0;
+            margin-top: 4px;
+        }
+        /* Tab 切换 */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #F2C94C40;
+            padding-bottom: 12px;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: #AAD4B0;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: #E69A2E;
+            color: #2D1E0C;
+        }
+        /* 内容区域 */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* 积分明细列表 */
+        .log-list, .order-list, .medal-list {
+            background: #0f281dcc;
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            border: 1px solid #F2C94C;
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .log-item, .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F2C94C20;
+        }
+        .log-time {
+            font-size: 0.7rem;
+            color: #AAD4B0;
+        }
+        .log-reason {
+            font-size: 0.85rem;
+            color: #FFD966;
+        }
+        .log-amount {
+            font-weight: bold;
+        }
+        .log-amount.earn { color: #4ECDC4; }
+        .log-amount.spend { color: #FF6B6B; }
+        /* 勋章网格 */
+        .medal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+        }
+        .medal-item {
+            text-align: center;
+            padding: 16px;
+            background: #1a3a2a;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .medal-item.earned {
+            border: 1px solid #FFD966;
+            background: #2a5a3a;
+        }
+        .medal-item.unearned {
+            opacity: 0.5;
+            filter: grayscale(0.5);
+        }
+        .medal-icon {
+            font-size: 3rem;
+            margin-bottom: 8px;
+        }
+        .medal-name {
+            font-weight: bold;
+            color: #FFD966;
+            font-size: 0.9rem;
+        }
+        .medal-desc {
+            font-size: 0.65rem;
+            color: #AAD4B0;
+            margin-top: 4px;
+        }
+        /* 会员等级卡片 */
+        .level-card {
+            background: #0f281dcc;
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            border: 1px solid #F2C94C;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .level-name {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #FFD966;
+        }
+        .level-progress {
+            margin-top: 16px;
+        }
+        .progress-bar {
+            background: #2a4a3a;
+            border-radius: 20px;
+            height: 12px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #E69A2E;
+            height: 100%;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.3s;
+        }
+        .level-rules {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 0.7rem;
+            color: #AAD4B0;
+        }
+        /* 账号设置 */
+        .settings-section {
+            background: #0f281dcc;
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            border: 1px solid #F2C94C;
+            padding: 20px;
+        }
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F2C94C20;
+        }
+        .settings-label {
+            color: #FFD966;
+        }
+        .change-pwd-btn {
+            background: #3C6E4A;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+        }
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #AAD4B0;
+        }
+        /* 规则按钮 */
+        .rule-btn {
+            background: #3C6E4A;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #1a3a2a;
+            border-radius: 32px;
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid #F2C94C;
+        }
+        .modal-title {
+            color: #FFD966;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+        }
+        .modal-rules {
+            list-style: none;
+            padding: 0;
+        }
+        .modal-rules li {
+            padding: 8px 0;
+            border-bottom: 1px solid #F2C94C20;
+            color: #AAD4B0;
+        }
+        .close-modal {
+            background: #E69A2E;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            margin-top: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .medal-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+<script src="checkAuth.js"></script>
+<a href="index.html" class="back-btn"> 返回首页</a>
+<div class="container">
+    <!-- 用户卡片 -->
+    <div class="user-card">
+        <div class="user-avatar" id="userAvatar"></div>
+        <div class="user-info">
+            <div class="user-name" id="userName">加载中...</div>
+            <div class="user-email" id="userEmail">-</div>
+            <div class="user-points" id="userPoints">积分: 0</div>
+        </div>
+        <button class="logout-btn" id="logoutBtn">退出登录</button>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value" id="statScore">0</div>
+            <div class="stat-label">当前积分</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="statLevel">芦芽</div>
+            <div class="stat-label">会员等级</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="statBadges">0</div>
+            <div class="stat-label">获得勋章</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="statOrders">0</div>
+            <div class="stat-label">兑换订单</div>
+        </div>
+    </div>
+
+    <!-- 会员等级卡片 -->
+    <div class="level-card">
+        <div class="level-name" id="levelName">芦芽</div>
+        <div class="level-progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="levelProgress" style="width: 0%;"></div>
+            </div>
+            <div class="level-rules">
+                <span> 芦芽 0</span>
+                <span> 芦叶 1000</span>
+                <span> 芦枝 3000</span>
+                <span> 芦花 7000</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 切换 -->
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="points"> 积分明细</button>
+        <button class="tab-btn" data-tab="medals"> 我的勋章 <button class="rule-btn" id="showMedalRule">规则</button></button>
+        <button class="tab-btn" data-tab="orders"> 兑换记录</button>
+        <button class="tab-btn" data-tab="settings">⚙️ 账号设置</button>
+    </div>
+
+    <!-- 积分明细 Tab -->
+    <div id="tab-points" class="tab-content active">
+        <div class="log-list" id="pointsLogList">
+            <div class="empty-state">加载中...</div>
+        </div>
+    </div>
+
+    <!-- 勋章 Tab -->
+    <div id="tab-medals" class="tab-content">
+        <div class="medal-grid" id="medalGrid"></div>
+    </div>
+
+    <!-- 兑换记录 Tab -->
+    <div id="tab-orders" class="tab-content">
+        <div class="order-list" id="orderList">
+            <div class="empty-state">加载中...</div>
+        </div>
+    </div>
+
+<!-- 账号设置 Tab -->
+<div id="tab-settings" class="tab-content">
+    <div class="settings-section">
+        <div class="settings-item">
+            <span class="settings-label">修改密码</span>
+            <button class="change-pwd-btn" onclick="showChangePasswordPanel()">修改密码</button>
+        </div>
+        <div class="settings-item">
+            <span class="settings-label">清除缓存</span>
+            <button class="change-pwd-btn" id="clearCacheBtn">清除我的数据</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+// ==================== 个人中心 ====================
+let currentUser = null;
+let currentPoints = 0;
+let pointsLog = [];
+
+// 会员等级规则
+const LEVELS = [
+    { name: "芦芽", min: 0, max: 999, color: "#8FBC8F", icon: "" },
+    { name: "芦叶", min: 1000, max: 2999, color: "#CDE990", icon: "" },
+    { name: "芦枝", min: 3000, max: 6999, color: "#F4A261", icon: "" },
+    { name: "芦花", min: 7000, max: Infinity, color: "#E76F51", icon: "" }
+];
+
+// 勋章规则
+const MEDALS = [
+    { id: "beginner", name: " 音乐小白", desc: "完成音乐小白学习全部29关", check: () => checkBeginnerComplete() },
+    { id: "theory", name: " 乐理达人", desc: "乐理手册累计进入30天", check: () => checkTheoryDays() },
+    { id: "style", name: " 风格鉴赏家", desc: "通关10种以上音乐风格", check: () => checkStyleComplete() },
+    { id: "advanced", name: " 闯关大师", desc: "综合闯关完成20关以上", check: () => checkAdvancedComplete() },
+    { id: "loyalty", name: " 芦苇铁粉", desc: "累计积分达到5000", check: () => currentPoints >= 5000 }
+];
+
+// 获取用户ID
+function getUserId() {
+    if (currentUser) return currentUser.user_id;
+    const local = localStorage.getItem('currentUser');
+    if (local) {
+        try {
+            return JSON.parse(local).user_id;
+        } catch(e) {}
+    }
+    return null;
+}
+
+// ==================== 积分计算（和首页完全一致）====================
+
+function getUserId() {
+    const user = localStorage.getItem('currentUser');
+    if (user) {
+        try {
+            return JSON.parse(user).user_id;
+        } catch(e) {}
+    }
+    return null;
+}
+
+// 获取单个模块积分（和首页 getModuleScore 完全一致）
+function getModuleScore(moduleName) {
+    const userId = getUserId();
+    if (!userId) return 0;
+    
+    let total = 0;
+    
+    // 格式1: userId + moduleName + Score (如 user123beginnerScore)
+    const key1 = `${userId}${moduleName}Score`;
+    const val1 = localStorage.getItem(key1);
+    if (val1) total += parseInt(val1);
+    
+    // 格式2: userId + _ + moduleName + _score (如 user123_beginner_score)
+    const key2 = `${userId}_${moduleName}_score`;
+    const val2 = localStorage.getItem(key2);
+    if (val2) total += parseInt(val2);
+    
+    // 特殊处理 theory 模块（可能有单独的 theory_score 无前缀）
+    if (moduleName === 'theory') {
+        const legacyScore = localStorage.getItem('theory_score');
+        if (legacyScore) total += parseInt(legacyScore);
+    }
+    
+    return total;
+}
+
+// 获取总获得积分（和首页 getTotalScore 完全一致）
+function getTotalEarnedPoints() {
+    const modules = ['beginner', 'theory', 'style', 'advanced'];
+    let total = 0;
+    modules.forEach(module => {
+        total += getModuleScore(module);
+    });
+    return total;
+}
+
+// 获取已使用积分（商城兑换）
+function getUsedPoints() {
+    const userId = getUserId();
+    if (!userId) return 0;
+    const usedKey = `shop_used_points_${userId}`;
+    return parseInt(localStorage.getItem(usedKey) || '0');
+}
+
+// 获取当前可用积分
+function getCurrentPoints() {
+    return getTotalEarnedPoints() - getUsedPoints();
+}
+
+// 获取当前等级
+function getCurrentLevel() {
+    for (let i = LEVELS.length - 1; i >= 0; i--) {
+        if (currentPoints >= LEVELS[i].min) return LEVELS[i];
+    }
+    return LEVELS[0];
+}
+
+// 获取进度百分比
+function getProgressPercentage() {
+    const level = getCurrentLevel();
+    if (level.max === Infinity) return 100;
+    const range = level.max - level.min;
+    const progress = currentPoints - level.min;
+    return Math.min(100, Math.max(0, (progress / range) * 100));
+}
+
+// 勋章检查函数
+function checkBeginnerComplete() {
+    const userId = getUserId();
+    if (!userId) return false;
+    for (let i = 1; i <= 29; i++) {
+        if (localStorage.getItem(`level_${i-1}_${userId}`) !== "true") return false;
+    }
+    return true;
+}
+
+function checkTheoryDays() {
+    const userId = getUserId();
+    if (!userId) return false;
+    let days = 0;
+    for (let i = 0; i < 365; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().slice(0, 10);
+        const key = `${userId}_theory_daily_entry`;
+        const lastDate = localStorage.getItem(key);
+        if (lastDate) days++;
+        if (days >= 30) return true;
+    }
+    return false;
+}
+
+function checkStyleComplete() {
+    const userId = getUserId();
+    if (!userId) return false;
+    let count = 0;
+    const styles = ["摇滚", "R&B", "爵士", "民谣", "蓝调", "放克", "电子", "嘻哈", "金属", "雷鬼", "灵魂乐", "福音", "世界音乐", "拉丁", "乡村"];
+    styles.forEach(style => {
+        if (localStorage.getItem(`style_${style}_${userId}`) === "true") count++;
+    });
+    return count >= 10;
+}
+
+function checkAdvancedComplete() {
+    const userId = getUserId();
+    if (!userId) return false;
+    let count = 0;
+    for (let i = 0; i < 29; i++) {
+        if (localStorage.getItem(`level_${i}_${userId}`) === "true") count++;
+    }
+    return count >= 20;
+}
+
+// 加载积分明细
+function loadPointsLog() {
+    const userId = getUserId();
+    const logKey = `points_log_${userId}`;
+    pointsLog = JSON.parse(localStorage.getItem(logKey) || '[]');
+    renderPointsLog();
+}
+
+function renderPointsLog() {
+    const container = document.getElementById('pointsLogList');
+    if (!container) return;
+    
+    if (pointsLog.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无积分记录，快去学习获取积分吧~</div>';
+        return;
+    }
+    
+    container.innerHTML = pointsLog.slice().reverse().map(log => `
+        <div class="log-item">
+            <div>
+                <div class="log-time">${log.time}</div>
+                <div class="log-reason">${log.reason}</div>
+            </div>
+            <div class="log-amount ${log.type === 'earn' ? 'earn' : 'spend'}">
+                ${log.type === 'earn' ? '+' : '-'}${log.amount}
+            </div>
+        </div>
+    `).join('');
+}
+
+// 加载勋章
+function loadMedals() {
+    const container = document.getElementById('medalGrid');
+    if (!container) return;
+    
+    let earnedCount = 0;
+    const medalsHtml = MEDALS.map(medal => {
+        const earned = medal.check();
+        if (earned) earnedCount++;
+        return `
+            <div class="medal-item ${earned ? 'earned' : 'unearned'}">
+                <div class="medal-icon">${medal.name.charAt(0)}</div>
+                <div class="medal-name">${medal.name}</div>
+                <div class="medal-desc">${medal.desc}</div>
+                ${earned ? '<div style="color:#4ECDC4; font-size:0.6rem;">✓ 已获得</div>' : '<div style="color:#AAD4B0; font-size:0.6rem;">未获得</div>'}
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = medalsHtml;
+    document.getElementById('statBadges').innerText = earnedCount;
+}
+
+// 加载兑换订单
+function loadOrders() {
+    const userId = getUserId();
+    const ordersKey = `exchange_orders_${userId}`;
+    const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+    const container = document.getElementById('orderList');
+    
+    if (orders.length === 0) {
+        container.innerHTML = '<div class="empty-state">暂无兑换记录，去积分商城看看吧~</div>';
+        document.getElementById('statOrders').innerText = '0';
+        return;
+    }
+    
+    document.getElementById('statOrders').innerText = orders.length;
+    container.innerHTML = orders.map(order => `
+        <div class="order-item">
+            <div>
+                <div class="log-time">${order.createTime}</div>
+                <div class="log-reason">${order.name}</div>
+            </div>
+            <div class="log-amount spend">-${order.points}</div>
+        </div>
+    `).join('');
+}
+
+// 加载用户信息
+async function loadUserInfo() {
+    if (window.getCurrentUser) {
+        currentUser = await window.getCurrentUser();
+    } else {
+        const local = localStorage.getItem('currentUser');
+        if (local) currentUser = JSON.parse(local);
+    }
+    
+    if (currentUser) {
+        document.getElementById('userName').innerText = currentUser.nickname || currentUser.email?.split('@')[0] || '芦苇同学';
+        document.getElementById('userEmail').innerText = currentUser.email || '-';
+        
+        currentPoints = getCurrentPoints();
+        document.getElementById('userPoints').innerText = `积分: ${currentPoints}`;
+        document.getElementById('statScore').innerText = currentPoints;
+        
+        const level = getCurrentLevel();
+        document.getElementById('levelName').innerHTML = `${level.icon} ${level.name}`;
+        document.getElementById('statLevel').innerHTML = level.name;
+        document.getElementById('levelProgress').style.width = `${getProgressPercentage()}%`;
+    }
+}
+
+// 勋章规则弹窗
+function showMedalRuleModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-title"> 勋章获得规则</div>
+            <ul class="modal-rules">
+                <li> 音乐小白：完成音乐小白学习全部29关</li>
+                <li> 乐理达人：乐理手册累计进入30天</li>
+                <li> 风格鉴赏家：通关10种以上音乐风格</li>
+                <li> 闯关大师：综合闯关完成20关以上</li>
+                <li> 芦苇铁粉：累计积分达到5000</li>
+            </ul>
+            <button class="close-modal">知道了</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.querySelector('.close-modal').onclick = () => modal.remove();
+}
+
+// ==================== 修改密码功能 ====================
+
+// 验证当前密码（复用 auth.js 的逻辑）
+async function verifyCurrentPassword(email, password) {
+    if (!window.API || !window.API.initSupabase) {
+        alert('API 未加载');
+        return false;
+    }
+    const sb = await window.API.initSupabase();
+    if (!sb) { alert('初始化失败'); return false; }
+    
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+        alert('当前密码输入错误！');
+        return false;
+    }
+    return true;
+}
+
+// 修改密码
+async function changePassword(currentPassword, newPassword) {
+    const user = await window.getCurrentUser();
+    if (!user) {
+        alert('请先登录！');
+        return false;
+    }
+
+    // 验证当前密码
+    const isValid = await verifyCurrentPassword(user.email, currentPassword);
+    if (!isValid) return false;
+
+    // 更新密码
+    if (!window.API || !window.API.initSupabase) {
+        alert('API 未加载');
+        return false;
+    }
+    const sb = await window.API.initSupabase();
+    if (!sb) { alert('初始化失败'); return false; }
+
+    const { error: updateError } = await sb.auth.updateUser({
+        password: newPassword
+    });
+
+    if (updateError) {
+        alert('修改密码失败：' + updateError.message);
+        return false;
+    }
+
+    alert('密码修改成功！请重新登录。');
+    // 退出登录
+    if (typeof window.logout === 'function') {
+        await window.logout();
+    } else {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'index.html';
+    }
+    return true;
+}
+
+// 显示修改密码弹窗（替换原来的按钮调用）
+function showChangePasswordPanel() {
+    // 移除已存在的面板
+    const existing = document.getElementById('changePasswordPanel');
+    if (existing) existing.remove();
+
+    const panelHtml = `
+        <div id="changePasswordPanel" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;">
+            <div style="background:#1a3a2a;border-radius:32px;padding:24px;width:340px;text-align:center;border:1px solid #F2C94C;">
+                <div style="color:#FFD966;font-size:1.2rem;margin-bottom:16px;">🔐 修改密码</div>
+                <div style="font-size:0.75rem;color:#AAD4B0;margin-bottom:12px;">密码长度不少于6位</div>
+                <input type="password" id="oldPasswordInput" placeholder="当前密码" style="width:100%;padding:10px;margin-bottom:12px;border-radius:40px;border:none;background:#2a4a3a;color:white;">
+                <input type="password" id="newPasswordInput" placeholder="新密码（至少6位）" style="width:100%;padding:10px;margin-bottom:12px;border-radius:40px;border:none;background:#2a4a3a;color:white;">
+                <input type="password" id="confirmPasswordInput" placeholder="确认新密码" style="width:100%;padding:10px;margin-bottom:12px;border-radius:40px;border:none;background:#2a4a3a;color:white;">
+                <button id="confirmChangePwdBtn" style="background:#E69A2E;border:none;padding:10px;border-radius:40px;width:100%;margin-bottom:8px;font-weight:bold;cursor:pointer;" onmouseover="this.style.background='#FFD966'" onmouseout="this.style.background='#E69A2E'">确认修改</button>
+                <button id="closePwdPanelBtn" style="background:none;border:none;color:#AAD4B0;cursor:pointer;padding:8px;" onmouseover="this.style.color='#FFD966'" onmouseout="this.style.color='#AAD4B0'">取消</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', panelHtml);
+
+    document.getElementById('confirmChangePwdBtn').onclick = async () => {
+        const oldPwd = document.getElementById('oldPasswordInput').value;
+        const newPwd = document.getElementById('newPasswordInput').value;
+        const confirmPwd = document.getElementById('confirmPasswordInput').value;
+
+        if (!oldPwd || !newPwd || !confirmPwd) {
+            alert('请完整填写所有字段！');
+            return;
+        }
+        if (newPwd.length < 6) {
+            alert('新密码长度不能少于6位！');
+            return;
+        }
+        if (newPwd !== confirmPwd) {
+            alert('两次输入的密码不一致！');
+            return;
+        }
+
+        await changePassword(oldPwd, newPwd);
+    };
+
+    document.getElementById('closePwdPanelBtn').onclick = () => {
+        document.getElementById('changePasswordPanel').remove();
+    };
+}
+
+// 暴露到全局（让按钮能调用）
+window.showChangePasswordPanel = showChangePasswordPanel;
+window.changePassword = changePassword;
+
+// 初始化页面
+async function init() {
+    await loadUserInfo();
+    loadPointsLog();
+    loadMedals();
+    loadOrders();
+    
+    // Tab 切换
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.onclick = () => {
+            const tabId = btn.dataset.tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        };
+    });
+    
+    // 勋章规则按钮
+    const showRuleBtn = document.getElementById('showMedalRule');
+    if (showRuleBtn) showRuleBtn.onclick = showMedalRuleModal;
+    
+    // 退出登录
+    document.getElementById('logoutBtn').onclick = () => {
+        if (confirm('确定要退出登录吗？')) {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+    };
+    
+    // 清除缓存按钮
+    document.getElementById('clearCacheBtn').onclick = () => {
+        if (confirm('清除个人数据将删除当前账号的本地记录，确定吗？')) {
+            const userId = getUserId();
+            if (userId) {
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.includes(userId)) keysToRemove.push(key);
+                }
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+                localStorage.removeItem(`points_log_${userId}`);
+                localStorage.removeItem(`shop_used_points_${userId}`);
+                localStorage.removeItem(`exchange_orders_${userId}`);
+                alert('已清除本地数据');
+                window.location.reload();
+            }
+        }
+    };
+}
+
+init();
+</script>
+</body>
+</html>
