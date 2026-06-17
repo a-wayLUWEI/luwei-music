@@ -114,16 +114,8 @@
     </style>
 </head>
 <body>
+<script src="checkAuth.js"></script>
 <div class="container">
-    <div class="user-bar">
-        <div class="user-info">
-            <div class="user-avatar">✍️</div>
-            <div>
-                <div class="user-name">芦苇同学</div>
-                <div class="user-score">灵感 0</div>
-            </div>
-        </div>
-    </div>
     <div class="header">
         <h1> 芦苇歌词写作武功秘籍</h1>
         <p>仙女撒花 · 万物复苏 · 众生皆苦 · 大爱无边 · 羽化成仙 · 回归自然</p>
@@ -13069,10 +13061,7 @@ if (firstPanel) {
     // 每日词心随机
     const tips = ["歌词是听得见的诗，诗是看得见的歌。","押韵不是镣铐，是舞步。","情绪是聚光灯，思想是背景板。","众生皆苦，唯有自渡。","模仿不是抄袭，是站在巨人的肩膀上。"];
     document.querySelector('.daily-content').innerText = tips[Math.floor(Math.random() * tips.length)];
-    
-    // 积分初始化
-    let points = 0;
-    document.querySelector('.user-score').innerText = `灵感 ${points}`;
+
 </script>
 </body>
 </html>
