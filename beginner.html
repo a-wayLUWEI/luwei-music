@@ -53,118 +53,116 @@
             .black-key { width: 26px !important; height: 68px !important; }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth.js"></script>
-    <script src="api.js"></script>
-    <script src="sync.js"></script>
 </head>
 <body>
-<button class="home-btn" onclick="location.href='index.html'">🏠 返回首页</button>
+<script src="checkAuth.js"></script>
+<button class="home-btn" onclick="location.href='index.html'"> 返回首页</button>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆ 顶部</button>
 <div class="game-panel">
-    <div class="user-bar" id="userBar">
+    <div class="user-bar">
         <div class="user-info">
-            <div class="user-avatar">🎹</div>
-            <div>
-                <div class="user-name" id="userName">加载中...</div>
-                <div class="user-score" id="userScore">积分 0</div>
-            </div>
+            <div class="user-avatar"></div>
+            <div style="color: #FFD966;">本模块积分：<span id="beginnerScore">0</span></div>
         </div>
-        <button class="login-btn" id="loginBtn" style="display:none;">🔑 登录</button>
-        <button class="login-btn" id="logoutBtn" style="display:none;">🚪 退出</button>
     </div>
     <div class="progress-hint">
-        <span>📊 通关进度</span>
+        <span> 通关进度</span>
         <span id="progressDisplay">0 / 29</span>
     </div>
     <div class="status-bar">
-        <div class="level-badge">🎵 和弦·关卡 <span class="level-num" id="levelValue">1</span></div>
+        <div class="level-badge"> 和弦·关卡 <span class="level-num" id="levelValue">1</span></div>
         <div class="score-badge">✨ 智慧积分 <span class="score-val" id="scoreValue">0</span></div>
     </div>
     <div class="challenge-area">
         <div class="chord-name" id="chordNameDisplay">C 大三和弦</div>
         <div class="chord-desc" id="chordDesc">大三度+纯五度</div>
-        <div class="progression-box"><span>🎸 和弦进行知识点</span><span id="progressionText">I - IV - V - I</span></div>
+        <div class="progression-box"><span> 和弦进行知识点</span><span id="progressionText">I - IV - V - I</span></div>
     </div>
     <div class="piano-stage"><div class="piano-container" id="pianoKeyboard"></div></div>
     <div class="controls">
         <button id="checkChordBtn" class="btn-primary">✅ 验证+闯关</button>
-        <button id="clearNotesBtn">🗑️ 清空</button>
-        <button id="resetGameBtn">🔄 重置进度</button>
+        <button id="clearNotesBtn">️ 清空</button>
+        <button id="resetGameBtn"> 重置进度</button>
     </div>
     <div id="quizArea" class="quiz-area"></div>
     <div class="feedback-bar" id="globalFeedback">✨ 点击钢琴键 → 连续答对8题过关</div>
 </div>
 
 <script>
-// ==================== 用户界面 ====================
-let currentUserData = null;
-let currentLevelData = null;
-let totalLevelsCount = 29;
-
-async function updateUserUI() {
-    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
-    const userNameSpan = document.getElementById('userName');
-    const userScoreSpan = document.getElementById('userScore');
-    const scoreValueSpan = document.getElementById('scoreValue');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
+// ==================== 积分明细记录 ====================
+function addPointsLog(amount, reason, type) {
+    let userId = null;
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+        try {
+            const u = JSON.parse(userStr);
+            userId = u.user_id;
+        } catch(e) {}
+    }
+    if (!userId) return;
     
-    if (user) {
-        userNameSpan.innerText = user.nickname || '芦苇同学';
-        let score = user.score || 0;
-        if (typeof window.API !== 'undefined' && window.API.getUserScore) {
-            const apiScore = await window.API.getUserScore();
-            if (apiScore !== undefined) score = apiScore;
-        }
-        userScoreSpan.innerText = `积分 ${score}`;
-        if(scoreValueSpan) scoreValueSpan.innerText = score;
-        if(loginBtn) loginBtn.style.display = 'none';
-        if(logoutBtn) logoutBtn.style.display = 'block';
-        currentUserData = user;
-    } else {
-        userNameSpan.innerText = '未登录';
-        userScoreSpan.innerText = '积分 0';
-        if(scoreValueSpan) scoreValueSpan.innerText = '0';
-        if(loginBtn) loginBtn.style.display = 'block';
-        if(logoutBtn) logoutBtn.style.display = 'none';
-        currentUserData = null;
+    const logKey = `points_log_${userId}`;
+    let logs = [];
+    const existing = localStorage.getItem(logKey);
+    if (existing) {
+        try { logs = JSON.parse(existing); } catch(e) {}
+    }
+    logs.push({
+        time: new Date().toLocaleString(),
+        reason: reason,
+        amount: Math.abs(amount),
+        type: type
+    });
+    if (logs.length > 500) logs.shift();
+    localStorage.setItem(logKey, JSON.stringify(logs));
+}
+// ==================== 用户数据 ====================
+let currentUserData = null;
+
+// 读取用户
+function loadCurrentUser() {
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+        try {
+            currentUserData = JSON.parse(userStr);
+        } catch(e) {}
     }
 }
-
-async function addScore(amount, reason) {
-    if (!currentUserData) return;
-    if (typeof window.API !== 'undefined' && window.API.addScore) {
-        await window.API.addScore(amount, reason);
-        updateUserUI();
-    } else {
-        let currentScore = parseInt(document.getElementById("scoreValue").innerText) || 0;
-        document.getElementById("scoreValue").innerText = currentScore + amount;
-        if(currentUserData) currentUserData.score = currentScore + amount;
-    }
-}
-
-if(document.getElementById('loginBtn')) {
-    document.getElementById('loginBtn').addEventListener('click', () => { if(typeof showLoginModal === 'function') showLoginModal(); });
-}
-if(document.getElementById('logoutBtn')) {
-    document.getElementById('logoutBtn').addEventListener('click', () => { if(typeof logout === 'function') logout(); location.reload(); });
-}
-
-window.onLoginSuccess = async function(user) {
-    currentUserData = user;
-    await updateUserUI();
-    if (typeof pullFromCloud === 'function') {
-        await pullFromCloud();
-    }
-    loadUserProgress();
-    loadLevel();
-};
+loadCurrentUser();
 
 // ==================== 工具函数 ====================
 function toStandard(n) { let m = { "C#":"Db", "D#":"Eb", "F#":"Gb", "G#":"Ab", "A#":"Bb" }; return m[n] || n; }
 function eqArr(a, b) { if (a.length !== b.length) return false; let sa = a.map(toStandard).sort(), sb = b.map(toStandard).sort(); return sa.every((v,i)=>v===sb[i]); }
 function msg(t, c) { let fb = document.getElementById("globalFeedback"); if(fb) { fb.innerHTML = t; fb.style.color = c || "#C8E6C9"; } }
+
+// ==================== 加分函数 ====================
+async function beginnerScore(amount, reason) {
+    if (!currentUserData) return;
+    const userId = currentUserData.user_id;
+    const current = parseInt(localStorage.getItem(`${userId}beginnerScore`) || '0');
+    const newScore = current + amount;
+    localStorage.setItem(`${userId}beginnerScore`, newScore);
+    
+    // ✅ 添加积分明细记录
+    addPointsLog(amount, reason || '音乐小白学习通关', 'earn');
+    
+    // 更新智慧积分
+    const scoreSpan = document.getElementById("scoreValue");
+    if (scoreSpan) {
+        scoreSpan.innerText = newScore;
+    }
+    
+    const beginnerSpan = document.getElementById('beginnerScore');
+    if (beginnerSpan) {
+        beginnerSpan.innerText = newScore;
+    }
+    
+    if (typeof window.API !== 'undefined' && window.API.addScore) {
+        await window.API.addScore(amount, reason);
+    }
+}
+
+
 
 // ==================== 和弦题库（每关8题） ====================
 const questionBank = {
@@ -1575,34 +1573,34 @@ for(let i=13; i<=29; i++) {
     ];
 }
 
-// ==================== 关卡数据（29关完整版）====================
+// ==================== 关卡数据（29关）====================
 const levels = [
     { id:1, name:"C 大三和弦", target:["C","E","G"], desc:"大三度+纯五度", prog:"I - IV - V - I" },
     { id:2, name:"Dm 小三和弦", target:["D","F","A"], desc:"小三度+纯五度", prog:"I - V - vi - IV" },
     { id:3, name:"G7 属七和弦", target:["G","B","D","F"], desc:"大三+小七", prog:"V7 - I" },
     { id:4, name:"Cmaj7 大七和弦", target:["C","E","G","B"], desc:"大三+大七", prog:"Imaj7 - VIm7 - IIm7 - V7" },
-    { id:5, name:"Em 小三和弦", target:["E","G","B"], desc:"小调和弦 · 忧郁感", prog:"Em - C - G - D" },
-    { id:6, name:"F 大三和弦", target:["F","A","C"], desc:"下属和弦 · 温暖推进", prog:"F - G - C" },
-    { id:7, name:"G 大三和弦", target:["G","B","D"], desc:"明亮民谣 · 吉他经典", prog:"G - C - D - G" },
-    { id:8, name:"Am 小三和弦", target:["A","C","E"], desc:"小调和弦 · 深情悲伤", prog:"Am - F - C - G" },
-    { id:9, name:"A 大三和弦", target:["A","C#","E"], desc:"明亮推动 · 力量爆发", prog:"A - D - E" },
-    { id:10, name:"E 大三和弦", target:["E","G#","B"], desc:"辉煌结尾 · 上扬感", prog:"E - A - B - E" },
-    { id:11, name:"D 大三和弦", target:["D","F#","A"], desc:"副歌推动 · 温暖上扬", prog:"D - A - Bm - G" },
-    { id:12, name:"Bm 小三和弦", target:["B","D","F#"], desc:"隐藏的悲伤 · 暗流涌动", prog:"Bm - G - D - A" },
-    { id:13, name:"Bb 大三和弦", target:["Bb","D","F"], desc:"转调拉升 · 突然开阔", prog:"Bb - F - C - Bb" },
-    { id:14, name:"F#m 小三和弦", target:["F#","A","C#"], desc:"隐忍孤独 · 现代感", prog:"F#m - D - A - E" },
-    { id:15, name:"C#m 小三和弦", target:["C#","E","G#"], desc:"极暗冷色 · 现代感", prog:"C#m - A - E - B" },
-    { id:16, name:"Ab 大三和弦", target:["Ab","C","Eb"], desc:"升调转折 · 豁然开朗", prog:"Ab - Eb - Bb - Ab" },
-    { id:17, name:"Eb 大三和弦", target:["Eb","G","Bb"], desc:"经典励志 · 光环感", prog:"Eb - Bb - Cm - Ab" },
-    { id:18, name:"Db 大三和弦", target:["Db","F","Ab"], desc:"冷色光明 · 现代空旷", prog:"Db - Ab - Bbm - Gb" },
-    { id:19, name:"Gb 大三和弦", target:["Gb","Bb","Db"], desc:"冷色光明 · 极光亮感", prog:"Gb - Db - Ebm - B" },
-    { id:20, name:"B 大三和弦", target:["B","D#","F#"], desc:"明亮力量 · 摇滚推动", prog:"B - F# - G#m - E" },
+    { id:5, name:"Em 小三和弦", target:["E","G","B"], desc:"小调和弦", prog:"Em - C - G - D" },
+    { id:6, name:"F 大三和弦", target:["F","A","C"], desc:"下属和弦", prog:"F - G - C" },
+    { id:7, name:"G 大三和弦", target:["G","B","D"], desc:"明亮民谣", prog:"G - C - D - G" },
+    { id:8, name:"Am 小三和弦", target:["A","C","E"], desc:"深情悲伤", prog:"Am - F - C - G" },
+    { id:9, name:"A 大三和弦", target:["A","C#","E"], desc:"明亮推动", prog:"A - D - E" },
+    { id:10, name:"E 大三和弦", target:["E","G#","B"], desc:"辉煌结尾", prog:"E - A - B - E" },
+    { id:11, name:"D 大三和弦", target:["D","F#","A"], desc:"温暖上扬", prog:"D - A - Bm - G" },
+    { id:12, name:"Bm 小三和弦", target:["B","D","F#"], desc:"暗流涌动", prog:"Bm - G - D - A" },
+    { id:13, name:"Bb 大三和弦", target:["Bb","D","F"], desc:"突然开阔", prog:"Bb - F - C - Bb" },
+    { id:14, name:"F#m 小三和弦", target:["F#","A","C#"], desc:"隐忍孤独", prog:"F#m - D - A - E" },
+    { id:15, name:"C#m 小三和弦", target:["C#","E","G#"], desc:"极暗冷色", prog:"C#m - A - E - B" },
+    { id:16, name:"Ab 大三和弦", target:["Ab","C","Eb"], desc:"豁然开朗", prog:"Ab - Eb - Bb - Ab" },
+    { id:17, name:"Eb 大三和弦", target:["Eb","G","Bb"], desc:"经典励志", prog:"Eb - Bb - Cm - Ab" },
+    { id:18, name:"Db 大三和弦", target:["Db","F","Ab"], desc:"现代空旷", prog:"Db - Ab - Bbm - Gb" },
+    { id:19, name:"Gb 大三和弦", target:["Gb","Bb","Db"], desc:"极光亮感", prog:"Gb - Db - Ebm - B" },
+    { id:20, name:"B 大三和弦", target:["B","D#","F#"], desc:"摇滚推动", prog:"B - F# - G#m - E" },
     { id:21, name:"D9 属九和弦", target:["D","F#","A","C","E"], desc:"属七+九度", prog:"II9 - V13 - Imaj9" },
     { id:22, name:"Fm9 小九和弦", target:["F","Ab","C","Eb","G"], desc:"小七+大九", prog:"Im9 - IV13 - V7alt" },
     { id:23, name:"C11 十一和弦", target:["C","E","G","Bb","D","F"], desc:"属九+十一", prog:"I11 - V7sus - I" },
     { id:24, name:"G13 十三和弦", target:["G","B","D","F","A","C","E"], desc:"终极扩展", prog:"I13 - V13 - I13" },
-    { id:25, name:"Ebm 小三和弦", target:["Eb","Gb","Bb"], desc:"小调情绪 · 寒冷延伸", prog:"Ebm - B - Abm - Bb" },
-    { id:26, name:"Bbm 小三和弦", target:["Bb","Db","F"], desc:"副歌小调 · 深情推动", prog:"Bbm - Gb - Db - Ab" },
+    { id:25, name:"Ebm 小三和弦", target:["Eb","Gb","Bb"], desc:"寒冷延伸", prog:"Ebm - B - Abm - Bb" },
+    { id:26, name:"Bbm 小三和弦", target:["Bb","Db","F"], desc:"深情推动", prog:"Bbm - Gb - Db - Ab" },
     { id:27, name:"C# 大三和弦", target:["C#","E#","G#"], desc:"升调力量", prog:"C# - G# - A#m - F#" },
     { id:28, name:"G#m 小三和弦", target:["G#","B","D#"], desc:"极冷小调", prog:"G#m - E - B - F#" },
     { id:29, name:"A#m 小三和弦", target:["A#","C#","E#"], desc:"冷色小调", prog:"A#m - F# - C# - G#" }
@@ -1625,19 +1623,25 @@ function updateProgressDisplay() {
 
 function loadUserProgress() {
     const userId = currentUserData?.user_id || "guest";
-    // 恢复积分
-    if(currentUserData?.score !== undefined) {
-        score = currentUserData.score;
-    } else {
-        let savedScore = localStorage.getItem(`user_score_${userId}`);
-        if(savedScore) score = parseInt(savedScore);
-    }
+    const savedScore = localStorage.getItem(`${userId}beginnerScore`);
+    if(savedScore) score = parseInt(savedScore);
+    else score = 0;
+    
+    // 更新智慧积分显示
     document.getElementById("scoreValue").innerText = score;
-    // 恢复关卡进度
-    let savedLevel = localStorage.getItem(`current_level_${userId}`);
+    
+    // 👇 加上这行：同步更新本模块积分显示
+    const beginnerSpan = document.getElementById('beginnerScore');
+    if (beginnerSpan) {
+        beginnerSpan.innerText = score;
+    }
+    
+    const savedLevel = localStorage.getItem(`current_level_${userId}`);
     if(savedLevel) {
         lvl = parseInt(savedLevel);
         if(lvl >= levels.length) lvl = levels.length - 1;
+    } else {
+        lvl = 0;
     }
     updateProgressDisplay();
 }
@@ -1645,21 +1649,8 @@ function loadUserProgress() {
 function saveProgress() {
     const userId = currentUserData?.user_id || "guest";
     localStorage.setItem(`current_level_${userId}`, lvl);
-    localStorage.setItem(`user_score_${userId}`, score);
-    if(currentUserData) {
-        currentUserData.score = score;
-        localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(currentUserData));
-    }
+    localStorage.setItem(`${userId}beginnerScore`, score);
     updateProgressDisplay();
-}
-
-async function recordLevelCompletion(levelId) {
-    const userId = currentUserData?.user_id || "guest";
-    localStorage.setItem(`level_${levelId}_${userId}`, "true");
-    updateProgressDisplay();
-    if(currentUserData && typeof window.API !== 'undefined' && window.API.completeLevel) {
-        await window.API.completeLevel(levelId, score);
-    }
 }
 
 // ==================== 钢琴键盘 ====================
@@ -1719,7 +1710,7 @@ function refresh() {
 }
 
 function onPress(n) { 
-    if(completed) { msg("🏆 本关已过"); return; } 
+    if(completed) { msg(" 本关已过"); return; } 
     playSound(n); highlight(n, true); setTimeout(()=>highlight(n,false),150); 
     let std = toStandard(n); 
     if(!played.includes(std)) { played.push(std); refresh(); msg(`➕ 按下 ${n} → ${std} | [${played.join(',')}]`); } 
@@ -1729,9 +1720,9 @@ function onPress(n) {
 // ==================== 关卡加载 ====================
 function loadLevel() {
     if(lvl >= levels.length){ 
-        document.getElementById("chordNameDisplay").innerHTML="🏆 和弦大师毕业！"; 
+        document.getElementById("chordNameDisplay").innerHTML=" 和弦大师毕业！"; 
         completed=true; 
-        msg("🎉 恭喜你完成了所有29关！");
+        msg(" 恭喜你完成了所有29关！");
         return; 
     }
     let L = levels[lvl];
@@ -1752,21 +1743,26 @@ function nextQuiz() {
     if(completed) return;
     if(streak >= 8){ advance(); return; }
     let qb = questionBank[levels[lvl].id] || questionBank[1];
+    if(!qb || qb.length === 0) {
+        document.getElementById("quizArea").innerHTML = '<div class="feedback"> 题库完善中，请先添加题目</div>';
+        return;
+    }
     currentQ = qb[Math.floor(Math.random() * qb.length)];
     let qa = document.getElementById("quizArea");
-    qa.innerHTML = `<div style="color:#F2C94C; margin-bottom:8px">📖 乐理闯关 · 第${streak+1}/8题</div><div class="lyric-question">${currentQ.q}</div><div class="lyric-options" id="quizOpts"></div><div id="quizFeed" style="color:#C8E6C9; font-size:0.75rem; text-align:center; margin-top:8px"></div>`;
+    qa.innerHTML = `<div style="color:#F2C94C; margin-bottom:8px"> 乐理闯关 · 第${streak+1}/8题</div><div class="lyric-question">${currentQ.q}</div><div class="lyric-options" id="quizOpts"></div><div id="quizFeed" style="color:#C8E6C9; font-size:0.75rem; text-align:center; margin-top:8px"></div>`;
     let optsDiv = document.getElementById("quizOpts");
+    optsDiv.innerHTML = "";
     currentQ.opts.forEach((opt,i)=>{
         let btn = document.createElement("button"); btn.className="lyric-opt-btn"; btn.innerText=opt;
-        btn.onclick=()=>{
-            if(i===currentQ.ans){
+        btn.onclick = () => {
+            if (i === currentQ.ans) {
                 streak++;
                 document.getElementById("quizFeed").innerHTML = "✅ 正确！继续下一题";
                 msg("✓ 回答正确");
-                addScore(5, "乐理答题正确");
+                beginnerScore(5, "乐理答题正确");
                 nextQuiz();
             } else {
-                streak=0;
+                streak = 0;
                 document.getElementById("quizFeed").innerHTML = `❌ 错误！正确答案：${currentQ.opts[currentQ.ans]}。 ${currentQ.exp}`;
                 msg("❌ 连击中断，重新开始8题");
                 nextQuiz();
@@ -1788,26 +1784,29 @@ async function advance() {
     document.getElementById("scoreValue").innerText = score;
     completed = true;
     msg(`✨ 闯关成功！ +${add}分 ✨`);
-    await addScore(add, `通关第${lvl+1}关`);
-    await recordLevelCompletion(lvl);
+    await beginnerScore(add, `通关第${lvl+1}关`);
+    
+    const userId = currentUserData?.user_id || "guest";
+    localStorage.setItem(`level_${lvl}_${userId}`, "true");
+    updateProgressDisplay();
     saveProgress();
     
-    const quotes = ["🎵 和弦是音乐的骨架", "📚 坚持每天10分钟", "🌱 慢慢来，比较快", "💖 情绪到位，音乐自然好听", "🎹 你正在变得更懂音乐", "🌟 每一关都是成长"];
-    alert("🌾 芦苇说：" + quotes[Math.floor(Math.random() * quotes.length)]);
+    const quotes = [" 和弦是音乐的骨架", " 坚持每天10分钟", " 慢慢来，比较快", " 情绪到位，音乐自然好听", " 你正在变得更懂音乐", " 每一关都是成长"];
+    alert(" 芦苇说：" + quotes[Math.floor(Math.random() * quotes.length)]);
     
     if(lvl + 1 < levels.length){
         lvl++;
         saveProgress();
         loadLevel();
     } else {
-        msg("🏆 和弦大师毕业！恭喜你完成了所有29关！");
-        alert("🎉 恭喜你完成了全部29关和弦学习！你已经从音乐小白成长为和弦达人了！");
+        msg(" 和弦大师毕业！恭喜你完成了所有29关！");
+        alert(" 恭喜你完成了全部29关和弦学习！你已经从音乐小白成长为和弦达人了！");
     }
 }
 
-function clearAll(){ played=[]; refresh(); msg("🗑️ 清空所有音符，重新弹奏吧"); }
+function clearAll(){ played=[]; refresh(); msg("️ 清空所有音符，重新弹奏吧"); }
 
-async function resetAll() {
+function resetAll() {
     if(confirm("⚠️ 确定重置所有进度吗？积分和通关记录将清空")){
         lvl=0; score=0; played=[]; streak=0;
         document.getElementById("scoreValue").innerText="0";
@@ -1816,29 +1815,21 @@ async function resetAll() {
             localStorage.removeItem(`level_${i}_${userId}`);
         }
         localStorage.removeItem(`current_level_${userId}`);
-        localStorage.removeItem(`user_score_${userId}`);
-        if(currentUserData) {
-            currentUserData.score = 0;
-            localStorage.setItem(AUTH_CONFIG.USER_KEY, JSON.stringify(currentUserData));
-            if(typeof window.API !== 'undefined' && window.API.addScore) {
-                await window.API.addScore(0, "重置");
-            }
-        }
+        localStorage.removeItem(`${userId}beginnerScore`);
         loadLevel();
         refresh();
         updateProgressDisplay();
-        msg("🔄 游戏已重置，从第1关重新出发！");
+        msg(" 游戏已重置，从第1关重新出发！");
     }
 }
 
 // ==================== 初始化 ====================
 document.body.onclick = () => { if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); };
-document.getElementById("checkChordBtn").onclick = () => { if(!completed && streak>=8 && eqArr(played, levels[lvl].target)) advance(); else if(streak<8) msg("📖 请先连续答对8道乐理题"); else msg("❌ 和弦不正确"); };
+document.getElementById("checkChordBtn").onclick = () => { if(!completed && streak>=8 && eqArr(played, levels[lvl].target)) advance(); else if(streak<8) msg(" 请先连续答对8道乐理题"); else msg("❌ 和弦不正确"); };
 document.getElementById("clearNotesBtn").onclick = clearAll;
 document.getElementById("resetGameBtn").onclick = resetAll;
 
 buildPiano();
-updateUserUI();
 loadUserProgress();
 loadLevel();
 </script>
