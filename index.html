@@ -389,6 +389,80 @@
             display: inline-block;
             margin: 10px 0;
         }
+/* 从零学音乐 · 渐变卡片 */
+.gradient-learn {
+    background: linear-gradient(135deg, #8a8a8a, #b8a0c8, #1a3a2a);
+    background-size: 200% 200%;
+    border: 1px solid #F2C94C;
+    animation: gradientFlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+/* 学写歌 · 渐变卡片 */
+.gradient-write {
+    background: linear-gradient(135deg, #4a4a5a, #7a9ab0, #1a3a2a);
+    background-size: 200% 200%;
+    border: 1px solid #F2C94C;
+    animation: gradientFlowWrite 4s ease-in-out infinite alternate;
+}
+
+@keyframes gradientFlowWrite {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+/* 学编曲 · 渐变卡片 */
+.gradient-produce {
+    background: linear-gradient(135deg, #3a3a4a, #8a7a6a, #1a3a2a);
+    background-size: 200% 200%;
+    border: 1px solid #F2C94C;
+    animation: gradientFlowProduce 4s ease-in-out infinite alternate;
+}
+
+@keyframes gradientFlowProduce {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* AI音乐 · 渐变卡片 */
+.gradient-aimusic {
+    background: linear-gradient(135deg, #3a3a4a, #6a5a7a, #1a3a2a);
+    background-size: 200% 200%;
+    border: 1px solid #F2C94C;
+    animation: gradientFlowAI 4s ease-in-out infinite alternate;
+}
+
+@keyframes gradientFlowAI {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* 出道变现 · 渐变卡片 */
+.gradient-career {
+    background: linear-gradient(135deg, #3a3a4a, #8a7a3a, #1a3a2a);
+    background-size: 200% 200%;
+    border: 1px solid #F2C94C;
+    animation: gradientFlowCareer 4s ease-in-out infinite alternate;
+}
+
+@keyframes gradientFlowCareer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* 作词作曲学堂 · 渐变卡片 */
+.gradient-songwriting {
+    background: linear-gradient(135deg, #f5f5f5, #b0b0b0, #1a3a2a);
+    background-size: 200% 200%;
+    animation: gradientFlowSongwriting 5s ease-in-out infinite alternate;
+}
+
+@keyframes gradientFlowSongwriting {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>    
     <script src="api.js"></script>
@@ -448,225 +522,75 @@
         <span id="lastModule">暂无记录</span>
     </div>
 
-    <!-- 作词作曲学堂 -->
-    <a href="songwriting.html" class="module-card" style="margin-bottom: 14px;">
-        <div class="module-icon">✍️</div>
-        <div class="module-info">
-            <div class="module-name">芦苇独特视角 · 作词作曲学堂</div>
-            <div class="module-desc">芦苇老师亲授 · 118节系统课 · 从零到创作 · 视频课需购买</div>
-        </div>
-        <div class="module-badge">系统课</div>
-    </a>
-
-    <!-- 两列布局：核心模块 -->
-    <div class="modules-container">
-        
-        <!-- 左边一列 -->
-        <div class="modules-left">
-            <!-- 音乐小白学习 -->
-            <div class="module-card" data-module="beginner">
-                <div class="module-icon"></div>
-                <div class="module-info">
-                    <div class="module-name">音乐小白学习</div>
-                    <div class="module-desc">钢琴键盘 · 29关和弦闯关 · 乐理题库 · 积分系统</div>
-                </div>
-                <div class="module-badge">推荐入门</div>
-            </div>
-
-            <!-- 乐理手册 -->
-            <div class="module-card" data-module="theory">
-                <div class="module-icon"></div>
-                <div class="module-info">
-                    <div class="module-name">乐理手册</div>
-                    <div class="module-desc">音程 · 音阶 · 和弦 · 调式 · 节奏 · 配器 · 和弦词典</div>
-                </div>
-                <div class="module-badge">必备知识</div>
-            </div>
-
-            <!-- 风格与鉴赏 -->
-            <div class="module-card" data-module="style">
-                <div class="module-icon"></div>
-                <div class="module-info">
-                    <div class="module-name">风格与鉴赏</div>
-                    <div class="module-desc">15+音乐风格 · 26位大师 · 民歌·古风</div>
-                </div>
-                <div class="module-badge">拓展视野</div>
-            </div>
-
-            <!-- AI音乐完全手册 -->
-            <a href="aimusicmanual.html" target="_blank" class="module-card" style="justify-content: space-between;">
-                <div style="display: flex; align-items: center; gap: 14px;">
-                    <div class="module-icon">🤖</div>
-                    <div class="module-info">
-                        <div class="module-name">AI音乐生成完全手册 · 闯关特训</div>
-                        <div class="module-desc">AI音乐工具深度学习</div>
-                    </div>
-                </div>
-                <div class="module-badge">特训</div>
-            </a>
-
-            <!-- 芦苇工具箱 -->
-            <div class="module-card" data-module="toolbox">
-                <div class="module-icon">🛠️</div>
-                <div class="module-info">
-                    <div class="module-name">芦苇工具箱</div>
-                    <div class="module-desc">节拍器 · 练耳 · 计时器 · 打卡 · 笔记 · 作品 · 统计</div>
-                </div>
-                <div class="module-badge">实用工具</div>
-            </div>
-
-            <!-- 音乐工具箱推荐 -->
-            <div class="module-card" data-module="tools">
-                <div class="module-icon">🛠️</div>
-                <div class="module-info">
-                    <div class="module-name">音乐工具箱推荐</div>
-                    <div class="module-desc">AI 音乐生成 · 识谱 · 伴奏分离 · 练耳 · 宿主软件</div>
-                </div>
-                <div class="module-badge">免费工具</div>
-            </div>
-
-            <!-- 工具使用指南 -->
-            <div class="module-card" data-module="guide">
-                <div class="module-icon"></div>
-                <div class="module-info">
-                    <div class="module-name">以上音乐工具使用指南</div>
-                    <div class="module-desc">Suno · 谱乐AI · 伴奏分离 · 宿主软件教程</div>
-                </div>
-                <div class="module-badge">教程</div>
-            </div>
-
-            <!-- 综合闯关 -->
-            <div class="module-card" data-module="advanced">
-                <div class="module-icon"></div>
-                <div class="module-info">
-                    <div class="module-name">综合闯关</div>
-                    <div class="module-desc">音程 · 节奏 · 旋律 · 调式 · 和声织体 · 配器 · 声乐 · 爵士</div>
-                </div>
-                <div class="module-badge">进阶挑战</div>
-            </div>
-
-            <!-- LuWei.studio 标准版 -->
-            <div class="module-card" data-module="studio">
-                <div class="module-icon"></div>
-                <div class="module-info">
-                    <div class="module-name">LuWei.studio 标准版</div>
-                    <div class="module-desc">专业DAW · 多轨编曲 · 钢琴卷帘 · MIDI导出 · 录音混音</div>
-                </div>
-                <div class="module-badge">推荐</div>
-            </div>
-
-            <!-- LuWei.studio 超强版 -->
-            <div class="module-card module-card-super" data-module="studio2">
-                <div class="module-icon">⚡</div>
-                <div class="module-info">
-                    <div class="module-name">LuWei.studio 超强版</div>
-                    <div class="module-desc">250+功能 · 10大全能菜单 · AI智能框架 · 50+效果器 · 乐谱/视频/云端 · 旗舰体验</div>
-                </div>
-                <div class="module-badge badge-super">⭐ 旗舰版</div>
-            </div>
-
-            <!-- 和弦模板库加强版 -->
-            <div class="module-card" data-module="templates">
-                <div class="module-icon"></div>
-                <div class="module-info">
-                    <div class="module-name">和弦模板库加强版</div>
-                    <div class="module-desc">85条和弦进行 · 可筛选搜索 · 和弦构成音速查</div>
-                </div>
-                <div class="module-badge">⭐ 85条完整版</div>
-            </div>
-        </div>
-
-        <!-- 右边一列 -->
-        <div class="modules-right">
-            <!-- 创作工坊 -->
-            <div class="module-card" data-module="creation">
-                <div class="module-icon">✍️</div>
-                <div class="module-info">
-                    <div class="module-name">创作工坊</div>
-                    <div class="module-desc">歌词押韵 · 灵感库 · 22条和弦模板 · 投稿</div>
-                </div>
-                <div class="module-badge">原创创作</div>
-            </div>
-
-            <!-- 歌词变现 -->
-            <div class="module-card" data-module="lyricsbiz">
-                <div class="module-icon"></div>
-                <div class="module-info">
-                    <div class="module-name">歌词变现</div>
-                    <div class="module-desc">写词赚钱 · 4大渠道 · 训练营 · 1对1改词</div>
-                </div>
-                <div class="module-badge"> 热门</div>
-            </div>
-    <!-- 音乐人接单中心 -->
-    <div class="module-card" data-module="jobcenter" style="margin-bottom: 14px;">
-        <div class="module-icon"></div>
-        <div class="module-info">
-            <div class="module-name">音乐人接单中心</div>
-            <div class="module-desc">发布需求 · 投稿中标 · 版权签约 · 交易评价</div>
-        </div>
-        <div class="module-badge"> 新功能</div>
+<!-- 作词作曲学堂 -->
+<a href=" " class="module-card gradient-songwriting" style="margin-bottom: 14px; display: flex; align-items: center; gap: 14px; text-decoration: none; padding: 16px 18px; border-radius: 24px; border: 1px solid #F2C94C;">
+    <div class="module-icon">✍️</div>
+    <div class="module-info">
+        <div class="module-name">芦苇独特视角 · 作词作曲学堂</div>
+        <div class="module-desc">芦苇老师亲授 · 118节系统课 · 从零到创作 · 视频课需购买</div>
     </div>
-            <!-- 芦苇歌词课程 -->
-            <a href="lyricshandbook.html" target="_blank" class="module-card">
-                <div style="font-size: 2rem; min-width: 55px; text-align: center;"></div>
-                <div class="module-info">
-                    <div class="module-name">芦苇歌词课程</div>
-                    <div class="module-desc">基础篇 · 初级/中级/高级/特级 + 进阶篇</div>
-                </div>
-                <div class="module-badge">系统课</div>
-            </a>
+    <div class="module-badge">系统课</div>
+</a >
 
-            <!-- 芦苇歌词武功秘籍 -->
-            <a href="lyricswugong.html" target="_blank" class="module-card">
-                <div style="font-size: 2rem; min-width: 55px; text-align: center;">⚔️</div>
-                <div class="module-info">
-                    <div class="module-name">芦苇歌词武功秘籍</div>
-                    <div class="module-desc">六部秘籍 · 仙女撒花/万物复苏/众生皆苦/大爱无边/羽化成仙/回归自然</div>
-                </div>
-                <div class="module-badge">秘籍</div>
-            </a>
+<!-- ===== 五个板块大卡片 ===== -->
+<div class="modules-container" style="display: flex; flex-direction: column; gap: 16px;">
 
-            <!-- 芦苇风格歌词素材库 -->
-            <a href="lyricsstylelibrary.html" class="module-card">
-                <div style="font-size: 28px; min-width: 55px; text-align: center;"></div>
-                <div class="module-info">
-                    <div class="module-name">芦苇风格歌词素材库</div>
-                    <div class="module-desc">按「体」分类 · 华语乐坛首创</div>
-                </div>
-                <div class="module-badge">新</div>
-            </a>
-            <!-- MIDI 素材库 -->
-            <a href="midi.html" class="module-card">
-                <div style="font-size: 2.2rem; min-width: 55px; text-align: center;"></div>
-                <div class="module-info">
-                    <div class="module-name">MIDI 素材库</div>
-                    <div class="module-desc">10万+ MIDI文件 · 编曲扒带必备 · 免费下载</div>
-                </div>
-                <div class="module-badge">免费</div>
-            </a>
-
-            <!-- MIDI 转简谱 · 专业版 -->
-            <a href="midi2sheetpro.html" class="module-card">
-                <div style="font-size: 2.2rem; min-width: 55px; text-align: center;"></div>
-                <div class="module-info">
-                    <div class="module-name">MIDI 转简谱 · 专业版</div>
-                    <div class="module-desc">多声部 · 调性识别 · 智能音名 · 导出PDF/图片</div>
-                </div>
-                <div class="module-badge">⭐ 专业版</div>
-            </a>
-
-            <!-- 乐谱导航 -->
-            <div class="module-card" data-module="sheetmusic">
-                <div class="module-icon"></div>
-                <div class="module-info">
-                    <div class="module-name">乐谱导航</div>
-                    <div class="module-desc">中国曲谱网 · 虫虫钢琴 · 吉他社 · IMSLP</div>
-                </div>
-                <div class="module-badge">免费</div>
+    <!-- 板块1：从零学音乐 -->
+<a href="learn.html" class="module-card gradient-learn" style="display: block; padding: 20px 24px; text-decoration: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 1.3rem; font-weight: bold; color: #FFD966;">🎵 从零学音乐</div>
+                <div style="font-size: 0.75rem; color: #AAD4B0; margin-top: 6px;">音乐小白学习 · 乐理手册 · 风格与鉴赏 · 综合闯关</div>
             </div>
+            <div style="color: #E69A2E; font-size: 0.8rem;">点击进入 →</div>
         </div>
+    </a >
 
-    </div>
+    <!-- 板块2：学写歌 -->
+<a href="write.html" class="module-card gradient-write" style="display: block; padding: 20px 24px; text-decoration: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 1.3rem; font-weight: bold; color: #FFD966;">✍️ 学写歌</div>
+                <div style="font-size: 0.75rem; color: #AAD4B0; margin-top: 6px;">作词作曲学堂 · 芦苇工具箱 · 创作工坊 · 芦苇歌词课程 · 芦苇歌词武功秘籍 · 芦苇风格歌词素材库 · 歌词变现</div>
+            </div>
+            <div style="color: #E69A2E; font-size: 0.8rem;">点击进入 →</div>
+        </div>
+    </a >
+
+    <!-- 板块3：学编曲 -->
+<a href="produce.html" class="module-card gradient-produce" style="display: block; padding: 20px 24px; text-decoration: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 1.3rem; font-weight: bold; color: #FFD966;">🎧 学编曲</div>
+                <div style="font-size: 0.75rem; color: #AAD4B0; margin-top: 6px;">LuWei.studio标准版 · 超强版 · 和弦模板库 · MIDI素材库 · MIDI转简谱 · 乐谱导航</div>
+            </div>
+            <div style="color: #E69A2E; font-size: 0.8rem;">点击进入 →</div>
+        </div>
+    </a >
+
+    <!-- 板块4：AI音乐 -->
+<a href="aimusiczone.html" class="module-card gradient-aimusic" style="display: block; padding: 20px 24px; text-decoration: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 1.3rem; font-weight: bold; color: #FFD966;">🤖 AI音乐</div>
+                <div style="font-size: 0.75rem; color: #AAD4B0; margin-top: 6px;">AI音乐生成完全手册 · 音乐工具箱推荐 · 工具使用指南</div>
+            </div>
+            <div style="color: #E69A2E; font-size: 0.8rem;">点击进入 →</div>
+        </div>
+    </a >
+
+    <!-- 板块5：出道变现 -->
+<a href="career.html" class="module-card gradient-career" style="display: block; padding: 20px 24px; text-decoration: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 1.3rem; font-weight: bold; color: #FFD966;">🚀 出道变现</div>
+                <div style="font-size: 0.75rem; color: #AAD4B0; margin-top: 6px;">音乐人接单中心</div>
+            </div>
+            <div style="color: #E69A2E; font-size: 0.8rem;">点击进入 →</div>
+        </div>
+    </a >
+
+</div>
 
     <!-- 芦苇说 -->
     <div class="reed-say">
