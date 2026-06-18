@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>学写歌 · 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+
+        .back-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .back-bar a {
+            color: #AAD4B0;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-bar a:hover { color: #FFD966; }
+        .back-bar .title {
+            color: #FFD966;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .module-card {
+            background: #0f281dcc;
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            border: 1px solid #F2C94C;
+            padding: 16px 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            margin-bottom: 12px;
+        }
+        .module-card:active { transform: scale(0.98); background: #1a3a2a; }
+        .module-icon {
+            font-size: 2.2rem;
+            width: 55px;
+            height: 55px;
+            background: #2a4a3a;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .module-info { flex: 1; }
+        .module-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 4px;
+        }
+        .module-desc {
+            font-size: 0.65rem;
+            color: #C8E6C9;
+            line-height: 1.3;
+        }
+        .module-badge {
+            font-size: 0.55rem;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .footer {
+            text-align: center;
+            color: #b8aa78;
+            font-size: 0.55rem;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #F2C94C40;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="back-bar">
+        ← 返回首页
+        <span class="title">✍️ 学写歌</span>
+    </div>
+
+    <!-- 作词作曲学堂 -->
+    <a href="songwriting.html" class="module-card">
+        <div class="module-icon">✍️</div>
+        <div class="module-info">
+            <div class="module-name">芦苇独特视角 · 作词作曲学堂</div>
+            <div class="module-desc">芦苇老师亲授 · 118节系统课 · 从零到创作 · 视频课需购买</div>
+        </div>
+        <div class="module-badge">系统课</div>
+    </a >
+
+    <!-- 芦苇工具箱 -->
+    <a href="toolbox.html" class="module-card">
+        <div class="module-icon">🛠️</div>
+        <div class="module-info">
+            <div class="module-name">芦苇工具箱</div>
+            <div class="module-desc">节拍器 · 练耳 · 计时器 · 打卡 · 笔记 · 作品 · 统计</div>
+        </div>
+        <div class="module-badge">实用工具</div>
+    </a >
+
+    <!-- 创作工坊 -->
+    <a href="creation.html" class="module-card">
+        <div class="module-icon">💡</div>
+        <div class="module-info">
+            <div class="module-name">创作工坊</div>
+            <div class="module-desc">歌词押韵 · 灵感库 · 22条和弦模板 · 投稿</div>
+        </div>
+        <div class="module-badge">原创创作</div>
+    </a >
+
+    <!-- 芦苇歌词课程 -->
+    <a href="lyricshandbook.html" class="module-card">
+        <div class="module-icon">📚</div>
+        <div class="module-info">
+            <div class="module-name">芦苇歌词课程</div>
+            <div class="module-desc">基础篇 · 初级/中级/高级/特级 + 进阶篇</div>
+        </div>
+        <div class="module-badge">系统课</div>
+    </a >
+
+    <!-- 芦苇歌词武功秘籍 -->
+    <a href="lyricswugong.html" class="module-card">
+        <div class="module-icon">⚔️</div>
+        <div class="module-info">
+            <div class="module-name">芦苇歌词武功秘籍</div>
+            <div class="module-desc">六部秘籍 · 仙女撒花/万物复苏/众生皆苦/大爱无边/羽化成仙/回归自然</div>
+        </div>
+        <div class="module-badge">秘籍</div>
+    </a >
+
+    <!-- 芦苇风格歌词素材库 -->
+    <a href="lyricsstylelibrary.html" class="module-card">
+        <div class="module-icon">🎨</div>
+        <div class="module-info">
+            <div class="module-name">芦苇风格歌词素材库</div>
+            <div class="module-desc">按「体」分类 · 华语乐坛首创</div>
+        </div>
+        <div class="module-badge">新</div>
+    </a >
+
+    <!-- 歌词变现 -->
+    <a href="lyricsbiz.html" class="module-card">
+        <div class="module-icon">💰</div>
+        <div class="module-info">
+            <div class="module-name">歌词变现</div>
+            <div class="module-desc">写词赚钱 · 4大渠道 · 训练营 · 1对1改词</div>
+        </div>
+        <div class="module-badge">热门</div>
+    </a >
+
+    <div class="footer">© A-WAY 芦苇 · 学写歌</div>
+</div>
+</body>
+</html>

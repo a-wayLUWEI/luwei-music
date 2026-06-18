@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>从零学音乐 · 芦苇音乐学堂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+            padding: 40px 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+
+        .back-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .back-bar a {
+            color: #AAD4B0;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-bar a:hover { color: #FFD966; }
+        .back-bar .title {
+            color: #FFD966;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .module-card {
+            background: #0f281dcc;
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            border: 1px solid #F2C94C;
+            padding: 16px 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            margin-bottom: 12px;
+        }
+        .module-card:active { transform: scale(0.98); background: #1a3a2a; }
+        .module-icon {
+            font-size: 2.2rem;
+            width: 55px;
+            height: 55px;
+            background: #2a4a3a;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .module-info { flex: 1; }
+        .module-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 4px;
+        }
+        .module-desc {
+            font-size: 0.65rem;
+            color: #C8E6C9;
+            line-height: 1.3;
+        }
+        .module-badge {
+            font-size: 0.55rem;
+            background: #E69A2E;
+            color: #2D1E0C;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .footer {
+            text-align: center;
+            color: #b8aa78;
+            font-size: 0.55rem;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #F2C94C40;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="back-bar">
+        ← 返回首页
+        <span class="title">🎵 从零学音乐</span>
+    </div>
+
+    <!-- 音乐小白学习 -->
+    <a href="beginner.html" class="module-card">
+        <div class="module-icon">🎹</div>
+        <div class="module-info">
+            <div class="module-name">音乐小白学习</div>
+            <div class="module-desc">钢琴键盘 · 29关和弦闯关 · 乐理题库 · 积分系统</div>
+        </div>
+        <div class="module-badge">推荐入门</div>
+    </a >
+
+    <!-- 乐理手册 -->
+    <a href="theory.html" class="module-card">
+        <div class="module-icon">📖</div>
+        <div class="module-info">
+            <div class="module-name">乐理手册</div>
+            <div class="module-desc">音程 · 音阶 · 和弦 · 调式 · 节奏 · 配器 · 和弦词典</div>
+        </div>
+        <div class="module-badge">必备知识</div>
+    </a >
+
+    <!-- 风格与鉴赏 -->
+    <a href="style.html" class="module-card">
+        <div class="module-icon">🎧</div>
+        <div class="module-info">
+            <div class="module-name">风格与鉴赏</div>
+            <div class="module-desc">15+音乐风格 · 26位大师 · 民歌 · 古风</div>
+        </div>
+        <div class="module-badge">拓展视野</div>
+    </a >
+
+    <!-- 综合闯关 -->
+    <a href="advanced.html" class="module-card">
+        <div class="module-icon">🏆</div>
+        <div class="module-info">
+            <div class="module-name">综合闯关</div>
+            <div class="module-desc">音程 · 节奏 · 旋律 · 调式 · 和声织体 · 配器 · 声乐 · 爵士</div>
+        </div>
+        <div class="module-badge">进阶挑战</div>
+    </a >
+
+    <div class="footer">© A-WAY 芦苇 · 从零学音乐</div>
+</div>
+</body>
+</html>
