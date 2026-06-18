@@ -16,36 +16,54 @@
     z-index: 1000;
 }
 
-/* AI助手按钮（跟学习路径按钮共用大部分样式，但可以独立微调） */
+/* AI助手按钮 - 呼吸光晕 + 流光扫过 */
 .ai-float-btn {
     width: 72px;
     height: 72px;
     background: radial-gradient(circle at 30% 30%, #FFD966, #E69A2E);
     border: none;
     border-radius: 50%;
-    box-shadow: 0 4px 20px rgba(230, 154, 46, 0.5);
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    transition: all 0.3s ease;
     padding: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: glowPulseAI 3s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(230, 154, 46, 0.3);
 }
+
 .ai-float-btn:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 30px rgba(230, 154, 46, 0.7);
+    animation: none;
+    box-shadow: 0 0 40px rgba(230, 154, 46, 0.7);
 }
-.ai-float-btn:active {
-    transform: scale(0.95);
+
+/* 流光扫过 - AI助手 */
+.ai-float-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: lightSweepAI 3s ease-in-out infinite;
 }
+
 .ai-float-btn .icon {
     font-size: 1.5rem;
     display: block;
     line-height: 1.2;
     margin-bottom: 2px;
+    position: relative;
+    z-index: 1;
 }
+
 .ai-float-btn .label {
     display: block;
     font-size: 0.65rem;
@@ -53,38 +71,58 @@
     color: #2D1E0C;
     line-height: 1.2;
     text-align: center;
+    position: relative;
+    z-index: 1;
 }
 
-/* 学习路径按钮（保留你原来的样式，但要确保没有 position: fixed 冲突） */
+/* 学习路径按钮 - 呼吸光晕 + 流光扫过 */
 .float-btn {
     width: 72px;
     height: 72px;
     background: radial-gradient(circle at 30% 30%, #FFD966, #E69A2E);
     border: none;
     border-radius: 50%;
-    box-shadow: 0 4px 20px rgba(230, 154, 46, 0.5);
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    transition: all 0.3s ease;
     padding: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: glowPulseLearn 3s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(230, 154, 46, 0.3);
 }
+
 .float-btn:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 30px rgba(230, 154, 46, 0.7);
+    animation: none;
+    box-shadow: 0 0 40px rgba(230, 154, 46, 0.7);
 }
-.float-btn:active {
-    transform: scale(0.95);
+
+/* 流光扫过 - 学习路径 */
+.float-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: lightSweepLearn 3s ease-in-out infinite;
 }
+
 .float-btn .icon {
     font-size: 1.5rem;
     display: block;
     line-height: 1.2;
     margin-bottom: 2px;
+    position: relative;
+    z-index: 1;
 }
+
 .float-btn .label {
     display: block;
     font-size: 0.65rem;
@@ -92,18 +130,54 @@
     color: #2D1E0C;
     line-height: 1.2;
     text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* 呼吸光晕动画 - AI助手 */
+@keyframes glowPulseAI {
+    0% { box-shadow: 0 0 20px rgba(230, 154, 46, 0.3), 0 0 40px rgba(230, 154, 46, 0.1); }
+    50% { box-shadow: 0 0 40px rgba(230, 154, 46, 0.6), 0 0 80px rgba(230, 154, 46, 0.2); }
+    100% { box-shadow: 0 0 20px rgba(230, 154, 46, 0.3), 0 0 40px rgba(230, 154, 46, 0.1); }
+}
+
+/* 呼吸光晕动画 - 学习路径 */
+@keyframes glowPulseLearn {
+    0% { box-shadow: 0 0 20px rgba(230, 154, 46, 0.3), 0 0 40px rgba(230, 154, 46, 0.1); }
+    50% { box-shadow: 0 0 40px rgba(230, 154, 46, 0.6), 0 0 80px rgba(230, 154, 46, 0.2); }
+    100% { box-shadow: 0 0 20px rgba(230, 154, 46, 0.3), 0 0 40px rgba(230, 154, 46, 0.1); }
+}
+
+/* 流光扫过动画 - AI助手 */
+@keyframes lightSweepAI {
+    0% { left: -100%; }
+    100% { left: 200%; }
+}
+
+/* 流光扫过动画 - 学习路径 */
+@keyframes lightSweepLearn {
+    0% { left: -100%; }
+    100% { left: 200%; }
 }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        body {
-            min-height: 100vh;
-            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
-            font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
-            padding: 40px 20px;
-        }
+body {
+    min-height: 100vh;
+    background: linear-gradient(145deg, #1a3a2a, #0e2a1f, #1a3a2a);
+    background-size: 200% 200%;
+    animation: bgFlow 8s ease-in-out infinite alternate;
+    font-family: 'Segoe UI', 'Poppins', 'Noto Sans SC', system-ui;
+    padding: 40px 20px;
+}
+
+@keyframes bgFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -116,28 +190,124 @@
             font-size: 3rem;
             margin-bottom: 10px;
         }
-        .title {
-            font-size: 1.6rem;
-            font-weight: bold;
-            color: #FFD966;
-            margin-bottom: 6px;
-        }
-        .subtitle {
-            font-size: 0.8rem;
-            color: #AAD4B0;
-        }
+
+.title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 6px;
+    background: linear-gradient(90deg, #FFD966, #E69A2E, #f5f5f0, #1a3a2a, #6a5a8a, #FFD966);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleShine 6s ease-in-out infinite alternate;
+}
+
+@keyframes titleShine {
+    0% { background-position: 0% 50%; }
+    16% { background-position: 16% 50%; }
+    33% { background-position: 33% 50%; }
+    50% { background-position: 50% 50%; }
+    66% { background-position: 66% 50%; }
+    83% { background-position: 83% 50%; }
+    100% { background-position: 100% 50%; }
+}
+.title-wrapper {
+    background: rgba(15, 40, 29, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(242, 201, 76, 0.2);
+    border-radius: 24px;
+    padding: 16px 32px 14px;
+    display: inline-block;
+    box-shadow: 0 0 40px rgba(242, 201, 76, 0.15), 0 0 80px rgba(242, 201, 76, 0.05);
+    animation: titleWrapperGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleWrapperGlow {
+    0% { box-shadow: 0 0 40px rgba(242, 201, 76, 0.15), 0 0 80px rgba(242, 201, 76, 0.05); }
+    100% { box-shadow: 0 0 60px rgba(242, 201, 76, 0.35), 0 0 120px rgba(242, 201, 76, 0.12); }
+}
+
+.title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 6px;
+    background: linear-gradient(90deg, #FFD966, #E69A2E, #f5f5f0, #1a3a2a, #6a5a8a, #FFD966);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleShine 6s linear infinite;
+}
+
+@keyframes titleShine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 400% 50%; }
+}
+.title-wrapper {
+    position: relative;
+    background: rgba(15, 40, 29, 0.4);
+    backdrop-filter: blur(8px);
+    border-radius: 24px;
+    padding: 16px 32px 14px;
+    display: inline-block;
+}
+
+/* 流动光晕边框 */
+.title-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 24px;
+    padding: 2px;
+    background: conic-gradient(from 0deg, #FFD966, #E69A2E, #f5f5f0, #1a3a2a, #6a5a8a, #FFD966);
+    background-size: 300% 300%;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: borderSpin 6s linear infinite;
+    z-index: -1;
+}
+
+@keyframes borderSpin {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+.subtitle {
+    font-size: 0.8rem;
+    color: #AAD4B0;
+    background: linear-gradient(90deg, #a8d5ba, #c0c0c0, #8ab8d4, #8a7aba, #c0c0c0, #6a6a7a);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: subtitleShine 8s linear infinite;
+}
+
+@keyframes subtitleShine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 400% 50%; }
+}
         /* 用户信息栏 */
-        .user-bar {
-            background: #0f281dcc;
-            border-radius: 60px;
-            padding: 8px 16px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(4px);
-            border: 1px solid #F2C94C;
-        }
+.user-bar {
+    border-radius: 60px;
+    padding: 8px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(4px);
+    border: 1px solid #F2C94C;
+    background: linear-gradient(135deg, #f5f5f0, #4a4a5a, #8a7a9a, #6a8a9a, #4a4a5a);
+    background-size: 300% 300%;
+    animation: coolFlow 6s ease-in-out infinite alternate;
+    box-shadow: 0 0 20px rgba(242, 201, 76, 0.08);
+}
+
+@keyframes coolFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
         .user-info {
             display: flex;
             align-items: center;
@@ -153,11 +323,17 @@
             justify-content: center;
             font-size: 1.2rem;
         }
-        .user-name {
-            color: #FFD966;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
+.user-name {
+    color: #ffffff !important;
+}
+
+.login-btn {
+    color: #ffffff !important;
+}
+
+.logout-btn {
+    color: #ffffff !important;
+}
         .user-score {
             background: #2a4a3a;
             padding: 4px 12px;
@@ -463,6 +639,379 @@
     0% { background-position: 0% 50%; }
     100% { background-position: 100% 50%; }
 }
+/* 金色 ↔ 浅白 渐变按钮 */
+.gradient-goldwhite {
+    background: linear-gradient(135deg, #FFD966, #f5f5f0, #FFD966);
+    background-size: 200% 200%;
+    border: none;
+    color: #2D1E0C;
+    font-weight: bold;
+    cursor: pointer;
+    animation: goldWhiteFlow 4s ease-in-out infinite alternate;
+    transition: transform 0.2s ease;
+}
+
+.gradient-goldwhite:hover {
+    transform: scale(1.02);
+}
+
+@keyframes goldWhiteFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+/* 芦苇清冷音乐 · 渐变按钮 */
+.gradient-cool {
+    background: linear-gradient(135deg, #f5f5f0, #4a4a5a, #8a7a9a, #6a8a9a, #4a4a5a);
+    background-size: 300% 300%;
+    border: none;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    animation: coolFlow 6s ease-in-out infinite alternate;
+    transition: transform 0.2s ease;
+}
+
+.gradient-cool:hover {
+    transform: scale(1.02);
+}
+
+@keyframes coolFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
+/* 音乐人入驻申请 · 渐变按钮 */
+.gradient-join {
+    background: linear-gradient(135deg, #f5f5f0, #4a4a5a, #6a8a9a, #4a4a5a);
+    background-size: 300% 300%;
+    border: none;
+    color: #ffffff !important;
+    font-weight: bold;
+    cursor: pointer;
+    animation: joinFlow 5s ease-in-out infinite alternate;
+    transition: transform 0.2s ease;
+}
+
+.gradient-join:hover {
+    transform: scale(1.02);
+}
+
+@keyframes joinFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* 音乐人登录 · 渐变按钮 */
+.gradient-login {
+    background: linear-gradient(135deg, #f5f5f0, #4a4a5a, #7a5a7a, #4a4a5a);
+    background-size: 300% 300%;
+    border: none;
+    color: #ffffff !important;
+    font-weight: bold;
+    cursor: pointer;
+    animation: loginFlow 5s ease-in-out infinite alternate;
+    transition: transform 0.2s ease;
+}
+
+.gradient-login:hover {
+    transform: scale(1.02);
+}
+
+@keyframes loginFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+/* 个人中心 · 渐变按钮 */
+.gradient-profile {
+    background: linear-gradient(135deg, #3C6E4A, #6a8a7a, #3C6E4A);
+    background-size: 200% 200%;
+    color: #ffffff !important;
+    font-weight: bold;
+    cursor: pointer;
+    animation: profileFlow 4s ease-in-out infinite alternate;
+    transition: transform 0.2s ease;
+    padding: 6px 16px;
+    border-radius: 40px;
+    display: inline-block;
+    text-decoration: none;
+    border: none;
+}
+
+.gradient-profile:hover {
+    transform: scale(1.05);
+}
+
+@keyframes profileFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+/* 用户头像 CD 旋转 */
+.cd-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: conic-gradient(#ddd, #999, #ddd, #777, #ddd);
+    display: inline-block;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px rgba(0,0,0,0.08);
+    animation: spin 3s linear infinite;
+    border: 2px solid #F2C94C;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+/* 标题卡片底座 */
+.title-wrapper {
+    background: rgba(15, 40, 29, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(242, 201, 76, 0.2);
+    border-radius: 24px;
+    padding: 16px 32px 14px;
+    display: inline-block;
+    box-shadow: 0 0 40px rgba(242, 201, 76, 0.06);
+    animation: titleWrapperGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes titleWrapperGlow {
+    0% { box-shadow: 0 0 40px rgba(242, 201, 76, 0.06); }
+    100% { box-shadow: 0 0 60px rgba(242, 201, 76, 0.2); }
+}
+.subtitle-desc {
+    background: linear-gradient(90deg, #a8d5ba, #c0c0c0, #8ab8d4, #8a7aba, #c0c0c0, #6a6a7a);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: subtitleShine 8s linear infinite;
+}
+/* ===== 芦苇说 · 全新设计 ===== */
+.reed-say {
+    background: rgba(15, 40, 29, 0.4);
+    backdrop-filter: blur(8px);
+    border-radius: 24px;
+    padding: 20px 24px 18px;
+    margin-top: 24px;
+    text-align: center;
+    border: 1px solid rgba(242, 201, 76, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 底部流光边框 */
+.reed-say::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #FFD966, #E69A2E, #6a5a8a, transparent);
+    background-size: 300% 100%;
+    animation: reedBorderFlow 4s linear infinite;
+}
+
+@keyframes reedBorderFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+/* 光晕呼吸 */
+.reed-say::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(ellipse, rgba(242, 201, 76, 0.05), transparent 70%);
+    animation: reedGlow 4s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes reedGlow {
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.8); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+/* “芦苇说”标题 */
+.quote-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.quote-icon {
+    font-size: 1rem;
+    opacity: 0.6;
+    animation: iconSway 3s ease-in-out infinite alternate;
+}
+
+@keyframes iconSway {
+    0% { transform: rotate(-8deg); }
+    100% { transform: rotate(8deg); }
+}
+
+.quote-text {
+    font-size: 1rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, #FFD966, #E69A2E, #6a5a8a, #FFD966);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: quoteTextShine 5s linear infinite;
+    letter-spacing: 2px;
+}
+
+@keyframes quoteTextShine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+/* 引用内容 */
+.quote-content {
+    color: #C8E6C9;
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-top: 4px;
+    opacity: 0.85;
+    letter-spacing: 0.5px;
+    background: linear-gradient(90deg, #C8E6C9, #AAD4B0, #C8E6C9);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: contentShine 6s ease-in-out infinite alternate;
+}
+
+@keyframes contentShine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+/* ===== 跳动音符 ===== */
+.music-notes {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.note {
+    font-size: 1.2rem;
+    color: #FFD966;
+    animation: noteBounce 1.2s ease-in-out infinite;
+}
+
+.note:nth-child(1) { animation-delay: 0s; }
+.note:nth-child(2) { animation-delay: 0.4s; }
+.note:nth-child(3) { animation-delay: 0.8s; }
+
+@keyframes noteBounce {
+    0%, 100% { transform: translateY(0px) scale(1); opacity: 0.6; }
+    50% { transform: translateY(-12px) scale(1.2); opacity: 1; }
+}
+/* ===== 流动五线谱 ===== */
+.staff-wrapper {
+    margin-top: 20px;
+    padding: 10px 0 4px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0.4;
+}
+
+.staff-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+}
+
+.staff-lines span {
+    display: block;
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #FFD966, transparent);
+}
+
+.staff-note {
+    position: absolute;
+    font-size: 1.2rem;
+    color: #FFD966;
+    animation: staffNoteMove 12s linear infinite;
+}
+
+.staff-note:nth-child(1) { left: -5%; top: 10%; animation-duration: 14s; }
+.staff-note:nth-child(2) { left: -10%; top: 30%; animation-duration: 18s; animation-delay: 2s; }
+.staff-note:nth-child(3) { left: -15%; top: 55%; animation-duration: 16s; animation-delay: 4s; }
+.staff-note:nth-child(4) { left: -8%; top: 75%; animation-duration: 20s; animation-delay: 1s; }
+.staff-note:nth-child(5) { left: -12%; top: 90%; animation-duration: 15s; animation-delay: 3s; }
+
+@keyframes staffNoteMove {
+    0% { left: -5%; opacity: 0; transform: translateY(0); }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: 105%; opacity: 0; transform: translateY(-10px); }
+}
+/* AI音乐打榜 · 渐变按钮 */
+.gradient-goldpurple {
+    background: linear-gradient(135deg, #FFD966, #c0c0c0, #4a4a5a, #6a5a8a, #4a4a5a, #c0c0c0, #FFD966);
+    background-size: 400% 400%;
+    border: none;
+    color: #2D1E0C;
+    font-weight: bold;
+    cursor: pointer;
+    animation: goldPurpleFlow 6s ease-in-out infinite alternate;
+    transition: transform 0.2s ease;
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.gradient-goldpurple:hover {
+    transform: scale(1.02);
+}
+
+@keyframes goldPurpleFlow {
+    0% { background-position: 0% 50%; }
+    16% { background-position: 16% 50%; }
+    33% { background-position: 33% 50%; }
+    50% { background-position: 50% 50%; }
+    66% { background-position: 66% 50%; }
+    83% { background-position: 83% 50%; }
+    100% { background-position: 100% 50%; }
+}
+/* 退出按钮 · 渐变 + 呼吸光晕 */
+.gradient-logout {
+    background: radial-gradient(circle at 30% 30%, #FFD966, #E69A2E);
+    border: none;
+    padding: 6px 16px;
+    border-radius: 40px;
+    color: #2D1E0C;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.7rem;
+    transition: all 0.3s ease;
+    animation: logoutGlow 3s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(230, 154, 46, 0.3);
+}
+
+.gradient-logout:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(230, 154, 46, 0.7);
+}
+
+@keyframes logoutGlow {
+    0% { box-shadow: 0 0 20px rgba(230, 154, 46, 0.3), 0 0 40px rgba(230, 154, 46, 0.1); }
+    50% { box-shadow: 0 0 40px rgba(230, 154, 46, 0.6), 0 0 80px rgba(230, 154, 46, 0.2); }
+    100% { box-shadow: 0 0 20px rgba(230, 154, 46, 0.3), 0 0 40px rgba(230, 154, 46, 0.1); }
+}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>    
     <script src="api.js"></script>
@@ -472,53 +1021,59 @@
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <div class="logo"></div>
+<div class="header">
+    <div class="logo"></div>
+    <div class="title-wrapper">
         <div class="title">芦苇音乐学堂</div>
         <div class="subtitle">选择模块，按需学习</div>
     </div>
+</div>
 
     <!-- 用户信息栏 -->
     <div class="user-bar" id="userBar">
         <div class="user-info" id="userInfo">
-            <div class="user-avatar"></div>
+<div class="user-avatar cd-avatar"></div>
             <div>
                 <div class="user-name" id="userName">加载中...</div>
             </div>
         </div>
         <button class="login-btn" id="loginBtn" style="display:none;background:#E69A2E; border:none; padding:6px 16px; border-radius:40px; color:#2D1E0C; font-weight:bold; cursor:pointer;">登录</button>
-       <button class="logout-btn" id="logoutBtn" style="display:none; background:#E69A2E; border:none; padding:6px 16px; border-radius:40px; color:#2D1E0C; font-weight:bold; cursor:pointer;">退出</button>
+       <button class="logout-btn gradient-logout" id="logoutBtn">退出</button>
     </div>
 <div style="color: #FFD966;">总积分：<span id="totalScore">0</span></div>
-<a href="profile.html" class="login-btn" style="background:#3C6E4A; color:white; text-decoration:none;">👤 个人中心</a >
-<a href="pointshop.html" class="btn-primary">🎁 积分商城</a >
+<a href="profile.html" class="btn-secondary gradient-login">👤 个人中心</a >
+<a href="pointshop.html" class="btn-primary gradient-cool">🎁 积分商城</a >
 
     <!-- AI音乐打榜 -->
     <div style="text-align: center; margin: 20px 0 10px 0;">
-        <a href="aimusic.html" class="btn-large">
+<a href="pointshop.html" class="btn-large gradient-goldpurple">
              AI/人机共创/原创音乐打榜
         </a>
-        <p style="color: #AAD4B0; font-size: 0.8rem; margin-top: 12px;">上传作品 · 点赞打榜 · 预留合作</p>
+<p class="subtitle-desc" style="margin-top: 12px; font-size: 0.8rem;">上传作品 · 点赞打榜 · 预留合作</p >
     </div>
 
     <!-- 优质音乐人 + 入驻申请 -->
     <div class="top-buttons">
-        <a href="display.html" class="btn-primary">
+<a href="display.html" class="btn-primary gradient-cool">
               优质音乐人展示区
         </a>
-        <a href="lwmusic.html" class="btn-primary">
+<a href="lwmusic.html" class="btn-primary gradient-cool">
               芦苇清冷音乐
         </a>
-        <a href="join.html" class="btn-secondary">
+        <a href="join.html" class="btn-secondary gradient-join">
             ✍️ 音乐人入驻申请
         </a>
-        <a href="login.html" class="btn-secondary">
+        <a href="login.html" class="btn-secondary gradient-login">
             🔐音乐人登录
         </a>
     </div>
     <!-- 学习进度提示 -->
     <div class="progress-hint" id="progressHint">
-        <span> 上次学习</span>
+        <span> 上次学习</span><span class="music-notes">
+    <span class="note">♪</span>
+    <span class="note">♫</span>
+    <span class="note">♪</span>
+</span>
         <span id="lastModule">暂无记录</span>
     </div>
 
@@ -593,17 +1148,28 @@
 </div>
 
     <!-- 芦苇说 -->
-    <div class="reed-say">
-        <div class="quote"> 芦苇说</div>
-        <p>“从音乐小白开始，一步一步走进音乐的世界。不怕慢，就怕停。”</p>
-    </div>
 
-    <div class="footer">
-        © A-WAY 芦苇 · 音乐学习系统<br>
-        可添加到手机桌面，离线学习
+<div class="reed-say">
+    <div class="quote-wrapper">
+        <span class="quote-icon">🌾</span>
+        <span class="quote-text">芦苇说</span>
+        <span class="quote-icon">🌾</span>
+    </div>
+    <p class="quote-content">“从音乐小白开始，一步一步走进音乐的世界。不怕慢，就怕停。”</p >
+<div class="staff-wrapper">
+    <div class="staff">
+        <span class="staff-note">♪</span>
+        <span class="staff-note">♫</span>
+        <span class="staff-note">♪</span>
+        <span class="staff-note">♩</span>
+        <span class="staff-note">♫</span>
+    </div>
+    <div class="staff-lines">
+        <span></span><span></span><span></span><span></span><span></span>
     </div>
 </div>
-
+</div>
+</div>
 <script>
    const moduleNames = {
     'beginner': '音乐小白学习',
