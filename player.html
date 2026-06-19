@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>正在播放 · 芦苇音乐</title>
+    <script src="healingWords.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8e8e8, #6a8a9a, #e8e8e8, #8a7a9a, #4a4a5a, #e8e8e8);
+            background-size: 400% 400%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: bodyGradientFlow 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes bodyGradientFlow {
+            0% { background-position: 0% 50%; }
+            20% { background-position: 20% 50%; }
+            40% { background-position: 40% 50%; }
+            60% { background-position: 60% 50%; }
+            80% { background-position: 80% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        @keyframes bgFlow {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 25% 50%; }
+            50% { background-position: 50% 50%; }
+            75% { background-position: 75% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes armDrop {
+            0% { transform: rotate(30deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes armLift {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(30deg); }
+        }
+
+        .back-btn {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-bottom: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .back-btn:hover {
+            color: #fff;
+        }
+
+        .cd-wrapper {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 10px auto 16px;
+        }
+
+        .cd-disc {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: conic-gradient(#4a4a5a, #6a8a9a, #6a5a8a, #6a8a9a, #1a3a2a, #4a4a5a);
+            animation: spin 4s linear infinite;
+            box-shadow: 0 0 40px rgba(106, 138, 154, 0.3);
+            position: relative;
+        }
+
+        .cd-disc.paused {
+            animation-play-state: paused;
+        }
+
+        .cd-disc::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #1a1a2e;
+            border: 3px solid #6a8a9a;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .tonearm {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 130px;
+            transform-origin: top right;
+        }
+
+        .tonearm.playing {
+            animation: armDrop 0.6s ease-out forwards;
+        }
+
+        .tonearm.paused {
+            animation: armLift 0.6s ease-out forwards;
+        }
+
+        .tonearm-base {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: radial-gradient(#c0c0c0, #888);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .tonearm-arm {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 70px;
+            height: 2px;
+            background: linear-gradient(90deg, #888, #ccc);
+            transform-origin: top right;
+            transform: rotate(-20deg);
+        }
+
+        .tonearm-head {
+            position: absolute;
+            bottom: 4px;
+            right: -4px;
+            width: 16px;
+            height: 24px;
+            background: linear-gradient(180deg, #aaa, #666);
+            border-radius: 2px 2px 4px 4px;
+        }
+
+        .tonearm-needle {
+            position: absolute;
+            bottom: -10px;
+            right: 2px;
+            width: 2px;
+            height: 18px;
+            background: #ddd;
+            transform: rotate(10deg);
+            border-radius: 1px;
+        }
+
+        .tonearm.playing .tonearm-needle {
+            height: 50px;
+        }
+
+        .song-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            margin-top: 6px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .song-artist {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-top: 2px;
+        }
+
+        .progress-bar {
+            margin-top: 16px;
+        }
+
+        .progress-bar input[type="range"] {
+            width: 100%;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .progress-bar input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .time-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        .controls button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.6rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: 0.2s;
+            padding: 4px;
+        }
+
+        .controls button:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .controls .play-main {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1.8rem;
+            opacity: 1;
+        }
+
+        .controls .play-main:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* 愈合说 */
+        #lyricsDisplay {
+            font-size: 1rem;
+            line-height: 2.2;
+            color: rgba(255, 255, 255, 0.85);
+            text-align: center;
+        }
+
+        .healing-line {
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 1.2s ease, transform 1.2s ease;
+            padding: 4px 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                align-items: center;
+            }
+            .main-layout {
+                flex-direction: column !important;
+                align-items: center !important;
+            }
+            .player-container {
+                flex: 0 0 auto !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            .healing-side {
+                min-height: 150px !important;
+                max-height: 250px !important;
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div style="display: flex; gap: 40px; max-width: 1100px; width: 100%; margin: 0 auto; align-items: stretch; padding: 20px;">
+
+        <!-- ===== 左边：播放器 ===== -->
+        <div class="player-container" style="flex: 0 0 400px; background: linear-gradient(135deg, #f5f5f0, #4a4a5a, #8a7a9a, #6a8a9a, #4a4a5a); background-size: 300% 300%; border-radius: 32px; padding: 32px 24px 28px; animation: bgFlow 6s ease-in-out infinite alternate; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08); position: relative; overflow: hidden;">
+
+            <button class="back-btn" onclick="window.location.href='lwmusic.html'">← 返回</button>
+
+            <div class="cd-wrapper">
+                <div class="cd-disc" id="cdDisc"></div>
+                <div class="tonearm playing" id="tonearm">
+                    <div class="tonearm-base"></div>
+                    <div class="tonearm-arm"></div>
+                    <div class="tonearm-head">
+                        <div class="tonearm-needle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="song-title" id="songTitle">加载中...</div>
+            <div class="song-artist" id="songArtist">-</div>
+
+            <div class="progress-bar">
+                <input type="range" id="progressSlider" value="0" step="0.01">
+                <div class="time-row">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="prevSong()">⏮</button>
+                <button class="play-main" id="playMainBtn" onclick="togglePlay()">▶</button>
+                <button onclick="nextSong()">⏭</button>
+            </div>
+        </div>
+
+<!-- ===== 右边：治愈说（浅白色半透明框） ===== -->
+<div class="healing-side" style="flex: 1; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border-radius: 32px; padding: 30px 24px; min-height: 400px; max-height: 500px; overflow-y: auto; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.06);">
+    <div id="lyricsDisplay" style="font-size: 1rem; line-height: 2.2; color: rgba(255, 255, 255, 0.85); text-align: center;"></div>
+</div>
+
+    <script src="healingWords.js"></script>
+    <script>
+        const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const songId = urlParams.get('id');
+
+        let currentSong = null;
+        let allSongs = [];
+        let audio = new Audio();
+        let healingInterval = null;
+        let usedHealingIndexes = [];
+
+        function getRandomHealing() {
+            if (usedHealingIndexes.length >= healingWords.length) {
+                usedHealingIndexes = [];
+            }
+            let randomIndex;
+            let attempts = 0;
+            do {
+                randomIndex = Math.floor(Math.random() * healingWords.length);
+                attempts++;
+            } while (usedHealingIndexes.includes(randomIndex) && attempts < 50);
+            usedHealingIndexes.push(randomIndex);
+            return healingWords[randomIndex];
+        }
+
+        function showHealingText() {
+            const container = document.getElementById('lyricsDisplay');
+            const text = getRandomHealing();
+
+            const div = document.createElement('div');
+            div.className = 'healing-line';
+            div.textContent = text;
+            container.appendChild(div);
+
+            requestAnimationFrame(() => {
+                div.style.opacity = '1';
+                div.style.transform = 'translateY(0)';
+            });
+
+            const lines = container.querySelectorAll('.healing-line');
+            if (lines.length > 6) {
+                const oldest = lines[0];
+                oldest.style.opacity = '0';
+                oldest.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    oldest.remove();
+                }, 1500);
+            }
+        }
+
+        function startHealingWords() {
+            if (healingInterval) {
+                clearInterval(healingInterval);
+                healingInterval = null;
+            }
+            const container = document.getElementById('lyricsDisplay');
+            container.innerHTML = '';
+            showHealingText();
+            healingInterval = setInterval(showHealingText, 4000);
+        }
+
+        function setPlayingState() {
+            const cd = document.getElementById('cdDisc');
+            const arm = document.getElementById('tonearm');
+            const btn = document.getElementById('playMainBtn');
+
+            if (!audio.paused) {
+                btn.textContent = '⏸';
+                cd.classList.remove('paused');
+                arm.classList.remove('paused');
+                arm.classList.add('playing');
+            } else {
+                btn.textContent = '▶';
+                cd.classList.add('paused');
+                arm.classList.remove('playing');
+                arm.classList.add('paused');
+            }
+        }
+
+        async function loadAllSongs(musicianId) {
+            try {
+                const resp = await fetch(
+                    `${SUPABASE_URL}/rest/v1/works?musician_id=eq.${musicianId}&status=eq.approved&order=created_at.desc`,
+                    { headers: { 'apikey': SUPABASE_KEY } }
+                );
+                allSongs = await resp.json();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function playSongById(songId) {
+            const song = allSongs.find(s => s.id === songId);
+            if (!song) return;
+
+            if (healingInterval) {
+                clearInterval(healingInterval);
+                healingInterval = null;
+            }
+            const container = document.getElementById('lyricsDisplay');
+            container.innerHTML = '';
+
+            currentSong = song;
+            document.getElementById('songTitle').textContent = song.title || '未命名';
+            document.getElementById('songArtist').textContent = '歌手';
+
+            const isInstrumental = !song.lyrics || song.lyrics.trim() === '' || song.lyrics.includes('纯音乐');
+
+            if (isInstrumental) {
+                audio.src = song.audio_url || '';
+                audio.load();
+                audio.play().then(() => {
+                    setPlayingState();
+                    startHealingWords();
+                }).catch(() => {
+                    setPlayingState();
+                    startHealingWords();
+                });
+            } else {
+                container.innerHTML = song.lyrics.replace(/\n/g, '<br>');
+                audio.src = song.audio_url || '';
+                audio.load();
+                audio.play().then(() => {
+                    setPlayingState();
+                }).catch(() => {
+                    setPlayingState();
+                });
+            }
+        }
+
+        async function loadSong() {
+            if (!songId) {
+                document.getElementById('songTitle').textContent = '歌曲不存在';
+                return;
+            }
+
+            if (healingInterval) {
+                clearInterval(healingInterval);
+                healingInterval = null;
+            }
+            const container = document.getElementById('lyricsDisplay');
+            container.innerHTML = '';
+
+            try {
+                const resp = await fetch(
+                    `${SUPABASE_URL}/rest/v1/works?id=eq.${songId}`,
+                    { headers: { 'apikey': SUPABASE_KEY } }
+                );
+                const data = await resp.json();
+                currentSong = data[0];
+
+                if (!currentSong) {
+                    document.getElementById('songTitle').textContent = '歌曲不存在';
+                    return;
+                }
+
+                const musicianId = currentSong.musician_id;
+                if (musicianId) {
+                    await loadAllSongs(musicianId);
+                }
+
+                document.getElementById('songTitle').textContent = currentSong.title || '未命名';
+                document.getElementById('songArtist').textContent = '歌手';
+
+                const isInstrumental = !currentSong.lyrics || currentSong.lyrics.trim() === '' || currentSong.lyrics.includes('纯音乐');
+
+                if (isInstrumental) {
+                    container.innerHTML = '';
+                } else {
+                    container.innerHTML = currentSong.lyrics.replace(/\n/g, '<br>');
+                }
+
+                audio.src = currentSong.audio_url || '';
+                audio.load();
+
+                audio.ontimeupdate = updateProgress;
+                audio.onloadedmetadata = function() {
+                    document.getElementById('totalTime').textContent = formatTime(audio.duration);
+                };
+                audio.onended = function() {
+                    setPlayingState();
+                    if (healingInterval) {
+                        clearInterval(healingInterval);
+                        healingInterval = null;
+                    }
+                    nextSong();
+                };
+                audio.onpause = function() {
+                    setPlayingState();
+                    if (healingInterval) {
+                        clearInterval(healingInterval);
+                        healingInterval = null;
+                    }
+                };
+                audio.onplay = function() {
+                    setPlayingState();
+                    if (isInstrumental) {
+                        startHealingWords();
+                    }
+                };
+
+                audio.play().then(() => {
+                    setPlayingState();
+                    if (isInstrumental) {
+                        startHealingWords();
+                    }
+                }).catch(() => {
+                    setPlayingState();
+                    if (isInstrumental) {
+                        startHealingWords();
+                    }
+                });
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('songTitle').textContent = '加载失败';
+            }
+        }
+
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+            setPlayingState();
+        }
+
+        function prevSong() {
+            if (!allSongs.length || !currentSong) return;
+            const currentIndex = allSongs.findIndex(s => s.id === currentSong.id);
+            if (currentIndex <= 0) return;
+            playSongById(allSongs[currentIndex - 1].id);
+        }
+
+        function nextSong() {
+            if (!allSongs.length || !currentSong) return;
+            const currentIndex = allSongs.findIndex(s => s.id === currentSong.id);
+            if (currentIndex >= allSongs.length - 1) return;
+            playSongById(allSongs[currentIndex + 1].id);
+        }
+
+        function updateProgress() {
+            if (!audio.duration) return;
+            const percent = (audio.currentTime / audio.duration) * 100;
+            document.getElementById('progressSlider').value = percent;
+            document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+        }
+
+        document.getElementById('progressSlider').addEventListener('input', function() {
+            if (!audio.duration) return;
+            const percent = this.value / 100;
+            audio.currentTime = percent * audio.duration;
+        });
+
+        function formatTime(sec) {
+            if (!sec || isNaN(sec)) return '0:00';
+            const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+            return m + ':' + s.toString().padStart(2, '0');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadSong);
+    </script>
+
+</body>
+</html>
