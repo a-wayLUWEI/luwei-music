@@ -7,9 +7,21 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f5f5f5;
+    background: linear-gradient(135deg, #e8e8e8, #6a8a9a, #e8e8e8, #8a7a9a, #4a4a5a, #e8e8e8);
+    background-size: 400% 400%;
     color: #1a1a2e;
     padding: 20px 20px 100px;
+    animation: bodyGradientFlow 12s ease-in-out infinite alternate;
+    min-height: 100vh;
+}
+
+@keyframes bodyGradientFlow {
+    0% { background-position: 0% 50%; }
+    20% { background-position: 20% 50%; }
+    40% { background-position: 40% 50%; }
+    60% { background-position: 60% 50%; }
+    80% { background-position: 80% 50%; }
+    100% { background-position: 100% 50%; }
 }
 .container { max-width: 900px; margin: 0 auto; }
 .heart {
@@ -25,19 +37,30 @@ body {
 }
 .header h1 {
     font-size: 28px;
-    background: linear-gradient(90deg, #3a3a3a, #aaa, #3a3a3a);
+    background: linear-gradient(90deg, #3a3a3a, #6a8a9a, #6a5a8a, #6a8a9a, #3a3a3a);
+    background-size: 400% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-size: 200% 100%;
-    animation: flowText 4s ease-in-out infinite alternate;
+    animation: headerTitleFlow 6s linear infinite;
+}
+
+@keyframes headerTitleFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 400% 50%; }
 }
 .header .sub {
     font-size: 14px;
-    background: linear-gradient(90deg, #f5f5f5, #aaa, #666);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-size: 200% 100%;
-    animation: flow 4s ease-in-out infinite alternate;
+    color: #ffffff;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
+
+@keyframes subTextFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
 }
 
 .back-btn {
@@ -65,8 +88,8 @@ body {
     gap: 16px;
 }
 .artist-card {
-    background: linear-gradient(135deg, #e8e8e8, #888888, #e8e8e8);
-    background-size: 200% 200%;
+    background: linear-gradient(135deg, #f5f5f0, #4a4a5a, #8a7a9a, #6a8a9a, #4a4a5a);
+    background-size: 300% 300%;
     border-radius: 16px;
     padding: 20px 16px;
     text-align: center;
@@ -74,7 +97,21 @@ body {
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     border: 1px solid #d5d5d5;
     transition: 0.3s;
-    animation: cardFlow 5s ease-in-out infinite alternate;
+    animation: artistCardFlow 6s ease-in-out infinite alternate;
+}
+
+.artist-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    border-color: #bbb;
+}
+
+@keyframes artistCardFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
 }
 .artist-card:hover {
     transform: translateY(-4px);
@@ -91,8 +128,18 @@ body {
     border: 2px solid #ccc;
 }
 .artist-card .name { font-weight: 700; font-size: 15px; color: #3a3a3a; }
-.artist-card .role { font-size: 13px; color: #999; margin-top: 2px; }
-.artist-card .count { font-size: 12px; color: #888; margin-top: 6px; font-weight: 600; }
+.artist-card .role {
+    font-size: 13px;
+    color: #ffffff;
+    margin-top: 2px;
+    opacity: 0.7;
+}
+.artist-card .count {
+    font-size: 12px;
+    color: #4a4a5a;
+    margin-top: 6px;
+    font-weight: 600;
+}
 
 .song-list { display: flex; flex-direction: column; gap: 8px; }
 .song-item {
@@ -119,7 +166,23 @@ body {
 }
 .song-item .play-btn:hover { background: #bbb; }
 .song-item .info { flex: 1; }
-.song-item .info .title { font-weight: 600; font-size: 15px; color: #3a3a3a; }
+.song-item .info .title {
+    font-weight: 600;
+    font-size: 15px;
+    background: linear-gradient(135deg, #f5f5f0, #4a4a5a, #8a7a9a, #6a8a9a, #4a4a5a);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: songTitleFlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes songTitleFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
 .song-item .info .meta { font-size: 13px; color: #bbb; }
 .song-item .likes { color: #bbb; font-size: 13px; }
 .song-item .info .meta .heart {
@@ -161,14 +224,18 @@ body {
 /* CD 唱片旋转 */
 .cd-icon {
     display: inline-block;
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    background: conic-gradient(#ddd, #999, #ddd, #777, #ddd);
-    margin-right: 8px;
+    background: conic-gradient(#4a4a5a, #6a8a9a, #6a5a8a, #6a8a9a, #1a3a2a, #4a4a5a);
+    margin-right: 10px;
     vertical-align: middle;
-    box-shadow: 0 0 6px rgba(0,0,0,0.08);
+    box-shadow: 0 0 12px rgba(106, 138, 154, 0.25);
     animation: spin 3s linear infinite;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 @keyframes spin {
@@ -183,6 +250,39 @@ body {
     0% { background-position: 0% 50%; }
     100% { background-position: 100% 50%; }
 }
+/* 广告语底片 - 和芦苇清冷音乐按钮一样 */
+.sub-wrapper {
+    display: inline-block;
+    background: linear-gradient(135deg, #f5f5f0, #4a4a5a, #8a7a9a, #6a8a9a, #4a4a5a);
+    background-size: 300% 300%;
+    border-radius: 40px;
+    padding: 6px 18px;
+    animation: subWrapperFlow 6s ease-in-out infinite alternate;
+    box-shadow: 0 0 30px rgba(106, 138, 154, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.sub-wrapper:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 0 50px rgba(106, 138, 154, 0.25);
+}
+
+@keyframes subWrapperFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* 文字纯白色，保持小字 */
+.sub {
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
     </style>
 </head>
 <body>
@@ -194,7 +294,9 @@ body {
     <span class="cd-icon"></span>
     芦苇音乐
 </h1>
-<span class="sub">在芦苇深处，治愈自己的思念。</span>
+<span class="sub-wrapper">
+    <span class="sub">在芦苇深处，治愈自己的思念。</span>
+</span>
     </div>
 
     <button class="back-btn" id="backBtn" onclick="showArtists()">← 返回歌手列表</button>
@@ -295,17 +397,16 @@ async function showSongs(artistId) {
             list.innerHTML = '<div class="empty">暂无已审核的歌曲</div>';
             return;
         }
-
-        list.innerHTML = allSongs.map((s, i) => `
-            <div class="song-item" onclick="playSong('${s.id}')">
-                <span style="color:#bbb;font-size:14px;width:28px;text-align:center;">${String(i+1).padStart(2,'0')}</span>
-                <button class="play-btn" onclick="event.stopPropagation();playSong('${s.id}')">▶</button>
-                <div class="info">
-                    <div class="title">${s.title || '未命名'}</div>
-<span class="likes"><span class="heart">❤️</span> ${s.likes || 0}</span>
-                </div>
-            </div>
-        `).join('');
+list.innerHTML = allSongs.map((s, i) => `
+    <div class="song-item">
+        <span style="color:#bbb;font-size:14px;width:28px;text-align:center;">${String(i+1).padStart(2,'0')}</span>
+        <button class="play-btn" id="play-btn-${s.id}" onclick="event.stopPropagation();playSong('${s.id}')">▶</button>
+        <div class="info" onclick="openPlayer('${s.id}')" style="cursor:pointer;flex:1;">
+            <div class="title">${s.title || '未命名'}</div>
+            <span class="likes"><span class="heart">❤️</span> ${s.likes || 0}</span>
+        </div>
+    </div>
+`).join('');
 
     } catch (e) {
         list.innerHTML = '<div class="empty">加载失败</div>';
@@ -321,19 +422,67 @@ function showArtists() {
     document.getElementById('audioPlayer').pause();
 }
 
-// ===== 播放 =====
+// ===== 播放歌曲 =====
+let currentSongId = null;
+
 function playSong(songId) {
     const song = allSongs.find(s => s.id === songId);
     if (!song) return;
 
+    const audio = document.getElementById('audioPlayer');
+    const player = document.getElementById('player');
+
+    // 如果点击的是同一首歌
+    if (currentSongId === songId) {
+        if (audio.paused) {
+            audio.play();
+            updatePlayBtn(songId, '⏸');
+        } else {
+            audio.pause();
+            updatePlayBtn(songId, '▶');
+        }
+        return;
+    }
+
+    // 把上一首歌的按钮重置
+    if (currentSongId) {
+        updatePlayBtn(currentSongId, '▶');
+    }
+
+    // 播放新歌
+    currentSongId = songId;
     document.getElementById('playerName').textContent = song.title || '未命名';
     document.getElementById('playerArtist').textContent = '歌手';
-    document.getElementById('audioPlayer').src = song.audio_url || '';
-    document.getElementById('player').classList.add('show');
+    audio.src = song.audio_url || '';
+    player.classList.add('show');
 
-    setTimeout(() => {
-        document.getElementById('audioPlayer').play();
-    }, 100);
+    audio.play();
+    updatePlayBtn(songId, '⏸');
+
+    audio.onended = function() {
+        updatePlayBtn(songId, '▶');
+        currentSongId = null;
+    };
+
+    audio.onpause = function() {
+        updatePlayBtn(songId, '▶');
+    };
+
+    audio.onplay = function() {
+        updatePlayBtn(songId, '⏸');
+    };
+}
+
+// ===== 更新单个播放按钮 =====
+function updatePlayBtn(songId, icon) {
+    const btn = document.getElementById(`play-btn-${songId}`);
+    if (btn) {
+        btn.textContent = icon;
+    }
+}
+// ===== 打开全屏播放页 =====
+function openPlayer(songId) {
+    window.location.href = `player.html?id=${songId}`;
 }
 
 // ===== 启动 =====
