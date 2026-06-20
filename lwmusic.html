@@ -283,6 +283,11 @@ body {
     font-weight: 400;
     letter-spacing: 0.5px;
 }
+@keyframes zhoutianBgFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 50% 50%; }
+    100% { background-position: 100% 50%; }
+}
     </style>
 </head>
 <body>
@@ -360,7 +365,7 @@ async function loadArtists() {
             const avatar = a.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2272%22 height=%2272%22%3E%3Crect width=%2272%22 height=%2272%22 fill=%22%23c8e6c9%22/%3E%3Ctext x=%2236%22 y=%2244%22 text-anchor=%22middle%22 font-size=%2232%22 fill=%22%234CAF50%22%3E%3C/text%3E%3C/svg%3E';
             return `
                 <div class="artist-card" onclick="showSongs('${a.id}')">
-                    <img class="avatar" src="${avatar}" alt="${a.artist_name || a.name}">
+<img class="avatar" src="${avatar}" alt="${a.artist_name || a.name}">
                     <div class="name">${a.artist_name || a.name || '未命名'}</div>
                     <div class="role">${a.role || '音乐人'}</div>
                     <div class="count"> ${count[a.id] || 0} 首歌</div>
@@ -381,7 +386,38 @@ async function showSongs(artistId) {
     document.getElementById('artistSection').classList.add('hidden');
     document.getElementById('songSection').classList.remove('hidden');
     document.getElementById('backBtn').style.display = 'inline-block';
+    // ===== 周田专属判断 =====
+const isZhouTian = artistId === '1781898147879639' || artist.artist_name === '周田';
+
+if (isZhouTian) {
+    document.getElementById('songSectionTitle').innerHTML = `
+        <span style="background: linear-gradient(135deg, #d4b896, #b8a0c8); 
+                     -webkit-background-clip: text; 
+                     -webkit-text-fill-color: transparent; 
+                     font-size: 1.6rem;
+                     font-weight: 700;
+                     letter-spacing: 2px;">
+            ✦ 周田 · 雨天的悬日 ✦
+        </span>
+        <span style="display: inline-block; background: linear-gradient(135deg, #d4b896, #b8a0c8); color: #1a1a2e; font-size: 0.6rem; padding: 2px 10px; border-radius: 12px; margin-left: 10px; font-weight: 600; vertical-align: middle;">专属</span>
+    `;
+    // 添加专属背景
+document.getElementById('songSection').style.background = 'linear-gradient(135deg, rgba(212, 184, 150, 0.1), rgba(60, 60, 80, 0.15), rgba(106, 90, 138, 0.12))';
+document.getElementById('songSection').style.backgroundSize = '300% 300%';
+document.getElementById('songSection').style.animation = 'zhoutianBgFlow 8s ease-in-out infinite alternate';
+    document.getElementById('songSection').style.border = '1px solid rgba(212, 184, 150, 0.15)';
+    document.getElementById('songSection').style.borderRadius = '24px';
+    document.getElementById('songSection').style.padding = '20px';
+    document.getElementById('songSection').style.boxShadow = '0 0 60px rgba(212, 184, 150, 0.04)';
+} else {
     document.getElementById('songSectionTitle').textContent = ` ${artist.artist_name || artist.name} 的歌曲`;
+    // 恢复普通样式
+    document.getElementById('songSection').style.background = '';
+    document.getElementById('songSection').style.border = '';
+    document.getElementById('songSection').style.borderRadius = '';
+    document.getElementById('songSection').style.padding = '';
+    document.getElementById('songSection').style.boxShadow = '';
+}
 
     const list = document.getElementById('songList');
     list.innerHTML = '<div class="loading">加载中...</div>';
