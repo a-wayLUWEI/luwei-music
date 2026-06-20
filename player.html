@@ -255,16 +255,18 @@
         }
 
         /* ===== 歌词模式：三列 ===== */
-        .lyrics-mode {
-            column-count: 3;
-            column-gap: 20px;
-            font-size: 0.9rem;
-            line-height: 2.4;
-            color: rgba(255, 255, 255, 0.85);
-            padding: 0 10px;
-            word-wrap: break-word;
-            max-width: 100%;
-        }
+.lyrics-mode {
+    column-count: 3;
+    column-gap: 50px;
+    font-size: 0.95rem;
+    line-height: 2.4;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0 10px;
+    word-wrap: break-word;
+    max-width: 100%;
+    position: relative;
+    z-index: 1;
+}
 
         /* ===== 治愈说模式：一列 ===== */
         .healing-mode {
@@ -277,6 +279,12 @@
             word-wrap: break-word;
             max-width: 100%;
         }
+
+#lyricsDisplay {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
 
         .healing-line {
             opacity: 0;
@@ -312,6 +320,55 @@
                 word-wrap: break-word;
             }
         }
+/* 已唱过的歌词：光影缥缈效果 */
+.lrc-line.past {
+    opacity: 0.2;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.15);
+    filter: blur(0.5px);
+    transform: translateY(-2px);
+    transition: all 0.6s ease;
+}
+@keyframes pastLyricGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 50% 50%; }
+    100% { background-position: 100% 50%; }
+}
+@keyframes watermarkPulse {
+    0% { opacity: 0.04; filter: grayscale(0.8) blur(3px) contrast(0.8); }
+    100% { opacity: 0.12; filter: grayscale(0.6) blur(1px) contrast(1); }
+}
+@keyframes beamFloat {
+    0% {
+        transform: translateX(-30%) scale(0.8);
+        opacity: 0;
+    }
+    30% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(30%) scale(1.2);
+        opacity: 0;
+    }
+}
+
+/* JAY·HEBE 淡入动画 */
+@keyframes jayhebeFadeIn {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* JAY·HEBE 颜色渐变流动 */
+@keyframes jayhebeFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
     </style>
 </head>
 <body>
@@ -360,7 +417,7 @@
 </div>
 
         <!-- ===== 右边：歌词 / 治愈说 ===== -->
-<div class="healing-side" style="flex: 2.5; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border-radius: 32px; padding: 30px 24px; min-height: 400px; max-height: 500px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.06);">
+<div class="healing-side" style="flex: 7.5; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border-radius: 32px; padding: 30px 24px; min-height: 400px; max-height: 500px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.06);">
             <div id="lyricsDisplay" class="lyrics-mode"></div>
             <div id="healingDisplay" class="healing-mode" style="display:none;"></div>
         </div>
@@ -573,90 +630,230 @@ document.getElementById('songArtist').textContent = isZhouTian ? '周田' : (son
 const isZhouTian = currentSong.musician_id === '1781898147879639' || currentSong.musician_name === '周田';
 document.getElementById('songArtist').textContent = isZhouTian ? '周田' : (currentSong.musician_name || '歌手');
 
-                if (isZhouTian) {
-                    const containerEl = document.querySelector('.player-container');
-                    if (containerEl) {
-                        containerEl.style.backgroundImage = `
-                            url('https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/zhoutian.jpg'),linear-gradient(135deg, rgba(212,184,150,0.25), rgba(106,90,138,0.25))
-                        `;
-                        containerEl.style.backgroundSize = 'cover';
-                        containerEl.style.backgroundBlendMode = 'overlay';
-                        containerEl.style.backgroundPosition = 'center';
-                    }
+if (isZhouTian) {
+    const bgImages = [
+        'https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/zhoutian.jpg',
+        'https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/zhoutian2.jpg',
+        'https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/zhoutian3.jpg',
+        'https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/zhoutian4.jpg',
+        'https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/zhoutian5.jpg'
+    ];
+    let bgIndex = 0;
+    const containerEl = document.querySelector('.player-container');
 
-                    const cdWrapper = document.querySelector('.cd-wrapper');
-                    if (cdWrapper) {
-                        cdWrapper.style.position = 'fixed';
-                        cdWrapper.style.top = '20px';
-                        cdWrapper.style.left = '20px';
-                        cdWrapper.style.width = '60px';
-                        cdWrapper.style.height = '60px';
-                        cdWrapper.style.zIndex = '999';
-                        cdWrapper.style.margin = '0';
-                    }
+    bgImages.forEach(url => { const img = new Image(); img.src = url; });
 
-const cdDisc = document.querySelector('.cd-disc');
-if (cdDisc) {
-    cdDisc.style.width = '60px';
-    cdDisc.style.height = '60px';
-    cdDisc.style.background = 'conic-gradient(#f5a623, #e88a1e, #d4731a, #f5a623)';
-    cdDisc.style.border = '1px solid rgba(245, 166, 35, 0.3)';
-    cdDisc.style.boxShadow = '0 0 20px rgba(245, 166, 35, 0.15)';
-    cdDisc.style.backdropFilter = 'none';
-    // 移除中间的假孔，保留夕阳渐变
-    cdDisc.style.animation = 'spin 4s linear infinite';
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+        background: linear-gradient(135deg, rgba(245, 166, 35, 0.08), rgba(180, 140, 200, 0.12));
+        z-index: 1;
+        transition: background 3s ease-in-out;
+    `;
+    containerEl.appendChild(overlay);
+
+    function switchBg() {
+        bgIndex = (bgIndex + 1) % bgImages.length;
+        containerEl.style.transition = 'background-image 2.5s ease-in-out';
+        containerEl.style.backgroundImage = `
+            url('${bgImages[bgIndex]}'),
+            linear-gradient(135deg, rgba(212,184,150,0.15), rgba(106,90,138,0.15))
+        `;
+        containerEl.style.backgroundSize = 'cover';
+        containerEl.style.backgroundBlendMode = 'overlay';
+        containerEl.style.backgroundPosition = 'center';
+        containerEl.style.filter = 'blur(6px)';
+        setTimeout(() => {
+            containerEl.style.transition = 'filter 2.5s ease-out';
+            containerEl.style.filter = 'blur(0px)';
+        }, 100);
+        const hues = [
+            'linear-gradient(135deg, rgba(245, 166, 35, 0.08), rgba(180, 140, 200, 0.12))',
+            'linear-gradient(135deg, rgba(200, 160, 100, 0.10), rgba(160, 120, 200, 0.15))',
+            'linear-gradient(135deg, rgba(220, 180, 120, 0.06), rgba(200, 160, 220, 0.10))',
+            'linear-gradient(135deg, rgba(245, 166, 35, 0.06), rgba(180, 140, 200, 0.08))',
+            'linear-gradient(135deg, rgba(200, 160, 100, 0.08), rgba(160, 120, 200, 0.12))'
+        ];
+        overlay.style.background = hues[bgIndex % hues.length];
+    }
+
+    switchBg();
+    if (window.bgInterval) clearInterval(window.bgInterval);
+    window.bgInterval = setInterval(switchBg, 12000);
+
+(function() {
+    const container = document.getElementById('lyricsDisplay');
+    if (!container) {
+        console.log('❌ 找不到 lyricsDisplay');
+        return;
+    }
+    if (document.getElementById('bgVideo')) {
+        console.log('⚠️ 视频已存在');
+        return;
+    }
+    const video = document.createElement('video');
+    video.id = 'bgVideo';
+    video.autoplay = true;
+    video.loop = true;
+    video.muted = true;
+    video.playsInline = true;
+video.style.cssText = `
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.02;
+    filter: blur(8px) saturate(0.05) brightness(1.8);
+    z-index: -1;
+    border-radius: 32px;
+    pointer-events: none;
+`;
+    const source = document.createElement('source');
+    source.src = 'https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/shipin.mp4';
+    source.type = 'video/mp4';
+    video.appendChild(source);
+    container.style.position = 'relative';
+    container.style.overflow = 'hidden';
+    container.insertBefore(video, container.firstChild);
+    console.log('✅ 视频已手动添加');
+})();
+
+    // CD移到左上角
+    const cdWrapper = document.querySelector('.cd-wrapper');
+    if (cdWrapper) {
+        cdWrapper.style.position = 'fixed';
+        cdWrapper.style.top = '20px';
+        cdWrapper.style.left = '20px';
+        cdWrapper.style.width = '60px';
+        cdWrapper.style.height = '60px';
+        cdWrapper.style.zIndex = '9999';
+        cdWrapper.style.margin = '0';
+        document.body.appendChild(cdWrapper);
+    }
+
+    const cdDisc = document.querySelector('.cd-disc');
+    if (cdDisc) {
+        cdDisc.style.width = '60px';
+        cdDisc.style.height = '60px';
+        cdDisc.style.background = 'conic-gradient(#f5a623, #e88a1e, #d4731a, #f5a623)';
+        cdDisc.style.border = '1px solid rgba(245, 166, 35, 0.3)';
+        cdDisc.style.boxShadow = '0 0 20px rgba(245, 166, 35, 0.15)';
+        cdDisc.style.backdropFilter = 'none';
+        cdDisc.style.animation = 'spin 4s linear infinite';
+    }
+
+    // 隐藏唱针
+    const tonearm = document.querySelector('.tonearm');
+    if (tonearm) {
+        tonearm.style.display = 'none';
+    }
+
+    const healingSide = document.querySelector('.healing-side');
+    if (healingSide) {
+        healingSide.style.overflow = 'hidden';
+    }
+
+    // ===== 歌词框视频背景 =====
+    const lyricsContainer = document.getElementById('lyricsDisplay');
+    if (lyricsContainer && !document.getElementById('bgVideo')) {
+        lyricsContainer.style.position = 'relative';
+        lyricsContainer.style.overflow = 'hidden';
+        
+        const video = document.createElement('video');
+        video.id = 'bgVideo';
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.2;
+            z-index: 0;
+            border-radius: 32px;
+            pointer-events: none;
+        `;
+        
+        const source = document.createElement('source');
+        source.src = 'https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/shipin.mp4';
+        source.type = 'video/mp4';
+        video.appendChild(source);
+        lyricsContainer.insertBefore(video, lyricsContainer.firstChild);
+    }
+
+    // ===== 歌词框右下角：周田透明轮廓 =====
+    const healingSide2 = document.querySelector('.healing-side');
+    if (healingSide2 && !document.querySelector('.zhoutian-watermark')) {
+        const watermark = document.createElement('img');
+        watermark.src = 'https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/zhoutian.jpg';
+        watermark.className = 'zhoutian-watermark';
+        watermark.style.cssText = `
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            opacity: 0.08;
+            filter: grayscale(0.8) blur(2px) contrast(0.8);
+            pointer-events: none;
+            z-index: 1;
+            transition: opacity 3s ease;
+            animation: watermarkPulse 6s ease-in-out infinite alternate;
+        `;
+        healingSide2.style.position = 'relative';
+        healingSide2.appendChild(watermark);
+    }
+
+} else {
+    // 非周田：恢复默认
+    const containerEl = document.querySelector('.player-container');
+    if (containerEl) {
+        containerEl.style.backgroundImage = 'linear-gradient(135deg, #f5f5f0, #4a4a5a, #8a7a9a, #6a8a9a, #4a4a5a)';
+        containerEl.style.backgroundSize = '300% 300%';
+        containerEl.style.backgroundBlendMode = 'normal';
+        containerEl.style.backgroundPosition = '0% 50%';
+    }
+
+    const cdWrapper = document.querySelector('.cd-wrapper');
+    if (cdWrapper) {
+        cdWrapper.style.position = 'relative';
+        cdWrapper.style.top = 'auto';
+        cdWrapper.style.left = 'auto';
+        cdWrapper.style.width = '220px';
+        cdWrapper.style.height = '220px';
+        cdWrapper.style.zIndex = 'auto';
+        cdWrapper.style.margin = '10px auto 16px';
+    }
+
+    const cdDisc = document.querySelector('.cd-disc');
+    if (cdDisc) {
+        cdDisc.style.width = '220px';
+        cdDisc.style.height = '220px';
+        cdDisc.style.background = 'conic-gradient(#4a4a5a, #6a8a9a, #6a5a8a, #6a8a9a, #1a3a2a, #4a4a5a)';
+        cdDisc.style.border = 'none';
+        cdDisc.style.boxShadow = '0 0 40px rgba(106, 138, 154, 0.3)';
+        cdDisc.style.backdropFilter = 'none';
+    }
+
+    const tonearm = document.querySelector('.tonearm');
+    if (tonearm) {
+        tonearm.style.display = 'block';
+    }
+
+    const healingSide = document.querySelector('.healing-side');
+    if (healingSide) {
+        healingSide.style.overflow = 'auto';
+    }
 }
 
-                    const tonearm = document.querySelector('.tonearm');
-                    if (tonearm) {
-                        tonearm.style.display = 'none';
-                    }
-
-                    const healingSide = document.querySelector('.healing-side');
-                    if (healingSide) {
-                        healingSide.style.overflow = 'hidden';
-                    }
-
-                } else {
-                    const containerEl = document.querySelector('.player-container');
-                    if (containerEl) {
-                        containerEl.style.backgroundImage = 'linear-gradient(135deg, #f5f5f0, #4a4a5a, #8a7a9a, #6a8a9a, #4a4a5a)';
-                        containerEl.style.backgroundSize = '300% 300%';
-                        containerEl.style.backgroundBlendMode = 'normal';
-                        containerEl.style.backgroundPosition = '0% 50%';
-                    }
-
-                    const cdWrapper = document.querySelector('.cd-wrapper');
-                    if (cdWrapper) {
-                        cdWrapper.style.position = 'relative';
-                        cdWrapper.style.top = 'auto';
-                        cdWrapper.style.left = 'auto';
-                        cdWrapper.style.width = '220px';
-                        cdWrapper.style.height = '220px';
-                        cdWrapper.style.zIndex = 'auto';
-                        cdWrapper.style.margin = '10px auto 16px';
-                    }
-
-                    const cdDisc = document.querySelector('.cd-disc');
-                    if (cdDisc) {
-                        cdDisc.style.width = '220px';
-                        cdDisc.style.height = '220px';
-                        cdDisc.style.background = 'conic-gradient(#4a4a5a, #6a8a9a, #6a5a8a, #6a8a9a, #1a3a2a, #4a4a5a)';
-                        cdDisc.style.border = 'none';
-                        cdDisc.style.boxShadow = '0 0 40px rgba(106, 138, 154, 0.3)';
-                        cdDisc.style.backdropFilter = 'none';
-                    }
-
-                    const tonearm = document.querySelector('.tonearm');
-                    if (tonearm) {
-                        tonearm.style.display = 'block';
-                    }
-
-                    const healingSide = document.querySelector('.healing-side');
-                    if (healingSide) {
-                        healingSide.style.overflow = 'auto';
-                    }
-                }
 
                 // ===== 歌词判断 =====
                 const isInstrumental = !currentSong.lyrics || currentSong.lyrics.trim() === '' || currentSong.lyrics.includes('纯音乐');
@@ -766,61 +963,125 @@ if (cdDisc) {
             playSongById(allSongs[currentIndex + 1].id);
         }
 
-        function updateProgress() {
-            if (!audio.duration) return;
-            const percent = (audio.currentTime / audio.duration) * 100;
-            document.getElementById('progressSlider').value = percent;
-            document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+function updateProgress() {
+    if (!audio.duration) return;
+    const currentTime = audio.currentTime;
+    const percent = (currentTime / audio.duration) * 100;
+    document.getElementById('progressSlider').value = percent;
+    document.getElementById('currentTime').textContent = formatTime(currentTime);
 
-            const lines = document.querySelectorAll('.lrc-line');
-            if (lines.length && lrcData.length > 0) {
-                const currentTime = audio.currentTime;
-                let activeIndex = -1;
-                for (let i = 0; i < lrcData.length; i++) {
-                    if (currentTime >= lrcData[i].time) {
-                        activeIndex = i;
-                    }
-                }
+    const lines = document.querySelectorAll('.lrc-line');
+    if (lines.length && lrcData && lrcData.length > 0) {
+        let activeIndex = -1;
+        for (let i = 0; i < lrcData.length; i++) {
+            if (currentTime >= lrcData[i].time) {
+                activeIndex = i;
+            }
+        }
 
-                lines.forEach((line, index) => {
-                    if (index < activeIndex) {
-                        line.style.opacity = '0.25';
-                        line.style.fontSize = '0.75rem';
-                        line.style.color = 'rgba(255,255,255,0.2)';
-                    } else if (index === activeIndex) {
-                        line.style.opacity = '1';
-                        line.style.fontSize = '1.1rem';
-                        line.style.color = '#ffffff';
-                        line.style.fontWeight = '600';
-                    } else {
-                        line.style.opacity = '0.5';
-                        line.style.fontSize = '0.85rem';
-                        line.style.color = 'rgba(255,255,255,0.4)';
-                    }
-                });
+        lines.forEach((line, index) => {
+            // 重置所有样式
+            line.style.opacity = '';
+            line.style.fontSize = '';
+            line.style.color = '';
+            line.style.fontWeight = '';
+            line.style.filter = '';
+            line.style.transform = '';
+            line.style.background = '';
+            line.style.backgroundSize = '';
+            line.style.webkitBackgroundClip = '';
+            line.style.webkitTextFillColor = '';
+            line.style.animation = '';
 
-                if (activeIndex >= 0) {
-                    const activeLine = lines[activeIndex];
-                    if (activeLine) {
-                        const container = document.getElementById('lyricsDisplay');
-                        if (container && container.style.display !== 'none') {
-                            const lineTop = activeLine.offsetTop;
-                            const containerHeight = container.clientHeight;
-                            const lineHeight = activeLine.clientHeight;
-                            const targetScroll = lineTop - containerHeight / 2 + lineHeight / 2;
-                            const maxScroll = container.scrollHeight - containerHeight;
-                            const clampedTarget = Math.max(0, Math.min(targetScroll, maxScroll));
-                            if (Math.abs(container.scrollTop - clampedTarget) > 2) {
-                                container.scrollTo({
-                                    top: clampedTarget,
-                                    behavior: 'smooth'
-                                });
-                            }
-                        }
+            if (index < activeIndex) {
+                // 已唱过的：浅灰→蓝紫→紫金→白色 渐变流动
+                line.style.opacity = '0.5';
+                line.style.fontSize = '0.75rem';
+                line.style.background = 'linear-gradient(90deg, rgba(200,200,210,0.4), rgba(160,140,190,0.4), rgba(212,184,150,0.4), rgba(255,255,255,0.3))';
+                line.style.backgroundSize = '300% 100%';
+                line.style.webkitBackgroundClip = 'text';
+                line.style.webkitTextFillColor = 'transparent';
+                line.style.filter = 'blur(0.3px)';
+                line.style.transform = 'translateY(-2px)';
+                line.style.animation = 'pastLyricGlow 5s ease-in-out infinite alternate';
+            } else if (index === activeIndex) {
+                // 当前高亮
+                line.style.opacity = '1';
+                line.style.fontSize = '1rem';
+                line.style.color = '#ffffff';
+                line.style.fontWeight = '600';
+            } else {
+                // 未唱到的：半透明
+                line.style.opacity = '0.5';
+                line.style.fontSize = '0.85rem';
+                line.style.color = 'rgba(255,255,255,0.4)';
+            }
+        });
+
+        // ===== JAY·HEBE 最后两秒淡入（稳定版） =====
+        const timeLeft = audio.duration - currentTime;
+        if (timeLeft <= 2 && timeLeft > 0) {
+            if (!window._jayhebeShown) {
+                window._jayhebeShown = true;
+                const cdWrapper = document.querySelector('.cd-wrapper');
+                const cdRect = cdWrapper ? cdWrapper.getBoundingClientRect() : { left: 20, top: 20 };
+                const cdX = cdRect.left + 30;
+                const cdY = cdRect.top + 30;
+
+                const overlay = document.createElement('div');
+                overlay.id = 'jayhebe-overlay';
+overlay.style.cssText = `
+    position: fixed;
+    top: ${cdY + 4}px;
+    left: ${cdX + 90}px;
+    pointer-events: none;
+    z-index: 99999;
+`;
+
+                const jh = document.createElement('div');
+                jh.textContent = 'JAY · HEBE';
+                jh.style.cssText = `
+                    font-size: 0.8rem;
+                    font-weight: 400;
+                    font-family: 'Georgia', 'Times New Roman', 'Songti SC', serif;
+                    letter-spacing: 4px;
+                    opacity: 0;
+                    background: linear-gradient(90deg, #f5f5f0, #ffffff, #d4b896, #b8a0c8, #d4b896, #f5f5f0);
+                    background-size: 300% 100%;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    animation: jayhebeFlow 3s ease-in-out infinite alternate, jayhebeFadeIn 2s ease-out forwards;
+                    filter: drop-shadow(0 0 20px rgba(212, 184, 150, 0.05));
+                    text-align: center;
+                `;
+
+                overlay.appendChild(jh);
+                document.body.appendChild(overlay);
+            }
+        } else {
+            // 这里不重置 _jayhebeShown，让它保留
+        }
+
+        // ===== 滚动 =====
+        if (activeIndex >= 0) {
+            const activeLine = lines[activeIndex];
+            if (activeLine) {
+                const container = document.getElementById('lyricsDisplay');
+                if (container && container.style.display !== 'none') {
+                    const lineTop = activeLine.offsetTop;
+                    const containerHeight = container.clientHeight;
+                    const lineHeight = activeLine.clientHeight;
+                    const targetScroll = lineTop - containerHeight / 2 + lineHeight / 2;
+                    const maxScroll = container.scrollHeight - containerHeight;
+                    const clampedTarget = Math.max(0, Math.min(targetScroll, maxScroll));
+                    if (Math.abs(container.scrollTop - clampedTarget) > 5) {
+                        container.scrollTop = clampedTarget;
                     }
                 }
             }
         }
+    }
+}
 
         document.getElementById('progressSlider').addEventListener('input', function() {
             if (!audio.duration) return;
