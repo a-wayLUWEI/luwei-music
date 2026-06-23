@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>正在播放 · 芦苇音乐</title>
     <style>
+/* 星星粒子层 - 仅限特定歌曲 */
+#stars-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+    display: none;
+}
         * {
             margin: 0;
             padding: 0;
@@ -372,7 +384,7 @@
     </style>
 </head>
 <body>
-
+<canvas id="stars-canvas"></canvas>
     <div style="display: flex; gap: 40px; max-width: 1100px; width: 100%; margin: 0 auto; align-items: stretch; padding: 20px;">
 
         <!-- ===== 左边：播放器 ===== -->
@@ -812,6 +824,15 @@ video.style.cssText = `
         healingSide2.appendChild(watermark);
     }
 
+// 判断是否是星星歌曲
+const isStarSong = currentSong.title && currentSong.title.includes('原来我们都变成了星星');
+
+if (isStarSong) {
+    startStars();
+} else {
+    stopStars();
+}
+
 } else {
     // 非周田：恢复默认
     const containerEl = document.querySelector('.player-container');
@@ -1097,6 +1118,78 @@ overlay.style.cssText = `
         }
 
         document.addEventListener('DOMContentLoaded', loadSong);
+
+// ===== 星星粒子特效 =====
+let starsAnimationId = null;
+let starParticles = [];
+
+function initStars() {
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // 生成520颗星星
+    starParticles = [];
+    for (let i = 0; i < 520; i++) {
+        starParticles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 2 + 0.5,
+            speed: Math.random() * 0.3 + 0.1,
+            opacity: Math.random() * 0.5 + 0.2,
+            direction: Math.random() * Math.PI * 2
+        });
+    }
+    drawStars(ctx, canvas);
+}
+
+function drawStars(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    starParticles.forEach(star => {
+        // 移动
+        star.x += Math.cos(star.direction) * star.speed;
+        star.y += Math.sin(star.direction) * star.speed;
+        // 边界回弹
+        if (star.x < 0 || star.x > canvas.width) star.direction = Math.PI - star.direction;
+        if (star.y < 0 || star.y > canvas.height) star.direction = -star.direction;
+
+        // 绘制
+        const opacity = star.opacity * (0.7 + 0.3 * Math.sin(Date.now() / 2000 + star.x));
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 215, 180, ${opacity})`;
+        ctx.fill();
+
+        // 光晕
+        if (star.radius > 1.5) {
+            const gradient = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, star.radius * 4);
+            gradient.addColorStop(0, `rgba(255, 215, 180, ${opacity * 0.3})`);
+            gradient.addColorStop(1, `rgba(255, 215, 180, 0)`);
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.radius * 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    });
+    starsAnimationId = requestAnimationFrame(() => drawStars(ctx, canvas));
+}
+
+function startStars() {
+    const canvas = document.getElementById('stars-canvas');
+    canvas.style.display = 'block';
+    initStars();
+}
+
+function stopStars() {
+    const canvas = document.getElementById('stars-canvas');
+    canvas.style.display = 'none';
+    if (starsAnimationId) {
+        cancelAnimationFrame(starsAnimationId);
+        starsAnimationId = null;
+    }
+    starParticles = [];
+}
     </script>
 
 </body>
