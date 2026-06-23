@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>正在播放 · 芦苇音乐</title>
     <style>
+#sakura-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+}
 #reed-canvas {
     position: fixed;
     top: 0;
@@ -545,6 +555,7 @@
     </style>
 </head>
 <body>
+<canvas id="sakura-canvas"></canvas>
 <canvas id="reed-canvas"></canvas>
 <canvas id="snow-canvas"></canvas>
 <canvas id="glow-canvas"></canvas>
@@ -1043,6 +1054,14 @@ if (isReedSong) {
     startReed();
 } else {
     stopReed();
+}
+
+const isSakuraSong = currentSong.title && currentSong.title.includes('月光洒在芦苇花上');
+
+if (isSakuraSong) {
+    startSakura();
+} else {
+    stopSakura();
 }
 
 } else {
@@ -1753,6 +1772,95 @@ function stopReed() {
     reedParticles = [];
     const canvas = document.getElementById('reed-canvas');
     if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+// ===== 樱花飘落（周田专属） =====
+let sakuraParticles = [];
+let sakuraAnimationId = null;
+
+function startSakura() {
+    const canvas = document.getElementById('sakura-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.display = 'block';
+
+    sakuraParticles = [];
+    const colors = ['#f5d6d6', '#e8d6f5', '#f0c4c4', '#dcc4f0', '#fae0e0', '#f0e0fa'];
+    for (let i = 0; i < 52; i++) {
+        sakuraParticles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 11 + 7,
+            speed: Math.random() * 0.3 + 0.15,
+            wind: (Math.random() - 0.5) * 0.2,
+            rotation: Math.random() * Math.PI * 2,
+            rotSpeed: (Math.random() - 0.5) * 0.02,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            opacity: Math.random() * 0.25 + 0.15,
+            sway: Math.random() * 1.5 + 0.5,
+            phase: Math.random() * Math.PI * 2
+        });
+    }
+    drawSakura(ctx, canvas);
+}
+
+function drawSakura(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const time = Date.now() / 1000;
+    
+    sakuraParticles.forEach(p => {
+        p.y += p.speed;
+        p.x += p.wind + Math.sin(time * 0.5 + p.phase) * p.sway * 0.2;
+        p.rotation += p.rotSpeed;
+        
+        if (p.y > canvas.height) {
+            p.y = -15;
+            p.x = Math.random() * canvas.width;
+        }
+        if (p.x < -15) p.x = canvas.width + 15;
+        if (p.x > canvas.width + 15) p.x = -15;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.globalAlpha = p.opacity;
+        ctx.shadowColor = `rgba(200, 180, 220, 0.03)`;
+        ctx.shadowBlur = 4;
+
+        for (let i = 0; i < 5; i++) {
+            const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+            const petalSize = p.size * (0.7 + 0.3 * Math.sin(time + p.phase + i));
+            ctx.beginPath();
+            ctx.ellipse(
+                Math.cos(angle) * p.size * 0.5,
+                Math.sin(angle) * p.size * 0.5,
+                petalSize * 0.7,
+                petalSize * 0.4,
+                angle,
+                0,
+                Math.PI * 2
+            );
+            ctx.fillStyle = p.color;
+            ctx.fill();
+        }
+        ctx.restore();
+    });
+    sakuraAnimationId = requestAnimationFrame(() => drawSakura(ctx, canvas));
+}
+
+function stopSakura() {
+    if (sakuraAnimationId) {
+        cancelAnimationFrame(sakuraAnimationId);
+        sakuraAnimationId = null;
+    }
+    sakuraParticles = [];
+    const canvas = document.getElementById('sakura-canvas');
+    if (canvas) {
+        canvas.style.display = 'none';
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
