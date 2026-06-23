@@ -5,6 +5,167 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>正在播放 · 芦苇音乐</title>
     <style>
+#reed-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+/* 大雪 - 一种所谓拒绝的善意 */
+#snow-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+/* 微光粒子 - 悬日的云彩黯淡了 */
+#glow-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+/* ===== 暗涌错位专属效果 ===== */
+
+/* 暗涌光影 - 明暗交替层 */
+#ripple-light {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+    background: radial-gradient(ellipse at center, rgba(180, 160, 200, 0.03), transparent 60%);
+    animation: rippleBreath 6s ease-in-out infinite alternate;
+}
+
+@keyframes rippleBreath {
+    0% { opacity: 0.2; transform: scale(0.95); }
+    100% { opacity: 0.8; transform: scale(1.05); }
+}
+
+/* 夜色流动 - 底层缓慢流动 */
+#night-flow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+    background: linear-gradient(180deg, 
+        rgba(20, 25, 40, 0) 0%,
+        rgba(20, 25, 40, 0.03) 30%,
+        rgba(20, 25, 40, 0.06) 50%,
+        rgba(20, 25, 40, 0.03) 70%,
+        rgba(20, 25, 40, 0) 100%
+    );
+    animation: nightFlowMove 12s ease-in-out infinite alternate;
+}
+
+@keyframes nightFlowMove {
+    0% { transform: translateX(-3%) scale(1); opacity: 0.4; }
+    100% { transform: translateX(3%) scale(1.03); opacity: 0.9; }
+}
+
+/* 冷色光晕 - 底部 */
+#cold-glow-ripple {
+    position: fixed;
+    bottom: -50px;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+    background: radial-gradient(ellipse at bottom center, rgba(100, 120, 180, 0.12), transparent 70%);
+    animation: rippleGlowPulse 5s ease-in-out infinite alternate;
+}
+
+@keyframes rippleGlowPulse {
+    0% { opacity: 0.3; transform: scale(0.9); }
+    100% { opacity: 0.7; transform: scale(1.1); }
+}
+
+/* 金色碎片 - 粒子层 */
+#gold-fragments-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+}
+/* 雨丝效果 */
+#rain-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+    display: none;
+}
+
+/* 雾气层 */
+#fog-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+    background: linear-gradient(180deg, 
+        rgba(150, 180, 200, 0) 0%,
+        rgba(150, 180, 200, 0.05) 30%,
+        rgba(150, 180, 200, 0.08) 50%,
+        rgba(150, 180, 200, 0.05) 70%,
+        rgba(150, 180, 200, 0) 100%
+    );
+    animation: fogMove 15s ease-in-out infinite alternate;
+}
+
+@keyframes fogMove {
+    0% { transform: translateX(-5%) scale(1); opacity: 0.6; }
+    100% { transform: translateX(5%) scale(1.05); opacity: 1; }
+}
+
+/* 冷色光晕 - 底部 */
+#cold-glow {
+    position: fixed;
+    bottom: -50px;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+    background: radial-gradient(ellipse at bottom center, rgba(100, 140, 180, 0.15), transparent 70%);
+    animation: glowPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+    0% { opacity: 0.4; transform: scale(0.95); }
+    100% { opacity: 0.8; transform: scale(1.05); }
+}
 /* 星星粒子层 - 仅限特定歌曲 */
 #stars-canvas {
     position: fixed;
@@ -384,6 +545,16 @@
     </style>
 </head>
 <body>
+<canvas id="reed-canvas"></canvas>
+<canvas id="snow-canvas"></canvas>
+<canvas id="glow-canvas"></canvas>
+<div id="ripple-light"></div>
+<div id="night-flow"></div>
+<div id="cold-glow-ripple"></div>
+<canvas id="gold-fragments-canvas"></canvas>
+<canvas id="rain-canvas"></canvas>
+<div id="fog-layer"></div>
+<div id="cold-glow"></div>
 <canvas id="stars-canvas"></canvas>
     <div style="display: flex; gap: 40px; max-width: 1100px; width: 100%; margin: 0 auto; align-items: stretch; padding: 20px;">
 
@@ -824,6 +995,15 @@ video.style.cssText = `
         healingSide2.appendChild(watermark);
     }
 
+// 判断是否是《雨天的悬日》
+const isRainSong = currentSong.title && currentSong.title.includes('雨天的悬日');
+
+if (isRainSong) {
+    startRain();
+} else {
+    stopRain();
+}
+
 // 判断是否是星星歌曲
 const isStarSong = currentSong.title && currentSong.title.includes('原来我们都变成了星星');
 
@@ -831,6 +1011,38 @@ if (isStarSong) {
     startStars();
 } else {
     stopStars();
+}
+
+const isRippleSong = currentSong.title && currentSong.title.includes('一场暗涌的错位');
+
+if (isRippleSong) {
+    startRipple();
+} else {
+    stopRipple();
+}
+
+const isGlowSong = currentSong.title && currentSong.title.includes('悬日的云彩黯淡了');
+
+if (isGlowSong) {
+    startGlow();
+} else {
+    stopGlow();
+}
+
+const isSnowSong = currentSong.title && currentSong.title.includes('一种所谓拒绝的善意');
+
+if (isSnowSong) {
+    startSnow();
+} else {
+    stopSnow();
+}
+
+const isReedSong = currentSong.title && currentSong.title.includes('雨天的悬日');
+
+if (isReedSong) {
+    startReed();
+} else {
+    stopReed();
 }
 
 } else {
@@ -1189,6 +1401,361 @@ function stopStars() {
         starsAnimationId = null;
     }
     starParticles = [];
+}
+
+// ===== 雨丝粒子 =====
+let rainAnimationId = null;
+let rainParticles = [];
+
+function initRain() {
+    const canvas = document.getElementById('rain-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+rainParticles = [];
+for (let i = 0; i < 250; i++) {
+    rainParticles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        length: Math.random() * 25 + 15,   // 更长
+        speed: Math.random() * 6 + 5,      // 更快
+        opacity: Math.random() * 0.4 + 0.2 // 更明显
+    });
+}
+    drawRain(ctx, canvas);
+}
+
+function drawRain(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = 'rgba(180, 210, 230, 0.4)';
+    ctx.lineWidth = 1;
+
+    rainParticles.forEach(rain => {
+        rain.y += rain.speed;
+        if (rain.y > canvas.height) {
+            rain.y = -10;
+            rain.x = Math.random() * canvas.width;
+        }
+        ctx.beginPath();
+        ctx.moveTo(rain.x, rain.y);
+        ctx.lineTo(rain.x - 2, rain.y - rain.length);
+        ctx.stroke();
+    });
+
+    rainAnimationId = requestAnimationFrame(() => drawRain(ctx, canvas));
+}
+
+function startRain() {
+    const canvas = document.getElementById('rain-canvas');
+    const fog = document.getElementById('fog-layer');
+    const glow = document.getElementById('cold-glow');
+    canvas.style.display = 'block';
+    fog.style.display = 'block';
+    glow.style.display = 'block';
+    initRain();
+}
+
+function stopRain() {
+    const canvas = document.getElementById('rain-canvas');
+    const fog = document.getElementById('fog-layer');
+    const glow = document.getElementById('cold-glow');
+    canvas.style.display = 'none';
+    fog.style.display = 'none';
+    glow.style.display = 'none';
+    if (rainAnimationId) {
+        cancelAnimationFrame(rainAnimationId);
+        rainAnimationId = null;
+    }
+    rainParticles = [];
+}
+
+// ===== 金色碎片 =====
+let fragmentsAnimationId = null;
+let goldFragments = [];
+
+function initFragments() {
+    const canvas = document.getElementById('gold-fragments-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    goldFragments = [];
+    for (let i = 0; i < 60; i++) {
+        goldFragments.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 4 + 1,
+            speedX: (Math.random() - 0.5) * 0.3,
+            speedY: (Math.random() - 0.5) * 0.3,
+            opacity: Math.random() * 0.3 + 0.1,
+            rotation: Math.random() * Math.PI * 2,
+            rotationSpeed: (Math.random() - 0.5) * 0.02
+        });
+    }
+    drawFragments(ctx, canvas);
+}
+
+function drawFragments(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    goldFragments.forEach(f => {
+        f.x += f.speedX;
+        f.y += f.speedY;
+        f.rotation += f.rotationSpeed;
+        if (f.x < 0 || f.x > canvas.width) f.speedX *= -1;
+        if (f.y < 0 || f.y > canvas.height) f.speedY *= -1;
+
+        const opacity = f.opacity * (0.6 + 0.4 * Math.sin(Date.now() / 3000 + f.x));
+
+        ctx.save();
+        ctx.translate(f.x, f.y);
+        ctx.rotate(f.rotation);
+        ctx.fillStyle = `rgba(212, 184, 150, ${opacity})`;
+        ctx.shadowColor = `rgba(212, 184, 150, ${opacity * 0.3})`;
+        ctx.shadowBlur = 10;
+        // 小菱形碎片
+        ctx.beginPath();
+        ctx.moveTo(0, -f.size);
+        ctx.lineTo(f.size, 0);
+        ctx.lineTo(0, f.size);
+        ctx.lineTo(-f.size, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    });
+
+    fragmentsAnimationId = requestAnimationFrame(() => drawFragments(ctx, canvas));
+}
+
+function startRipple() {
+    document.getElementById('ripple-light').style.display = 'block';
+    document.getElementById('night-flow').style.display = 'block';
+    document.getElementById('cold-glow-ripple').style.display = 'block';
+    const canvas = document.getElementById('gold-fragments-canvas');
+    canvas.style.display = 'block';
+    initFragments();
+}
+
+function stopRipple() {
+    document.getElementById('ripple-light').style.display = 'none';
+    document.getElementById('night-flow').style.display = 'none';
+    document.getElementById('cold-glow-ripple').style.display = 'none';
+    const canvas = document.getElementById('gold-fragments-canvas');
+    canvas.style.display = 'none';
+    if (fragmentsAnimationId) {
+        cancelAnimationFrame(fragmentsAnimationId);
+        fragmentsAnimationId = null;
+    }
+    goldFragments = [];
+}
+// ===== 微光粒子（悬日的云彩黯淡了） =====
+let glowParticles = [];
+let glowAnimationId = null;
+
+function startGlow() {
+    const canvas = document.getElementById('glow-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    glowParticles = [];
+    for (let i = 0; i < 520; i++) {
+        glowParticles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 3 + 2,
+            speedX: (Math.random() - 0.5) * 0.15,
+            speedY: (Math.random() - 0.5) * 0.15,
+            opacity: Math.random() * 0.4 + 0.1,
+            phase: Math.random() * Math.PI * 2
+        });
+    }
+    drawGlow(ctx, canvas);
+}
+
+function drawGlow(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const time = Date.now() / 3000;
+    glowParticles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+        const opacity = p.opacity * (0.6 + 0.4 * Math.sin(time + p.phase));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(212, 184, 150, ${opacity})`;
+        ctx.shadowColor = `rgba(212, 184, 150, ${opacity * 0.3})`;
+        ctx.shadowBlur = 12;
+        ctx.fill();
+    });
+    glowAnimationId = requestAnimationFrame(() => drawGlow(ctx, canvas));
+}
+
+function stopGlow() {
+    if (glowAnimationId) {
+        cancelAnimationFrame(glowAnimationId);
+        glowAnimationId = null;
+    }
+    glowParticles = [];
+    const canvas = document.getElementById('glow-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+// ===== 大雪 520颗六角雪花（一种所谓拒绝的善意） =====
+let snowParticles = [];
+let snowAnimationId = null;
+
+function startSnow() {
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    snowParticles = [];
+    for (let i = 0; i < 50; i++) {
+        snowParticles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 6 + 6,
+            speed: Math.random() * 0.6 + 0.2,
+            wind: (Math.random() - 0.5) * 0.2,
+            opacity: Math.random() * 0.4 + 0.2,
+            rotation: Math.random() * Math.PI * 2,
+            rotSpeed: (Math.random() - 0.5) * 0.02
+        });
+    }
+    drawSnow(ctx, canvas);
+}
+
+function drawSnowflake(ctx, x, y, size, opacity, rotation) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+    ctx.globalAlpha = opacity;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.05)';
+    ctx.shadowBlur = 4;
+
+    // 六条主臂
+    for (let i = 0; i < 6; i++) {
+        const angle = (i / 6) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(angle) * size, Math.sin(angle) * size);
+        ctx.stroke();
+
+        // 小分支
+        const branchLength = size * 0.4;
+        const branchPos = size * 0.6;
+        for (let j = -1; j <= 1; j += 2) {
+            const branchAngle = angle + j * 0.6;
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(angle) * branchPos, Math.sin(angle) * branchPos);
+            ctx.lineTo(
+                Math.cos(angle) * branchPos + Math.cos(branchAngle) * branchLength,
+                Math.sin(angle) * branchPos + Math.sin(branchAngle) * branchLength
+            );
+            ctx.stroke();
+        }
+    }
+    ctx.restore();
+}
+
+function drawSnow(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    snowParticles.forEach(p => {
+        p.y += p.speed;
+        p.x += p.wind + Math.sin(p.y / 100) * 0.3;
+        p.rotation += p.rotSpeed;
+        if (p.y > canvas.height) {
+            p.y = -20;
+            p.x = Math.random() * canvas.width;
+        }
+        if (p.x < -20) p.x = canvas.width + 20;
+        if (p.x > canvas.width + 20) p.x = -20;
+
+        drawSnowflake(ctx, p.x, p.y, p.size, p.opacity, p.rotation);
+    });
+    snowAnimationId = requestAnimationFrame(() => drawSnow(ctx, canvas));
+}
+
+function stopSnow() {
+    if (snowAnimationId) {
+        cancelAnimationFrame(snowAnimationId);
+        snowAnimationId = null;
+    }
+    snowParticles = [];
+    const canvas = document.getElementById('snow-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+// ===== 芦苇飘动（风的效果） =====
+let reedParticles = [];
+let reedAnimationId = null;
+
+function startReed() {
+    const canvas = document.getElementById('reed-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    reedParticles = [];
+    for (let i = 0; i < 30; i++) {
+        reedParticles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            height: Math.random() * 80 + 40,
+            width: Math.random() * 2 + 1,
+            phase: Math.random() * Math.PI * 2,
+            speed: Math.random() * 0.02 + 0.01,
+            opacity: Math.random() * 0.08 + 0.04
+        });
+    }
+    drawReed(ctx, canvas);
+}
+
+function drawReed(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const time = Date.now() / 1000;
+    reedParticles.forEach(r => {
+        const sway = Math.sin(time * r.speed + r.phase) * 20;
+        ctx.beginPath();
+        const offsetX = canvas.width * 0.7; // 右移
+const offsetY = canvas.height * 0.1; // 上移
+ctx.moveTo(r.x + offsetX, r.y + offsetY);
+        ctx.quadraticCurveTo(r.x + sway, r.y - r.height * 0.5, r.x + sway * 1.2, r.y - r.height);
+        ctx.strokeStyle = `rgba(180, 170, 150, ${r.opacity})`;
+        ctx.lineWidth = r.width;
+        ctx.stroke();
+
+        // 芦穗
+        ctx.beginPath();
+        ctx.ellipse(r.x + sway * 1.2, r.y - r.height, r.width * 3, r.width * 2, sway * 0.02, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(180, 170, 150, ${r.opacity * 0.5})`;
+        ctx.fill();
+    });
+    reedAnimationId = requestAnimationFrame(() => drawReed(ctx, canvas));
+}
+
+function stopReed() {
+    if (reedAnimationId) {
+        cancelAnimationFrame(reedAnimationId);
+        reedAnimationId = null;
+    }
+    reedParticles = [];
+    const canvas = document.getElementById('reed-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
 }
     </script>
 
