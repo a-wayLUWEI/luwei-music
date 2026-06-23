@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>歌词投稿 · 芦苇音乐</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8e8e8, #6a8a9a, #e8e8e8, #8a7a9a, #4a4a5a, #e8e8e8);
+            background-size: 400% 400%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: bodyGradientFlow 16s ease-in-out infinite alternate;
+        }
+
+        @keyframes bodyGradientFlow {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 25% 50%; }
+            50% { background-position: 50% 50%; }
+            75% { background-position: 75% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .container {
+            max-width: 520px;
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 40px 32px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .back-link {
+            color: rgba(255,255,255,0.2);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+        .back-link:hover { color: rgba(255,255,255,0.4); }
+
+        .title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #d4b896;
+            letter-spacing: 3px;
+            margin-top: 16px;
+        }
+
+        .subtitle {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.15);
+            letter-spacing: 2px;
+            margin-top: 4px;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 40px;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 3px;
+            font-weight: 300;
+            margin-top: 4px;
+        }
+        .submit-btn:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.5);
+        }
+
+        .message {
+            display: none;
+            margin-top: 16px;
+            font-size: 0.8rem;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .message.success { color: rgba(100,200,150,0.6); }
+        .message.error { color: rgba(255,150,150,0.5); }
+
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 0.5rem;
+            color: rgba(255,255,255,0.04);
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+<a href="lwmusic.html" class="back-link">← 返回</a >
+    <div class="title">✍️ 歌词投稿</div>
+    <div class="subtitle">把你的歌词留在这里，审核通过后会展示</div>
+
+    <form id="lyricForm">
+        <div class="form-group">
+            <label>标题</label>
+            <input type="text" id="lyricTitle" placeholder="歌词标题" required>
+        </div>
+        <div class="form-group">
+            <label>作者</label>
+            <input type="text" id="lyricAuthor" placeholder="原作者（选填）">
+        </div>
+        <div class="form-group">
+            <label>歌词</label>
+            <textarea id="lyricContent" rows="6" placeholder="把歌词写在这里..." required></textarea>
+        </div>
+        <div class="form-group">
+            <label>你的昵称</label>
+            <input type="text" id="submitterName" placeholder="你叫什么名字？" required>
+        </div>
+        <div class="form-group">
+            <label>联系方式</label>
+            <input type="text" id="submitterEmail" placeholder="微信/邮箱（选填）">
+        </div>
+        <button type="submit" class="submit-btn">✦ 提交投稿</button>
+    </form>
+
+    <div class="message" id="message"></div>
+    <div class="footer">芦苇音乐 · 歌词投稿</div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+document.getElementById('lyricForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const title = document.getElementById('lyricTitle').value.trim();
+    const author = document.getElementById('lyricAuthor').value.trim();
+    const content = document.getElementById('lyricContent').value.trim();
+    const name = document.getElementById('submitterName').value.trim();
+    const email = document.getElementById('submitterEmail').value.trim();
+    const msg = document.getElementById('message');
+
+    if (!title || !content || !name) {
+        msg.textContent = '请填写标题、歌词和你的昵称';
+        msg.className = 'message error';
+        msg.style.display = 'block';
+        return;
+    }
+
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/lyric_submissions`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: Date.now(),
+                title: title,
+                author: author,
+                content: content,
+                submitter_name: name,
+                submitter_email: email,
+                status: 'pending'
+            })
+        });
+
+        if (resp.ok) {
+            msg.textContent = '✅ 投稿成功！审核通过后会展示在这里。';
+            msg.className = 'message success';
+            msg.style.display = 'block';
+            document.getElementById('lyricForm').reset();
+        } else {
+            msg.textContent = '提交失败，请稍后重试';
+            msg.className = 'message error';
+            msg.style.display = 'block';
+        }
+    } catch (e) {
+        msg.textContent = '网络错误，请稍后重试';
+        msg.className = 'message error';
+        msg.style.display = 'block';
+    }
+});
+</script>
+
+</body>
+</html>
