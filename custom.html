@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>歌手定制 · 芦苇音乐</title>
+    <style>
+#meteor-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(145deg, #e8e8e8, #6a8a9a, #e8e8e8, #8a7a9a, #4a4a5a, #1a3a2a, #e8e8e8);
+    background-size: 400% 400%;
+    min-height: 100vh;
+    padding: 20px;
+    animation: bodyGradientFlow 16s ease-in-out infinite alternate;
+}
+
+@keyframes bodyGradientFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* 返回导航 */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .nav a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .nav a:hover {
+            color: #fff;
+        }
+
+        .nav .brand {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #d4b896, #b8a0c8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 主视觉 */
+        .hero {
+            text-align: center;
+            padding: 50px 20px 40px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 4px;
+            margin-bottom: 12px;
+            text-shadow: 0 0 60px rgba(255, 255, 255, 0.05);
+        }
+
+        .hero h1 span {
+            background: linear-gradient(90deg, #d4b896, #b8a0c8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 6px;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        .hero .sub-line {
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 3px;
+        }
+
+        /* 六个服务卡片 */
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 40px 0;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 24px 20px;
+            transition: 0.4s;
+            cursor: default;
+        }
+
+        .service-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .service-card .icon {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+        }
+
+        .service-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .service-card p {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.6;
+        }
+
+        /* 案例展示 */
+        .cases {
+            margin: 40px 0;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .cases .title {
+            text-align: center;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .case-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: 0.3s;
+        }
+
+        .case-item:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .case-item .name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .case-item .detail {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .case-item .tag {
+            display: inline-block;
+            font-size: 0.5rem;
+            background: rgba(212, 184, 150, 0.15);
+            color: rgba(212, 184, 150, 0.6);
+            padding: 2px 12px;
+            border-radius: 20px;
+            margin-top: 6px;
+            letter-spacing: 1px;
+        }
+
+        /* 定价 */
+        .pricing {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 40px 0;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 24px 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: 0.3s;
+        }
+
+        .pricing-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .pricing-card.featured {
+            border-color: rgba(212, 184, 150, 0.15);
+            background: rgba(212, 184, 150, 0.04);
+        }
+
+        .pricing-card .level {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+        }
+
+        .pricing-card .price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 8px 0 4px;
+        }
+
+        .pricing-card .price span {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .pricing-card .desc {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            line-height: 1.8;
+        }
+
+        .pricing-card .badge {
+            display: inline-block;
+            font-size: 0.5rem;
+            background: rgba(212, 184, 150, 0.15);
+            color: rgba(212, 184, 150, 0.5);
+            padding: 2px 12px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* 行动入口 */
+        .cta {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .cta .btn {
+            display: inline-block;
+            padding: 14px 48px;
+            background: linear-gradient(135deg, rgba(212, 184, 150, 0.15), rgba(184, 160, 200, 0.15));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .cta .btn:hover {
+            background: linear-gradient(135deg, rgba(212, 184, 150, 0.25), rgba(184, 160, 200, 0.25));
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
+        }
+
+        .cta .contact {
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.15);
+            letter-spacing: 2px;
+        }
+
+        .cta .contact a {
+            color: rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+        }
+
+        .cta .contact a:hover {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 30px 0 10px;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.06);
+            letter-spacing: 2px;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            margin-top: 20px;
+        }
+
+        /* 手机适配 */
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .services {
+                grid-template-columns: 1fr;
+            }
+            .pricing {
+                grid-template-columns: 1fr;
+            }
+            .case-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<canvas id="meteor-canvas"></canvas>
+<div class="container">
+
+    <!-- 导航 -->
+    <div class="nav">
+        <a href="lwmusic.html">← 返回首页</a>
+        <span class="brand">芦苇音乐</span>
+    </div>
+
+    <!-- 主视觉 -->
+    <div class="hero">
+        <h1>每个人都可以是 <span>周田</span></h1>
+        <p>你只需要一个艺名，剩下的交给我们。</p>
+        <div class="sub-line">歌词 · 旋律 · 声音 · 界面 · 入驻 · 礼物</div>
+    </div>
+
+    <!-- 六个服务 -->
+    <div class="services">
+        <div class="service-card">
+            <div class="icon">✍️</div>
+            <h3>歌词定制</h3>
+            <p>你写或我们写，不押韵也没关系，我们有芦苇老师帮你打磨。</p>
+        </div>
+        <div class="service-card">
+            <div class="icon"></div>
+            <h3>旋律定制</h3>
+            <p>你写旋律或我们创作，不懂乐理也没关系，AI会帮你完成。</p>
+        </div>
+        <div class="service-card">
+            <div class="icon"></div>
+            <h3>虚拟歌手声音</h3>
+            <p>你唱或用AI生成你的声音，让“另一个你”替你演唱。</p>
+        </div>
+        <div class="service-card">
+            <div class="icon"></div>
+            <h3>高级歌手界面</h3>
+            <p>芦苇老师亲自设计，独一无二，与你的气质高度匹配。</p>
+        </div>
+        <div class="service-card">
+            <div class="icon"></div>
+            <h3>入驻芦苇音乐</h3>
+            <p>可以选择入驻展示，也可以只留给自己或那个人，完全由你决定。</p>
+        </div>
+        <div class="service-card">
+            <div class="icon"></div>
+            <h3>送给重要的人</h3>
+            <p>朋友、恋人、家人——一首歌不会过期，就像有些人不会忘记。</p>
+        </div>
+    </div>
+
+    <!-- 案例 -->
+    <div class="cases">
+        <div class="title">✦ 案例 · 周田 ✦</div>
+        <div class="case-grid">
+            <div class="case-item">
+                <div class="name">《雨天的悬日》</div>
+                <div class="detail">清冷钢琴 · 遗憾感</div>
+                <span class="tag">已入驻</span>
+            </div>
+            <div class="case-item">
+                <div class="name">《悬日的云彩黯淡了》</div>
+                <div class="detail">清冷钢琴 · 爱而不得</div>
+                <span class="tag">已入驻</span>
+            </div>
+            <div class="case-item">
+                <div class="name">《每个人都变成了周田》</div>
+                <div class="detail">写给听众的独白</div>
+                <span class="tag">制作中</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 定价 -->
+    <div class="pricing">
+        <div class="pricing-card">
+            <div class="level">基础</div>
+            <div class="price">¥399 <span>起</span></div>
+            <div class="desc">歌词定制 · 纯音乐旋律<br>基础歌手界面</div>
+        </div>
+        <div class="pricing-card featured">
+            <div class="badge">推荐</div>
+            <div class="level">标准</div>
+            <div class="price">¥899 <span>起</span></div>
+            <div class="desc">歌词 · 旋律 · 虚拟声音<br>高级界面 · 平台入驻</div>
+        </div>
+        <div class="pricing-card">
+            <div class="level">旗舰</div>
+            <div class="price">¥1699 <span>起</span></div>
+            <div class="desc">歌词 · 旋律 · 虚拟声音 · 高级界面<br>平台入驻 · 专属推广</div>
+        </div>
+    </div>
+
+    <!-- 行动入口 -->
+    <div class="cta">
+<a href="javascript:void(0)" class="btn" onclick="openCustomAI()">✧ 点击悬浮按钮 · 高级定制 ✧</a >
+        <div class="contact">
+            微信：jianjiayinyue &nbsp;·&nbsp; 或私信我
+        </div>
+    </div>
+
+    <div class="footer">
+        © 芦苇音乐 · 每个人都可以是独特音乐人
+    </div>
+
+</div>
+<!-- ===== 高级定制客服 AI 助手 ===== -->
+<div id="customAIAssistant" style="display:none; position:fixed; bottom:100px; right:20px; width:360px; max-width:90vw; background:rgba(20,30,40,0.85); backdrop-filter:blur(16px); border-radius:24px; border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 60px rgba(0,0,0,0.5); z-index:10000; overflow:hidden; padding:20px; transition:0.3s;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span style="color:#d4b896; font-weight:600; font-size:1rem; letter-spacing:1px;">🎤 高级定制客服</span>
+        <button onclick="document.getElementById('customAIAssistant').style.display='none'" style="background:none; border:none; color:rgba(255,255,255,0.3); font-size:1.2rem; cursor:pointer;">✕</button>
+    </div>
+    <div id="customAIChat" style="background:rgba(0,0,0,0.2); border-radius:16px; padding:14px; min-height:100px; max-height:200px; overflow-y:auto; font-size:0.85rem; color:rgba(255,255,255,0.7); line-height:1.8; margin-bottom:12px;">
+        <div style="color:rgba(255,255,255,0.2); text-align:center; font-size:0.75rem;">👋 你好！我是芦苇音乐定制客服，<br>你想定制一首歌还是歌手页面？</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+        <input type="text" id="customAIInput" placeholder="输入你的问题..." style="flex:1; padding:10px 14px; border-radius:40px; border:none; background:rgba(255,255,255,0.06); color:white; font-size:0.8rem; outline:none;" onkeydown="if(event.key==='Enter') submitCustomAI()">
+        <button onclick="submitCustomAI()" style="background:linear-gradient(135deg, #d4b896, #b8a0c8); border:none; padding:10px 18px; border-radius:40px; color:#1a1a2e; font-weight:600; cursor:pointer; font-size:0.8rem;">发送</button>
+    </div>
+</div>
+
+<!-- 悬浮触发按钮 -->
+<button onclick="document.getElementById('customAIAssistant').style.display='block'" style="position:fixed; bottom:30px; right:30px; width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg, #d4b896, #b8a0c8); border:none; box-shadow:0 4px 20px rgba(184,160,200,0.4); cursor:pointer; font-size:1.8rem; z-index:9999; transition:0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+    🎤
+</button>
+
+<script>
+// ===== 定制客服AI知识库 =====
+const customKnowledge = {
+    // ===== 基础问题 =====
+    '价格': '我们的定制服务分三档：基础版 ¥399（歌词+纯音乐+基础界面），标准版 ¥899（歌词+旋律+虚拟声音+高级界面+入驻），旗舰版 ¥1699（全部+专属推广）。具体价格根据需求浮动，可以私聊详谈。',
+    '流程': '流程很简单：1. 你提供艺名和想法；2. 我们完成歌词、旋律、声音、界面；3. 你确认效果；4. 交付完成。全程你什么都不用做，只需要告诉我们你的想法。',
+    '时间': '基础版 3-5 个工作日，标准版 5-7 个工作日，旗舰版 7-10 个工作日。如果是生日或纪念日礼物，请提前两周告诉我们，我们会优先排期。',
+    '礼物': '可以送给朋友、恋人、家人。一首歌不会过期，就像有些人不会忘记。我们可以帮你包装成一份完整的"音乐礼物"，包括歌手页面链接和专属二维码。',
+    '声音': '你可以自己唱，也可以用AI生成你的声音。如果你选择AI声音，只需要提供一段干净的语音样本（1-2分钟），我们会生成属于你的虚拟歌手声线。',
+    '界面': '界面由芦苇老师亲自设计，独一无二，与你的气质高度匹配。包括歌手头像、背景配色、歌词排版、专属字体等，全部定制。',
+    '入驻': '可以选择入驻芦苇音乐平台展示，也可以只留给自己或那个人。入驻后，你的作品会在芦苇音乐展示区被看到。',
+    '周田': '周田是我们做的第一个虚拟歌手案例。他的《雨天的悬日》《悬日之前》就是通过这套流程完成的。你可以把它作为参考，看看我们能做到什么程度。',
+
+    // ===== 新增核心问题 =====
+    '零基础': '可以！你什么都不用会，不需要懂乐理、不需要会乐器、不需要进录音棚。你只需要提供一个艺名和大概的想法，剩下的全部交给我们。',
+    '版权': '歌曲版权完全归你所有，芦苇音乐只保留在平台展示的权利。你可以自由使用、发布、发行你的歌曲。',
+    '试听': '制作过程中会提供小样试听，满意了再继续。如果不满意，可以在前期阶段提出调整，确保成品是你想要的。',
+    '修改': '提供 2-3 次免费修改，放心调整到满意为止。超过次数后，酌情收取少量修改费用。',
+    '永久': '歌手页面永久保留在芦苇音乐平台，不会删除。只要芦苇音乐还在，你的页面就在。',
+    '私密': '可以设置成"仅自己可见"或"仅链接可见"，只有你自己或收到链接的人能看到。完全由你决定。',
+    '上架': '暂不支持上架到 QQ音乐、网易云等平台，但后续我们会增加分发服务。目前主要做页面展示和平台入驻。',
+    '区别': 'AI只是辅助工具，我们有真人老师打磨歌词、旋律和界面，不是纯机器生成。AI帮你快速出雏形，真人帮你打磨细节。',
+    '单项': '可以！单项服务也接。你可以只买歌词，只买旋律，只买界面，或者任意组合。按单项报价，比全套更灵活。',
+    '生日礼物': '非常适合！很多客户都是拿来当生日礼物或纪念日礼物。我们还可以帮你定制专属祝福语，放在歌手页面里。',
+    '合唱': '可以！情侣档、亲子档、闺蜜档都可以定制。只需要提供两个人的艺名和想法，我们会做成合唱版本。',
+    '付款': '可以联系芦苇老师的微信哦！她微信是：jiangjiayinyue，谢谢惠顾！爱你哦。',
+    '找不到': '可以再加芦苇老师QQ哦，她QQ是：1573738696，谢谢惠顾！爱你哦。',
+
+    '默认': '你好呀！想问什么呢？我可以帮你解答：价格、流程、时间、礼物、声音、界面、入驻、版权、试听、修改、零基础……也可以直接看看周田的案例。'
+};
+
+function getCustomAIResponse(input) {
+    const lower = input.toLowerCase();
+    for (const [key, value] of Object.entries(customKnowledge)) {
+        if (lower.includes(key)) {
+            return value;
+        }
+    }
+    // 检查是否包含常见词
+    const keywords = ['价格', '多少钱', '收费', '费用', '贵不贵'];
+    for (const kw of keywords) {
+        if (lower.includes(kw)) {
+            return customKnowledge['价格'];
+        }
+    }
+    const keywords2 = ['多久', '时间', '几天', '周期'];
+    for (const kw of keywords2) {
+        if (lower.includes(kw)) {
+            return customKnowledge['时间'];
+        }
+    }
+    return customKnowledge['默认'];
+}
+
+function submitCustomAI() {
+    const input = document.getElementById('customAIInput');
+    const chat = document.getElementById('customAIChat');
+    const question = input.value.trim();
+    if (!question) return;
+    
+    // 显示用户问题
+    chat.innerHTML += `<div style="text-align:right;margin-bottom:6px;"><span style="display:inline-block;background:rgba(212,184,150,0.15);padding:4px 14px;border-radius:14px 14px 4px 14px;color:#d4b896;font-size:0.8rem;">${question}</span></div>`;
+    input.value = '';
+    chat.scrollTop = chat.scrollHeight;
+    
+    // 获取回复
+    const reply = getCustomAIResponse(question);
+    setTimeout(() => {
+        chat.innerHTML += `<div style="text-align:left;margin-bottom:6px;"><span style="display:inline-block;background:rgba(255,255,255,0.04);padding:4px 14px;border-radius:14px 14px 14px 4px;color:rgba(255,255,255,0.5);font-size:0.8rem;border:1px solid rgba(255,255,255,0.04);">${reply}</span></div>`;
+        chat.scrollTop = chat.scrollHeight;
+    }, 300);
+}
+// ===== 流星雨 =====
+let meteors = [];
+let meteorAnimationId = null;
+
+function startMeteors() {
+    const canvas = document.getElementById('meteor-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // 生成流星
+    for (let i = 0; i < 8; i++) {
+        meteors.push(createMeteor(canvas));
+    }
+    drawMeteors(ctx, canvas);
+}
+
+function createMeteor(canvas) {
+    const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.3;
+    return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height * 0.5,
+        speed: Math.random() * 6 + 4,
+        angle: angle,
+        length: Math.random() * 60 + 40,
+        opacity: Math.random() * 0.4 + 0.1,
+        life: 0,
+        maxLife: Math.random() * 150 + 100
+    };
+}
+
+function drawMeteors(ctx, canvas) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    meteors.forEach(m => {
+        m.x += Math.cos(m.angle) * m.speed;
+        m.y += Math.sin(m.angle) * m.speed;
+        m.life++;
+        
+        if (m.life > m.maxLife || m.x > canvas.width || m.y > canvas.height) {
+            Object.assign(m, createMeteor(canvas));
+            m.life = 0;
+        }
+        
+        const progress = m.life / m.maxLife;
+        const alpha = m.opacity * (1 - progress * 0.8);
+        
+        // 流星尾巴
+        const tailX = m.x - Math.cos(m.angle) * m.length;
+        const tailY = m.y - Math.sin(m.angle) * m.length;
+        
+        const gradient = ctx.createLinearGradient(tailX, tailY, m.x, m.y);
+        gradient.addColorStop(0, `rgba(180, 200, 220, ${alpha * 0.1})`);
+        gradient.addColorStop(0.3, `rgba(200, 215, 235, ${alpha * 0.3})`);
+        gradient.addColorStop(1, `rgba(255, 255, 255, ${alpha * 0.9})`);
+        
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(m.x, m.y);
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = `rgba(200, 220, 255, ${alpha * 0.2})`;
+        ctx.shadowBlur = 12;
+        ctx.stroke();
+        
+        // 流星头部光晕
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.6})`;
+        ctx.shadowBlur = 20;
+        ctx.fill();
+    });
+    
+    meteorAnimationId = requestAnimationFrame(() => drawMeteors(ctx, canvas));
+}
+
+function stopMeteors() {
+    if (meteorAnimationId) {
+        cancelAnimationFrame(meteorAnimationId);
+        meteorAnimationId = null;
+    }
+    meteors = [];
+    const canvas = document.getElementById('meteor-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    startMeteors();
+});
+</script>
+</body>
+</html>
