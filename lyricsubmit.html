@@ -132,12 +132,24 @@ body {
             color: rgba(255,255,255,0.04);
             letter-spacing: 2px;
         }
+
+        /* 投稿记录滚动条 */
+        #mySubmissions::-webkit-scrollbar {
+            width: 2px;
+        }
+        #mySubmissions::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #mySubmissions::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
 <script src="checkAuth.js"></script>
 <div class="container">
-<a href="lwmusic.html" class="back-link">← 返回</a >
+    <a href="lwmusic.html" class="back-link">← 返回</a>
     <div class="title">✍️ 歌词投稿</div>
     <div class="subtitle">把你的歌词留在这里，审核通过后会展示</div>
 
@@ -165,6 +177,31 @@ body {
         <button type="submit" class="submit-btn">✦ 提交投稿</button>
     </form>
 
+    <!-- ===== 我的投稿（查看状态） ===== -->
+    <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="color: rgba(255,255,255,0.15); font-size: 0.7rem; letter-spacing: 1px;"> 我的投稿</span>
+            <button onclick="loadMySubmissions()" style="
+                background: rgba(255,255,255,0.03);
+                border: none;
+                color: rgba(255,255,255,0.1);
+                font-size: 0.6rem;
+                cursor: pointer;
+                padding: 4px 12px;
+                border-radius: 12px;
+            ">刷新</button>
+        </div>
+        <div id="mySubmissions" style="
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 4px;
+        ">
+            <div style="text-align: center; color: rgba(255,255,255,0.06); font-size: 0.7rem; padding: 20px 0;">
+                还没有投稿记录
+            </div>
+        </div>
+    </div>
+
     <div class="message" id="message"></div>
     <div class="footer">芦苇音乐 · 歌词投稿</div>
 </div>
@@ -173,6 +210,7 @@ body {
 const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
 
+// ===== 提交投稿 =====
 document.getElementById('lyricForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -213,6 +251,8 @@ document.getElementById('lyricForm').addEventListener('submit', async function(e
             msg.className = 'message success';
             msg.style.display = 'block';
             document.getElementById('lyricForm').reset();
+            // 刷新投稿记录
+            setTimeout(loadMySubmissions, 500);
         } else {
             msg.textContent = '提交失败，请稍后重试';
             msg.className = 'message error';
@@ -223,6 +263,93 @@ document.getElementById('lyricForm').addEventListener('submit', async function(e
         msg.className = 'message error';
         msg.style.display = 'block';
     }
+});
+
+// ===== 获取当前用户昵称 =====
+function getCurrentUser() {
+    try {
+        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        return user.nickname || user.username || '';
+    } catch (e) {
+        return '';
+    }
+}
+
+// ===== 加载我的投稿 =====
+async function loadMySubmissions() {
+    const container = document.getElementById('mySubmissions');
+    const userName = getCurrentUser();
+    
+    if (!userName) {
+        container.innerHTML = `
+            <div style="text-align: center; color: rgba(255,255,255,0.08); font-size: 0.7rem; padding: 20px 0;">
+                 提交投稿后，这里会显示状态
+            </div>
+        `;
+        return;
+    }
+
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/lyric_submissions?submitter_name=eq.${encodeURIComponent(userName)}&order=created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const data = await resp.json();
+
+        if (!data || data.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; color: rgba(255,255,255,0.06); font-size: 0.7rem; padding: 20px 0;">
+                    暂无投稿记录
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = data.map(item => {
+            const status = item.status || 'pending';
+            const statusMap = {
+                'pending': '<span style="color: rgba(255,193,7,0.5);">⏳ 审核中</span>',
+                'approved': '<span style="color: rgba(76,175,80,0.5);">✅ 已通过</span>',
+                'rejected': '<span style="color: rgba(229,57,53,0.5);">❌ 已拒绝</span>'
+            };
+            
+            const rejectReasonHtml = item.reject_reason 
+                ? `<div style="color: rgba(229,57,53,0.4); font-size: 0.65rem; margin-top: 3px; padding: 4px 10px; background: rgba(229,57,53,0.05); border-radius: 6px; display: inline-block;"> ${item.reject_reason}</div>`
+                : '';
+
+            return `
+                <div style="
+                    padding: 10px 12px;
+                    margin-bottom: 6px;
+                    background: rgba(255,255,255,0.02);
+                    border-radius: 12px;
+                    border-left: 2px solid ${status === 'approved' ? 'rgba(76,175,80,0.2)' : status === 'rejected' ? 'rgba(229,57,53,0.2)' : 'rgba(255,193,7,0.1)'};
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+                        <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">${item.title || '无标题'}</span>
+                        ${statusMap[status]}
+                    </div>
+                    ${rejectReasonHtml}
+                    <div style="color: rgba(255,255,255,0.06); font-size: 0.5rem; margin-top: 2px;">
+                        ${item.created_at ? new Date(item.created_at).toLocaleDateString() : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+    } catch (e) {
+        container.innerHTML = `
+            <div style="text-align: center; color: rgba(255,255,255,0.06); font-size: 0.7rem; padding: 20px 0;">
+                加载失败
+            </div>
+        `;
+        console.error(e);
+    }
+}
+
+// ===== 页面加载时自动加载投稿记录 =====
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(loadMySubmissions, 500);
 });
 </script>
 
