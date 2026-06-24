@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>正在播放 · 芦苇音乐</title>
     <style>
+/* 评论弹窗背景流动 */
+@keyframes commentBgFlow {
+    0% { background-position: 0% 0%; }
+    25% { background-position: 50% 100%; }
+    50% { background-position: 100% 50%; }
+    75% { background-position: 50% 0%; }
+    100% { background-position: 0% 100%; }
+}
 #volumeSlider::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 14px;
@@ -674,6 +682,31 @@
     ♡ <span id="likeCount" style="font-size:0.6rem; margin-left:2px;">0</span>
 </button>
 
+<!-- 评论按钮 -->
+<button id="commentBtn" onclick="openCommentModal()" style="
+    position: absolute;
+    bottom: 20px;
+    left: 146px;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8, #d4b896);
+    background-size: 300% 300%;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: #1a1a2e;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(184, 160, 200, 0.08);
+    animation: floatGradient 4s ease-in-out infinite alternate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+" onmouseover="this.style.boxShadow='0 0 30px rgba(184,160,200,0.2)'; this.style.transform='scale(1.05)'" onmouseout="this.style.boxShadow='0 0 20px rgba(184,160,200,0.08)'; this.style.transform='scale(1)'">
+    💬
+</button>
+
 <!-- 音量控制按钮（同款渐变） -->
 <button id="volumeBtn" onclick="toggleVolumePopup()" style="
     position: absolute;
@@ -764,6 +797,104 @@
     " id="volumeLabel">80%</div>
 </div>
 
+<!-- ===== 评论弹窗 ===== -->
+<div id="commentModal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+">
+<div style="
+    background: linear-gradient(135deg, 
+        #e8e8e8 0%, 
+        #8a8a8a 15%, 
+        #1a1a1a 30%, 
+        #d4a843 45%, 
+        #6a5a9a 60%, 
+        #2a4a3a 75%, 
+        #6a5a9a 85%, 
+        #3a3a4a 100%
+    );
+    background-size: 300% 300%;
+    border-radius: 24px;
+    width: 92%;
+    max-width: 800px;        /* ← 从 400px 改成 800px，两倍宽 */
+    max-height: 90vh;        /* ← 从 80vh 改成 90vh，更高 */
+    height: 80vh;            /* ← 新增，固定高度占屏幕 80% */
+    padding: 28px 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    animation: commentBgFlow 10s ease-in-out infinite alternate;
+">
+        <!-- 标题 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <span style="color: #fff; font-size: 1rem; font-weight: 600; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">💬 评论 <span id="commentCount" style="color: rgba(255,255,255,0.4); font-weight: 400;">0</span></span>
+            <button onclick="closeCommentModal()" style="
+                background: rgba(255,255,255,0.1);
+                border: none;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                color: rgba(255,255,255,0.6);
+                font-size: 1rem;
+                cursor: pointer;
+                transition: 0.3s;
+            " onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='rgba(255,255,255,0.6)'">✕</button>
+        </div>
+
+<!-- 评论列表 -->
+<div id="commentList" style="
+    flex: 1;
+    overflow-y: auto;
+    max-height: 520px;       /* ← 从 380px 改成 520px */
+    margin-bottom: 14px;
+    padding-right: 6px;
+">
+            <div style="text-align: center; color: rgba(255,255,255,0.4); padding: 50px 0; font-size: 0.85rem; text-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                💭 还没有评论，说点什么吧～
+            </div>
+        </div>
+
+        <!-- 输入区 -->
+        <div style="display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
+            <input id="commentInput" type="text" placeholder="写评论..." style="
+                flex: 1;
+                background: rgba(0,0,0,0.3);
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 20px;
+                padding: 10px 16px;
+                color: #fff;
+                font-size: 0.85rem;
+                outline: none;
+                transition: 0.3s;
+            " onfocus="this.style.borderColor='rgba(212,184,150,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" onkeydown="if(event.key==='Enter') postComment()">
+            <button onclick="postComment()" style="
+                background: linear-gradient(135deg, #d4b896, #b8a0c8);
+                border: none;
+                border-radius: 20px;
+                padding: 10px 18px;
+                color: #1a1a2e;
+                font-weight: 600;
+                font-size: 0.85rem;
+                cursor: pointer;
+                white-space: nowrap;
+                transition: 0.3s;
+                box-shadow: 0 4px 20px rgba(184,160,200,0.2);
+            " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 30px rgba(184,160,200,0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 20px rgba(184,160,200,0.2)'">发送</button>
+        </div>
+    </div>
+</div>
+
         <!-- ===== 右边：歌词 / 治愈说 ===== -->
 <div class="healing-side" style="flex: 7.5; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border-radius: 32px; padding: 30px 24px; min-height: 400px; max-height: 500px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.06);">
             <div id="lyricsDisplay" class="lyrics-mode"></div>
@@ -851,6 +982,7 @@
         }
 
 async function loadAllSongs(musicianId) {
+    if (!musicianId) return;  // ← 加上这行，防止空值报错
     try {
         const resp = await fetch(
             `${SUPABASE_URL}/rest/v1/works?musician_id=eq.${musicianId}&status=eq.approved&order=created_at.desc`,
@@ -2187,6 +2319,261 @@ function handleTrackClick(e) {
 volumeTrack.addEventListener('mousedown', startDrag);
 volumeTrack.addEventListener('touchstart', startDrag, { passive: false });
 volumeTrack.addEventListener('click', handleTrackClick);
+
+// ============================================================
+// ===== 评论功能（完整版） =====
+// ============================================================
+
+let commentLikedStatus = {};
+
+// 打开评论弹窗
+async function openCommentModal() {
+    if (!currentSong) {
+        alert('请先播放一首歌');
+        return;
+    }
+    const modal = document.getElementById('commentModal');
+    modal.style.display = 'flex';
+    await loadComments(currentSong.id);
+}
+
+// 关闭评论弹窗
+function closeCommentModal() {
+    document.getElementById('commentModal').style.display = 'none';
+}
+
+// 加载评论
+async function loadComments(workId) {
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/comments?work_id=eq.${workId}&order=likes.desc,created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const comments = await resp.json();
+
+        // 获取点赞状态
+        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        commentLikedStatus = {};
+        if (user.user_id && comments && comments.length > 0) {
+            try {
+                const commentIds = comments.map(c => c.id).join(',');
+                const likeResp = await fetch(
+                    `${SUPABASE_URL}/rest/v1/comment_likes?user_id=eq.${user.user_id}&comment_id=in.(${commentIds})`,
+                    { headers: { 'apikey': SUPABASE_KEY } }
+                );
+                if (likeResp.ok) {
+                    const likes = await likeResp.json();
+                    likes.forEach(l => { commentLikedStatus[l.comment_id] = true; });
+                }
+            } catch (e) {
+                console.warn('获取点赞状态失败:', e);
+            }
+        }
+
+        renderComments(comments);
+    } catch (e) {
+        console.error('加载评论失败:', e);
+    }
+}
+
+// 渲染评论
+function renderComments(comments) {
+    const list = document.getElementById('commentList');
+    const countEl = document.getElementById('commentCount');
+    countEl.textContent = comments.length;
+
+    if (!comments || comments.length === 0) {
+        list.innerHTML = `<div style="text-align: center; color: rgba(255,255,255,0.25); padding: 50px 0; font-size: 0.85rem;"> 还没有评论，说点什么吧～</div>`;
+        return;
+    }
+
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+    list.innerHTML = comments.map(c => {
+        const isMine = c.user_id === user.user_id;
+        const time = formatTimeAgo(c.created_at);
+        const isLiked = commentLikedStatus[c.id] || false;
+        
+        return `
+            <div style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <span style="color: #b8a0c8; font-size: 0.75rem; font-weight: 500;">${c.user_name || '匿名用户'}</span>
+                            <span style="color: rgba(255,255,255,0.2); font-size: 0.6rem;">${time}</span>
+                        </div>
+                        <div style="color: rgba(255,255,255,0.85); font-size: 0.85rem; line-height: 1.5; word-break: break-word;">${c.content}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 10px;">
+                        ${isMine ? `
+                            <button onclick="deleteComment(${c.id}, '${c.user_id}')" style="
+                                background: none;
+                                border: none;
+                                color: rgba(255,255,255,0.15);
+                                cursor: pointer;
+                                font-size: 0.65rem;
+                                padding: 2px 6px;
+                                border-radius: 4px;
+                            " onmouseover="this.style.color='rgba(255,100,100,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.15)'">删除</button>
+                        ` : ''}
+                        <button onclick="toggleCommentLike(${c.id})" style="
+                            background: none;
+                            border: none;
+                            color: ${isLiked ? '#e88a8a' : 'rgba(255,255,255,0.25)'};
+                            cursor: pointer;
+                            font-size: 0.75rem;
+                            padding: 2px 4px;
+                            border-radius: 4px;
+                            display: flex;
+                            align-items: center;
+                            gap: 2px;
+                            transition: 0.2s;
+                        " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            ${isLiked ? '❤️' : '🤍'} <span style="font-size: 0.6rem;">${c.likes || 0}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// 发布评论
+async function postComment() {
+    const input = document.getElementById('commentInput');
+    const content = input.value.trim();
+    if (!content) {
+        alert('请输入内容');
+        return;
+    }
+
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!user.user_id) {
+        alert('请先登录');
+        return;
+    }
+
+    try {
+        await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                work_id: currentSong.id,
+                user_id: user.user_id,
+                user_name: user.nickname || user.username || '用户',
+                content: content
+            })
+        });
+
+        input.value = '';
+        await loadComments(currentSong.id);
+    } catch (e) {
+        console.error('发布失败:', e);
+        alert('发送失败，请重试');
+    }
+}
+
+// 删除评论
+async function deleteComment(commentId, userId) {
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (user.user_id !== userId) {
+        alert('只能删自己的');
+        return;
+    }
+    if (!confirm('确定删除？')) return;
+
+    try {
+        await fetch(`${SUPABASE_URL}/rest/v1/comments?id=eq.${commentId}`, {
+            method: 'DELETE',
+            headers: { 'apikey': SUPABASE_KEY }
+        });
+        await loadComments(currentSong.id);
+    } catch (e) {
+        console.error('删除失败:', e);
+        alert('删除失败');
+    }
+}
+
+// 切换评论点赞（最简化版）
+async function toggleCommentLike(commentId) {
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!user.user_id) {
+        alert('请先登录再点赞');
+        return;
+    }
+
+    try {
+        // 1. 获取当前点赞数
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/comments?id=eq.${commentId}&select=likes`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const data = await resp.json();
+        const currentLikes = data[0]?.likes || 0;
+        const isLiked = commentLikedStatus[commentId] || false;
+        const newLikes = isLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+
+        // 2. 更新 comments 表的 likes
+        const updateResp = await fetch(
+            `${SUPABASE_URL}/rest/v1/comments?id=eq.${commentId}`,
+            {
+                method: 'PATCH',
+                headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ likes: newLikes })
+            }
+        );
+
+        if (!updateResp.ok) {
+            console.error('更新 likes 失败:', await updateResp.text());
+            alert('点赞失败，请重试');
+            return;
+        }
+
+        // 3. 更新 comment_likes 表
+        if (isLiked) {
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/comment_likes?comment_id=eq.${commentId}&user_id=eq.${user.user_id}`,
+                { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY } }
+            );
+        } else {
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/comment_likes`,
+                {
+                    method: 'POST',
+                    headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ comment_id: commentId, user_id: user.user_id })
+                }
+            ).catch(() => {});
+        }
+
+        // 4. 更新本地状态
+        commentLikedStatus[commentId] = !isLiked;
+
+        // 5. 刷新评论列表
+        await loadComments(currentSong.id);
+
+    } catch (e) {
+        console.error('点赞失败:', e);
+        alert('点赞失败，请重试');
+    }
+}
+
+// 时间格式化
+function formatTimeAgo(timestamp) {
+    if (!timestamp) return '刚刚';
+    const now = Date.now();
+    const time = new Date(timestamp).getTime();
+    const diff = Math.floor((now - time) / 1000);
+    if (diff < 60) return '刚刚';
+    if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+    if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+    if (diff < 2592000) return Math.floor(diff / 86400) + '天前';
+    return new Date(timestamp).toLocaleDateString();
+}
+
     </script>
 
 </body>
