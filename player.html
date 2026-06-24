@@ -797,6 +797,14 @@
     " id="volumeLabel">80%</div>
 </div>
 
+        <!-- ===== 右边：歌词 / 治愈说 ===== -->
+<div class="healing-side" style="flex: 7.5; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border-radius: 32px; padding: 30px 24px; min-height: 400px; max-height: 500px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.06);">
+            <div id="lyricsDisplay" class="lyrics-mode"></div>
+            <div id="healingDisplay" class="healing-mode" style="display:none;"></div>
+        </div>
+
+    </div>
+
 <!-- ===== 评论弹窗 ===== -->
 <div id="commentModal" style="
     display: none;
@@ -835,6 +843,19 @@
     flex-direction: column;
     animation: commentBgFlow 10s ease-in-out infinite alternate;
 ">
+<div class="modal-box" style="position: relative; overflow: hidden;">
+    <!-- 流星雨 Canvas -->
+    <canvas id="meteorCanvas" style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 24px;
+        pointer-events: none;
+        z-index: 0;
+    "></canvas>
+
         <!-- 标题 -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
             <span style="color: #fff; font-size: 1rem; font-weight: 600; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">💬 评论 <span id="commentCount" style="color: rgba(255,255,255,0.4); font-weight: 400;">0</span></span>
@@ -865,7 +886,7 @@
         </div>
 
         <!-- 输入区 -->
-        <div style="display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
+<div style="display: flex; gap: 10px;  padding-top: 170px; margin-top: 100px;">
             <input id="commentInput" type="text" placeholder="写评论..." style="
                 flex: 1;
                 background: rgba(0,0,0,0.3);
@@ -895,13 +916,7 @@
     </div>
 </div>
 
-        <!-- ===== 右边：歌词 / 治愈说 ===== -->
-<div class="healing-side" style="flex: 7.5; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border-radius: 32px; padding: 30px 24px; min-height: 400px; max-height: 500px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.06);">
-            <div id="lyricsDisplay" class="lyrics-mode"></div>
-            <div id="healingDisplay" class="healing-mode" style="display:none;"></div>
-        </div>
 
-    </div>
 
     <script src="healingWords.js"></script>
     <script>
@@ -1007,6 +1022,14 @@ function playSongById(songId) {
     healingEl.innerHTML = '';
 
     currentSong = song;
+// ===== 重新加载点赞状态 =====
+(async () => {
+    const liked = await Like.check(currentSong.id);
+    const count = await Like.count(currentSong.id);
+    Like.render('likeBtn', 'likeCount', liked, count);
+    if (currentSong) currentSong.likes = count;
+})();
+
     // ===== 安全更新点赞数 =====
     const likeCountEl = document.getElementById('likeCount');
     if (likeCountEl) {
@@ -2334,12 +2357,17 @@ async function openCommentModal() {
     }
     const modal = document.getElementById('commentModal');
     modal.style.display = 'flex';
+    
+    // 启动流星雨
+    startMeteors();
+    
     await loadComments(currentSong.id);
 }
 
 // 关闭评论弹窗
 function closeCommentModal() {
     document.getElementById('commentModal').style.display = 'none';
+    stopMeteors();
 }
 
 // 加载评论
@@ -2573,7 +2601,136 @@ function formatTimeAgo(timestamp) {
     if (diff < 2592000) return Math.floor(diff / 86400) + '天前';
     return new Date(timestamp).toLocaleDateString();
 }
+// ============================================================
+// ===== 流星雨效果 =====
+// ============================================================
 
+let meteorAnimationId = null;
+let meteors = [];
+let meteorCtx = null;
+let meteorCanvas = null;
+
+function initMeteorCanvas() {
+    meteorCanvas = document.getElementById('meteorCanvas');
+    if (!meteorCanvas) return;
+    meteorCtx = meteorCanvas.getContext('2d');
+    
+    // 设置 canvas 尺寸
+    const rect = meteorCanvas.parentElement.getBoundingClientRect();
+    meteorCanvas.width = rect.width;
+    meteorCanvas.height = rect.height;
+    
+    // 生成流星
+    meteors = [];
+    for (let i = 0; i < 19; i++) {
+        meteors.push(createMeteor());
+    }
+    
+    drawMeteors();
+}
+
+function createMeteor() {
+    const canvas = meteorCanvas;
+    return {
+        x: Math.random() * canvas.width * 0.8,
+        y: Math.random() * canvas.height * 0.3,
+        length: Math.random() * 80 + 40,
+        speed: Math.random() * 4 + 3,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.6 + 0.3,
+        life: Math.random() * 120 + 80,
+        maxLife: 200,
+        delay: Math.random() * 200
+    };
+}
+
+function drawMeteors() {
+    if (!meteorCtx || !meteorCanvas) return;
+    const ctx = meteorCtx;
+    const canvas = meteorCanvas;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    meteors.forEach(meteor => {
+        // 延迟
+        if (meteor.delay > 0) {
+            meteor.delay--;
+            return;
+        }
+        
+        // 更新位置
+        meteor.x += Math.cos(meteor.angle) * meteor.speed;
+        meteor.y += Math.sin(meteor.angle) * meteor.speed;
+        meteor.life--;
+        
+        // 透明度渐变（尾部渐隐）
+        const lifeRatio = meteor.life / meteor.maxLife;
+        const alpha = meteor.opacity * Math.min(1, lifeRatio * 2);
+        
+        // 画流星尾巴
+        const tailLength = meteor.length * lifeRatio;
+        const gradient = ctx.createLinearGradient(
+            meteor.x, meteor.y,
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+        gradient.addColorStop(0.3, `rgba(255, 240, 220, ${alpha * 0.6})`);
+        gradient.addColorStop(1, `rgba(255, 220, 200, 0)`);
+        
+        ctx.beginPath();
+        ctx.moveTo(meteor.x, meteor.y);
+        ctx.lineTo(
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // 流星头部光晕
+        const glow = ctx.createRadialGradient(meteor.x, meteor.y, 0, meteor.x, meteor.y, 6);
+        glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.8})`);
+        glow.addColorStop(1, `rgba(255, 255, 255, 0)`);
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(meteor.x, meteor.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // 重置
+        if (meteor.life <= 0) {
+            Object.assign(meteor, createMeteor());
+            meteor.x = Math.random() * canvas.width * 0.8;
+            meteor.y = Math.random() * canvas.height * 0.2;
+            meteor.delay = Math.random() * 100 + 50;
+        }
+    });
+    
+    meteorAnimationId = requestAnimationFrame(drawMeteors);
+}
+
+function startMeteors() {
+    const canvas = document.getElementById('meteorCanvas');
+    if (canvas) {
+        // 等弹窗显示后再初始化
+        setTimeout(() => {
+            initMeteorCanvas();
+            // 窗口变化时重置尺寸
+            window.addEventListener('resize', () => {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            });
+        }, 300);
+    }
+}
+
+function stopMeteors() {
+    if (meteorAnimationId) {
+        cancelAnimationFrame(meteorAnimationId);
+        meteorAnimationId = null;
+    }
+}
     </script>
 
 </body>
