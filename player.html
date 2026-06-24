@@ -1,10 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<script src="like.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>正在播放 · 芦苇音乐</title>
     <style>
+#volumeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8);
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 20px rgba(184,160,200,0.15);
+}
+@keyframes floatGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 50% 50%; }
+    100% { background-position: 100% 50%; }
+}
 #sakura-canvas {
     position: fixed;
     top: 0;
@@ -608,6 +624,146 @@
     </div>
 </div>
 
+<!-- 播放模式按钮（左下角，渐变流动） -->
+<button id="playModeBtn" onclick="togglePlayMode()" style="
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8, #d4b896);
+    background-size: 300% 300%;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: #1a1a2e;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(184, 160, 200, 0.08);
+    animation: floatGradient 4s ease-in-out infinite alternate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+" onmouseover="this.style.boxShadow='0 0 30px rgba(184,160,200,0.2)'; this.style.transform='scale(1.05)'" onmouseout="this.style.boxShadow='0 0 20px rgba(184,160,200,0.08)'; this.style.transform='scale(1)'">
+    🔁
+</button>
+
+<!-- 收藏按钮（同款渐变） -->
+<button id="likeBtn" onclick="handleLikeClick()" style="
+    position: absolute;
+    bottom: 20px;
+    left: 104px;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8, #d4b896);
+    background-size: 300% 300%;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: #1a1a2e;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(184, 160, 200, 0.08);
+    animation: floatGradient 4s ease-in-out infinite alternate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+" onmouseover="this.style.boxShadow='0 0 30px rgba(184,160,200,0.2)'; this.style.transform='scale(1.05)'" onmouseout="this.style.boxShadow='0 0 20px rgba(184,160,200,0.08)'; this.style.transform='scale(1)'">
+    ♡ <span id="likeCount" style="font-size:0.6rem; margin-left:2px;">0</span>
+</button>
+
+<!-- 音量控制按钮（同款渐变） -->
+<button id="volumeBtn" onclick="toggleVolumePopup()" style="
+    position: absolute;
+    bottom: 20px;
+    left: 62px;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8, #d4b896);
+    background-size: 300% 300%;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: #1a1a2e;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(184, 160, 200, 0.08);
+    animation: floatGradient 4s ease-in-out infinite alternate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+" onmouseover="this.style.boxShadow='0 0 30px rgba(184,160,200,0.2)'; this.style.transform='scale(1.05)'" onmouseout="this.style.boxShadow='0 0 20px rgba(184,160,200,0.08)'; this.style.transform='scale(1)'">
+    🔊
+</button>
+<!-- 音量垂直滑条（自定义拖拽） -->
+<div id="volumePopup" style="
+    position: absolute;
+    bottom: 62px;
+    left: 68px;
+    background: rgba(20,30,40,0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 16px 6px;
+    display: none;
+    z-index: 20;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    height: 140px;
+    touch-action: none;
+    user-select: none;
+    width: 28px;           /* ← 加上固定宽度 */
+    min-width: 28px;       /* ← 防止被压缩 */
+    max-width: 28px;       /* ← 防止被撑开 */
+    box-sizing: border-box;
+">
+<!-- 滑条轨道 -->
+<div id="volumeTrack" style="
+    width: 4px;
+    height: 100px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    touch-action: none;
+    margin: 0 auto;
+">
+        <!-- 已填充部分 -->
+        <div id="volumeFill" style="
+            width: 100%;
+            height: 80%;
+            background: linear-gradient(180deg, #d4b896, #b8a0c8);
+            border-radius: 4px;
+            position: absolute;
+            bottom: 0;
+            transition: height 0.05s;
+        "></div>
+        <!-- 拖拽圆点 -->
+<div id="volumeThumb" style="
+    width: 16px;
+    height: 16px;
+    background: #d4b896;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    bottom: 80%;
+    transform: translate(-50%, 50%);
+    box-shadow: 0 0 20px rgba(212,184,150,0.3);
+    pointer-events: none;
+    transition: bottom 0.05s;
+"></div>
+    </div>
+    <div style="
+        text-align: center;
+        color: rgba(255,255,255,0.2);
+        font-size: 0.5rem;
+        margin-top: 8px;
+        letter-spacing: 1px;
+    " id="volumeLabel">80%</div>
+</div>
+
         <!-- ===== 右边：歌词 / 治愈说 ===== -->
 <div class="healing-side" style="flex: 7.5; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(8px); border-radius: 32px; padding: 30px 24px; min-height: 400px; max-height: 500px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.06);">
             <div id="lyricsDisplay" class="lyrics-mode"></div>
@@ -618,9 +774,6 @@
 
     <script src="healingWords.js"></script>
     <script>
-        const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
-
         const urlParams = new URLSearchParams(window.location.search);
         const songId = urlParams.get('id');
 
@@ -697,123 +850,133 @@
             }
         }
 
-        async function loadAllSongs(musicianId) {
-            try {
-                const resp = await fetch(
-                    `${SUPABASE_URL}/rest/v1/works?musician_id=eq.${musicianId}&status=eq.approved&order=created_at.desc`,
-                    { headers: { 'apikey': SUPABASE_KEY } }
-                );
-                allSongs = await resp.json();
-            } catch (e) {
-                console.error(e);
-            }
+async function loadAllSongs(musicianId) {
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/works?musician_id=eq.${musicianId}&status=eq.approved&order=created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        allSongs = await resp.json();
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+function playSongById(songId) {
+    const song = allSongs.find(s => s.id === songId);
+    if (!song) return;
+    if (healingInterval) {
+        clearInterval(healingInterval);
+        healingInterval = null;
+    }
+    const lyricsEl = document.getElementById('lyricsDisplay');
+    const healingEl = document.getElementById('healingDisplay');
+    lyricsEl.innerHTML = '';
+    healingEl.innerHTML = '';
+
+    currentSong = song;
+    // ===== 安全更新点赞数 =====
+    const likeCountEl = document.getElementById('likeCount');
+    if (likeCountEl) {
+        likeCountEl.textContent = currentSong.likes || 0;
+    }
+
+    document.getElementById('songTitle').textContent = song.title || '未命名';
+    const isZhouTian = song.musician_id === '1781898147879639' || song.musician_name === '周田';
+    document.getElementById('songArtist').textContent = isZhouTian ? '周田' : (song.musician_name || '歌手');
+
+    const isInstrumental = !song.lyrics || song.lyrics.trim() === '' || song.lyrics.includes('纯音乐');
+
+    if (isInstrumental) {
+        lyricsEl.style.display = 'none';
+        healingEl.style.display = 'block';
+        healingEl.className = 'healing-mode';
+        audio.src = song.audio_url || '';
+        audio.load();
+        audio.play().then(() => {
+            setPlayingState();
+            startHealingWords();
+        }).catch(() => {
+            setPlayingState();
+            startHealingWords();
+        });
+    } else {
+        lyricsEl.style.display = 'block';
+        healingEl.style.display = 'none';
+        lyricsEl.className = 'lyrics-mode';
+        const hasLRC = /\[\d{2}:\d{2}/.test(song.lyrics);
+        if (hasLRC) {
+            const lines = song.lyrics.split('\n');
+            let parsed = [];
+            lines.forEach(line => {
+                const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\]/);
+                if (match) {
+                    const minutes = parseInt(match[1]);
+                    const seconds = parseInt(match[2]);
+                    const ms = parseInt(match[3].padEnd(3, '0'));
+                    const time = minutes * 60 + seconds + ms / 1000;
+                    const text = line.replace(/\[\d{2}:\d{2}\.\d{2,3}\]/, '').trim();
+                    if (text) {
+                        parsed.push({ time, text });
+                    }
+                }
+            });
+            lrcData = parsed;
+            lyricsEl.innerHTML = lrcData.map((item, index) =>
+                `<div class="lrc-line" data-time="${item.time}" data-index="${index}">${item.text}</div>`
+            ).join('');
+        } else {
+            lyricsEl.innerHTML = song.lyrics.replace(/\n/g, '<br>');
+        }
+        audio.src = song.audio_url || '';
+        audio.load();
+        audio.play().then(() => {
+            setPlayingState();
+        }).catch(() => {
+            setPlayingState();
+        });
+    }
+}
+
+async function loadSong() {
+    if (!songId) {
+        document.getElementById('songTitle').textContent = '歌曲不存在';
+        return;
+    }
+
+    if (healingInterval) {
+        clearInterval(healingInterval);
+        healingInterval = null;
+    }
+
+    const lyricsEl = document.getElementById('lyricsDisplay');
+    const healingEl = document.getElementById('healingDisplay');
+    lyricsEl.innerHTML = '';
+    healingEl.innerHTML = '';
+    lrcData = [];
+
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/works?id=eq.${songId}`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const data = await resp.json();
+        currentSong = data[0];
+
+        if (!currentSong) {
+            document.getElementById('songTitle').textContent = '歌曲不存在';
+            return;
         }
 
-        function playSongById(songId) {
-            const song = allSongs.find(s => s.id === songId);
-            if (!song) return;
-            if (healingInterval) {
-                clearInterval(healingInterval);
-                healingInterval = null;
-            }
-            const lyricsEl = document.getElementById('lyricsDisplay');
-            const healingEl = document.getElementById('healingDisplay');
-            lyricsEl.innerHTML = '';
-            healingEl.innerHTML = '';
+// ===== 显示点赞状态和数量 =====
+const liked = await Like.check(currentSong.id);
+const count = await Like.count(currentSong.id);
+Like.render('likeBtn', 'likeCount', liked, count);
 
-            currentSong = song;
-            document.getElementById('songTitle').textContent = song.title || '未命名';
-const isZhouTian = song.musician_id === '1781898147879639' || song.musician_name === '周田';
-document.getElementById('songArtist').textContent = isZhouTian ? '周田' : (song.musician_name || '歌手');
-
-            const isInstrumental = !song.lyrics || song.lyrics.trim() === '' || song.lyrics.includes('纯音乐');
-
-            if (isInstrumental) {
-                lyricsEl.style.display = 'none';
-                healingEl.style.display = 'block';
-                healingEl.className = 'healing-mode';
-                audio.src = song.audio_url || '';
-                audio.load();
-                audio.play().then(() => {
-                    setPlayingState();
-                    startHealingWords();
-                }).catch(() => {
-                    setPlayingState();
-                    startHealingWords();
-                });
-            } else {
-                lyricsEl.style.display = 'block';
-                healingEl.style.display = 'none';
-                lyricsEl.className = 'lyrics-mode';
-                // 解析 LRC
-                const hasLRC = /\[\d{2}:\d{2}/.test(song.lyrics);
-                if (hasLRC) {
-                    const lines = song.lyrics.split('\n');
-                    let parsed = [];
-                    lines.forEach(line => {
-                        const match = line.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\]/);
-                        if (match) {
-                            const minutes = parseInt(match[1]);
-                            const seconds = parseInt(match[2]);
-                            const ms = parseInt(match[3].padEnd(3, '0'));
-                            const time = minutes * 60 + seconds + ms / 1000;
-                            const text = line.replace(/\[\d{2}:\d{2}\.\d{2,3}\]/, '').trim();
-                            if (text) {
-                                parsed.push({ time, text });
-                            }
-                        }
-                    });
-                    lrcData = parsed;
-                    lyricsEl.innerHTML = lrcData.map((item, index) =>
-                        `<div class="lrc-line" data-time="${item.time}" data-index="${index}">${item.text}</div>`
-                    ).join('');
-                } else {
-                    lyricsEl.innerHTML = song.lyrics.replace(/\n/g, '<br>');
-                }
-                audio.src = song.audio_url || '';
-                audio.load();
-                audio.play().then(() => {
-                    setPlayingState();
-                }).catch(() => {
-                    setPlayingState();
-                });
-            }
-        }
-
-        async function loadSong() {
-            if (!songId) {
-                document.getElementById('songTitle').textContent = '歌曲不存在';
-                return;
-            }
-
-            if (healingInterval) {
-                clearInterval(healingInterval);
-                healingInterval = null;
-            }
-
-            const lyricsEl = document.getElementById('lyricsDisplay');
-            const healingEl = document.getElementById('healingDisplay');
-            lyricsEl.innerHTML = '';
-            healingEl.innerHTML = '';
-            lrcData = [];
-
-            try {
-                const resp = await fetch(
-                    `${SUPABASE_URL}/rest/v1/works?id=eq.${songId}`,
-                    { headers: { 'apikey': SUPABASE_KEY } }
-                );
-                const data = await resp.json();
-                currentSong = data[0];
-
-                if (!currentSong) {
-                    document.getElementById('songTitle').textContent = '歌曲不存在';
-                    return;
-                }
-
-                const musicianId = currentSong.musician_id;
-                if (musicianId) {
-                    await loadAllSongs(musicianId);
-                }
+const musicianId = currentSong.musician_id;
+if (musicianId) {
+    await loadAllSongs(musicianId);
+}
 
                 document.getElementById('songTitle').textContent = currentSong.title || '未命名';
                 document.getElementById('songArtist').textContent = '歌手';
@@ -1145,19 +1308,23 @@ if (isSakuraSong) {
 
                 audio.src = currentSong.audio_url || '';
                 audio.load();
+             restoreVolume();
 
                 audio.ontimeupdate = updateProgress;
                 audio.onloadedmetadata = function() {
                     document.getElementById('totalTime').textContent = formatTime(audio.duration);
                 };
-                audio.onended = function() {
-                    setPlayingState();
-                    if (healingInterval) {
-                        clearInterval(healingInterval);
-                        healingInterval = null;
-                    }
-                    nextSong();
-                };
+audio.onended = function() {
+    setPlayingState();
+    if (healingInterval) {
+        clearInterval(healingInterval);
+        healingInterval = null;
+    }
+    const next = getNextSong();
+    if (next) {
+        playSongById(next.id);
+    }
+};
                 audio.onpause = function() {
                     setPlayingState();
                     if (healingInterval) {
@@ -1863,6 +2030,163 @@ function stopSakura() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 }
+
+// ===== 播放模式 =====
+let playMode = 'sequential';
+
+function togglePlayMode() {
+    const modes = ['sequential', 'repeat', 'shuffle'];
+    const icons = ['🔁', '🔂', '🎲'];
+    let i = (modes.indexOf(playMode) + 1) % modes.length;
+    playMode = modes[i];
+    document.getElementById('playModeBtn').textContent = icons[i];
+}
+
+function getNextSong() {
+    if (!allSongs.length) return null;
+    if (playMode === 'repeat') return currentSong;
+    if (playMode === 'shuffle') {
+        return allSongs[Math.floor(Math.random() * allSongs.length)];
+    }
+    const idx = allSongs.findIndex(s => s.id === currentSong.id);
+    return allSongs[(idx + 1) % allSongs.length];
+}
+function toggleVolume() {
+    if (isMuted) {
+        audio.volume = savedVolume;
+        isMuted = false;
+        document.getElementById('volumeBtn').textContent = '🔊';
+    } else {
+        savedVolume = audio.volume || 0.8;
+        audio.volume = 0;
+        isMuted = true;
+        document.getElementById('volumeBtn').textContent = '🔇';
+    }
+}
+// ===== 点赞按钮点击 =====
+async function handleLikeClick() {
+    if (!currentSong) return;
+    const result = await Like.toggle(currentSong.id);
+    Like.render('likeBtn', 'likeCount', result.liked, result.count);
+}
+// ===== 音量控制 =====
+let isVolumePopupOpen = false;
+
+function toggleVolumePopup() {
+    const popup = document.getElementById('volumePopup');
+    popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+}
+
+function setVolume(val) {
+    const volume = parseInt(val);
+    const percent = volume / 100;
+    audio.volume = percent;
+    document.getElementById('volumeLabel').textContent = volume + '%';
+    document.getElementById('volumeBtn').textContent = volume === 0 ? '🔇' : '🔊';
+    localStorage.setItem('volume', volume);
+}
+
+// 初始化音量
+function restoreVolume() {
+    const saved = localStorage.getItem('playerVolume');
+    if (saved !== null) {
+        const vol = parseInt(saved, 10);
+        // 直接用 vol，不要用 value
+        if (audio) audio.volume = vol / 100;
+        if (volumeFill) volumeFill.style.height = vol + '%';
+        if (volumeThumb) volumeThumb.style.bottom = vol + '%';
+        if (volumeLabel) volumeLabel.textContent = vol + '%';
+        currentVolume = vol;
+    }
+}
+
+// 点击页面其他地方关闭弹窗
+document.addEventListener('click', function(e) {
+    const popup = document.getElementById('volumePopup');
+    const btn = document.getElementById('volumeBtn');
+    if (popup && !popup.contains(e.target) && !btn.contains(e.target)) {
+        popup.style.display = 'none';
+        isVolumePopupOpen = false;
+    }
+});
+
+let currentVolume = 80; // 0-100
+
+const volumePopup = document.getElementById('volumePopup');
+const volumeTrack = document.getElementById('volumeTrack');
+const volumeFill = document.getElementById('volumeFill');
+const volumeThumb = document.getElementById('volumeThumb');
+const volumeLabel = document.getElementById('volumeLabel');
+
+// 更新音量显示
+function updateVolume(value) {
+    value = Math.max(0, Math.min(100, value));
+    value = Math.round(value); // ← 加上这一行，取整
+    currentVolume = value;
+    const percent = value + '%';
+    
+    if (volumeFill) volumeFill.style.height = percent;
+    if (volumeThumb) volumeThumb.style.bottom = percent;
+    if (volumeLabel) volumeLabel.textContent = value + '%';
+    
+    localStorage.setItem('playerVolume', value);
+    
+    if (audio) {
+        audio.volume = value / 100;
+    }
+}
+
+// 从鼠标/触摸事件获取音量值
+function getVolumeFromEvent(e) {
+    const rect = volumeTrack.getBoundingClientRect();
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    if (!clientY) return currentVolume;
+    
+    let relativeY = (clientY - rect.top) / rect.height; // 0~1
+    relativeY = Math.max(0, Math.min(1, relativeY));
+    return (1 - relativeY) * 100; // 顶部=100, 底部=0
+}
+
+let isDragging = false;
+
+// 开始拖拽
+function startDrag(e) {
+    e.preventDefault();
+    isDragging = true;
+    const value = getVolumeFromEvent(e);
+    updateVolume(value);
+    
+    function onMove(moveEvent) {
+        moveEvent.preventDefault();
+        const newValue = getVolumeFromEvent(moveEvent);
+        updateVolume(newValue);
+    }
+    
+    function onEnd() {
+        isDragging = false;
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+    }
+    
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onEnd);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onEnd);
+}
+
+// 点击轨道直接跳转（只有不是拖拽时才触发）
+function handleTrackClick(e) {
+    if (isDragging) return; // 拖拽时不触发点击
+    const value = getVolumeFromEvent(e);
+    updateVolume(value);
+}
+
+// 绑定事件
+volumeTrack.addEventListener('mousedown', startDrag);
+volumeTrack.addEventListener('touchstart', startDrag, { passive: false });
+volumeTrack.addEventListener('click', handleTrackClick);
     </script>
 
 </body>
