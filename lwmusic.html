@@ -1,22 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="album-display.js"></script>
     <meta charset="UTF-8">
     <title>芦苇音乐</title>
     <style>
+/* 专辑分组里的歌名渐变 */
+.album-songs .title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    background: linear-gradient(90deg, 
+        #1a1a1a 0%, 
+        #6a6a6a 25%, 
+        #b8b8b8 50%, 
+        #6a6a6a 75%, 
+        #1a1a1a 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleGrayFlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes titleGrayFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
 .heart-gradient {
-    background: linear-gradient(135deg, #d4b896, #b8a0c8, #6a5a9a);
-    background-size: 200% 200%;
+    background: linear-gradient(135deg, #f5a0b0, #d4b896, #b8a0c8, #6a5a9a, #f5a0b0);
+    background-size: 300% 300%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-size: 0.9rem;
     display: inline-block;
-    animation: heartFlow 4s ease-in-out infinite alternate;
+    animation: heartFlow 6s ease-in-out infinite alternate;
 }
 
 @keyframes heartFlow {
     0% { background-position: 0% 50%; }
+    50% { background-position: 50% 50%; }
     100% { background-position: 100% 50%; }
 }
 .heart-pink {
@@ -629,80 +656,47 @@ async function showSongs(artistId) {
     document.getElementById('artistSection').classList.add('hidden');
     document.getElementById('songSection').classList.remove('hidden');
     document.getElementById('backBtn').style.display = 'inline-block';
-    // ===== 周田专属判断 =====
-const isZhouTian = artistId === '1781898147879639' || artist.artist_name === '周田';
+    
+    // ===== 周田专属判断（完全不动） =====
+    const isZhouTian = artistId === '1781898147879639' || artist.artist_name === '周田';
 
-if (isZhouTian) {
-    document.getElementById('songSectionTitle').innerHTML = `
-        <span style="background: linear-gradient(135deg, #d4b896, #b8a0c8); 
-                     -webkit-background-clip: text; 
-                     -webkit-text-fill-color: transparent; 
-                     font-size: 1.6rem;
-                     font-weight: 700;
-                     letter-spacing: 2px;">
-            ✦ 周田 · 雨天的悬日 ✦
-        </span>
-        <span style="display: inline-block; background: linear-gradient(135deg, #d4b896, #b8a0c8); color: #1a1a2e; font-size: 0.6rem; padding: 2px 10px; border-radius: 12px; margin-left: 10px; font-weight: 600; vertical-align: middle;">专属</span>
-    `;
-    document.getElementById('songSection').style.background = 'linear-gradient(135deg, rgba(212, 184, 150, 0.1), rgba(60, 60, 80, 0.15), rgba(106, 90, 138, 0.12))';
-    document.getElementById('songSection').style.backgroundSize = '300% 300%';
-    document.getElementById('songSection').style.animation = 'zhoutianBgFlow 8s ease-in-out infinite alternate';
-    document.getElementById('songSection').style.border = '1px solid rgba(212, 184, 150, 0.15)';
-    document.getElementById('songSection').style.borderRadius = '24px';
-    document.getElementById('songSection').style.padding = '20px';
-    document.getElementById('songSection').style.boxShadow = '0 0 60px rgba(212, 184, 150, 0.04)';
-} else {
-    document.getElementById('songSectionTitle').textContent = ` ${artist.artist_name || artist.name} 的歌曲`;
-    document.getElementById('songSection').style.background = '';
-    document.getElementById('songSection').style.border = '';
-    document.getElementById('songSection').style.borderRadius = '';
-    document.getElementById('songSection').style.padding = '';
-    document.getElementById('songSection').style.boxShadow = '';
-}
+    if (isZhouTian) {
+        document.getElementById('songSectionTitle').innerHTML = `
+            <span style="background: linear-gradient(135deg, #d4b896, #b8a0c8); 
+                         -webkit-background-clip: text; 
+                         -webkit-text-fill-color: transparent; 
+                         font-size: 1.6rem;
+                         font-weight: 700;
+                         letter-spacing: 2px;">
+                ✦ 周田 · 雨天的悬日 ✦
+            </span>
+            <span style="display: inline-block; background: linear-gradient(135deg, #d4b896, #b8a0c8); color: #1a1a2e; font-size: 0.6rem; padding: 2px 10px; border-radius: 12px; margin-left: 10px; font-weight: 600; vertical-align: middle;">专属</span>
+        `;
+        document.getElementById('songSection').style.background = 'linear-gradient(135deg, rgba(212, 184, 150, 0.1), rgba(60, 60, 80, 0.15), rgba(106, 90, 138, 0.12))';
+        document.getElementById('songSection').style.backgroundSize = '300% 300%';
+        document.getElementById('songSection').style.animation = 'zhoutianBgFlow 8s ease-in-out infinite alternate';
+        document.getElementById('songSection').style.border = '1px solid rgba(212, 184, 150, 0.15)';
+        document.getElementById('songSection').style.borderRadius = '24px';
+        document.getElementById('songSection').style.padding = '20px';
+        document.getElementById('songSection').style.boxShadow = '0 0 60px rgba(212, 184, 150, 0.04)';
+    } else {
+        document.getElementById('songSectionTitle').textContent = `📀 ${artist.artist_name || artist.name} 的作品`;
+        document.getElementById('songSection').style.background = '';
+        document.getElementById('songSection').style.border = '';
+        document.getElementById('songSection').style.borderRadius = '';
+        document.getElementById('songSection').style.padding = '';
+        document.getElementById('songSection').style.boxShadow = '';
+    }
 
     const list = document.getElementById('songList');
     list.innerHTML = '<div class="loading">加载中...</div>';
 
     try {
-        const resp = await fetch(
-            `${SUPABASE_URL}/rest/v1/works?musician_id=eq.${artistId}&status=eq.approved&order=created_at.desc`,
-            { headers: { 'apikey': SUPABASE_KEY } }
-        );
-        allSongs = await resp.json();
-
-        if (!allSongs || allSongs.length === 0) {
-            list.innerHTML = '<div class="empty">暂无已审核的歌曲</div>';
-            return;
-        }
-list.innerHTML = allSongs.map((s, i) => `
-    <div class="song-item">
-        <span style="color:#bbb;font-size:14px;width:28px;text-align:center;">${String(i+1).padStart(2,'0')}</span>
-<button class="play-btn" id="play-btn-${s.id}" onclick="event.stopPropagation();playSong('${s.id}')" style="
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #d4b896, #b8a0c8);
-    border: none;
-    color: #fff;
-    font-size: 14px;
-    cursor: pointer;
-    flex-shrink: 0;
-    box-shadow: 0 2px 12px rgba(184,160,200,0.15);
-    transition: 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 20px rgba(184,160,200,0.25)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 12px rgba(184,160,200,0.15)'">
-    <span id="play-icon-${s.id}" style="margin-left: 2px;">▶</span>
-</button>
-        <div class="info" onclick="openPlayer('${s.id}')" style="cursor:pointer;flex:1;">
-            <div class="title">${s.title || '未命名'}</div>
-<span class="likes"><span class="heart-gradient">♥</span> ${s.likes || 0}</span>
-        </div>
-    </div>
-`).join('');
-
+        // ===== 这里改成调用专辑分组 =====
+        const grouped = await fetchArtistAlbums(artistId);
+        list.innerHTML = renderAlbumsHTML(grouped);
     } catch (e) {
+        console.error(e);
         list.innerHTML = '<div class="empty">加载失败</div>';
     }
 }
@@ -843,6 +837,13 @@ function drawSnowLW(ctx, canvas) {
     snowLWAnimationId = requestAnimationFrame(() => drawSnowLW(ctx, canvas));
 }
 
+function toggleAlbum(albumId) {
+    const el = document.getElementById(`album-${albumId}`);
+    if (el) {
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
 function stopSnowLW() {
     if (snowLWAnimationId) {
         cancelAnimationFrame(snowLWAnimationId);
@@ -873,7 +874,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 // ===== 跳转播放页 =====
-function openPlayer(songId) {
+async function openPlayer(songId) {
+    // 增加播放量
+    try {
+        // 先获取当前播放量
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/works?id=eq.${songId}&select=plays`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const data = await resp.json();
+        const currentPlays = data[0]?.plays || 0;
+        // 播放量 +1
+        await fetch(
+            `${SUPABASE_URL}/rest/v1/works?id=eq.${songId}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ plays: currentPlays + 1 })
+            }
+        );
+    } catch (e) {
+        console.warn('播放量更新失败:', e);
+    }
+    // 跳转播放页
     window.location.href = `player.html?id=${songId}`;
 }
 
