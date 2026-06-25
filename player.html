@@ -725,6 +725,33 @@
     ">0</span>
 </button>
 
+<!-- 播放量按钮 -->
+<button id="playCountBtn" style="
+    position: absolute;
+    bottom: 20px;
+    left: 188px;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8, #d4b896);
+    background-size: 300% 300%;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: #1a1a2e;
+    font-size: 0.6rem;
+    cursor: default;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(184, 160, 200, 0.08);
+    animation: floatGradient 4s ease-in-out infinite alternate;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+">
+    <span style="font-size:0.85rem; line-height:1; margin-left:0;">▸</span>
+    <span id="playCountDisplay" style="font-size:0.5rem; line-height:1;">0</span>
+</button>
+
 <!-- 音量控制按钮（同款渐变） -->
 <button id="volumeBtn" onclick="toggleVolumePopup()" style="
     position: absolute;
@@ -1053,6 +1080,14 @@ function playSongById(songId) {
     await loadCommentCount(currentSong.id);
 })();
 
+// ===== 更新播放量显示（切歌时刷新） =====
+(async () => {
+    const playCountEl = document.getElementById('playCountDisplay');
+    if (playCountEl && currentSong) {
+        playCountEl.textContent = formatPlayCount(currentSong.plays || 0);
+    }
+})();
+
     // ===== 安全更新点赞数 =====
     const likeCountEl = document.getElementById('likeCount');
     if (likeCountEl) {
@@ -1169,6 +1204,14 @@ async function loadSong() {
 const liked = await Like.check(currentSong.id);
 const count = await Like.count(currentSong.id);
 Like.render('likeBtn', 'likeCount', liked, count);
+
+// ===== 更新播放量显示（切歌时刷新） =====
+(async () => {
+    const playCountEl = document.getElementById('playCountDisplay');
+    if (playCountEl && currentSong) {
+        playCountEl.textContent = formatPlayCount(currentSong.plays || 0);
+    }
+})();
 
 const musicianId = currentSong.musician_id;
 if (musicianId) {
@@ -2773,6 +2816,18 @@ function stopMeteors() {
         cancelAnimationFrame(meteorAnimationId);
         meteorAnimationId = null;
     }
+}
+
+// ===== 格式化播放量（万/亿单位） =====
+function formatPlayCount(num) {
+    if (!num) return '0';
+    if (num >= 100000000) {
+        return (num / 100000000).toFixed(1) + '亿';
+    }
+    if (num >= 10000) {
+        return (num / 10000).toFixed(1) + '万';
+    }
+    return num.toString();
 }
 // ===== 返回歌手歌曲列表 =====
 function goBackToArtist() {
