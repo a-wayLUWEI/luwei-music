@@ -4,6 +4,50 @@
     <meta charset="UTF-8">
     <title>芦苇音乐</title>
     <style>
+.heart-gradient {
+    background: linear-gradient(135deg, #d4b896, #b8a0c8, #6a5a9a);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 0.9rem;
+    display: inline-block;
+    animation: heartFlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes heartFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+.heart-pink {
+    background: linear-gradient(135deg, #d4b896, #b8a0c8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 0.9rem;
+}
+.song-item .info .title {
+    font-weight: 600;
+    font-size: 15px;
+    background: linear-gradient(90deg, 
+        #1a1a1a 0%, 
+        #6a5a9a 35%, 
+        #2a4a3a 70%, 
+        #1a1a1a 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleColorFlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes titleColorFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
 #snow-lw-canvas {
     position: fixed;
     top: 0;
@@ -263,33 +307,40 @@ body {
     align-items: center;
     gap: 14px;
     padding: 12px 16px;
-    background: #f5f5f5;
+    background: linear-gradient(90deg, 
+        rgba(212,184,150,0.04), 
+        rgba(212,184,150,0.12), 
+        rgba(184,160,200,0.08), 
+        rgba(212,184,150,0.12), 
+        rgba(212,184,150,0.04)
+    );
+    background-size: 300% 100%;
     border-radius: 10px;
     cursor: pointer;
-    transition: 0.2s;
-    border: 1px solid #e8e8e8;
+    transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.04);
+    animation: songItemShimmer 6s ease-in-out infinite;
 }
-.song-item:hover { border-color: #ccc; background: #f0f0f0; }
-.song-item .play-btn {
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    background: #d5d5d5;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    flex-shrink: 0;
+
+@keyframes songItemShimmer {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 50% 50%; }
+    50% { background-position: 100% 50%; }
+    75% { background-position: 50% 50%; }
+    100% { background-position: 0% 50%; }
 }
-.song-item .play-btn:hover { background: #bbb; }
-.song-item .info { flex: 1; }
-.song-item .info .title {
-    font-weight: 600;
-    font-size: 15px;
-    background: linear-gradient(135deg, #f5f5f0, #4a4a5a, #8a7a9a, #6a8a9a, #4a4a5a);
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: songTitleFlow 6s ease-in-out infinite alternate;
+
+.song-item:hover {
+    border-color: rgba(212,184,150,0.2);
+    background: linear-gradient(90deg, 
+        rgba(212,184,150,0.08), 
+        rgba(212,184,150,0.18), 
+        rgba(184,160,200,0.12), 
+        rgba(212,184,150,0.18), 
+        rgba(212,184,150,0.08)
+    );
+    background-size: 300% 100%;
+    animation: songItemShimmer 6s ease-in-out infinite;
 }
 
 @keyframes songTitleFlow {
@@ -626,10 +677,27 @@ if (isZhouTian) {
 list.innerHTML = allSongs.map((s, i) => `
     <div class="song-item">
         <span style="color:#bbb;font-size:14px;width:28px;text-align:center;">${String(i+1).padStart(2,'0')}</span>
-        <button class="play-btn" id="play-btn-${s.id}" onclick="event.stopPropagation();playSong('${s.id}')">▶</button>
+<button class="play-btn" id="play-btn-${s.id}" onclick="event.stopPropagation();playSong('${s.id}')" style="
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8);
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 2px 12px rgba(184,160,200,0.15);
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 20px rgba(184,160,200,0.25)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 12px rgba(184,160,200,0.15)'">
+    <span id="play-icon-${s.id}" style="margin-left: 2px;">▶</span>
+</button>
         <div class="info" onclick="openPlayer('${s.id}')" style="cursor:pointer;flex:1;">
             <div class="title">${s.title || '未命名'}</div>
-            <span class="likes"><span class="heart">❤️</span> ${s.likes || 0}</span>
+<span class="likes"><span class="heart-gradient">♥</span> ${s.likes || 0}</span>
         </div>
     </div>
 `).join('');
@@ -699,15 +767,32 @@ function playSong(songId) {
 function updatePlayBtn(songId, icon) {
     const btn = document.getElementById(`play-btn-${songId}`);
     if (btn) {
-        btn.textContent = icon;
+        // 更新图标
+        const iconSpan = document.getElementById(`play-icon-${songId}`);
+        if (iconSpan) {
+            iconSpan.textContent = icon;
+        }
+        // 播放时按钮微微发光
+        if (icon === '⏸') {
+            btn.style.boxShadow = '0 0 20px rgba(212,184,150,0.3)';
+        } else {
+            btn.style.boxShadow = '0 2px 12px rgba(184,160,200,0.15)';
+        }
     }
 }
 
-function openPlayer(songId) {
-    window.location.href = `player.html?id=${songId}`;
-}
-
 loadArtists();
+// ===== 返回歌手歌曲列表 =====
+function goBackToArtist() {
+    // 从当前歌曲获取 musician_id
+    if (!currentSong) {
+        window.location.href = 'lwmusic.html';
+        return;
+    }
+    const musicianId = currentSong.musician_id;
+    // 跳转回 lwmusic.html，带上歌手 ID 参数，让页面自动展开该歌手的歌曲列表
+    window.location.href = `lwmusic.html?artist=${musicianId}`;
+}
 
 // ===== 简单雪花（50颗，带光晕） =====
 let snowLWParticles = [];
@@ -773,6 +858,24 @@ function stopSnowLW() {
 document.addEventListener('DOMContentLoaded', function() {
     startSnowLW();
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const artistId = urlParams.get('artist');
+    if (artistId) {
+        // 等待 allArtists 加载完成
+        const checkInterval = setInterval(() => {
+            if (allArtists.length > 0) {
+                clearInterval(checkInterval);
+                showSongs(artistId);
+            }
+        }, 100);
+    }
+});
+// ===== 跳转播放页 =====
+function openPlayer(songId) {
+    window.location.href = `player.html?id=${songId}`;
+}
 
 </script>
 <div class="float-btn-group" style="position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 12px; z-index: 1000;">
