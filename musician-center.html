@@ -432,6 +432,24 @@
         <form id="workForm">
             <div class="form-group">
                 <label>作品名称 *</label>
+<div class="form-group">
+    <label>专辑</label>
+    <div style="display:flex; gap:8px; align-items:center;">
+        <select id="albumSelect" style="flex:1; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px; background:white;">
+            <option value="">单曲（无专辑）</option>
+        </select>
+        <button type="button" onclick="showNewAlbumModal()" style="
+            padding:10px 16px;
+            background:linear-gradient(135deg, #d4b896, #b8a0c8);
+            border:none;
+            border-radius:8px;
+            color:#1a1a2e;
+            font-weight:600;
+            cursor:pointer;
+            white-space:nowrap;
+        ">+ 新建</button>
+    </div>
+</div>
                 <input type="text" id="workTitleInput" placeholder="请输入作品名称" required>
             </div>
             <div class="form-group">
@@ -451,6 +469,28 @@
             </div>
         </form>
     </div>
+<!-- ===== 新建专辑弹窗 ===== -->
+<div class="modal-overlay" id="newAlbumModal">
+    <div class="modal" style="max-width:400px;">
+        <h3>📀 新建专辑</h3>
+        <div class="form-group">
+            <label>专辑名称 *</label>
+            <input type="text" id="newAlbumTitle" placeholder="输入专辑名称">
+        </div>
+        <div class="form-group">
+            <label>专辑封面</label>
+            <input type="file" id="newAlbumCover" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label>专辑简介</label>
+            <textarea id="newAlbumDesc" rows="2" placeholder="选填"></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeNewAlbumModal()">取消</button>
+            <button class="btn-submit" onclick="createAlbum()">创建专辑</button>
+        </div>
+    </div>
+</div>
 </div>
 
 <!-- ===== Toast ===== -->
@@ -497,6 +537,7 @@ function formatDate(str) {
 document.addEventListener('DOMContentLoaded', () => {
     loadMusicianData();
     loadWorks();
+ loadAlbumsForSelect();
     document.getElementById('avatarInput').addEventListener('change', uploadAvatar);
     document.getElementById('workForm').addEventListener('submit', submitWork);
     document.getElementById('uploadModal').addEventListener('click', function(e) {
@@ -595,12 +636,13 @@ function renderWorks(works) {
                 <button class="play-btn" onclick="playAudio('${work.audio_url}')">▶</button>
                 <div>
                     <div class="title">${work.title || '未命名'}</div>
-                    <div class="meta">
-                        ❤️ ${work.likes || 0}
-                        <span class="status-tag ${statusClass}">${statusMap[statusClass] || '⏳ 审核中'}</span>
-                        ${work.created_at ? formatDate(work.created_at) : ''}
-                    </div>
-                </div>
+<div class="meta">
+    ❤️ ${work.likes || 0}
+    ${work.album_id ? `<span style="color:#b8a0c8;font-size:11px;">📀 专辑</span>` : ''}
+    <span class="status-tag ${statusClass}">${statusMap[statusClass] || '⏳ 审核中'}</span>
+    ${work.created_at ? formatDate(work.created_at) : ''}
+</div>
+            </div>
             </div>
             <div class="work-actions">
                 <button class="delete-btn" onclick="deleteWork('${work.id}')" title="删除">️</button>
@@ -652,15 +694,17 @@ async function submitWork(e) {
         // ✅ 手动生成作品 ID
         const workId = Date.now().toString() + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
 
-        const workData = {
-            id: workId,
-            musician_id: musicianId,
-            title: title,
-            audio_url: audioUrl,
-            lyrics: lyrics,
-            likes: 0,
-            status: 'pending'
-        };
+const albumId = document.getElementById('albumSelect').value;
+const workData = {
+    id: workId,
+    musician_id: musicianId,
+    title: title,
+    audio_url: audioUrl,
+    lyrics: lyrics,
+    likes: 0,
+    status: 'pending',
+    album_id: albumId || null
+};
 
         const insertResp = await fetch(
             `${SUPABASE_URL}/rest/v1/works`,
@@ -850,6 +894,111 @@ function logout() {
     if (confirm('确定退出吗？')) {
         localStorage.removeItem('musician_id');
         window.location.href = 'login.html';
+    }
+}
+// ============================================================
+// 专辑相关
+// ============================================================
+
+// 加载专辑列表到下拉框
+async function loadAlbumsForSelect() {
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/albums?musician_id=eq.${musicianId}&order=created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const albums = await resp.json();
+        const select = document.getElementById('albumSelect');
+        // 保留第一个选项（单曲）
+        select.innerHTML = '<option value="">单曲（无专辑）</option>';
+        albums.forEach(a => {
+            const opt = document.createElement('option');
+            opt.value = a.id;
+            opt.textContent = a.title + (a.created_at ? ' (' + new Date(a.created_at).toLocaleDateString() + ')' : '');
+            select.appendChild(opt);
+        });
+    } catch (e) {
+        console.error('加载专辑失败:', e);
+    }
+}
+
+// 显示新建专辑弹窗
+function showNewAlbumModal() {
+    document.getElementById('newAlbumModal').classList.add('show');
+}
+
+// 关闭新建专辑弹窗
+function closeNewAlbumModal() {
+    document.getElementById('newAlbumModal').classList.remove('show');
+    document.getElementById('newAlbumTitle').value = '';
+    document.getElementById('newAlbumCover').value = '';
+    document.getElementById('newAlbumDesc').value = '';
+}
+
+// 创建专辑
+async function createAlbum() {
+    const title = document.getElementById('newAlbumTitle').value.trim();
+    if (!title) {
+        showToast('请输入专辑名称', 'error');
+        return;
+    }
+
+    try {
+        // 如果有封面，上传封面
+        let coverUrl = null;
+        const coverFile = document.getElementById('newAlbumCover').files[0];
+        if (coverFile) {
+            const fileExt = coverFile.name.split('.').pop();
+            const fileName = `album_covers/${musicianId}_${Date.now()}.${fileExt}`;
+            const uploadResp = await fetch(
+                `${SUPABASE_URL}/storage/v1/object/album_covers/${fileName}`,
+                {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
+                    body: coverFile
+                }
+            );
+            if (uploadResp.ok) {
+                coverUrl = `${SUPABASE_URL}/storage/v1/object/public/album_covers/${fileName}`;
+            }
+        }
+
+        const albumData = {
+            musician_id: musicianId,
+            title: title,
+            cover_url: coverUrl,
+            description: document.getElementById('newAlbumDesc').value.trim() || null,
+            release_date: new Date().toISOString().split('T')[0]
+        };
+
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/albums`,
+            {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
+                },
+                body: JSON.stringify(albumData)
+            }
+        );
+
+        if (resp.ok) {
+            showToast('✅ 专辑创建成功', 'success');
+            closeNewAlbumModal();
+            await loadAlbumsForSelect();
+            // 自动选中新专辑
+            const newAlbum = await resp.json();
+            if (newAlbum && newAlbum[0]) {
+                document.getElementById('albumSelect').value = newAlbum[0].id;
+            }
+        } else {
+            throw new Error('创建失败');
+        }
+    } catch (e) {
+        console.error(e);
+        showToast('❌ ' + e.message, 'error');
     }
 }
 </script>
