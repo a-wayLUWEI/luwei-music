@@ -2,356 +2,445 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>歌词投稿 · 芦苇音乐</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歌词投稿审核 · 芦苇音乐</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(145deg, #e8e8e8, #6a8a9a, #1a3a2a, #4a4a5a, #e8e8e8);
-    background-size: 400% 400%;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: bodyGradientFlow 16s ease-in-out infinite alternate;
-}
-
-@keyframes bodyGradientFlow {
-    0% { background-position: 0% 50%; }
-    25% { background-position: 25% 50%; }
-    50% { background-position: 50% 50%; }
-    75% { background-position: 75% 50%; }
-    100% { background-position: 100% 50%; }
-}
-
-        .container {
-            max-width: 520px;
-            width: 100%;
-            background: rgba(255,255,255,0.04);
-            backdrop-filter: blur(12px);
-            border-radius: 32px;
-            padding: 40px 32px;
-            border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #121212;
+            color: #ddd;
+            padding: 30px 20px;
+            min-height: 100vh;
         }
-
-        .back-link {
-            color: rgba(255,255,255,0.2);
-            text-decoration: none;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            transition: 0.3s;
-        }
-        .back-link:hover { color: rgba(255,255,255,0.4); }
-
-        .title {
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 {
             font-size: 1.4rem;
             font-weight: 600;
             color: #d4b896;
-            letter-spacing: 3px;
-            margin-top: 16px;
-        }
-
-        .subtitle {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.15);
             letter-spacing: 2px;
-            margin-top: 4px;
-            margin-bottom: 28px;
+            margin-bottom: 6px;
         }
+        .sub {
+            color: rgba(255,255,255,0.15);
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.2);
+        }
+        .stats span { background: rgba(255,255,255,0.03); padding: 4px 14px; border-radius: 20px; }
+        .stats .num { color: #d4b896; font-weight: 600; }
 
-        .form-group {
-            margin-bottom: 16px;
+        .item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            border-left: 3px solid #d4b896;
         }
-        .form-group label {
-            display: block;
+        .item .title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .item .author {
             font-size: 0.7rem;
             color: rgba(255,255,255,0.2);
-            letter-spacing: 1px;
-            margin-bottom: 4px;
+            margin-left: 8px;
         }
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px 14px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9rem;
-            transition: 0.3s;
-            font-family: inherit;
-        }
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: rgba(255,255,255,0.12);
-            background: rgba(255,255,255,0.06);
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 40px;
-            color: rgba(255,255,255,0.3);
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.3s;
-            letter-spacing: 3px;
-            font-weight: 300;
-            margin-top: 4px;
-        }
-        .submit-btn:hover {
-            background: rgba(255,255,255,0.06);
-            border-color: rgba(255,255,255,0.12);
+        .item .content {
             color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+            margin: 8px 0 10px;
+            line-height: 1.6;
+            white-space: pre-wrap;
         }
-
-        .message {
-            display: none;
-            margin-top: 16px;
-            font-size: 0.8rem;
-            text-align: center;
+        .item .meta {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.12);
+        }
+        .item .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .item .actions button {
+            padding: 6px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 500;
             letter-spacing: 1px;
+            transition: 0.3s;
         }
-        .message.success { color: rgba(100,200,150,0.6); }
-        .message.error { color: rgba(255,150,150,0.5); }
+        .btn-approve { background: rgba(76, 175, 80, 0.15); color: rgba(76, 175, 80, 0.6); }
+        .btn-approve:hover { background: rgba(76, 175, 80, 0.25); }
+        .btn-reject { background: rgba(229, 57, 53, 0.15); color: rgba(229, 57, 53, 0.6); }
+        .btn-reject:hover { background: rgba(229, 57, 53, 0.25); }
+        .btn-delete { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.15); }
+        .btn-delete:hover { background: rgba(255,255,255,0.06); }
 
-        .footer {
-            margin-top: 24px;
+        .empty {
             text-align: center;
-            font-size: 0.5rem;
-            color: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.08);
+            padding: 60px 0;
+            font-size: 0.8rem;
             letter-spacing: 2px;
         }
 
-        /* 投稿记录滚动条 */
-        #mySubmissions::-webkit-scrollbar {
-            width: 2px;
+        .status-badge {
+            display: inline-block;
+            font-size: 0.55rem;
+            padding: 2px 12px;
+            border-radius: 20px;
+            margin-left: 10px;
+            letter-spacing: 1px;
         }
-        #mySubmissions::-webkit-scrollbar-track {
-            background: transparent;
+        .status-badge.pending { background: rgba(255, 193, 7, 0.1); color: rgba(255, 193, 7, 0.5); }
+        .status-badge.approved { background: rgba(76, 175, 80, 0.1); color: rgba(76, 175, 80, 0.5); }
+        .status-badge.rejected { background: rgba(229, 57, 53, 0.1); color: rgba(229, 57, 53, 0.5); }
+
+        .refresh-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.15);
+            padding: 6px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.6rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
         }
-        #mySubmissions::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.06);
-            border-radius: 10px;
+        .refresh-btn:hover { border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.3); }
+
+        /* ===== 拒绝原因弹窗 ===== */
+        #rejectModal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        #rejectModal.active {
+            display: flex;
+        }
+        #rejectModal .modal-box {
+            background: linear-gradient(145deg, #1a1a2e, #2a2a4a);
+            border-radius: 24px;
+            padding: 32px 28px;
+            max-width: 440px;
+            width: 92%;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        #rejectModal .modal-title {
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        #rejectModal .modal-sub {
+            color: rgba(255,255,255,0.25);
+            font-size: 0.75rem;
+            margin-bottom: 16px;
+        }
+        #rejectModal textarea {
+            width: 100%;
+            height: 100px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: #fff;
+            font-size: 0.85rem;
+            resize: vertical;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        #rejectModal textarea:focus {
+            border-color: rgba(212,184,150,0.3);
+        }
+        #rejectModal textarea::placeholder {
+            color: rgba(255,255,255,0.15);
+        }
+        #rejectModal .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        #rejectModal .modal-actions button {
+            padding: 10px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        #rejectModal .btn-confirm {
+            flex: 1;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+        }
+        #rejectModal .btn-confirm:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(231,76,60,0.3);
+        }
+        #rejectModal .btn-cancel {
+            flex: 0.5;
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.3);
+        }
+        #rejectModal .btn-cancel:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        .reject-reason {
+            color: rgba(229, 57, 53, 0.5);
+            font-size: 0.7rem;
+            margin-top: 4px;
+            padding: 4px 10px;
+            background: rgba(229,57,53,0.06);
+            border-radius: 8px;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
-<script src="checkAuth.js"></script>
 <div class="container">
-    <a href="lwmusic.html" class="back-link">← 返回</a>
-    <div class="title">✍️ 歌词投稿</div>
-    <div class="subtitle">把你的歌词留在这里，审核通过后会展示</div>
-
-    <form id="lyricForm">
-        <div class="form-group">
-            <label>标题</label>
-            <input type="text" id="lyricTitle" placeholder="歌词标题" required>
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+            <h1> 歌词投稿审核</h1>
+            <div class="sub">所有投稿都会显示在这里，你可以通过或拒绝</div>
         </div>
-        <div class="form-group">
-            <label>作者</label>
-            <input type="text" id="lyricAuthor" placeholder="原作者（选填）">
-        </div>
-        <div class="form-group">
-            <label>歌词</label>
-            <textarea id="lyricContent" rows="6" placeholder="把歌词写在这里..." required></textarea>
-        </div>
-        <div class="form-group">
-            <label>你的昵称</label>
-            <input type="text" id="submitterName" placeholder="你叫什么名字？" required>
-        </div>
-        <div class="form-group">
-            <label>联系方式</label>
-            <input type="text" id="submitterEmail" placeholder="微信/邮箱（选填）">
-        </div>
-        <button type="submit" class="submit-btn">✦ 提交投稿</button>
-    </form>
-
-    <!-- ===== 我的投稿（查看状态） ===== -->
-    <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 24px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <span style="color: rgba(255,255,255,0.15); font-size: 0.7rem; letter-spacing: 1px;"> 我的投稿</span>
-            <button onclick="loadMySubmissions()" style="
-                background: rgba(255,255,255,0.03);
-                border: none;
-                color: rgba(255,255,255,0.1);
-                font-size: 0.6rem;
-                cursor: pointer;
-                padding: 4px 12px;
-                border-radius: 12px;
-            ">刷新</button>
-        </div>
-        <div id="mySubmissions" style="
-            max-height: 300px;
-            overflow-y: auto;
-            padding-right: 4px;
-        ">
-            <div style="text-align: center; color: rgba(255,255,255,0.06); font-size: 0.7rem; padding: 20px 0;">
-                还没有投稿记录
-            </div>
-        </div>
+        <button class="refresh-btn" onclick="loadSubmissions()"> 刷新</button>
     </div>
 
-    <div class="message" id="message"></div>
-    <div class="footer">芦苇音乐 · 歌词投稿</div>
+    <div class="stats" id="stats">
+        <span>全部 <span class="num" id="totalCount">0</span></span>
+        <span>待审 <span class="num" id="pendingCount">0</span></span>
+        <span>已通过 <span class="num" id="approvedCount">0</span></span>
+    </div>
+
+    <div id="list"></div>
+</div>
+
+<!-- ===== 拒绝原因弹窗 ===== -->
+<div id="rejectModal">
+    <div class="modal-box">
+        <div class="modal-title"> 填写拒绝原因</div>
+        <div class="modal-sub">投稿人将看到这个原因，方便他们修改后重新投稿</div>
+        <textarea id="rejectReasonInput" placeholder="例如：歌词格式不对、内容不完整、重复投稿、版权问题..."></textarea>
+        <div class="modal-actions">
+            <button class="btn-confirm" id="rejectConfirmBtn">确认拒绝</button>
+            <button class="btn-cancel" onclick="closeRejectModal()">取消</button>
+        </div>
+    </div>
 </div>
 
 <script>
 const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
 
-// ===== 提交投稿 =====
-document.getElementById('lyricForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+let currentRejectId = null;
 
-    const title = document.getElementById('lyricTitle').value.trim();
-    const author = document.getElementById('lyricAuthor').value.trim();
-    const content = document.getElementById('lyricContent').value.trim();
-    const name = document.getElementById('submitterName').value.trim();
-    const email = document.getElementById('submitterEmail').value.trim();
-    const msg = document.getElementById('message');
-
-    if (!title || !content || !name) {
-        msg.textContent = '请填写标题、歌词和你的昵称';
-        msg.className = 'message error';
-        msg.style.display = 'block';
-        return;
-    }
+// ===== 加载投稿列表 =====
+async function loadSubmissions() {
+    const list = document.getElementById('list');
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.05);">加载中...</div>';
 
     try {
-        const resp = await fetch(`${SUPABASE_URL}/rest/v1/lyric_submissions`, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_KEY,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: Date.now(),
-                title: title,
-                author: author,
-                content: content,
-                submitter_name: name,
-                submitter_email: email,
-                status: 'pending'
-            })
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/lyric_submissions?order=created_at.desc`, {
+            headers: { 'apikey': SUPABASE_KEY }
         });
-
-        if (resp.ok) {
-            msg.textContent = '✅ 投稿成功！审核通过后会展示在这里。';
-            msg.className = 'message success';
-            msg.style.display = 'block';
-            document.getElementById('lyricForm').reset();
-            // 刷新投稿记录
-            setTimeout(loadMySubmissions, 500);
-        } else {
-            msg.textContent = '提交失败，请稍后重试';
-            msg.className = 'message error';
-            msg.style.display = 'block';
-        }
-    } catch (e) {
-        msg.textContent = '网络错误，请稍后重试';
-        msg.className = 'message error';
-        msg.style.display = 'block';
-    }
-});
-
-// ===== 获取当前用户昵称 =====
-function getCurrentUser() {
-    try {
-        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        return user.nickname || user.username || '';
-    } catch (e) {
-        return '';
-    }
-}
-
-// ===== 加载我的投稿 =====
-async function loadMySubmissions() {
-    const container = document.getElementById('mySubmissions');
-    const userName = getCurrentUser();
-    
-    if (!userName) {
-        container.innerHTML = `
-            <div style="text-align: center; color: rgba(255,255,255,0.08); font-size: 0.7rem; padding: 20px 0;">
-                 提交投稿后，这里会显示状态
-            </div>
-        `;
-        return;
-    }
-
-    try {
-        const resp = await fetch(
-            `${SUPABASE_URL}/rest/v1/lyric_submissions?submitter_name=eq.${encodeURIComponent(userName)}&order=created_at.desc`,
-            { headers: { 'apikey': SUPABASE_KEY } }
-        );
         const data = await resp.json();
 
         if (!data || data.length === 0) {
-            container.innerHTML = `
-                <div style="text-align: center; color: rgba(255,255,255,0.06); font-size: 0.7rem; padding: 20px 0;">
-                    暂无投稿记录
-                </div>
-            `;
+            list.innerHTML = '<div class="empty">暂无投稿</div>';
+            document.getElementById('totalCount').textContent = '0';
+            document.getElementById('pendingCount').textContent = '0';
+            document.getElementById('approvedCount').textContent = '0';
             return;
         }
 
-        container.innerHTML = data.map(item => {
+        const pending = data.filter(d => d.status === 'pending' || !d.status);
+        const approved = data.filter(d => d.status === 'approved');
+
+        document.getElementById('totalCount').textContent = data.length;
+        document.getElementById('pendingCount').textContent = pending.length;
+        document.getElementById('approvedCount').textContent = approved.length;
+
+        list.innerHTML = data.map(item => {
             const status = item.status || 'pending';
             const statusMap = {
-                'pending': '<span style="color: rgba(255,193,7,0.5);">⏳ 审核中</span>',
-                'approved': '<span style="color: rgba(76,175,80,0.5);">✅ 已通过</span>',
-                'rejected': '<span style="color: rgba(229,57,53,0.5);">❌ 已拒绝</span>'
+                'pending': '<span class="status-badge pending">⏳ 待审</span>',
+                'approved': '<span class="status-badge approved">✅ 已通过</span>',
+                'rejected': '<span class="status-badge rejected">❌ 已拒绝</span>'
             };
-            
             const rejectReasonHtml = item.reject_reason 
-                ? `<div style="color: rgba(229,57,53,0.4); font-size: 0.65rem; margin-top: 3px; padding: 4px 10px; background: rgba(229,57,53,0.05); border-radius: 6px; display: inline-block;"> ${item.reject_reason}</div>`
+                ? `<div class="reject-reason"> ${item.reject_reason}</div>` 
                 : '';
 
             return `
-                <div style="
-                    padding: 10px 12px;
-                    margin-bottom: 6px;
-                    background: rgba(255,255,255,0.02);
-                    border-radius: 12px;
-                    border-left: 2px solid ${status === 'approved' ? 'rgba(76,175,80,0.2)' : status === 'rejected' ? 'rgba(229,57,53,0.2)' : 'rgba(255,193,7,0.1)'};
-                ">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
-                        <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">${item.title || '无标题'}</span>
-                        ${statusMap[status]}
+                <div class="item" data-id="${item.id}">
+                    <div>
+                        <span class="title">${item.title || '无标题'}</span>
+                        <span class="author">${item.author || ''}</span>
+                        ${statusMap[status] || ''}
                     </div>
+                    <div class="content">${item.content || ''}</div>
                     ${rejectReasonHtml}
-                    <div style="color: rgba(255,255,255,0.06); font-size: 0.5rem; margin-top: 2px;">
+                    <div class="meta">
+                        ${item.submitter_name || '匿名'} ·
+                        ${item.submitter_email || ''} ·
                         ${item.created_at ? new Date(item.created_at).toLocaleDateString() : ''}
                     </div>
+                    ${status === 'pending' ? `
+                        <div class="actions">
+                            <button class="btn-approve" onclick="approveSubmission(${item.id})">✅ 通过</button>
+                            <button class="btn-reject" onclick="openRejectModal(${item.id})">❌ 拒绝</button>
+                        </div>
+                    ` : `
+                        <div class="actions">
+                            <button class="btn-delete" onclick="deleteSubmission(${item.id})">️ 删除</button>
+                        </div>
+                    `}
                 </div>
             `;
         }).join('');
 
     } catch (e) {
-        container.innerHTML = `
-            <div style="text-align: center; color: rgba(255,255,255,0.06); font-size: 0.7rem; padding: 20px 0;">
-                加载失败
-            </div>
-        `;
+        list.innerHTML = '<div class="empty">加载失败，请刷新</div>';
         console.error(e);
     }
 }
 
-// ===== 页面加载时自动加载投稿记录 =====
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(loadMySubmissions, 500);
-});
-</script>
+// ===== 通过投稿 =====
+async function approveSubmission(id) {
+    if (!confirm('确定要通过这条投稿吗？')) return;
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/lyric_submissions?id=eq.${id}`, {
+            method: 'PATCH',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                status: 'approved',
+                reject_reason: null  // 清空拒绝原因
+            })
+        });
+        if (resp.ok) {
+            loadSubmissions();
+        } else {
+            alert('操作失败，请检查网络');
+        }
+    } catch (e) {
+        alert('操作失败');
+    }
+}
 
+// ===== 打开拒绝弹窗 =====
+function openRejectModal(id) {
+    currentRejectId = id;
+    document.getElementById('rejectModal').classList.add('active');
+    document.getElementById('rejectReasonInput').value = '';
+    document.getElementById('rejectReasonInput').focus();
+}
+
+// ===== 关闭拒绝弹窗 =====
+function closeRejectModal() {
+    document.getElementById('rejectModal').classList.remove('active');
+    currentRejectId = null;
+}
+
+// ===== 确认拒绝（提交原因） =====
+async function confirmReject() {
+    const reason = document.getElementById('rejectReasonInput').value.trim();
+    if (!reason) {
+        alert('请填写拒绝原因，投稿人需要知道为什么被拒');
+        return;
+    }
+
+    if (!currentRejectId) return;
+
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/lyric_submissions?id=eq.${currentRejectId}`, {
+            method: 'PATCH',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                status: 'rejected',
+                reject_reason: reason
+            })
+        });
+        if (resp.ok) {
+            closeRejectModal();
+            loadSubmissions();
+        } else {
+            alert('操作失败，请检查网络');
+        }
+    } catch (e) {
+        alert('操作失败');
+    }
+}
+
+// ===== 删除投稿 =====
+async function deleteSubmission(id) {
+    if (!confirm('确定要删除这条投稿吗？')) return;
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/lyric_submissions?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: { 'apikey': SUPABASE_KEY }
+        });
+        if (resp.ok) {
+            loadSubmissions();
+        } else {
+            alert('删除失败');
+        }
+    } catch (e) {
+        alert('删除失败');
+    }
+}
+
+// ===== 点击弹窗外关闭 =====
+document.getElementById('rejectModal').addEventListener('click', function(e) {
+    if (e.target === this) closeRejectModal();
+});
+
+// ===== 键盘事件：Enter 确认，Esc 取消 =====
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeRejectModal();
+    if (e.key === 'Enter' && document.getElementById('rejectModal').classList.contains('active')) {
+        confirmReject();
+    }
+});
+
+// ===== 绑定确认按钮 =====
+document.getElementById('rejectConfirmBtn').addEventListener('click', confirmReject);
+
+// ===== 启动 =====
+loadSubmissions();
+</script>
 </body>
 </html>
