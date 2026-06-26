@@ -944,28 +944,30 @@ async function createAlbum() {
 
     try {
         // 如果有封面，上传封面
-let coverUrl = null;
-if (coverFile) {
-    try {
-        // 上传逻辑...
-    } catch (e) {
-        console.warn('封面上传失败，继续创建专辑', e);
-        // 不中断流程
-    }
-}
+        let coverUrl = null;
+        const coverFileInput = document.getElementById('newAlbumCover');
+        const coverFile = coverFileInput ? coverFileInput.files[0] : null;
+        
         if (coverFile) {
-            const fileExt = coverFile.name.split('.').pop();
-            const fileName = `${musicianId}_${Date.now()}.${fileExt}`;
-            const uploadResp = await fetch(
-                `${SUPABASE_URL}/storage/v1/object/album_covers/${fileName}`,
-                {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
-                    body: coverFile
+            try {
+                const fileExt = coverFile.name.split('.').pop();
+                const fileName = `${musicianId}_${Date.now()}.${fileExt}`;
+                const uploadResp = await fetch(
+                    `${SUPABASE_URL}/storage/v1/object/album_covers/${fileName}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` },
+                        body: coverFile
+                    }
+                );
+                if (uploadResp.ok) {
+                    coverUrl = `${SUPABASE_URL}/storage/v1/object/public/album_covers/${fileName}`;
+                } else {
+                    console.warn('封面上传失败，继续创建专辑');
                 }
-            );
-            if (uploadResp.ok) {
-                coverUrl = `${SUPABASE_URL}/storage/v1/object/public/album_covers/${fileName}`;
+            } catch (e) {
+                console.warn('封面上传失败:', e);
+                // 封面失败不影响专辑创建
             }
         }
 
@@ -974,7 +976,7 @@ if (coverFile) {
             title: title,
             cover_url: coverUrl,
             description: document.getElementById('newAlbumDesc').value.trim() || null,
-            release_date: new Date().toISOString().split('T')[0] || null
+            release_date: new Date().toISOString().split('T')[0]
         };
 
         const resp = await fetch(
@@ -1000,6 +1002,8 @@ if (coverFile) {
                 document.getElementById('albumSelect').value = newAlbum[0].id;
             }
         } else {
+            const err = await resp.text();
+            console.error('创建失败:', err);
             throw new Error('创建失败');
         }
     } catch (e) {
