@@ -6,25 +6,28 @@
     <title>歌词投稿 · 芦苇音乐</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(145deg, #e8e8e8, #6a8a9a, #1a3a2a, #4a4a5a, #e8e8e8);
-    background-size: 400% 400%;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: bodyGradientFlow 16s ease-in-out infinite alternate;
-}
 
-@keyframes bodyGradientFlow {
-    0% { background-position: 0% 50%; }
-    25% { background-position: 25% 50%; }
-    50% { background-position: 50% 50%; }
-    75% { background-position: 75% 50%; }
-    100% { background-position: 100% 50%; }
-}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8e8e8 0%, #8a8a8a 15%, #1a1a1a 30%, #d4a843 45%, #6a5a9a 60%, #2a4a3a 75%, #6a5a9a 85%, #3a3a4a 100%);
+            background-size: 300% 300%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: commentBgFlow 10s ease-in-out infinite alternate;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes commentBgFlow {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 50% 100%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 0%; }
+            100% { background-position: 0% 100%; }
+        }
 
         .container {
             max-width: 520px;
@@ -35,6 +38,8 @@ body {
             padding: 40px 32px;
             border: 1px solid rgba(255,255,255,0.06);
             box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
         }
 
         .back-link {
@@ -62,9 +67,7 @@ body {
             margin-bottom: 28px;
         }
 
-        .form-group {
-            margin-bottom: 16px;
-        }
+        .form-group { margin-bottom: 16px; }
         .form-group label {
             display: block;
             font-size: 0.7rem;
@@ -133,7 +136,6 @@ body {
             letter-spacing: 2px;
         }
 
-        /* 投稿记录滚动条 */
         #mySubmissions::-webkit-scrollbar {
             width: 2px;
         }
@@ -144,9 +146,20 @@ body {
             background: rgba(255,255,255,0.06);
             border-radius: 10px;
         }
+
+        #meteorCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
     </style>
 </head>
 <body>
+<canvas id="meteorCanvas"></canvas>
 <script src="checkAuth.js"></script>
 <div class="container">
     <a href="lwmusic.html" class="back-link">← 返回</a>
@@ -177,7 +190,7 @@ body {
         <button type="submit" class="submit-btn">✦ 提交投稿</button>
     </form>
 
-    <!-- ===== 投稿状态（查看状态） ===== -->
+    <!-- ===== 投稿状态 ===== -->
     <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <span style="color: rgba(255,255,255,0.15); font-size: 0.7rem; letter-spacing: 1px;"> 投稿状态</span>
@@ -221,7 +234,6 @@ document.getElementById('lyricForm').addEventListener('submit', async function(e
     const email = document.getElementById('submitterEmail').value.trim();
     const msg = document.getElementById('message');
 
-    // 获取当前登录用户 ID
     const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const userId = user.user_id || null;
 
@@ -269,16 +281,6 @@ document.getElementById('lyricForm').addEventListener('submit', async function(e
     }
 });
 
-// ===== 获取当前用户昵称 =====
-function getCurrentUser() {
-    try {
-        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        return user.nickname || user.username || '';
-    } catch (e) {
-        return '';
-    }
-}
-
 // ===== 加载我的投稿 =====
 async function loadMySubmissions() {
     const container = document.getElementById('mySubmissions');
@@ -288,7 +290,7 @@ async function loadMySubmissions() {
     if (!userId) {
         container.innerHTML = `
             <div style="text-align: center; color: rgba(255,255,255,0.08); font-size: 0.7rem; padding: 20px 0;">
-                💡 请先登录，查看你的投稿状态
+                 请先登录，查看你的投稿状态
             </div>
         `;
         return;
@@ -315,12 +317,12 @@ async function loadMySubmissions() {
             const statusMap = {
                 'pending': '<span style="color: rgba(255,193,7,0.5);">⏳ 审核中</span>',
                 'approved': '<span style="color: rgba(76,175,80,0.5);">✅ 已通过</span>',
-                'rejected': '<span style="color: rgba(229,57,53,0.5);">❌ 已拒绝</span>'
+                'rejected': '<span style="color: rgba(255,255,255,0.3);">❌ 已拒绝</span>'
             };
             
-const rejectReasonHtml = item.reject_reason 
-    ? `<div style="color: rgba(255,255,255,0.4); font-size: 0.65rem; margin-top: 3px; padding: 4px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: inline-block;">📌 ${item.reject_reason}</div>`
-    : '';
+            const rejectReasonHtml = item.reject_reason 
+                ? `<div style="color: rgba(255,255,255,0.4); font-size: 0.65rem; margin-top: 3px; padding: 4px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: inline-block;"> ${item.reject_reason}</div>`
+                : '';
 
             return `
                 <div style="
@@ -328,7 +330,7 @@ const rejectReasonHtml = item.reject_reason
                     margin-bottom: 6px;
                     background: rgba(255,255,255,0.02);
                     border-radius: 12px;
-                    border-left: 2px solid ${status === 'approved' ? 'rgba(76,175,80,0.2)' : status === 'rejected' ? 'rgba(229,57,53,0.2)' : 'rgba(255,193,7,0.1)'};
+                    border-left: 2px solid ${status === 'approved' ? 'rgba(76,175,80,0.2)' : status === 'rejected' ? 'rgba(255,255,255,0.1)' : 'rgba(255,193,7,0.1)'};
                 ">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
                         <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">${item.title || '无标题'}</span>
@@ -352,9 +354,127 @@ const rejectReasonHtml = item.reject_reason
     }
 }
 
-// ===== 页面加载时自动加载投稿记录 =====
+// ===== 页面加载 =====
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(loadMySubmissions, 500);
+});
+
+// ============================================================
+// ===== 流星雨 =====
+// ============================================================
+
+let meteorAnimationId = null;
+let meteors = [];
+let meteorCtx = null;
+let meteorCanvas = null;
+
+function initMeteorCanvas() {
+    meteorCanvas = document.getElementById('meteorCanvas');
+    if (!meteorCanvas) return;
+    meteorCtx = meteorCanvas.getContext('2d');
+    
+    const rect = document.body.getBoundingClientRect();
+    meteorCanvas.width = rect.width;
+    meteorCanvas.height = rect.height;
+    
+    meteors = [];
+    for (let i = 0; i < 52; i++) {
+        meteors.push(createMeteor());
+    }
+    
+    drawMeteors();
+}
+
+function createMeteor() {
+    const canvas = meteorCanvas;
+    return {
+        x: Math.random() * canvas.width * 0.8,
+        y: Math.random() * canvas.height * 0.3,
+        length: Math.random() * 80 + 40,
+        speed: Math.random() * 4 + 3,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.6 + 0.3,
+        life: Math.random() * 120 + 80,
+        maxLife: 200,
+        delay: Math.random() * 200
+    };
+}
+
+function drawMeteors() {
+    if (!meteorCtx || !meteorCanvas) return;
+    const ctx = meteorCtx;
+    const canvas = meteorCanvas;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    meteors.forEach(meteor => {
+        if (meteor.delay > 0) {
+            meteor.delay--;
+            return;
+        }
+        
+        meteor.x += Math.cos(meteor.angle) * meteor.speed;
+        meteor.y += Math.sin(meteor.angle) * meteor.speed;
+        meteor.life--;
+        
+        const lifeRatio = meteor.life / meteor.maxLife;
+        const alpha = meteor.opacity * Math.min(1, lifeRatio * 2);
+        
+        const tailLength = meteor.length * lifeRatio;
+        const gradient = ctx.createLinearGradient(
+            meteor.x, meteor.y,
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+        gradient.addColorStop(0.3, `rgba(255, 240, 220, ${alpha * 0.6})`);
+        gradient.addColorStop(1, `rgba(255, 220, 200, 0)`);
+        
+        ctx.beginPath();
+        ctx.moveTo(meteor.x, meteor.y);
+        ctx.lineTo(
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        const glow = ctx.createRadialGradient(meteor.x, meteor.y, 0, meteor.x, meteor.y, 6);
+        glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.8})`);
+        glow.addColorStop(1, `rgba(255, 255, 255, 0)`);
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(meteor.x, meteor.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        
+        if (meteor.life <= 0) {
+            Object.assign(meteor, createMeteor());
+            meteor.x = Math.random() * canvas.width * 0.8;
+            meteor.y = Math.random() * canvas.height * 0.2;
+            meteor.delay = Math.random() * 100 + 50;
+        }
+    });
+    
+    meteorAnimationId = requestAnimationFrame(drawMeteors);
+}
+
+function startMeteors() {
+    const canvas = document.getElementById('meteorCanvas');
+    if (canvas) {
+        setTimeout(() => {
+            initMeteorCanvas();
+            window.addEventListener('resize', () => {
+                const rect = document.body.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            });
+        }, 300);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    startMeteors();
 });
 </script>
 
