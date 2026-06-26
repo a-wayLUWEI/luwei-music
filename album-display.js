@@ -54,7 +54,15 @@ function renderAlbumsHTML(grouped) {
         var album = group.album;
         html += '<div style="margin-bottom:20px;">';
         html += '<div style="display:flex; align-items:center; gap:12px; margin-bottom:8px; cursor:pointer; color:rgba(255,255,255,0.5); font-size:0.85rem;" onclick="toggleAlbum(\'' + album.id + '\')">';
-html += '<span style="color:rgba(212,184,150,0.3); font-size:1.2rem; margin-right:4px; display:inline-block; line-height:1;">●</span> <span style="color:rgba(255,255,255,0.6);">' + album.title + '</span>';
+        // 封面图片或占位符
+        html += '<div style="width:40px; height:40px; border-radius:6px; background:linear-gradient(135deg, rgba(212,184,150,0.2), rgba(184,160,200,0.2)); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; overflow:hidden;">';
+        if (album.cover_url && album.cover_url.startsWith('http')) {
+            html += '<img src="' + album.cover_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">';
+        } else {
+            html += '📀';
+        }
+        html += '</div>';
+        html += '<span style="color:rgba(255,255,255,0.6);">' + album.title + '</span>';
         html += '<span style="color:rgba(255,255,255,0.15); font-size:0.6rem;">' + group.songs.length + '首</span>';
         html += '</div>';
         html += '<div class="album-songs" id="album-' + album.id + '" style="padding-left:12px;">';
@@ -63,11 +71,9 @@ html += '<span style="color:rgba(212,184,150,0.3); font-size:1.2rem; margin-righ
             var s = group.songs[i];
             html += '<div class="song-item" onclick="openPlayer(\'' + s.id + '\')" style="cursor:pointer; padding:8px 12px; border-radius:6px; margin-bottom:2px; display:flex; align-items:center; gap:12px; transition:0.2s;">';
             html += '<span style="color:rgba(255,255,255,0.12); font-size:0.65rem; width:20px; text-align:center;">' + String(i+1).padStart(2,'0') + '</span>';
-            // 歌名：用 .title 类
             html += '<span class="title" style="font-size:0.85rem; font-weight:600;">' + (s.title || '未命名') + '</span>';
-            // 爱心：用 .heart-gradient 类
-html += '<span class="likes" style="margin-left:auto; font-size:0.8rem; align-self:center;"><span class="heart-gradient">♥</span> ' + (s.likes || 0) + '</span>';
-html += '<span style="color:rgba(255,255,255,0.15); font-size:0.7rem;">▶ ' + (s.plays || 0) + '</span>';
+            html += '<span class="likes" style="margin-left:auto; font-size:0.8rem; align-self:center;"><span class="heart-gradient">♥</span> ' + (s.likes || 0) + '</span>';
+            html += '<span style="color:rgba(255,255,255,0.15); font-size:0.7rem;">▶ ' + (s.plays || 0) + '</span>';
             html += '</div>';
         }
 
