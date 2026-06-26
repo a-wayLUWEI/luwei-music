@@ -318,9 +318,9 @@ async function loadMySubmissions() {
                 'rejected': '<span style="color: rgba(229,57,53,0.5);">❌ 已拒绝</span>'
             };
             
-            const rejectReasonHtml = item.reject_reason 
-                ? `<div style="color: rgba(229,57,53,0.4); font-size: 0.65rem; margin-top: 3px; padding: 4px 10px; background: rgba(229,57,53,0.05); border-radius: 6px; display: inline-block;">📌 ${item.reject_reason}</div>`
-                : '';
+const rejectReasonHtml = item.reject_reason 
+    ? `<div style="color: rgba(255,255,255,0.4); font-size: 0.65rem; margin-top: 3px; padding: 4px 10px; background: rgba(255,255,255,0.04); border-radius: 6px; display: inline-block;">📌 ${item.reject_reason}</div>`
+    : '';
 
             return `
                 <div style="
