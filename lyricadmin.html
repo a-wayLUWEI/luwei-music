@@ -69,6 +69,7 @@
             display: flex;
             gap: 10px;
             margin-top: 12px;
+            flex-wrap: wrap;
         }
         .item .actions button {
             padding: 6px 20px;
@@ -82,7 +83,7 @@
         }
         .btn-approve { background: rgba(76, 175, 80, 0.15); color: rgba(76, 175, 80, 0.6); }
         .btn-approve:hover { background: rgba(76, 175, 80, 0.25); }
-        .btn-reject { background: rgba(229, 57, 53, 0.15); color: rgba(229, 57, 53, 0.6); }
+.btn-reject { background: rgba(229, 57, 53, 0.15); color: #1a1a2e; }
         .btn-reject:hover { background: rgba(229, 57, 53, 0.25); }
         .btn-delete { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.15); }
         .btn-delete:hover { background: rgba(255,255,255,0.06); }
@@ -119,16 +120,118 @@
             transition: 0.3s;
         }
         .refresh-btn:hover { border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.3); }
+
+        /* ===== 拒绝原因弹窗 ===== */
+        #rejectModal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        #rejectModal.active {
+            display: flex;
+        }
+        #rejectModal .modal-box {
+            background: linear-gradient(145deg, #1a1a2e, #2a2a4a);
+            border-radius: 24px;
+            padding: 32px 28px;
+            max-width: 440px;
+            width: 92%;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        #rejectModal .modal-title {
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        #rejectModal .modal-sub {
+            color: rgba(255,255,255,0.25);
+            font-size: 0.75rem;
+            margin-bottom: 16px;
+        }
+        #rejectModal textarea {
+            width: 100%;
+            height: 100px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: #fff;
+            font-size: 0.85rem;
+            resize: vertical;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        #rejectModal textarea:focus {
+            border-color: rgba(212,184,150,0.3);
+        }
+        #rejectModal textarea::placeholder {
+            color: rgba(255,255,255,0.15);
+        }
+        #rejectModal .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        #rejectModal .modal-actions button {
+            padding: 10px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        #rejectModal .btn-confirm {
+            flex: 1;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+        }
+        #rejectModal .btn-confirm:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(231,76,60,0.3);
+        }
+        #rejectModal .btn-cancel {
+            flex: 0.5;
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.3);
+        }
+        #rejectModal .btn-cancel:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        .reject-reason {
+            color: rgba(229, 57, 53, 0.5);
+            font-size: 0.7rem;
+            margin-top: 4px;
+            padding: 4px 10px;
+            background: rgba(229,57,53,0.06);
+            border-radius: 8px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
         <div>
-            <h1>📝 歌词投稿审核</h1>
+            <h1> 歌词投稿审核</h1>
             <div class="sub">所有投稿都会显示在这里，你可以通过或拒绝</div>
         </div>
-        <button class="refresh-btn" onclick="loadSubmissions()">🔄 刷新</button>
+        <button class="refresh-btn" onclick="loadSubmissions()"> 刷新</button>
     </div>
 
     <div class="stats" id="stats">
@@ -140,10 +243,26 @@
     <div id="list"></div>
 </div>
 
+<!-- ===== 拒绝原因弹窗 ===== -->
+<div id="rejectModal">
+    <div class="modal-box">
+        <div class="modal-title"> 填写拒绝原因</div>
+        <div class="modal-sub">投稿人将看到这个原因，方便他们修改后重新投稿</div>
+        <textarea id="rejectReasonInput" placeholder="例如：歌词格式不对、内容不完整、重复投稿、版权问题..."></textarea>
+        <div class="modal-actions">
+            <button class="btn-confirm" id="rejectConfirmBtn">确认拒绝</button>
+            <button class="btn-cancel" onclick="closeRejectModal()">取消</button>
+        </div>
+    </div>
+</div>
+
 <script>
 const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
 
+let currentRejectId = null;
+
+// ===== 加载投稿列表 =====
 async function loadSubmissions() {
     const list = document.getElementById('list');
     list.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.05);">加载中...</div>';
@@ -176,6 +295,10 @@ async function loadSubmissions() {
                 'approved': '<span class="status-badge approved">✅ 已通过</span>',
                 'rejected': '<span class="status-badge rejected">❌ 已拒绝</span>'
             };
+            const rejectReasonHtml = item.reject_reason 
+                ? `<div class="reject-reason"> ${item.reject_reason}</div>` 
+                : '';
+
             return `
                 <div class="item" data-id="${item.id}">
                     <div>
@@ -184,6 +307,7 @@ async function loadSubmissions() {
                         ${statusMap[status] || ''}
                     </div>
                     <div class="content">${item.content || ''}</div>
+                    ${rejectReasonHtml}
                     <div class="meta">
                         ${item.submitter_name || '匿名'} ·
                         ${item.submitter_email || ''} ·
@@ -191,12 +315,12 @@ async function loadSubmissions() {
                     </div>
                     ${status === 'pending' ? `
                         <div class="actions">
-                            <button class="btn-approve" onclick="updateStatus(${item.id}, 'approved')">✅ 通过</button>
-                            <button class="btn-reject" onclick="updateStatus(${item.id}, 'rejected')">❌ 拒绝</button>
+                            <button class="btn-approve" onclick="approveSubmission(${item.id})">✅ 通过</button>
+                            <button class="btn-reject" onclick="openRejectModal(${item.id})">❌ 拒绝</button>
                         </div>
                     ` : `
                         <div class="actions">
-                            <button class="btn-delete" onclick="deleteSubmission(${item.id})">🗑️ 删除</button>
+                            <button class="btn-delete" onclick="deleteSubmission(${item.id})">️ 删除</button>
                         </div>
                     `}
                 </div>
@@ -209,8 +333,9 @@ async function loadSubmissions() {
     }
 }
 
-async function updateStatus(id, status) {
-    if (!confirm(`确定要${status === 'approved' ? '通过' : '拒绝'}这条投稿吗？`)) return;
+// ===== 通过投稿 =====
+async function approveSubmission(id) {
+    if (!confirm('确定要通过这条投稿吗？')) return;
     try {
         const resp = await fetch(`${SUPABASE_URL}/rest/v1/lyric_submissions?id=eq.${id}`, {
             method: 'PATCH',
@@ -218,7 +343,10 @@ async function updateStatus(id, status) {
                 'apikey': SUPABASE_KEY,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ status: status })
+            body: JSON.stringify({ 
+                status: 'approved',
+                reject_reason: null  // 清空拒绝原因
+            })
         });
         if (resp.ok) {
             loadSubmissions();
@@ -230,6 +358,54 @@ async function updateStatus(id, status) {
     }
 }
 
+// ===== 打开拒绝弹窗 =====
+function openRejectModal(id) {
+    currentRejectId = id;
+    document.getElementById('rejectModal').classList.add('active');
+    document.getElementById('rejectReasonInput').value = '';
+    document.getElementById('rejectReasonInput').focus();
+}
+
+// ===== 关闭拒绝弹窗 =====
+function closeRejectModal() {
+    document.getElementById('rejectModal').classList.remove('active');
+    currentRejectId = null;
+}
+
+// ===== 确认拒绝（提交原因） =====
+async function confirmReject() {
+    const reason = document.getElementById('rejectReasonInput').value.trim();
+    if (!reason) {
+        alert('请填写拒绝原因，投稿人需要知道为什么被拒');
+        return;
+    }
+
+    if (!currentRejectId) return;
+
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/lyric_submissions?id=eq.${currentRejectId}`, {
+            method: 'PATCH',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                status: 'rejected',
+                reject_reason: reason
+            })
+        });
+        if (resp.ok) {
+            closeRejectModal();
+            loadSubmissions();
+        } else {
+            alert('操作失败，请检查网络');
+        }
+    } catch (e) {
+        alert('操作失败');
+    }
+}
+
+// ===== 删除投稿 =====
 async function deleteSubmission(id) {
     if (!confirm('确定要删除这条投稿吗？')) return;
     try {
@@ -247,6 +423,23 @@ async function deleteSubmission(id) {
     }
 }
 
+// ===== 点击弹窗外关闭 =====
+document.getElementById('rejectModal').addEventListener('click', function(e) {
+    if (e.target === this) closeRejectModal();
+});
+
+// ===== 键盘事件：Enter 确认，Esc 取消 =====
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeRejectModal();
+    if (e.key === 'Enter' && document.getElementById('rejectModal').classList.contains('active')) {
+        confirmReject();
+    }
+});
+
+// ===== 绑定确认按钮 =====
+document.getElementById('rejectConfirmBtn').addEventListener('click', confirmReject);
+
+// ===== 启动 =====
 loadSubmissions();
 </script>
 </body>
