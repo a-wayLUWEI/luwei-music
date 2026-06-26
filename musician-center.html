@@ -691,20 +691,19 @@ async function submitWork(e) {
 
         const audioUrl = `${SUPABASE_URL}/storage/v1/object/public/audios/${fileName}`;
 
-        // ✅ 手动生成作品 ID
         const workId = Date.now().toString() + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
 
-const albumId = document.getElementById('albumSelect').value;
-const workData = {
-    id: workId,
-    musician_id: musicianId,
-    title: title,
-    audio_url: audioUrl,
-    lyrics: lyrics,
-    likes: 0,
-    status: 'pending',
-    album_id: albumId || null
-};
+        const albumId = document.getElementById('albumSelect').value;
+        const workData = {
+            id: workId,
+            musician_id: musicianId,
+            title: title,
+            audio_url: audioUrl,
+            lyrics: lyrics,
+            likes: 0,
+            status: 'pending',
+            album_id: albumId || null
+        };
 
         const insertResp = await fetch(
             `${SUPABASE_URL}/rest/v1/works`,
@@ -945,11 +944,18 @@ async function createAlbum() {
 
     try {
         // 如果有封面，上传封面
-        let coverUrl = null;
-        const coverFile = document.getElementById('newAlbumCover').files[0];
+let coverUrl = null;
+if (coverFile) {
+    try {
+        // 上传逻辑...
+    } catch (e) {
+        console.warn('封面上传失败，继续创建专辑', e);
+        // 不中断流程
+    }
+}
         if (coverFile) {
             const fileExt = coverFile.name.split('.').pop();
-            const fileName = `album_covers/${musicianId}_${Date.now()}.${fileExt}`;
+            const fileName = `${musicianId}_${Date.now()}.${fileExt}`;
             const uploadResp = await fetch(
                 `${SUPABASE_URL}/storage/v1/object/album_covers/${fileName}`,
                 {
@@ -968,7 +974,7 @@ async function createAlbum() {
             title: title,
             cover_url: coverUrl,
             description: document.getElementById('newAlbumDesc').value.trim() || null,
-            release_date: new Date().toISOString().split('T')[0]
+            release_date: new Date().toISOString().split('T')[0] || null
         };
 
         const resp = await fetch(
