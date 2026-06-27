@@ -752,6 +752,57 @@
     <span id="playCountDisplay" style="font-size:0.5rem; line-height:1;">0</span>
 </button>
 
+<!-- 意难平·故事 -->
+<button id="storyBtn" onclick="window.location.href='yinian.html?tab=story'" style="
+    position: absolute;
+    bottom: 20px;
+    left: 230px;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8, #d4b896);
+    background-size: 300% 300%;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: #1a1a2e;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(184, 160, 200, 0.08);
+    animation: floatGradient 4s ease-in-out infinite alternate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+" onmouseover="this.style.boxShadow='0 0 30px rgba(184,160,200,0.2)'; this.style.transform='scale(1.05)'" onmouseout="this.style.boxShadow='0 0 20px rgba(184,160,200,0.08)'; this.style.transform='scale(1)'">
+    
+</button>
+
+<!-- 意难平·歌词 -->
+<button id="lyricsBtn" onclick="window.location.href='yinian.html?tab=lyrics'" style="
+    position: absolute;
+    bottom: 20px;
+    left: 272px;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8, #d4b896);
+    background-size: 300% 300%;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    color: #1a1a2e;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(184, 160, 200, 0.08);
+    animation: floatGradient 4s ease-in-out infinite alternate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+" onmouseover="this.style.boxShadow='0 0 30px rgba(184,160,200,0.2)'; this.style.transform='scale(1.05)'" onmouseout="this.style.boxShadow='0 0 20px rgba(184,160,200,0.08)'; this.style.transform='scale(1)'">
+    ✍️
+</button>
+
+
 <!-- 音量控制按钮（同款渐变） -->
 <button id="volumeBtn" onclick="toggleVolumePopup()" style="
     position: absolute;
