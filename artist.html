@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script src="follow.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>歌手详情 · 芦苇音乐</title>
+    <style>
+@keyframes titleColorFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ===== 极光渐变背景 ===== */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8e8e8, #6a8a9a, #e8e8e8, #8a7a9a, #4a4a5a, #e8e8e8);
+            background-size: 400% 400%;
+            min-height: 100vh;
+            color: #ddd;
+            padding: 20px 20px 100px;
+            animation: bodyGradientFlow 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes bodyGradientFlow {
+            0% { background-position: 0% 50%; }
+            20% { background-position: 20% 50%; }
+            40% { background-position: 40% 50%; }
+            60% { background-position: 60% 50%; }
+            80% { background-position: 80% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .container { max-width: 900px; margin: 0 auto; }
+
+        /* ===== 返回按钮 ===== */
+        .back-link {
+            color: rgba(255,255,255,0.15);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .back-link:hover { color: rgba(255,255,255,0.4); }
+
+        /* ===== 歌手头部 ===== */
+        .artist-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .artist-header .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(212,184,150,0.15);
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.04);
+        }
+        .artist-header .info { flex: 1; min-width: 200px; }
+        .artist-header .info .name {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 2px;
+        }
+        .artist-header .info .name .vip-badge {
+            font-size: 0.6rem;
+            background: linear-gradient(135deg, #d4b896, #b8a0c8);
+            color: #1a1a2e;
+            padding: 1px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .artist-header .info .role-tag {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        .artist-header .info .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .artist-header .info .stats span {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.15);
+            letter-spacing: 1px;
+        }
+        .artist-header .info .stats span strong {
+            color: rgba(255,255,255,0.4);
+            font-weight: 600;
+        }
+        .artist-header .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .artist-header .actions button {
+            padding: 8px 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 30px;
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.3);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .artist-header .actions button:hover {
+            border-color: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.5);
+        }
+        .artist-header .actions .follow-btn {
+            background: rgba(212,184,150,0.08);
+            border-color: rgba(212,184,150,0.15);
+            color: rgba(212,184,150,0.4);
+        }
+        .artist-header .actions .follow-btn:hover {
+            background: rgba(212,184,150,0.15);
+            border-color: rgba(212,184,150,0.3);
+        }
+
+        /* ===== 两栏布局 ===== */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1.8fr;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        @media (max-width: 720px) {
+            .two-col { grid-template-columns: 1fr; }
+        }
+
+        /* ===== 左侧：热门歌曲 ===== */
+        .hot-songs {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 20px 18px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .hot-songs .section-title {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.12);
+            letter-spacing: 3px;
+            margin-bottom: 14px;
+        }
+        .hot-songs .song-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .hot-songs .song-item:hover {
+            background: rgba(255,255,255,0.02);
+            margin: 0 -8px;
+            padding: 8px 8px;
+            border-radius: 8px;
+        }
+        .hot-songs .song-item .idx {
+            color: rgba(255,255,255,0.08);
+            font-size: 0.6rem;
+            width: 20px;
+            text-align: center;
+        }
+        .hot-songs .song-item .title {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            flex: 1;
+        }
+        .hot-songs .song-item .plays {
+            color: rgba(255,255,255,0.08);
+            font-size: 0.6rem;
+        }
+
+        /* ===== 右侧：专辑列表 ===== */
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 16px;
+        }
+        .album-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 12px 10px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.04);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .album-card:hover {
+            border-color: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.05);
+        }
+.album-card .album-cover {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    object-fit: cover;
+    background: conic-gradient(#e8e8e8, #b8b8b8, #8a8a8a, #4a4a4a, #1a1a1a, #e8e8e8);
+    animation: spin 6s linear infinite;
+}
+        .album-card .album-cover.placeholder {
+            animation: spin 3s linear infinite;
+        }
+        .album-card .album-title {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+            margin-top: 6px;
+            letter-spacing: 0.5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .album-card .album-count {
+            font-size: 0.5rem;
+            color: rgba(255,255,255,0.06);
+            margin-top: 2px;
+        }
+
+        /* ===== CD 旋转动画 ===== */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== 加载/空状态 ===== */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.04);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+        }
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.04);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+        }
+
+        /* ===== 浮动投稿按钮（复用） ===== */
+        .float-btn-group {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1000;
+        }
+        .float-btn {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #d4b896, #b8a0c8, #d4b896);
+            background-size: 300% 300%;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(184,160,200,0.4);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 8px;
+            transition: 0.3s;
+            animation: floatGradient 4s ease-in-out infinite alternate;
+        }
+        .float-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 30px rgba(184,160,200,0.5);
+        }
+        @keyframes floatGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 50% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        .float-btn span {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: #2D1E0C;
+            line-height: 1.2;
+            text-align: center;
+        }
+        .float-btn .icon {
+            font-size: 1.5rem;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ===== 返回按钮 ===== -->
+<a href="lwmusic.html?artist=${artistId}" class="back-link" id="backLink">← 返回</a>
+
+    <!-- ===== 歌手头部 ===== -->
+    <div class="artist-header" id="artistHeader">
+        <img class="avatar" id="avatar" src="" alt="">
+        <div class="info">
+            <div class="name" id="artistName">加载中...</div>
+            <div class="role-tag" id="artistRole">音乐人</div>
+            <div class="stats" id="artistStats">
+                <span>❤️ 粉丝 <strong id="followerCount">0</strong></span>
+                <span> 歌曲 <strong id="songCount">0</strong></span>
+                <span> 专辑 <strong id="albumCount">0</strong></span>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="follow-btn" id="followBtn" onclick="handleFollow()">🤍 关注</button>
+            <button onclick="playAll()">▶ 播放全部</button>
+        </div>
+    </div>
+
+    <!-- ===== 两栏内容 ===== -->
+    <div class="two-col">
+
+        <!-- ===== 左侧：热门歌曲 ===== -->
+        <div class="hot-songs">
+            <div class="section-title"> 热门歌曲</div>
+            <div id="hotSongsList">
+                <div class="loading">加载中...</div>
+            </div>
+        </div>
+
+        <!-- ===== 右侧：专辑列表 ===== -->
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="color:rgba(255,255,255,0.12); font-size:0.7rem; letter-spacing:2px;"> 专辑</span>
+                <span style="color:rgba(255,255,255,0.04); font-size:0.5rem; letter-spacing:1px;" id="albumCountLabel">0 张</span>
+            </div>
+            <div class="album-grid" id="albumGrid">
+                <div class="loading">加载中...</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===== 浮动按钮 ===== -->
+<div class="float-btn-group">
+    <a href="lyricsubmit.html" class="float-btn" style="text-decoration:none;">
+        <span class="icon">✍️</span>
+        <span>歌词<br>投稿</span>
+    </a>
+    <a href="custom.html" class="float-btn" style="text-decoration:none;">
+        <span class="icon"></span>
+        <span>歌手<br>定制</span>
+    </a>
+</div>
+
+<script>
+// ===== 配置 =====
+const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+const urlParams = new URLSearchParams(window.location.search);
+const artistId = urlParams.get('id');
+
+let artistData = null;
+let songsData = [];
+let albumsData = [];
+
+// ===== 加载数据 =====
+async function loadArtist() {
+    if (!artistId) {
+        document.getElementById('artistName').textContent = '歌手不存在';
+        return;
+    }
+
+    try {
+        // 1. 获取歌手信息
+const artistResp = await fetch(
+    `${SUPABASE_URL}/rest/v1/musicians?id=eq.${artistId}&select=id,name,role,vip,avatar_url,followers_count,vip_color`,
+    { headers: { 'apikey': SUPABASE_KEY } }
+);
+        const artistDataArr = await artistResp.json();
+        artistData = artistDataArr[0];
+
+        if (!artistData) {
+            document.getElementById('artistName').textContent = '歌手不存在';
+            return;
+        }
+document.getElementById('backLink').href = `lwmusic.html?artist=${artistId}`;
+
+        // 2. 获取歌曲列表
+        const songsResp = await fetch(
+            `${SUPABASE_URL}/rest/v1/works?musician_id=eq.${artistId}&status=eq.approved&order=plays.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        songsData = await songsResp.json();
+
+        // 3. 获取专辑列表
+        const albumsResp = await fetch(
+            `${SUPABASE_URL}/rest/v1/albums?musician_id=eq.${artistId}&order=created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        albumsData = await albumsResp.json();
+
+        // 4. 渲染
+        renderArtist();
+        renderHotSongs();
+        renderAlbums();
+
+    } catch (e) {
+        console.error(e);
+        document.getElementById('artistName').textContent = '加载失败';
+    }
+}
+
+
+
+// ===== 渲染歌手头部 =====
+function renderArtist() {
+    const a = artistData;
+    document.getElementById('artistName').innerHTML = `
+        ${a.name || '未命名'}
+        ${a.vip ? '<span class="vip-badge">VIP</span>' : ''}
+    `;
+    document.getElementById('artistRole').textContent = a.role || '音乐人';
+    document.getElementById('followerCount').textContent = a.followers_count || 0;
+    document.getElementById('songCount').textContent = songsData.length;
+    document.getElementById('albumCount').textContent = albumsData.length;
+    document.getElementById('albumCountLabel').textContent = albumsData.length + ' 张';
+
+    if (a.avatar_url) {
+        document.getElementById('avatar').src = a.avatar_url;
+    }
+
+    // 关注状态
+    updateFollowBtn();
+}
+
+// ===== 热门歌曲 =====
+function renderHotSongs() {
+    const list = document.getElementById('hotSongsList');
+    if (!songsData || songsData.length === 0) {
+        list.innerHTML = '<div class="empty">暂无歌曲</div>';
+        return;
+    }
+
+    // 按播放量排序，取前 5
+    const hot = songsData.slice(0, 5);
+
+    list.innerHTML = hot.map((s, i) => `
+        <div class="song-item" onclick="openPlayer('${s.id}')">
+            <span class="idx">${String(i+1).padStart(2,'0')}</span>
+            <span class="title" style="font-weight:600; background: linear-gradient(90deg, #1a1a1a 0%, #6a5a9a 35%, #2a4a3a 70%, #1a1a1a 100%); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: titleColorFlow 6s ease-in-out infinite alternate;">${s.title || '未命名'}</span>
+            <span class="plays">▶ ${s.plays || 0}</span>
+        </div>
+    `).join('');
+}
+
+// ===== 专辑列表 =====
+function renderAlbums() {
+    const grid = document.getElementById('albumGrid');
+    if (!albumsData || albumsData.length === 0) {
+        grid.innerHTML = '<div class="empty">暂无专辑</div>';
+        return;
+    }
+
+    grid.innerHTML = albumsData.map(a => {
+        const cover = a.cover_url && a.cover_url.startsWith('http') ? a.cover_url : '';
+        const count = songsData.filter(s => s.album_id === a.id).length;
+        return `
+            <div class="album-card" onclick="openAlbum('${a.id}')">
+                <div style="width:100%; aspect-ratio:1/1; border-radius:50%; overflow:hidden; background:conic-gradient(#e8e8e8, #b8b8b8, #8a8a8a, #4a4a4a, #1a1a1a, #e8e8e8); animation: spin 6s linear infinite;">
+                    ${cover ? `<img src="${cover}" style="width:100%;height:100%;object-fit:cover;">` : ''}
+                </div>
+                <div class="album-title">${a.title || '未命名'}</div>
+                <div class="album-count">${count} 首歌</div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ===== 关注按钮 =====
+async function handleFollow() {
+    if (!artistId) return;
+    const result = await Follow.toggle(artistId);
+    document.getElementById('followerCount').textContent = result.count;
+    updateFollowBtn();
+}
+
+function updateFollowBtn() {
+    const btn = document.getElementById('followBtn');
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!user.user_id) {
+        btn.textContent = '🤍 关注';
+        return;
+    }
+    // 检查是否已关注
+    Follow.check(artistId).then(followed => {
+        btn.textContent = followed ? '❤️ 已关注' : '🤍 关注';
+        btn.style.color = followed ? '#e88a8a' : 'rgba(212,184,150,0.4)';
+    });
+}
+
+// ===== 跳转 =====
+function openPlayer(songId) {
+    window.location.href = `player.html?id=${songId}`;
+}
+
+function openAlbum(albumId) {
+    window.location.href = `lwmusic.html?artist=${artistId}&album=${albumId}`;
+}
+
+function playAll() {
+    if (songsData.length > 0) {
+        openPlayer(songsData[0].id);
+    }
+}
+
+// ===== 启动 =====
+loadArtist();
+</script>
+
+</body>
+</html>
