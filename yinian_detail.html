@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script src="ui-style.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>意难平详情 · 芦苇音乐</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8e8e8 0%, #8a8a8a 15%, #1a1a1a 30%, #d4a843 45%, #6a5a9a 60%, #2a4a3a 75%, #6a5a9a 85%, #3a3a4a 100%);
+            background-size: 400% 400%;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            animation: commentBgFlow 10s ease-in-out infinite alternate;
+        }
+        @keyframes commentBgFlow {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 50% 100%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 0%; }
+            100% { background-position: 0% 100%; }
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 30px 28px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .back-link {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+        .back-link:hover { color: rgba(255,255,255,0.8); }
+        .story-card {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 30px 28px;
+            margin: 16px 0 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .story-card .tag {
+            display: inline-block;
+            font-size: 0.5rem;
+            color: rgba(212,184,150,0.4);
+            letter-spacing: 2px;
+            border: 1px solid rgba(212,184,150,0.06);
+            padding: 1px 12px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+        .story-card .story-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .story-card .story-content {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+            line-height: 2;
+            white-space: pre-wrap;
+        }
+        .story-card .story-divider {
+            width: 30px;
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin: 16px 0;
+        }
+        .story-card .lyrics-block {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+            line-height: 2;
+            font-style: italic;
+            padding-left: 16px;
+            border-left: 1px solid rgba(212,184,150,0.08);
+            white-space: pre-wrap;
+        }
+        .story-card .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.25);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .story-card .meta .author {
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 1px;
+        }
+        .story-card .meta .stats span {
+            color: rgba(255,255,255,0.2);
+        }
+        .story-card .healing-reply {
+            margin-top: 16px;
+            padding: 14px 18px;
+            background: rgba(212,184,150,0.04);
+            border-radius: 12px;
+            border-left: 2px solid rgba(212,184,150,0.08);
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.6;
+            font-style: italic;
+        }
+        .story-card .healing-reply::before {
+            content: ' ';
+            opacity: 0.5;
+        }
+        .comment-section {
+            margin-top: 20px;
+        }
+        .comment-section .comment-title {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+        .comment-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .comment-item .comment-user {
+            font-size: 0.7rem;
+            color: rgba(212,184,150,0.4);
+            font-weight: 500;
+        }
+        .comment-item .comment-time {
+            font-size: 0.55rem;
+            color: rgba(255,255,255,0.15);
+            margin-left: 8px;
+        }
+        .comment-item .comment-content {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.6;
+            margin-top: 4px;
+        }
+        .comment-input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .comment-input-area input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        .comment-input-area input:focus {
+            border-color: rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+        }
+        .comment-input-area input::placeholder {
+            color: rgba(255,255,255,0.15);
+        }
+        .comment-input-area button {
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #d4b896, #b8a0c8);
+            border: none;
+            border-radius: 20px;
+            color: #1a1a2e;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+        .comment-input-area button:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+        .comment-empty {
+            text-align: center;
+            color: rgba(255,255,255,0.08);
+            font-size: 0.7rem;
+            padding: 30px 0;
+            letter-spacing: 1px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px 0;
+            color: rgba(255,255,255,0.08);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+        }
+        .error {
+            text-align: center;
+            padding: 40px 0;
+            color: rgba(255,150,150,0.25);
+            font-size: 0.8rem;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.5rem;
+            color: rgba(255,255,255,0.06);
+            letter-spacing: 2px;
+            padding: 30px 0 20px;
+        }
+        @media (max-width: 480px) {
+            .story-card { padding: 20px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="meteorCanvas" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+"></canvas>
+
+<div class="container">
+    <a href="yinian.html" class="back-link">← 返回意难平</a>
+    <div id="storyDetail"><div class="loading">加载中...</div></div>
+    <div class="comment-section" id="commentSection">
+        <div class="comment-title"> 回应</div>
+        <div id="commentList"><div class="comment-empty">还没有回应，说点什么吧～</div></div>
+        <div class="comment-input-area">
+            <input id="commentInput" type="text" placeholder="写下你的回应..." onkeydown="if(event.key==='Enter') postComment()">
+            <button onclick="postComment()">回应</button>
+        </div>
+    </div>
+    <div class="footer">每一篇意难平，都是一次温柔的放下。</div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+const urlParams = new URLSearchParams(window.location.search);
+const storyId = urlParams.get('id');
+let storyData = null;
+
+async function loadDetail() {
+    if (!storyId) {
+        document.getElementById('storyDetail').innerHTML = '<div class="error">未找到</div>';
+        return;
+    }
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/yinian_stories?id=eq.${storyId}&status=eq.approved`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const data = await resp.json();
+        storyData = data[0];
+        if (!storyData) {
+            document.getElementById('storyDetail').innerHTML = '<div class="error">已删除或不存在</div>';
+            return;
+        }
+        renderDetail(storyData);
+        loadComments(storyId);
+    } catch (e) {
+        console.error(e);
+        document.getElementById('storyDetail').innerHTML = '<div class="error">加载失败</div>';
+    }
+}
+
+function renderDetail(s) {
+    const container = document.getElementById('storyDetail');
+    const healingReply = s.healing_reply || '谢谢你愿意说出来。有些意难平，说出来就轻了一点点。';
+    const timeAgo = formatTimeAgo(s.created_at);
+    container.innerHTML = `
+        <div class="story-card">
+            ${s.tag ? `<div class="tag"># ${s.tag}</div>` : ''}
+            <div class="story-title">${s.title || '未命名'}</div>
+            <div class="story-content">${s.story || ''}</div>
+            <div class="story-divider"></div>
+            <div class="lyrics-block">${(s.lyrics || '').replace(/\n/g, '<br>')}</div>
+            <div class="healing-reply">${healingReply}</div>
+            <div class="meta">
+                <span class="author">${s.author_name || '匿名'} · ${timeAgo}</span>
+                <div class="stats">
+                    <span> ${s.comment_count || 0}</span>
+                    <span>♥ ${s.likes || 0}</span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+async function loadComments(storyId) {
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/comments?story_id=eq.${storyId}&order=created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const comments = await resp.json();
+        renderComments(comments);
+    } catch (e) { console.error(e); }
+}
+
+function renderComments(comments) {
+    const list = document.getElementById('commentList');
+    if (!comments || comments.length === 0) {
+        list.innerHTML = '<div class="comment-empty">还没有回应，说点什么吧～</div>';
+        return;
+    }
+    list.innerHTML = comments.map(c => `
+        <div class="comment-item">
+            <span class="comment-user">${c.user_name || '匿名用户'}</span>
+            <span class="comment-time">${formatTimeAgo(c.created_at)}</span>
+            <div class="comment-content">${c.content}</div>
+        </div>
+    `).join('');
+}
+
+async function postComment() {
+    const input = document.getElementById('commentInput');
+    const content = input.value.trim();
+    if (!content) return;
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!user.user_id) {
+        alert('请先登录');
+        return;
+    }
+    try {
+        await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                story_id: parseInt(storyId),
+                user_id: user.user_id,
+                user_name: user.nickname || user.username || '用户',
+                content: content
+            })
+        });
+        input.value = '';
+        loadComments(storyId);
+    } catch (e) {
+        console.error(e);
+        alert('发送失败');
+    }
+}
+
+function formatTimeAgo(timestamp) {
+    if (!timestamp) return '刚刚';
+    const now = Date.now();
+    const time = new Date(timestamp).getTime();
+    const diff = Math.floor((now - time) / 1000);
+    if (diff < 60) return '刚刚';
+    if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+    if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+    if (diff < 2592000) return Math.floor(diff / 86400) + '天前';
+    return new Date(timestamp).toLocaleDateString();
+}
+
+loadDetail();
+
+// ===== 流星雨效果 (52颗) =====
+let meteorAnimationId = null, meteors = [], meteorCtx = null, meteorCanvas = null;
+
+function initMeteorCanvas() {
+    meteorCanvas = document.getElementById('meteorCanvas');
+    if (!meteorCanvas) return;
+    meteorCtx = meteorCanvas.getContext('2d');
+    meteorCanvas.width = window.innerWidth;
+    meteorCanvas.height = window.innerHeight;
+    meteors = [];
+    for (let i = 0; i < 52; i++) meteors.push(createMeteor());
+    drawMeteors();
+}
+
+function createMeteor() {
+    const canvas = meteorCanvas;
+    return {
+        x: Math.random() * canvas.width * 0.8,
+        y: Math.random() * canvas.height * 0.3,
+        length: Math.random() * 80 + 40,
+        speed: Math.random() * 4 + 3,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.6 + 0.3,
+        life: Math.random() * 120 + 80,
+        maxLife: 200,
+        delay: Math.random() * 200
+    };
+}
+
+function drawMeteors() {
+    if (!meteorCtx || !meteorCanvas) return;
+    const ctx = meteorCtx, canvas = meteorCanvas;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    meteors.forEach(meteor => {
+        if (meteor.delay > 0) { meteor.delay--; return; }
+        meteor.x += Math.cos(meteor.angle) * meteor.speed;
+        meteor.y += Math.sin(meteor.angle) * meteor.speed;
+        meteor.life--;
+        const lifeRatio = meteor.life / meteor.maxLife;
+        const alpha = meteor.opacity * Math.min(1, lifeRatio * 2);
+        const tailLength = meteor.length * lifeRatio;
+        const gradient = ctx.createLinearGradient(
+            meteor.x, meteor.y,
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+        gradient.addColorStop(0.3, `rgba(255, 240, 220, ${alpha * 0.6})`);
+        gradient.addColorStop(1, `rgba(255, 220, 200, 0)`);
+        ctx.beginPath();
+        ctx.moveTo(meteor.x, meteor.y);
+        ctx.lineTo(
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        const glow = ctx.createRadialGradient(meteor.x, meteor.y, 0, meteor.x, meteor.y, 6);
+        glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.8})`);
+        glow.addColorStop(1, `rgba(255, 255, 255, 0)`);
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(meteor.x, meteor.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        if (meteor.life <= 0) {
+            Object.assign(meteor, createMeteor());
+            meteor.x = Math.random() * canvas.width * 0.8;
+            meteor.y = Math.random() * canvas.height * 0.2;
+            meteor.delay = Math.random() * 100 + 50;
+        }
+    });
+    meteorAnimationId = requestAnimationFrame(drawMeteors);
+}
+
+function startMeteors() {
+    const canvas = document.getElementById('meteorCanvas');
+    if (canvas) {
+        setTimeout(() => {
+            initMeteorCanvas();
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }, 300);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', startMeteors);
+</script>
+</body>
+</html>

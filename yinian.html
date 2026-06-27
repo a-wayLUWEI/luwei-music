@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script src="ui-style.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>意难平 · 芦苇音乐</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8e8e8 0%, #8a8a8a 15%, #1a1a1a 30%, #d4a843 45%, #6a5a9a 60%, #2a4a3a 75%, #6a5a9a 85%, #3a3a4a 100%);
+            background-size: 400% 400%;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            animation: commentBgFlow 10s ease-in-out infinite alternate;
+        }
+        @keyframes commentBgFlow {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 50% 100%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 0%; }
+            100% { background-position: 0% 100%; }
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+        .back-link {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+        .back-link:hover { color: rgba(255,255,255,0.9); }
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.9);
+            letter-spacing: 6px;
+            text-align: center;
+        }
+        .header .sub {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 3px;
+            margin-top: 6px;
+            text-align: center;
+        }
+        .header .divider {
+            width: 40px;
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 16px auto 0;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 24px 0 20px;
+            flex-wrap: wrap;
+        }
+        .tabs button {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 30px;
+            padding: 6px 20px;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .tabs button:hover {
+            border-color: rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.6);
+        }
+        .tabs button.active {
+            border-color: rgba(212,184,150,0.15);
+            color: rgba(255,255,255,0.8);
+            background: rgba(212,184,150,0.04);
+        }
+        .story-card {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .story-card:hover {
+            border-color: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.06);
+        }
+        .story-card .left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+        .story-card .tag {
+            font-size: 0.5rem;
+            color: rgba(212,184,150,0.3);
+            border: 1px solid rgba(212,184,150,0.06);
+            padding: 0px 10px;
+            border-radius: 20px;
+            flex-shrink: 0;
+        }
+        .story-card .title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .story-card .right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.3);
+        }
+        .story-card .right .author { color: rgba(255,255,255,0.3); }
+        .story-card .right .stats span { color: rgba(255,255,255,0.2); }
+        .daily-count {
+            text-align: center;
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 2px;
+            padding: 30px 0 10px;
+        }
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255,255,255,0.15);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255,255,255,0.08);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.5rem;
+            color: rgba(255,255,255,0.08);
+            letter-spacing: 2px;
+            padding: 20px 0 40px;
+        }
+        .float-btn-group {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1000;
+        }
+        .float-btn {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #d4b896, #b8a0c8, #d4b896);
+            background-size: 300% 300%;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(184,160,200,0.4);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 8px;
+            transition: 0.3s;
+            animation: floatGradient 4s ease-in-out infinite alternate;
+        }
+        .float-btn:hover { transform: scale(1.05); box-shadow: 0 4px 30px rgba(184,160,200,0.5); }
+        @keyframes floatGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 50% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        .float-btn span {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: #2D1E0C;
+            line-height: 1.2;
+            text-align: center;
+        }
+        .float-btn .icon { font-size: 1.5rem; line-height: 1.2; margin-bottom: 2px; }
+        @media (max-width: 480px) {
+            .container { padding: 0 4px; }
+            .story-card { padding: 14px 16px; }
+            .story-card .title { font-size: 0.8rem; }
+            .header h1 { font-size: 1.2rem; letter-spacing: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="meteorCanvas" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+"></canvas>
+
+<div class="container">
+    <div class="header">
+        <a href="lwmusic.html" class="back-link" style="display:inline-block; margin-bottom:10px;">← 返回</a>
+        <h1> 意难平</h1>
+        <div class="sub">那些没说出口的话，都写成了歌词</div>
+        <div class="divider"></div>
+    </div>
+    <div class="tabs">
+        <button class="active" data-tab="all">全部</button>
+        <button data-tab="青春">青春</button>
+        <button data-tab="友情">友情</button>
+        <button data-tab="爱情">爱情</button>
+        <button data-tab="亲人">亲人</button>
+        <button data-tab="梦想">梦想</button>
+    </div>
+    <div class="daily-count" id="dailyCount">今日已有 0 人寄出了意难平 </div>
+    <div id="storyList"><div class="loading">加载中...</div></div>
+    <div class="footer">每一篇意难平，都是一次温柔的放下。</div>
+</div>
+
+<div class="float-btn-group">
+    <a href="yinian_submit.html" class="float-btn" style="text-decoration:none;">
+        <span class="icon">✍️</span>
+        <span>写我的<br>意难平</span>
+    </a>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+let currentTab = 'all';
+let allStories = [];
+
+async function loadStories(tab) {
+    const list = document.getElementById('storyList');
+    list.innerHTML = '<div class="loading">加载中...</div>';
+    try {
+        let url = `${SUPABASE_URL}/rest/v1/yinian_stories?status=eq.approved&order=created_at.desc`;
+        if (tab !== 'all') url += `&tag=eq.${encodeURIComponent(tab)}`;
+        const resp = await fetch(url, { headers: { 'apikey': SUPABASE_KEY } });
+        const data = await resp.json();
+        allStories = data || [];
+        const today = new Date().toDateString();
+        const todayCount = allStories.filter(s => new Date(s.created_at).toDateString() === today).length;
+        document.getElementById('dailyCount').textContent = `今日已有 ${todayCount} 人寄出了意难平 `;
+        renderStories(allStories);
+    } catch (e) {
+        console.error(e);
+        list.innerHTML = '<div class="empty">加载失败，请刷新</div>';
+    }
+}
+
+function renderStories(stories) {
+    const list = document.getElementById('storyList');
+    if (!stories || stories.length === 0) {
+        list.innerHTML = '<div class="empty"> 还没有意难平<br><span style="font-size:0.6rem;color:rgba(255,255,255,0.15);">写下你的故事，让它被轻轻安放</span></div>';
+        return;
+    }
+    list.innerHTML = stories.map(s => {
+        const timeAgo = formatTimeAgo(s.created_at);
+        return `
+        <div class="story-card" onclick="openDetail(${s.id})">
+            <div class="left">
+                ${s.tag ? `<span class="tag"># ${s.tag}</span>` : ''}
+                <span class="title">${s.title || '未命名'}</span>
+            </div>
+            <div class="right">
+                <span class="author">${s.author_name || '匿名'}</span>
+                <div class="stats">
+                    <span> ${s.comment_count || 0}</span>
+                    <span>♥ ${s.likes || 0}</span>
+                </div>
+            </div>
+        </div>
+    `}).join('');
+}
+
+function formatTimeAgo(timestamp) {
+    if (!timestamp) return '刚刚';
+    const now = Date.now();
+    const time = new Date(timestamp).getTime();
+    const diff = Math.floor((now - time) / 1000);
+    if (diff < 60) return '刚刚';
+    if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+    if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+    if (diff < 2592000) return Math.floor(diff / 86400) + '天前';
+    return new Date(timestamp).toLocaleDateString();
+}
+
+function openDetail(id) {
+    window.location.href = `yinian_detail.html?id=${id}`;
+}
+
+document.querySelectorAll('.tabs button').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentTab = this.dataset.tab;
+        loadStories(currentTab);
+    });
+});
+
+loadStories('all');
+
+// ============================================================
+// ===== 流星雨效果 (52颗) =====
+// ============================================================
+let meteorAnimationId = null, meteors = [], meteorCtx = null, meteorCanvas = null;
+
+function initMeteorCanvas() {
+    meteorCanvas = document.getElementById('meteorCanvas');
+    if (!meteorCanvas) return;
+    meteorCtx = meteorCanvas.getContext('2d');
+    meteorCanvas.width = window.innerWidth;
+    meteorCanvas.height = window.innerHeight;
+    meteors = [];
+    for (let i = 0; i < 52; i++) meteors.push(createMeteor());
+    drawMeteors();
+}
+
+function createMeteor() {
+    const canvas = meteorCanvas;
+    return {
+        x: Math.random() * canvas.width * 0.8,
+        y: Math.random() * canvas.height * 0.3,
+        length: Math.random() * 80 + 40,
+        speed: Math.random() * 4 + 3,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.6 + 0.3,
+        life: Math.random() * 120 + 80,
+        maxLife: 200,
+        delay: Math.random() * 200
+    };
+}
+
+function drawMeteors() {
+    if (!meteorCtx || !meteorCanvas) return;
+    const ctx = meteorCtx, canvas = meteorCanvas;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    meteors.forEach(meteor => {
+        if (meteor.delay > 0) { meteor.delay--; return; }
+        meteor.x += Math.cos(meteor.angle) * meteor.speed;
+        meteor.y += Math.sin(meteor.angle) * meteor.speed;
+        meteor.life--;
+        const lifeRatio = meteor.life / meteor.maxLife;
+        const alpha = meteor.opacity * Math.min(1, lifeRatio * 2);
+        const tailLength = meteor.length * lifeRatio;
+        const gradient = ctx.createLinearGradient(
+            meteor.x, meteor.y,
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+        gradient.addColorStop(0.3, `rgba(255, 240, 220, ${alpha * 0.6})`);
+        gradient.addColorStop(1, `rgba(255, 220, 200, 0)`);
+        ctx.beginPath();
+        ctx.moveTo(meteor.x, meteor.y);
+        ctx.lineTo(
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        const glow = ctx.createRadialGradient(meteor.x, meteor.y, 0, meteor.x, meteor.y, 6);
+        glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.8})`);
+        glow.addColorStop(1, `rgba(255, 255, 255, 0)`);
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(meteor.x, meteor.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        if (meteor.life <= 0) {
+            Object.assign(meteor, createMeteor());
+            meteor.x = Math.random() * canvas.width * 0.8;
+            meteor.y = Math.random() * canvas.height * 0.2;
+            meteor.delay = Math.random() * 100 + 50;
+        }
+    });
+    meteorAnimationId = requestAnimationFrame(drawMeteors);
+}
+
+function startMeteors() {
+    const canvas = document.getElementById('meteorCanvas');
+    if (canvas) {
+        setTimeout(() => {
+            initMeteorCanvas();
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }, 300);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', startMeteors);
+</script>
+</body>
+</html>

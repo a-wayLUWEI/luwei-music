@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script src="ui-style.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>写意难平 · 芦苇音乐</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8e8e8 0%, #8a8a8a 15%, #1a1a1a 30%, #d4a843 45%, #6a5a9a 60%, #2a4a3a 75%, #6a5a9a 85%, #3a3a4a 100%);
+            background-size: 400% 400%;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            animation: commentBgFlow 10s ease-in-out infinite alternate;
+        }
+        @keyframes commentBgFlow {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 50% 100%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 0%; }
+            100% { background-position: 0% 100%; }
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 30px 28px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .back-link {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+        .back-link:hover { color: rgba(255,255,255,0.8); }
+        .title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            letter-spacing: 3px;
+            margin-top: 16px;
+        }
+        .subtitle {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 2px;
+            margin-top: 4px;
+            margin-bottom: 28px;
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.08);
+        }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .form-group .hint {
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.2);
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 40px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 3px;
+            font-weight: 300;
+            margin-top: 4px;
+        }
+        .submit-btn:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.7);
+        }
+        .message {
+            display: none;
+            margin-top: 16px;
+            font-size: 0.8rem;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .message.success { color: rgba(100,200,150,0.7); }
+        .message.error { color: rgba(255,150,150,0.6); }
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 0.5rem;
+            color: rgba(255,255,255,0.08);
+            letter-spacing: 2px;
+        }
+        .tag-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .tag-group .tag-option {
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.3);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
+            background: transparent;
+        }
+        .tag-group .tag-option:hover,
+        .tag-group .tag-option.active {
+            border-color: rgba(212,184,150,0.3);
+            color: rgba(255,255,255,0.6);
+            background: rgba(212,184,150,0.06);
+        }
+        #mySubmissions::-webkit-scrollbar {
+            width: 2px;
+        }
+        #mySubmissions::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #mySubmissions::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="meteorCanvas" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+"></canvas>
+
+<div class="container">
+    <a href="yinian.html" class="back-link">← 返回意难平</a>
+    <div class="title"> 写意难平</div>
+    <div class="subtitle">把那些没说出口的话，写成歌词</div>
+
+    <form id="yinianForm">
+        <div class="form-group">
+            <label>标题</label>
+            <input type="text" id="storyTitle" placeholder="给你的意难平一个名字" required>
+        </div>
+        <div class="form-group">
+            <label>标签</label>
+            <div class="tag-group" id="tagGroup">
+                <button type="button" class="tag-option" data-tag="青春">青春</button>
+                <button type="button" class="tag-option" data-tag="友情">友情</button>
+                <button type="button" class="tag-option" data-tag="爱情">爱情</button>
+                <button type="button" class="tag-option" data-tag="亲人">亲人</button>
+                <button type="button" class="tag-option" data-tag="梦想">梦想</button>
+                <button type="button" class="tag-option" data-tag="其他">其他</button>
+            </div>
+            <input type="hidden" id="storyTag" value="">
+        </div>
+        <div class="form-group">
+            <label>故事</label>
+            <textarea id="storyContent" rows="5" placeholder="写下你的故事..." required></textarea>
+            <div class="hint"> 不超过 2000 字</div>
+        </div>
+        <div class="form-group">
+            <label>歌词</label>
+            <textarea id="storyLyrics" rows="4" placeholder="把故事写成歌词..." required></textarea>
+            <div class="hint">✍️ 可以是你写的诗，也可以是改编的歌词片段</div>
+        </div>
+        <div class="form-group">
+            <label>署名</label>
+            <input type="text" id="storyAuthor" placeholder="留空则匿名">
+        </div>
+        <button type="submit" class="submit-btn">✦ 提交意难平</button>
+    </form>
+
+    <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="color: rgba(255,255,255,0.3); font-size: 0.7rem; letter-spacing: 1px;"> 我的投稿</span>
+            <button onclick="loadMySubmissions()" style="
+                background: rgba(255,255,255,0.04);
+                border: none;
+                color: rgba(255,255,255,0.2);
+                font-size: 0.6rem;
+                cursor: pointer;
+                padding: 4px 12px;
+                border-radius: 12px;
+            ">刷新</button>
+        </div>
+        <div id="mySubmissions" style="
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 4px;
+        ">
+            <div style="text-align: center; color: rgba(255,255,255,0.06); font-size: 0.7rem; padding: 20px 0;">
+                还没有投稿记录
+            </div>
+        </div>
+    </div>
+
+    <div class="message" id="message"></div>
+    <div class="footer">芦苇音乐 · 意难平</div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+// 标签选择
+document.querySelectorAll('.tag-option').forEach(el => {
+    el.addEventListener('click', function() {
+        document.querySelectorAll('.tag-option').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('storyTag').value = this.dataset.tag;
+    });
+});
+
+// 字数限制
+document.getElementById('storyContent').addEventListener('input', function() {
+    const maxLen = 2000;
+    if (this.value.length > maxLen) this.value = this.value.slice(0, maxLen);
+});
+
+// ===== 提交投稿 =====
+document.getElementById('yinianForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const title = document.getElementById('storyTitle').value.trim();
+    const story = document.getElementById('storyContent').value.trim();
+    const lyrics = document.getElementById('storyLyrics').value.trim();
+    const author = document.getElementById('storyAuthor').value.trim();
+    const tag = document.getElementById('storyTag').value;
+    const msg = document.getElementById('message');
+
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userId = user.user_id || null;
+
+    if (!title || !story || !lyrics) {
+        msg.textContent = '请填写标题、故事和歌词';
+        msg.className = 'message error';
+        msg.style.display = 'block';
+        return;
+    }
+
+    if (story.length > 2000) {
+        msg.textContent = '故事不超过 2000 字';
+        msg.className = 'message error';
+        msg.style.display = 'block';
+        return;
+    }
+
+    try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/yinian_stories`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: title,
+                story: story,
+                lyrics: lyrics,
+                tag: tag || '其他',
+                author_name: author || null,
+                user_id: userId,
+                status: 'pending'
+            })
+        });
+
+        if (resp.ok) {
+            msg.textContent = '✅ 投稿成功！审核通过后会展示在意难平。';
+            msg.className = 'message success';
+            msg.style.display = 'block';
+            document.getElementById('yinianForm').reset();
+            document.querySelectorAll('.tag-option').forEach(t => t.classList.remove('active'));
+            document.getElementById('storyTag').value = '';
+            setTimeout(loadMySubmissions, 500);
+        } else {
+            msg.textContent = '提交失败，请稍后重试';
+            msg.className = 'message error';
+            msg.style.display = 'block';
+        }
+    } catch (e) {
+        msg.textContent = '网络错误，请稍后重试';
+        msg.className = 'message error';
+        msg.style.display = 'block';
+    }
+});
+
+// ===== 加载我的投稿 =====
+async function loadMySubmissions() {
+    const container = document.getElementById('mySubmissions');
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userId = user.user_id;
+    
+    if (!userId) {
+        container.innerHTML = `
+            <div style="text-align: center; color: rgba(255,255,255,0.08); font-size: 0.7rem; padding: 20px 0;">
+                 请先登录，查看你的投稿状态
+            </div>
+        `;
+        return;
+    }
+
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/yinian_stories?user_id=eq.${userId}&order=created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const data = await resp.json();
+
+        if (!data || data.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; color: rgba(255,255,255,0.06); font-size: 0.7rem; padding: 20px 0;">
+                    暂无投稿记录
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = data.map(item => {
+            const status = item.status || 'pending';
+            const statusMap = {
+                'pending': '<span style="color: rgba(255,193,7,0.5);">⏳ 审核中</span>',
+                'approved': '<span style="color: rgba(76,175,80,0.6);">✅ 已通过</span>',
+                'rejected': '<span style="color: rgba(229,57,53,0.5);">❌ 已拒绝</span>'
+            };
+            
+            const rejectReasonHtml = item.reject_reason 
+                ? `<div style="color: rgba(229,57,53,0.4); font-size: 0.65rem; margin-top: 3px; padding: 4px 10px; background: rgba(229,57,53,0.05); border-radius: 6px; display: inline-block;"> ${item.reject_reason}</div>`
+                : '';
+
+            const healingReplyHtml = item.healing_reply
+                ? `<div style="color: rgba(212,184,150,0.3); font-size: 0.6rem; margin-top: 2px; font-style: italic;"> ${item.healing_reply}</div>`
+                : '';
+
+            return `
+                <div style="
+                    padding: 10px 12px;
+                    margin-bottom: 6px;
+                    background: rgba(255,255,255,0.02);
+                    border-radius: 12px;
+                    border-left: 2px solid ${status === 'approved' ? 'rgba(76,175,80,0.2)' : status === 'rejected' ? 'rgba(229,57,53,0.2)' : 'rgba(255,193,7,0.1)'};
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+                        <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">${item.title || '无标题'}</span>
+                        ${statusMap[status]}
+                    </div>
+                    ${rejectReasonHtml}
+                    ${healingReplyHtml}
+                    <div style="color: rgba(255,255,255,0.06); font-size: 0.5rem; margin-top: 2px;">
+                        ${item.created_at ? new Date(item.created_at).toLocaleDateString() : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+    } catch (e) {
+        container.innerHTML = `
+            <div style="text-align: center; color: rgba(255,255,255,0.06); font-size: 0.7rem; padding: 20px 0;">
+                加载失败
+            </div>
+        `;
+        console.error(e);
+    }
+}
+
+// ===== 流星雨效果 (52颗) =====
+let meteorAnimationId = null, meteors = [], meteorCtx = null, meteorCanvas = null;
+
+function initMeteorCanvas() {
+    meteorCanvas = document.getElementById('meteorCanvas');
+    if (!meteorCanvas) return;
+    meteorCtx = meteorCanvas.getContext('2d');
+    meteorCanvas.width = window.innerWidth;
+    meteorCanvas.height = window.innerHeight;
+    meteors = [];
+    for (let i = 0; i < 52; i++) meteors.push(createMeteor());
+    drawMeteors();
+}
+
+function createMeteor() {
+    const canvas = meteorCanvas;
+    return {
+        x: Math.random() * canvas.width * 0.8,
+        y: Math.random() * canvas.height * 0.3,
+        length: Math.random() * 80 + 40,
+        speed: Math.random() * 4 + 3,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.6 + 0.3,
+        life: Math.random() * 120 + 80,
+        maxLife: 200,
+        delay: Math.random() * 200
+    };
+}
+
+function drawMeteors() {
+    if (!meteorCtx || !meteorCanvas) return;
+    const ctx = meteorCtx, canvas = meteorCanvas;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    meteors.forEach(meteor => {
+        if (meteor.delay > 0) { meteor.delay--; return; }
+        meteor.x += Math.cos(meteor.angle) * meteor.speed;
+        meteor.y += Math.sin(meteor.angle) * meteor.speed;
+        meteor.life--;
+        const lifeRatio = meteor.life / meteor.maxLife;
+        const alpha = meteor.opacity * Math.min(1, lifeRatio * 2);
+        const tailLength = meteor.length * lifeRatio;
+        const gradient = ctx.createLinearGradient(
+            meteor.x, meteor.y,
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+        gradient.addColorStop(0.3, `rgba(255, 240, 220, ${alpha * 0.6})`);
+        gradient.addColorStop(1, `rgba(255, 220, 200, 0)`);
+        ctx.beginPath();
+        ctx.moveTo(meteor.x, meteor.y);
+        ctx.lineTo(
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        const glow = ctx.createRadialGradient(meteor.x, meteor.y, 0, meteor.x, meteor.y, 6);
+        glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.8})`);
+        glow.addColorStop(1, `rgba(255, 255, 255, 0)`);
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(meteor.x, meteor.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        if (meteor.life <= 0) {
+            Object.assign(meteor, createMeteor());
+            meteor.x = Math.random() * canvas.width * 0.8;
+            meteor.y = Math.random() * canvas.height * 0.2;
+            meteor.delay = Math.random() * 100 + 50;
+        }
+    });
+    meteorAnimationId = requestAnimationFrame(drawMeteors);
+}
+
+function startMeteors() {
+    const canvas = document.getElementById('meteorCanvas');
+    if (canvas) {
+        setTimeout(() => {
+            initMeteorCanvas();
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }, 300);
+    }
+}
+
+// ===== 页面加载 =====
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(loadMySubmissions, 500);
+    startMeteors();
+});
+</script>
+</body>
+</html>
