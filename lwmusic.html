@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="album-display.js"></script>
+<script src="follow.js"></script>
     <meta charset="UTF-8">
     <title>芦苇音乐</title>
     <style>
@@ -554,13 +555,31 @@ async function loadArtists() {
             return;
         }
 
+        // 批量获取歌曲数
+        const ids = allArtists.map(a => a.id).join(',');
         const wResp = await fetch(
-            `${SUPABASE_URL}/rest/v1/works?status=eq.approved&select=musician_id`,
+            `${SUPABASE_URL}/rest/v1/works?status=eq.approved&select=musician_id&musician_id=in.(${ids})`,
             { headers: { 'apikey': SUPABASE_KEY } }
         );
         const works = await wResp.json();
         const count = {};
         works.forEach(w => count[w.musician_id] = (count[w.musician_id] || 0) + 1);
+
+        // 批量获取关注状态（一次请求）
+        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        let followedMap = {};
+        if (user.user_id && allArtists.length > 0) {
+            try {
+                const followResp = await fetch(
+                    `${SUPABASE_URL}/rest/v1/follows?follower_id=eq.${user.user_id}&following_id=in.(${ids})`,
+                    { headers: { 'apikey': SUPABASE_KEY } }
+                );
+                const follows = await followResp.json();
+                follows.forEach(f => { followedMap[f.following_id] = true; });
+            } catch (e) {
+                console.warn('批量获取关注状态失败:', e);
+            }
+        }
 
         // ===== 分类 =====
         const vipArtists = allArtists.filter(a => a.vip === true);
@@ -568,14 +587,18 @@ async function loadArtists() {
 
         let html = '';
 
-// VIP 区域
-if (vipArtists.length > 0) {
-    html += `<div class="section-title" style="margin-top: 24px; color: #d4b896; font-size: 1.1rem; letter-spacing: 2px;">✦ VIP高级定制歌手 ✦</div>`;
-    html += `<div class="artist-grid">`;
-    vipArtists.forEach(a => {
-        const avatar = a.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2272%22 height=%2272%22%3E%3Crect width=%2272%22 height=%2272%22 fill=%22%23c8e6c9%22/%3E%3Ctext x=%2236%22 y=%2244%22 text-anchor=%22middle%22 font-size=%2232%22 fill=%22%234CAF50%22%3E%3C/text%3E%3C/svg%3E';
-        const vipBadge = `<span style="position:absolute;top:6px;right:8px;font-size:0.45rem;background:linear-gradient(135deg,#d4b896,#f0e0c8);color:#1a1a1a;padding:1px 8px;border-radius:10px;font-weight:600;letter-spacing:0.5px;border:1px solid rgba(212,184,150,0.2);">VIP</span>`;
-        html += `
+        // VIP 区域
+        if (vipArtists.length > 0) {
+            html += `<div class="section-title" style="margin-top: 24px; color: #d4b896; font-size: 1.1rem; letter-spacing: 2px;">✦ VIP高级定制歌手 ✦</div>`;
+            html += `<div class="artist-grid">`;
+            for (const a of vipArtists) {
+                const avatar = a.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2272%22 height=%2272%22%3E%3Crect width=%2272%22 height=%2272%22 fill=%22%23c8e6c9%22/%3E%3Ctext x=%2236%22 y=%2244%22 text-anchor=%22middle%22 font-size=%2232%22 fill=%22%234CAF50%22%3E%3C/text%3E%3C/svg%3E';
+                const vipBadge = `<span style="position:absolute;top:6px;right:8px;font-size:0.45rem;background:linear-gradient(135deg,#d4b896,#f0e0c8);color:#1a1a1a;padding:1px 8px;border-radius:10px;font-weight:600;letter-spacing:0.5px;border:1px solid rgba(212,184,150,0.2);">VIP</span>`;
+                
+                const followed = followedMap[a.id] || false;
+                const followerCount = a.followers_count || 0;
+                
+                html += `
 <div class="artist-card vip-card" onclick="showSongs('${a.id}')" style="
     position: relative;
     background: linear-gradient(145deg, #1a1a1a 25%, #3d3520 40%, #d4b896 50%, #3d3520 60%, #1a1a1a 75%) !important;
@@ -614,30 +637,68 @@ onmouseout="this.style.borderColor='rgba(212,184,150,0.4)'; this.style.boxShadow
                 <img class="avatar" src="${avatar}" alt="${a.artist_name || a.name}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 10px;background:#d0d0d0;border:2px solid rgba(212,184,150,0.2);">
                 <div class="name" style="font-weight:700;font-size:15px;color:#d4b896;animation: nameFade 6s ease-in-out infinite;">${a.artist_name || a.name || '未命名'}</div>
                 <div class="role" style="font-size:13px;color:rgba(212,184,150,0.5);margin-top:2px;">${a.role || '音乐人'}</div>
-                <div class="count" style="font-size:12px;color:rgba(212,184,150,0.4);margin-top:6px;font-weight:600;"> ${count[a.id] || 0} 首歌</div>
+                <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-top:4px;">
+                    <span class="count" style="font-size:12px;color:rgba(212,184,150,0.4);font-weight:600;">${count[a.id] || 0} 首歌</span>
+                    <span style="font-size:12px;color:rgba(212,184,150,0.3);">·</span>
+                    <span class="count" style="font-size:12px;color:rgba(212,184,150,0.4);font-weight:600;">❤️ ${followerCount} 粉丝</span>
+                </div>
+                <button id="follow-btn-${a.id}" onclick="event.stopPropagation();handleFollow('${a.id}')" style="
+                    margin-top:8px;
+                    padding:4px 16px;
+                    border:1px solid rgba(255,255,255,0.1);
+                    border-radius:20px;
+                    background:rgba(255,255,255,0.03);
+                    color:rgba(255,255,255,0.3);
+                    font-size:0.6rem;
+                    cursor:pointer;
+                    transition:0.3s;
+                    letter-spacing:1px;
+                " onmouseover="this.style.borderColor='rgba(255,255,255,0.2)'; this.style.color='rgba(255,255,255,0.5)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.color='rgba(255,255,255,0.3)'">
+                    ${followed ? '❤️ 已关注' : '🤍 关注'}
+                </button>
             </div>
         `;
-    });
-    html += `</div>`;
-}
-
-
+            }
+            html += `</div>`;
+        }
 
         // 普通入驻歌手
         if (normalArtists.length > 0) {
             html += `<div class="section-title" style="margin-top: 24px;"> 入驻歌手</div>`;
             html += `<div class="artist-grid">`;
-            normalArtists.forEach(a => {
+            for (const a of normalArtists) {
                 const avatar = a.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2272%22 height=%2272%22%3E%3Crect width=%2272%22 height=%2272%22 fill=%22%23c8e6c9%22/%3E%3Ctext x=%2236%22 y=%2244%22 text-anchor=%22middle%22 font-size=%2232%22 fill=%22%234CAF50%22%3E%3C/text%3E%3C/svg%3E';
+                
+                const followed = followedMap[a.id] || false;
+                const followerCount = a.followers_count || 0;
+                
                 html += `
                     <div class="artist-card" onclick="showSongs('${a.id}')">
                         <img class="avatar" src="${avatar}" alt="${a.artist_name || a.name}">
                         <div class="name">${a.artist_name || a.name || '未命名'}</div>
                         <div class="role">${a.role || '音乐人'}</div>
-                        <div class="count"> ${count[a.id] || 0} 首歌</div>
+                        <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-top:4px;">
+                            <div class="count">${count[a.id] || 0} 首歌</div>
+                            <span style="color:rgba(255,255,255,0.1);">·</span>
+                            <div class="count">❤️ ${followerCount} 粉丝</div>
+                        </div>
+                        <button id="follow-btn-${a.id}" onclick="event.stopPropagation();handleFollow('${a.id}')" style="
+                            margin-top:8px;
+                            padding:4px 16px;
+                            border:1px solid rgba(255,255,255,0.06);
+                            border-radius:20px;
+                            background:rgba(255,255,255,0.02);
+                            color:rgba(255,255,255,0.2);
+                            font-size:0.6rem;
+                            cursor:pointer;
+                            transition:0.3s;
+                            letter-spacing:1px;
+                        " onmouseover="this.style.borderColor='rgba(255,255,255,0.12)'; this.style.color='rgba(255,255,255,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.color='rgba(255,255,255,0.2)'">
+                            ${followed ? '❤️ 已关注' : '🤍 关注'}
+                        </button>
                     </div>
                 `;
-            });
+            }
             html += `</div>`;
         }
 
@@ -645,8 +706,10 @@ onmouseout="this.style.borderColor='rgba(212,184,150,0.4)'; this.style.boxShadow
 
     } catch (e) {
         grid.innerHTML = '<div class="empty">加载失败，请刷新</div>';
+        console.error(e);
     }
 }
+
 
 // ===== 显示歌手的歌曲 =====
 async function showSongs(artistId) {
@@ -873,6 +936,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 100);
     }
 });
+
+// ===== 处理关注/取消关注 =====
+async function handleFollow(musicianId) {
+    if (!musicianId) return;
+    const result = await Follow.toggle(musicianId);
+    // 更新按钮文字和颜色
+    const btn = document.getElementById(`follow-btn-${musicianId}`);
+    if (btn) {
+        btn.textContent = result.followed ? '❤️ 已关注' : '🤍 关注';
+        btn.style.color = result.followed ? '#e88a8a' : 'rgba(255,255,255,0.3)';
+    }
+    // 更新粉丝数显示（找到卡片里的粉丝数元素）
+    const card = btn?.closest('.artist-card') || btn?.closest('.vip-card');
+    if (card) {
+        const countEl = card.querySelector('.count:last-child');
+        if (countEl) {
+            countEl.textContent = '❤️ ' + result.count + ' 粉丝';
+        }
+    }
+}
 // ===== 跳转播放页 =====
 async function openPlayer(songId) {
     // 增加播放量
