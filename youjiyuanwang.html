@@ -812,16 +812,19 @@ async function sendMail() {
         `📬 收愿人：${recipient}\n✒️ 寄愿人：${sender}\n🏠 地址：${address}\n\n${content}`;
 
     const { data: users } = await supabase
-        .from('wishes')
-        .select('sender_id')
-        .neq('sender_id', userId)
-        .limit(100);
+    .from('user_profiles')
+    .select('id')
+    .neq('id', userId)
+    .limit(100);
 
-    let receiverId = null;
-    if (users && users.length > 0) {
-        const randomUser = users[Math.floor(Math.random() * users.length)];
-        receiverId = randomUser.sender_id;
-    }
+   let receiverId = null;
+if (users && users.length > 0) {
+    const randomUser = users[Math.floor(Math.random() * users.length)];
+    receiverId = randomUser.id;
+    console.log('🎯 随机选中的收件人:', receiverId);
+} else {
+    console.log('❌ 没有找到其他用户');
+}
 
     const { error } = await supabase.from('wishes').insert({
         sender_id: userId,
