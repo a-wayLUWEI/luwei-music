@@ -601,6 +601,19 @@
             box-shadow: 0 0 20px rgba(255, 59, 59, 0.3);
         ">0</span>
     </div>
+<!-- 寄件记录 -->
+<div onclick="openSentBox()" style="
+    cursor: pointer;
+    font-size: 1.8rem;
+    transition: 0.3s;
+    position: relative;
+    line-height: 1;
+    color: rgba(255,255,255,0.5);
+    text-shadow: 0 0 20px rgba(255,255,255,0.05);
+" onmouseover="this.style.color='rgba(255,255,255,0.9)';this.style.transform='scale(1.15)';this.style.textShadow='0 0 30px rgba(255,255,255,0.15)'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.transform='scale(1)';this.style.textShadow='0 0 20px rgba(255,255,255,0.05)'">
+    📤
+</div>
+
 </div>
 
     <!-- ===== 主容器 ===== -->
@@ -685,6 +698,16 @@
     </div>
     <div id="inboxList"></div>
 </div>
+<!-- ===== 寄件记录弹窗 ===== -->
+<div class="modal-overlay" id="sentOverlay" onclick="closeSentBox()"></div>
+<div class="modal-box" id="sentModal">
+    <div class="modal-header">
+        <h3>📤 我的寄件记录</h3>
+        <button class="modal-close" onclick="closeSentBox()">✕</button>
+    </div>
+    <div id="sentList"></div>
+</div>
+
 
     <!-- ===== Supabase ===== -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1117,6 +1140,9 @@ async function checkWishBox() {
         window.openWishBox = openWishBox;
         window.closeInbox = closeInbox;
         window.checkWishBox = checkWishBox;
+        window.openSentBox = openSentBox;
+        window.closeSentBox = closeSentBox;
+
         // ============================================================
         // 3. 流星雨效果 (52颗)
         // ============================================================
@@ -1237,6 +1263,87 @@ checkWishBox();
             label.style.color = 'rgba(255,255,255,0.5)';
         }
     });
+// ============================================================
+// 寄件记录
+// ============================================================
+async function openSentBox() {
+    const currentUser = getCurrentAuthUser();
+    if (!currentUser) { alert('请先登录'); return; }
+    const userId = currentUser.user_id;
+
+    const { data, error } = await supabase
+        .from('wishes')
+        .select('id, receiver_id, content, anonymous_name, created_at, is_read, is_public')
+        .eq('sender_id', userId)
+        .order('created_at', { ascending: false });
+
+    if (error) { alert('加载失败'); return; }
+
+    const modal = document.getElementById('sentModal');
+    const list = document.getElementById('sentList');
+    document.getElementById('sentOverlay').style.display = 'block';
+    modal.style.display = 'block';
+    setTimeout(() => { modal.classList.add('show'); }, 10);
+
+    if (data.length === 0) {
+        list.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.15); line-height: 2.5;">
+                <div style="font-size: 3rem; opacity: 0.2; margin-bottom: 16px;">📭</div>
+                <div style="font-size: 1rem; letter-spacing: 4px; font-weight: 200;">你还没有寄过信</div>
+                <div style="font-size: 0.75rem; letter-spacing: 2px; color: rgba(255,255,255,0.06);">
+                    去写一封信吧，会有人收到的
+                </div>
+            </div>
+        `;
+    } else {
+        list.innerHTML = data.map(w => {
+            const preview = w.content.length > 30 ? w.content.substring(0, 30) + '...' : w.content;
+            let status = '📭 回收箱';
+            let statusColor = 'rgba(255,255,255,0.15)';
+            if (w.receiver_id) {
+                if (w.is_read) {
+                    status = '✅ 已读';
+                    statusColor = 'rgba(100,220,180,0.5)';
+                } else {
+                    status = '⏳ 未读';
+                    statusColor = 'rgba(255,215,0,0.4)';
+                }
+            }
+            return `
+                <div style="
+                    background: rgba(255,255,255,0.02);
+                    border-radius: 16px;
+                    padding: 16px 18px;
+                    margin-bottom: 12px;
+                    border: 1px solid rgba(255,255,255,0.03);
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="color: rgba(255,255,255,0.25); font-size: 0.65rem; letter-spacing: 1px;">
+                            ${w.receiver_id ? '📬 寄给：' + (w.anonymous_name || '匿名用户') : '📭 公共回收箱'}
+                        </span>
+                        <span style="color: ${statusColor}; font-size: 0.6rem; letter-spacing: 1px;">
+                            ${status}
+                        </span>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.6); font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap;">
+                        ${preview}
+                    </div>
+                    <div style="color: rgba(255,255,255,0.06); font-size: 0.55rem; margin-top: 6px; text-align: right;">
+                        🌙 ${new Date(w.created_at).toLocaleString()}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+function closeSentBox() {
+    document.getElementById('sentModal').classList.remove('show');
+    setTimeout(() => {
+        document.getElementById('sentModal').style.display = 'none';
+        document.getElementById('sentOverlay').style.display = 'none';
+    }, 250);
+}
     </script>
 
 </body>
