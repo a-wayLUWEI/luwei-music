@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>许愿池 · 芦苇·小世界</title>
+    <style>
+        /* ===== 全局重置 & 背景 ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a2a1a 0%, #4a6a5a 15%, #2a4a3a 30%, #d4a843 40%, #1a2a3a 50%, #3a4a6a 65%, #2a4a3a 80%, #d4a843 88%, #1a2a1a 100%);
+            background-size: 300% 300%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: auroraFlow 14s ease-in-out infinite alternate;
+            transition: background 0.4s ease-out;
+        }
+        @keyframes auroraFlow {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 50% 100%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 0%; }
+            100% { background-position: 0% 100%; }
+        }
+
+        /* ===== 流星雨 Canvas ===== */
+        #meteorCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ===== 月亮 & 光束 ===== */
+        @keyframes moonBreath {
+            0% { box-shadow: 0 0 60px rgba(180, 210, 230, 0.12), 0 0 120px rgba(180, 210, 230, 0.06), 0 0 200px rgba(180, 210, 230, 0.03); transform: scale(1); }
+            100% { box-shadow: 0 0 80px rgba(180, 210, 230, 0.2), 0 0 160px rgba(180, 210, 230, 0.1), 0 0 250px rgba(180, 210, 230, 0.05); transform: scale(1.02); }
+        }
+        @keyframes moonBeamSweep {
+            0% { transform: rotate(-20deg) translateX(-100%); opacity: 0; }
+            30% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { transform: rotate(-20deg) translateX(100%); opacity: 0; }
+        }
+        #moon {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #e8f0f8, #b0c8d8 55%, #8aaec8 85%, #c8c0b8);
+            box-shadow: 0 0 60px rgba(180, 210, 230, 0.15), 0 0 120px rgba(180, 210, 230, 0.08), 0 0 200px rgba(180, 210, 230, 0.04), inset 0 -10px 30px rgba(100, 150, 180, 0.1);
+            z-index: 2;
+            pointer-events: none;
+            overflow: hidden;
+            animation: moonBreath 6s ease-in-out infinite alternate;
+        }
+        #moonBeam {
+            position: absolute;
+            top: -10%;
+            left: -50%;
+            width: 200%;
+            height: 120%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.06) 60%, transparent 100%);
+            transform: rotate(-20deg);
+            animation: moonBeamSweep 6s ease-in-out infinite;
+        }
+
+        /* ===== 主容器 ===== */
+        .container {
+            max-width: 680px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .back {
+            display: inline-block;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .back:hover { color: rgba(255,255,255,0.6); }
+        .icon-big { font-size: 5rem; margin-bottom: 6px; display: block; }
+        .title { font-size: 2.4rem; color: rgba(255,255,255,0.95); font-weight: 200; letter-spacing: 6px; }
+        .desc { font-size: 1.1rem; color: rgba(255,255,255,0.8); letter-spacing: 4px; margin-top: 6px; }
+        .divider { width: 40px; height: 1px; background: rgba(255,255,255,0.06); margin: 20px auto; }
+
+        /* ===== 池子区域 ===== */
+        .pool-area {
+            background: rgba(255,255,255,0.02);
+            border-radius: 24px;
+            padding: 40px 28px;
+            border: 1px solid rgba(255,255,255,0.02);
+            min-height: 320px;
+            position: relative;
+            margin: 10px 0 20px;
+            overflow: hidden;
+            transition: box-shadow 0.4s ease-out;
+        }
+        #poolCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            border-radius: 24px;
+        }
+        .pool-content {
+            position: relative;
+            z-index: 1;
+        }
+        .pool-water {
+            font-size: 3rem;
+            opacity: 0.06;
+            letter-spacing: 10px;
+            user-select: none;
+        }
+        .coin-display {
+            margin-top: 12px;
+            color: rgba(255,255,255,0.5);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        #starContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+            border-radius: 24px;
+        }
+        #responseText {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+            font-weight: 200;
+            letter-spacing: 2px;
+            line-height: 1.8;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            pointer-events: none;
+            z-index: 3;
+            width: 90%;
+            text-shadow: 0 0 40px rgba(212,184,150,0.15);
+            max-width: 500px;
+        }
+
+        /* ===== 输入区 ===== */
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 12px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            color: rgba(255,255,255,0.6);
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-area input:focus {
+            border-color: rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+        }
+        .input-area input::placeholder { color: rgba(255,255,255,0.1); }
+        .input-area button {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 1px;
+        }
+        .input-area button:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.5);
+        }
+        .bottom-text {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.38);
+            letter-spacing: 3px;
+        }
+
+        /* ===== 音乐控制器 ===== */
+        .global-music {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.34);
+            border-radius: 40px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+        .global-music:hover {
+            background: rgba(255,255,255,0.36);
+            border-color: rgba(255,255,255,0.28);
+        }
+        .global-music button {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .global-music button:hover { color: rgba(255,255,255,0.6); }
+        .global-music .label {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            min-width: 60px;
+            text-align: left;
+        }
+
+        /* ===== 移动端适配 ===== */
+        @media (max-width: 480px) {
+            .container { padding: 0 4px; }
+            .pool-area { padding: 20px 14px; }
+            .icon-big { font-size: 2.8rem; }
+            .title { font-size: 1.2rem; }
+            .global-music { bottom: 16px; right: 16px; padding: 6px 14px; }
+            .global-music button { font-size: 0.7rem; }
+            .global-music .label { font-size: 0.45rem; min-width: 40px; }
+        }
+    </style>
+</head>
+<body>
+<script src="checkAuth.js"></script>
+<a href="youjiyuanwang.html" id="moonLink" style="
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    z-index: 2;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+">
+    <div id="moon" style="
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, #e8f0f8, #b0c8d8 55%, #8aaec8 85%, #c8c0b8);
+        box-shadow: 0 0 60px rgba(180, 210, 230, 0.15), 0 0 120px rgba(180, 210, 230, 0.08), 0 0 200px rgba(180, 210, 230, 0.04), inset 0 -10px 30px rgba(100, 150, 180, 0.1);
+        overflow: hidden;
+        animation: moonBreath 6s ease-in-out infinite alternate;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        transition: transform 0.3s;
+        position: relative;
+    " onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+        <!-- 光束 -->
+        <div style="
+            position: absolute;
+            top: -10%;
+            left: -50%;
+            width: 200%;
+            height: 120%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.06) 60%, transparent 100%);
+            transform: rotate(-20deg);
+            animation: moonBeamSweep 6s ease-in-out infinite;
+            pointer-events: none;
+        "></div>
+        <!-- 文字 -->
+        <span style="
+    position: relative;
+    z-index: 3;
+    color: rgba(255,255,255,0.9);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    font-weight: 300;
+    text-shadow: 0 0 20px rgba(255,255,255,0.2);
+    line-height: 1.4;
+    text-align: center;
+    pointer-events: none;
+">
+    邮寄<br>愿望
+</span>
+    </div>
+</a >
+
+    <!-- ===== 流星雨 Canvas ===== -->
+    <canvas id="meteorCanvas"></canvas>
+
+    <!-- ===== 主容器 ===== -->
+    <div class="container">
+        <a href="xiaoshijie.html" class="back">← 返回小世界</a>
+        <span class="icon-big"></span>
+        <div class="title">许愿池</div>
+        <div class="desc">扔一枚硬币，沉一个愿望</div>
+        <div class="divider"></div>
+
+        <div class="pool-area">
+            <canvas id="poolCanvas"></canvas>
+            <div id="starContainer"></div>
+            <div class="pool-content">
+                <div class="pool-water">～～～</div>
+                <div class="coin-display" id="coinCount">已有 0 枚硬币沉入池底</div>
+            </div>
+            <div id="responseText"></div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="wishInput" placeholder="写下你的愿望..." onkeydown="if(event.key==='Enter') dropCoin()">
+            <button onclick="dropCoin()">投币</button>
+        </div>
+
+        <div class="bottom-text">每一枚硬币，都是一个被听见的愿望</div>
+    </div>
+
+    <!-- ===== 音乐控制 ===== -->
+    <div class="global-music">
+        <span class="label" id="musicLabel" style="color:rgba(255,255,255,0.15);font-size:0.5rem;letter-spacing:1px;min-width:50px;">加载中...</span>
+        <button onclick="prevSong()" id="prevBtn" style="background:none;border:none;color:rgba(255,255,255,0.2);font-size:0.7rem;cursor:pointer;">⏮</button>
+        <button onclick="toggleMusic()" id="musicBtn" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:1rem;cursor:pointer;">▶</button>
+        <button onclick="nextSong()" id="nextBtn" style="background:none;border:none;color:rgba(255,255,255,0.2);font-size:0.7rem;cursor:pointer;">⏭</button>
+    </div>
+
+    <!-- ===== 音乐脚本 (占位，实际使用需引入 music.js) ===== -->
+    <script src="music.js"></script>
+
+    <script>
+        // ============================================================
+        // 1. 许愿池核心交互
+        // ============================================================
+        let coinCount = 0;
+        const wishInput = document.getElementById('wishInput');
+        const coinDisplay = document.getElementById('coinCount');
+        const starContainer = document.getElementById('starContainer');
+        const poolArea = document.querySelector('.pool-area');
+        const body = document.body;
+
+        // 恢复投币数据
+        const savedCoins = localStorage.getItem('xuyuanchi_coins');
+        if (savedCoins) {
+            coinCount = parseInt(savedCoins);
+            coinDisplay.textContent = '已有 ' + coinCount + ' 枚硬币沉入池底';
+        }
+
+        // ===== 回应库 (精选60句) =====
+        const responses = [
+            "你的愿望已邮寄给平行时空，在那里悄悄实现。希望你每天开心快乐。",
+            "星星听见了，它会在你抬头的时候，眨一下眼睛。",
+            "愿望已经沉入池底，像一颗种子。它会慢慢长成你期待的样子。",
+            "你说的话，水记住了。等风来的时候，它会替你传出去。",
+            "许愿池收到你的心愿了。它正在等一个合适的月光，帮你送出去。",
+            "你的愿望被裹进了一枚金色的硬币里，沉进了最柔软的水底。",
+            "这个世界总有一个角落，在替你悄悄回应。",
+            "你相信的事，正在来的路上。",
+            "许愿池的水，替你保管了一个秘密。",
+            "它会变成光，在某个你不经意的夜晚，落回你身上。",
+            "你的愿望已经出发了，它走得很慢，但一定会到。",
+            "今天的水波很温柔，它收下了你的心愿。",
+            "许愿池底有一枚星星，正在替你发光。",
+            "你的愿望被风带走了，它会落在该落的地方。",
+            "水面下有一个小小的宇宙，你的愿望在那里安了家。",
+            "你许愿的时候，月亮轻轻晃了一下。它听见了。",
+            "愿望像一枚叶子，落在水上，漂向很远的岸。",
+            "你相信的事，正在悄悄变得真实。",
+            "许愿池记得每一个来过的人。你也是。",
+            "你的愿望已经被裹进月光里，等一个夜晚送达。",
+            "在水底，有一粒光在慢慢长大。那是你的愿望。",
+            "风吹过池面的时候，把你的话带走了。它会到的。",
+            "你的心愿像一颗石子，落进了时间的河里。涟漪会传得很远。",
+            "许愿池的底部，堆积着很多温柔的期待。你的也在其中。",
+            "你放下愿望的那一刻，池水轻轻亮了一下。",
+            "你的愿望在水底呼吸，它正在变成一种很轻的东西。",
+            "今夜的水面很平静，你的愿望被安稳地收下了。",
+            "你的心愿已经上路了，它走得很轻，不会打扰任何人。",
+            "许愿池会替你保管，直到你忘记它。然后它就会实现。",
+            "你相信的，正在来的路上。它只是走得很慢。",
+            "你的愿望被折成了一只纸船，漂向了一个你看不见的远方。",
+            "水底的星星又多了一颗。那是你的。",
+            "你放下的事，池水帮你接住了。",
+            "风吹过的时候，你的愿望被带到了更远的地方。",
+            "许愿池里有一片安静的水域，你的愿望睡在那里。",
+            "你的心愿在水底发出微光，像一枚安静的珍珠。",
+            "你许愿的时候，风停了。它也在听。",
+            "你的愿望被月光包裹，正在被送往一个温柔的地方。",
+            "池底的沙粒记得你。你的愿望也留下了痕迹。",
+            "你放下愿望的那一刻，水波轻轻动了一下。那是回应。",
+            "你的愿望正在穿过夜色，去往一个它该去的地方。",
+            "许愿池的水是活的，它会把你的话带到很远的地方。",
+            "你相信的事，已经开始发生了。只是你还不知道。",
+            "你的愿望在水底慢慢发芽，它需要一点时间。",
+            "你放下心愿的时候，整个池子都安静了一秒。它在认真听。",
+            "你的愿望被收进了一滴水珠里，会随着阳光蒸发到天上。",
+            "许愿池记得你。你许愿时的样子，它也记得。",
+            "你的愿望很轻，所以它会被风带走，送到很远的地方。",
+            "水底的石子微微发亮。那是你的心愿在呼吸。",
+            "你许下的愿望，已经变成了一缕风，正在穿过夜晚的街道。",
+            "你的愿望在池底沉睡，等一个合适的时机醒来。",
+            "今夜的风替你传了一句话。它没有说给谁听，但一定有人收到了。",
+            "你的愿望被裹进了一片落叶里，顺着水流漂向了远方的湖泊。",
+            "许愿池的水面泛起了一圈极淡的涟漪。它在回应你。",
+            "你的心愿像一枚书签，夹在了时间的某一页里。",
+            "你放下愿望的那一刻，整个世界都安静了一点点。",
+            "你的愿望正在穿越夜晚的迷雾，去往一个它该去的地方。",
+            "水底的月光把你的心愿照亮了。它现在很安全。",
+            "你的愿望和很多人的愿望一起，轻轻叠在池底，互相取暖。",
+            "你相信的事，正在悄悄靠近。你已经走了一半的路。"
+        ];
+
+        // ===== 投币主函数 =====
+        function dropCoin() {
+            const wish = wishInput.value.trim();
+            if (!wish) {
+                alert('写一个愿望再投吧');
+                return;
+            }
+            coinCount++;
+            coinDisplay.textContent = '已有 ' + coinCount + ' 枚硬币沉入池底';
+            wishInput.value = '';
+            localStorage.setItem('xuyuanchi_coins', coinCount);
+
+            // ---- 投币闪光特效 (30秒渐变) ----
+            poolArea.style.transition = 'box-shadow 0.4s ease-out';
+            poolArea.style.boxShadow = '0 0 300px rgba(212,184,150,1), inset 0 0 200px rgba(212,184,150,0.5)';
+            body.style.transition = 'background 0.4s ease-out';
+            body.style.background = 'linear-gradient(135deg, #3a2a1a 0%, #5a4a3a 15%, #3a2a1a 30%, #d4a843 45%, #2a1a0a 55%, #4a3a2a 70%, #3a2a1a 85%, #d4a843 95%, #2a1a0a 100%)';
+
+            setTimeout(() => {
+                poolArea.style.boxShadow = '0 0 250px rgba(212,184,150,0.7), inset 0 0 180px rgba(212,184,150,0.35)';
+                body.style.background = 'linear-gradient(135deg, #2a1a0a 0%, #4a3a2a 15%, #2a1a0a 30%, #d4a843 40%, #1a1a0a 50%, #3a2a1a 65%, #2a1a0a 80%, #d4a843 88%, #1a1a0a 100%)';
+            }, 2000);
+            setTimeout(() => {
+                poolArea.style.boxShadow = '0 0 200px rgba(212,184,150,0.45), inset 0 0 150px rgba(212,184,150,0.2)';
+                body.style.background = 'linear-gradient(135deg, #1a2a1a 0%, #4a6a5a 15%, #2a4a3a 30%, #d4a843 40%, #1a2a3a 50%, #3a4a6a 65%, #2a4a3a 80%, #d4a843 88%, #1a2a1a 100%)';
+            }, 6000);
+            setTimeout(() => {
+                poolArea.style.boxShadow = '0 0 150px rgba(212,184,150,0.25), inset 0 0 100px rgba(212,184,150,0.12)';
+                body.style.background = 'linear-gradient(135deg, #1a2a1a 0%, #4a6a5a 15%, #2a4a3a 30%, #1a2a3a 50%, #3a4a6a 65%, #2a4a3a 80%, #1a2a1a 100%)';
+            }, 12000);
+            setTimeout(() => {
+                poolArea.style.boxShadow = '0 0 100px rgba(212,184,150,0.12), inset 0 0 70px rgba(212,184,150,0.06)';
+            }, 18000);
+            setTimeout(() => {
+                poolArea.style.boxShadow = '0 0 60px rgba(212,184,150,0.06), inset 0 0 40px rgba(212,184,150,0.03)';
+            }, 24000);
+            setTimeout(() => {
+                poolArea.style.boxShadow = 'none';
+                body.style.background = '';
+            }, 30000);
+
+            // ---- 星星飞入池底 ----
+            const coin = document.createElement('div');
+            coin.textContent = '★';
+            const size = 2.4 + Math.random() * 1.2;
+            const startX = 30 + Math.random() * 40;
+            const startY = -30 - Math.random() * 40;
+            const targetX = 10 + Math.random() * 80;
+            const targetY = 10 + Math.random() * 70;
+            const delay = Math.random() * 300;
+
+            coin.style.cssText = 'position: absolute; left: ' + startX + '%; top: ' + startY + '%; font-size: ' + size + 'rem; color: #ffe680; opacity: 0; transition: all 2.5s cubic-bezier(0.22, 0.68, 0.35, 1.0); text-shadow: 0 0 40px rgba(255,230,128,0.8), 0 0 80px rgba(255,215,0,0.5), 0 0 120px rgba(255,200,0,0.3);';
+            starContainer.appendChild(coin);
+
+            setTimeout(() => {
+                coin.style.opacity = '1';
+                coin.style.top = '10%';
+            }, delay);
+            setTimeout(() => {
+                coin.style.left = targetX + '%';
+                coin.style.top = targetY + '%';
+                coin.style.transform = 'rotate(' + (360 + Math.random() * 720) + 'deg) scale(0.7)';
+                coin.style.color = '#1a1a1a';
+                coin.style.opacity = '0.7';
+                coin.style.textShadow = '0 0 30px rgba(212,184,150,0.05)';
+                // 保存星星
+                const starData = { left: targetX, top: targetY, size: size };
+                const allStars = JSON.parse(localStorage.getItem('xuyuanchi_stars') || '[]');
+                allStars.push(starData);
+                localStorage.setItem('xuyuanchi_stars', JSON.stringify(allStars));
+            }, delay + 400);
+            setTimeout(() => {
+                breatheStar(coin);
+            }, delay + 2500);
+
+            // ---- 显示回应 ----
+            showResponse();
+        }
+
+        // ===== 星星呼吸动画 =====
+        function breatheStar(star) {
+            let direction = 1;
+            let intensity = 0.3;
+            star.style.transition = 'color 1.2s ease-in-out, text-shadow 1.2s ease-in-out, opacity 1.2s ease-in-out';
+            setInterval(() => {
+                if (!star.parentNode) return;
+                intensity += direction * 0.015;
+                if (intensity >= 0.85) direction = -1;
+                if (intensity <= 0.15) direction = 1;
+                const alpha = 0.25 + intensity * 0.65;
+                star.style.opacity = alpha;
+                star.style.textShadow = '0 0 40px rgba(255,230,128,0.8), 0 0 80px rgba(255,215,0,0.5), 0 0 120px rgba(255,200,0,0.3)';
+                // 颜色渐变：金色 ↔ 高级黑 ↔ 白色
+                if (intensity > 0.6) {
+                    const t = (intensity - 0.6) / 0.25;
+                    const r = 212 + t * 43, g = 184 + t * 71, b = 150 + t * 105;
+                    star.style.color = 'rgb(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ')';
+                } else if (intensity > 0.35) {
+                    const t = (intensity - 0.35) / 0.25;
+                    const r = 26 + t * 186, g = 26 + t * 158, b = 26 + t * 124;
+                    star.style.color = 'rgb(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ')';
+                } else {
+                    const t = intensity / 0.35;
+                    const gray = 26 + t * 30;
+                    star.style.color = 'rgb(' + Math.round(gray) + ',' + Math.round(gray) + ',' + Math.round(gray) + ')';
+                }
+            }, 150);
+        }
+
+      // ===== 恢复星星 =====
+        function restoreStars() {
+            const savedStars = localStorage.getItem('xuyuanchi_stars');
+            if (!savedStars) return;
+            const starsData = JSON.parse(savedStars);
+            starsData.forEach(data => {
+                const coin = document.createElement('div');
+                coin.textContent = '★';
+                coin.style.cssText = 'position: absolute; left: ' + data.left + '%; top: ' + data.top + '%; font-size: ' + data.size + 'rem; color: #1a1a1a; opacity: 0.7; transition: none; text-shadow: 0 0 30px rgba(212,184,150,0.05);';
+                starContainer.appendChild(coin);
+                breatheStar(coin);
+            });
+        }
+
+        // ===== 显示回应文字 =====
+        function showResponse() {
+            const el = document.getElementById('responseText');
+            if (!el) return;
+            const index = Math.floor(Math.random() * responses.length);
+            el.textContent = responses[index];
+            el.style.opacity = '0';
+            el.style.transform = 'translateX(-50%) translateY(20px)';
+            requestAnimationFrame(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateX(-50%) translateY(0)';
+            });
+            clearTimeout(el._timer);
+            el._timer = setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateX(-50%) translateY(-10px)';
+            }, 10000);
+        }
+
+        // ============================================================
+        // 2. 动态许愿池 (水波纹 + 光点)
+        // ============================================================
+        (function() {
+            const canvas = document.getElementById('poolCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h, time = 0;
+            const particles = [];
+
+            function resize() {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                w = canvas.width = rect.width;
+                h = canvas.height = rect.height;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            for (let i = 0; i < 30; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 3 + 1,
+                    speed: Math.random() * 0.005 + 0.002,
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+
+            function draw() {
+                time += 0.02;
+                ctx.clearRect(0, 0, w, h);
+
+                // 8条水波纹
+                for (let i = 0; i < 8; i++) {
+                    const offset = i * 1.0;
+                    const amp = 10 + i * 3;
+                    const freq = 0.025 + i * 0.004;
+                    const speed = 0.5 + i * 0.06;
+                    const alphaBase = 0.025 + i * 0.012;
+                    const lineWidth = 1 + i * 0.25;
+                    const yBase = h * (0.3 + i * 0.055);
+
+                    ctx.beginPath();
+                    for (let x = 0; x < w; x += 2) {
+                        const y = yBase + Math.sin(x * freq + time * speed + offset) * amp + Math.sin(x * (freq * 1.6) + time * (speed * 0.7) + offset * 0.5) * (amp * 0.5);
+                        if (x === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    const alpha = alphaBase + Math.sin(time * 0.2 + i) * 0.012 + 0.008;
+                    ctx.strokeStyle = 'rgba(255,255,255,' + alpha + ')';
+                    ctx.lineWidth = lineWidth;
+                    ctx.stroke();
+                }
+
+                // 光点 + 金色光晕
+                for (let p = 0; p < particles.length; p++) {
+                    const pt = particles[p];
+                    const px = pt.x + Math.sin(time * pt.speed * 10 + pt.phase) * 10;
+                    const py = pt.y + Math.cos(time * pt.speed * 8 + pt.phase) * 8;
+                    const alpha = 0.15 + Math.sin(time * pt.speed * 5 + pt.phase) * 0.08 + 0.08;
+
+                    const glow = ctx.createRadialGradient(px, py, 0, px, py, pt.r * 6);
+                    glow.addColorStop(0, 'rgba(212,184,150,' + alpha + ')');
+                    glow.addColorStop(0.3, 'rgba(212,184,150,' + (alpha * 0.3) + ')');
+                    glow.addColorStop(1, 'rgba(212,184,150,0)');
+                    ctx.beginPath();
+                    ctx.arc(px, py, pt.r * 6, 0, Math.PI * 2);
+                    ctx.fillStyle = glow;
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(px, py, pt.r * 1.2, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255,240,220,' + (alpha * 0.6) + ')';
+                    ctx.fill();
+                }
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+
+        // ============================================================
+        // 3. 流星雨效果 (52颗)
+        // ============================================================
+        let meteorAnimationId = null;
+        let meteors = [];
+        let meteorCtx = null;
+        let meteorCanvas = null;
+
+        function initMeteorCanvas() {
+            meteorCanvas = document.getElementById('meteorCanvas');
+            if (!meteorCanvas) return;
+            meteorCtx = meteorCanvas.getContext('2d');
+            const rect = document.body.getBoundingClientRect();
+            meteorCanvas.width = rect.width;
+            meteorCanvas.height = rect.height;
+            meteors = [];
+            for (let i = 0; i < 52; i++) {
+                meteors.push(createMeteor());
+            }
+            drawMeteors();
+        }
+
+        function createMeteor() {
+            const canvas = meteorCanvas;
+            return {
+                x: Math.random() * canvas.width * 0.8,
+                y: Math.random() * canvas.height * 0.3,
+                length: Math.random() * 80 + 40,
+                speed: Math.random() * 4 + 3,
+                angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+                opacity: Math.random() * 0.6 + 0.3,
+                life: Math.random() * 120 + 80,
+                maxLife: 200,
+                delay: Math.random() * 200
+            };
+        }
+
+        function drawMeteors() {
+            if (!meteorCtx || !meteorCanvas) return;
+            const ctx = meteorCtx;
+            const canvas = meteorCanvas;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            meteors.forEach(meteor => {
+                if (meteor.delay > 0) { meteor.delay--; return; }
+                meteor.x += Math.cos(meteor.angle) * meteor.speed;
+                meteor.y += Math.sin(meteor.angle) * meteor.speed;
+                meteor.life--;
+                const lifeRatio = meteor.life / meteor.maxLife;
+                const alpha = meteor.opacity * Math.min(1, lifeRatio * 2);
+                const tailLength = meteor.length * lifeRatio;
+                const gradient = ctx.createLinearGradient(
+                    meteor.x, meteor.y,
+                    meteor.x - Math.cos(meteor.angle) * tailLength,
+                    meteor.y - Math.sin(meteor.angle) * tailLength
+                );
+                gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+                gradient.addColorStop(0.3, `rgba(255, 240, 220, ${alpha * 0.6})`);
+                gradient.addColorStop(1, `rgba(255, 220, 200, 0)`);
+                ctx.beginPath();
+                ctx.moveTo(meteor.x, meteor.y);
+                ctx.lineTo(
+                    meteor.x - Math.cos(meteor.angle) * tailLength,
+                    meteor.y - Math.sin(meteor.angle) * tailLength
+                );
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                const glow = ctx.createRadialGradient(meteor.x, meteor.y, 0, meteor.x, meteor.y, 6);
+                glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.8})`);
+                glow.addColorStop(1, `rgba(255, 255, 255, 0)`);
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(meteor.x, meteor.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (meteor.life <= 0) {
+                    Object.assign(meteor, createMeteor());
+                    meteor.x = Math.random() * canvas.width * 0.8;
+                    meteor.y = Math.random() * canvas.height * 0.2;
+                    meteor.delay = Math.random() * 100 + 50;
+                }
+            });
+            meteorAnimationId = requestAnimationFrame(drawMeteors);
+        }
+
+        // ============================================================
+        // 4. 初始化
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // 恢复星星
+            restoreStars();
+            // 启动流星雨
+            setTimeout(() => {
+                initMeteorCanvas();
+                window.addEventListener('resize', () => {
+                    const rect = document.body.getBoundingClientRect();
+                    if (meteorCanvas) {
+                        meteorCanvas.width = rect.width;
+                        meteorCanvas.height = rect.height;
+                    }
+                });
+            }, 300);
+            // 音乐标签样式
+            const label = document.getElementById('musicLabel');
+            if (label) {
+                label.style.fontSize = '0.8rem';
+                label.style.color = 'rgba(255,255,255,0.5)';
+            }
+        });
+
+    // ===== 音乐控制 =====
+    document.addEventListener('DOMContentLoaded', function() {
+        // 歌名显示调大
+        var label = document.getElementById('musicLabel');
+        if (label) {
+            label.style.fontSize = '0.8rem';
+            label.style.color = 'rgba(255,255,255,0.5)';
+        }
+    });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>芦苇·小世界</title>
+    <style>
+#meteorCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8e8e8 0%, #8a8a8a 15%, #1a1a1a 30%, #d4a843 45%, #6a5a9a 60%, #2a4a3a 75%, #6a5a9a 85%, #3a3a4a 100%);
+            background-size: 400% 400%;
+            min-height: 100vh;
+            padding: 30px 20px 80px;
+            animation: commentBgFlow 12s ease-in-out infinite alternate;
+        }
+        @keyframes commentBgFlow {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 50% 100%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 0%; }
+            100% { background-position: 0% 100%; }
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .header {
+            text-align: center;
+            padding: 30px 0 10px;
+        }
+        .header h1 {
+            font-size: 2.6rem;
+            font-weight: 200;
+            color: rgba(255,255,255,0.95);
+            letter-spacing: 12px;
+        }
+        .header h1 span { color: #d4b896; }
+        .header .sub {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 6px;
+            margin-top: 6px;
+        }
+        .header .divider {
+            width: 60px;
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin: 18px auto 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 14px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 16px;
+            padding: 18px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.4s;
+            text-decoration: none;
+            display: block;
+        }
+        .card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(212,184,150,0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+        .card .icon {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .card .name {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 1px;
+        }
+        .card .desc {
+            font-size: 0.55rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 4px;
+        }
+
+        /* ===== 全局音乐控制 ===== */
+        .global-music {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 40px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+        .global-music:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.08);
+        }
+        .global-music button {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .global-music button:hover { color: rgba(255,255,255,0.8); }
+        .global-music .label {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            min-width: 60px;
+            text-align: left;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; letter-spacing: 8px; }
+            .grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+            .card { padding: 14px 8px; }
+            .card .icon { font-size: 1.5rem; }
+            .card .name { font-size: 0.75rem; }
+            .global-music { bottom: 16px; right: 16px; padding: 6px 14px; }
+            .global-music button { font-size: 0.85rem; }
+            .global-music .label { font-size: 0.5rem; min-width: 50px; }
+        }
+    </style>
+</head>
+<body>
+<script src="checkAuth.js"></script>
+<canvas id="meteorCanvas" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+"></canvas>
+<div class="container">
+    <div class="header">
+        <h1><span>芦苇·小世界</span></h1>
+        <div class="sub">走进来，找一个地方安放自己</div>
+        <div class="divider"></div>
+    </div>
+
+    <div class="grid" id="worldGrid">
+        <!-- 由 JavaScript 生成 52 个卡片 -->
+    </div>
+
+    <div class="footer">慢慢走，不着急</div>
+</div>
+
+<!-- ===== 全局音乐控制 ===== -->
+<div class="global-music">
+    <span class="label" id="musicLabel" style="color:rgba(255,255,255,0.15);font-size:0.5rem;letter-spacing:1px;min-width:50px;">🎵 加载中...</span>
+    <button onclick="prevSong()" id="prevBtn" style="background:none;border:none;color:rgba(255,255,255,0.2);font-size:0.7rem;cursor:pointer;">⏮</button>
+    <button onclick="toggleMusic()" id="musicBtn" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:1rem;cursor:pointer;">▶</button>
+    <button onclick="nextSong()" id="nextBtn" style="background:none;border:none;color:rgba(255,255,255,0.2);font-size:0.7rem;cursor:pointer;">⏭</button>
+</div>
+
+<script src="music.js"></script>
+
+<script>
+const worlds = [
+    { id: 'xuyuanchi', name: '许愿池', icon: '💎', desc: '扔一枚硬币，沉一个愿望' },
+    { id: 'xingyuanping', name: '星愿瓶', icon: '✨', desc: '把愿望装进瓶子里' },
+    { id: 'yunji', name: '云寄', icon: '☁️', desc: '写给未来的你，等风来' },
+    { id: 'piaoliuxin', name: '漂流信', icon: '🌊', desc: '放它入海，到该去的地方' },
+    { id: 'weiwan', name: '未完待续', icon: '🍁', desc: '有些话不用说完' },
+    { id: 'guangyu', name: '光遇', icon: '💫', desc: '收集细小的光' },
+    { id: 'miwu', name: '迷雾森林', icon: '🌫️', desc: '你在雾里，但你不是一个人' },
+    { id: 'lvzhou', name: '沙漠绿洲', icon: '🏜️', desc: '在荒芜里种一个渴望' },
+    { id: 'jiguang', name: '极光信', icon: '🌠', desc: '有些话不说给耳朵，说给天空' },
+    { id: 'luweihai', name: '芦苇海', icon: '🌾', desc: '风会把思念吹到该去的地方' },
+    { id: 'huisheng', name: '回声山谷', icon: '🗻', desc: '喊出来，山谷会记得' },
+    { id: 'yinhe', name: '银河渡口', icon: '🌌', desc: '放不下的，可以放在船上' },
+    { id: 'jibing', name: '寂静冰川', icon: '🧊', desc: '沉默的话，也可以被听见' },
+    { id: 'luori', name: '落日收集站', icon: '🌅', desc: '把今天存进落日里' },
+    { id: 'yueguang', name: '月光邮局', icon: '🌙', desc: '写给过去，月光会送到' },
+    { id: 'shudong', name: '秘密树洞', icon: '🌳', desc: '说给树听，它守得住' },
+    { id: 'gouhuo', name: '篝火夜话', icon: '🔥', desc: '围坐篝火，说点什么吧' },
+    { id: 'shandian', name: '山巅回音', icon: '🏔️', desc: '喊出去，山会记住' },
+    { id: 'ludukou', name: '芦苇渡口', icon: '🛶', desc: '上船吧，放下一些东西再走' },
+    { id: 'huaban', name: '花瓣信', icon: '🎑', desc: '说给花瓣听' },
+    { id: 'fengling', name: '风铃长廊', icon: '🎐', desc: '风铃记得每一阵风' },
+    { id: 'denglong', name: '灯笼街', icon: '🏮', desc: '亮起来，让这句话被看见' },
+    { id: 'yudi', name: '雨滴信箱', icon: '💧', desc: '让雨替你洗掉一些' },
+    { id: 'caomu', name: '草木集', icon: '☘️', desc: '说给风听，风会记住你' },
+    { id: 'shenhai', name: '深海回响', icon: '🐚', desc: '沉下去，海底会收留它' },
+    { id: 'zhuguang', name: '烛光厅', icon: '🕯️', desc: '点亮它，让它被看见' },
+    { id: 'shuilian', name: '睡莲池', icon: '💮', desc: '放下它，让它开成莲' },
+    { id: 'zhulin', name: '竹林听风', icon: '🎋', desc: '竹子会替你传话' },
+    { id: 'fuxiao', name: '拂晓码头', icon: '⛵', desc: '等天亮，等一个回答' },
+    { id: 'rihuo', name: '日落电台', icon: '📻', desc: '发送出去，等它被收到' },
+    { id: 'huixiang', name: '回声湖', icon: '🏞️', desc: '丢进去，等它泛起回声' },
+    { id: 'shudongyou', name: '树洞邮局', icon: '📮', desc: '藏进去，树洞不会说出去' },
+    { id: 'chawu', name: '晨雾茶亭', icon: '🍵', desc: '坐下来，喝杯茶再说' },
+    { id: 'maitian', name: '麦田守望', icon: '🌾', desc: '站一会儿，什么都不用说' },
+    { id: 'shatan', name: '月光沙滩', icon: '🏖️', desc: '光着脚走一走' },
+    { id: 'shuwu', name: '深夜书屋', icon: '📖', desc: '翻开书，总有一页写着你想说的话' },
+    { id: 'baige', name: '白鸽广场', icon: '🕊️', desc: '放出去，让它替你飞一段' },
+    { id: 'songlin', name: '松林静坐', icon: '🌲', desc: '坐一会儿，听松树告诉你答案' },
+    { id: 'luoye', name: '落叶小径', icon: '🍂', desc: '走一遍，有些东西会落下来' },
+    { id: 'pugongying', name: '蒲公英原野', icon: '🌼', desc: '吹一口气，送到该去的地方' },
+    { id: 'chenguang', name: '晨光露台', icon: '🌅', desc: '站高一点，看天亮起来' },
+    { id: 'jieti', name: '月光阶梯', icon: '🌙', desc: '走上去，把沉重留在台阶上' },
+    { id: 'yeying', name: '夜樱小径', icon: '🌸', desc: '走一走，花瓣会替你落一些东西' },
+    { id: 'qingti', name: '青苔石阶', icon: '🌿', desc: '苔藓记得每一个脚步' },
+    { id: 'duorou', name: '多肉花园', icon: '🌵', desc: '它会陪你慢慢长' },
+    { id: 'mengya', name: '萌芽站台', icon: '🌱', desc: '等一辆车，载你去看新的东西' },
+    { id: 'luohua', name: '落花河', icon: '🍃', desc: '看着它流走' },
+    { id: 'shiqiao', name: '月下石桥', icon: '🌉', desc: '走一趟，月亮会陪你过去' },
+    { id: 'xueshan', name: '雪山来信', icon: '🏔️', desc: '写给远方，雪会替你寄出' },
+    { id: 'fengche', name: '风车原野', icon: '🎡', desc: '看着它转，时间会慢下来' },
+    { id: 'dengta', name: '黄昏灯塔', icon: '🗼', desc: '亮起来，让迷途的人看见' },
+    { id: 'shuzhuo', name: '月光书桌', icon: '📝', desc: '坐下来，写一封信给自己' }
+];
+
+    const grid = document.getElementById('worldGrid');
+    worlds.forEach(w => {
+        const a = document.createElement('a');
+        a.href = `${w.id}.html`;
+        a.className = 'card';
+        a.innerHTML = `
+            <span class="icon">${w.icon}</span>
+            <div class="name">${w.name}</div>
+            <div class="desc">${w.desc}</div>
+        `;
+        grid.appendChild(a);
+    });
+// ============================================================
+// ===== 流星雨效果（52颗，评论区同款） =====
+// ============================================================
+
+let meteorAnimationId = null;
+let meteors = [];
+let meteorCtx = null;
+let meteorCanvas = null;
+
+function initMeteorCanvas() {
+    meteorCanvas = document.getElementById('meteorCanvas');
+    if (!meteorCanvas) return;
+    meteorCtx = meteorCanvas.getContext('2d');
+    
+    // 设置 canvas 尺寸
+    const rect = document.body.getBoundingClientRect();
+    meteorCanvas.width = rect.width;
+    meteorCanvas.height = rect.height;
+    
+    // 生成流星
+    meteors = [];
+    for (let i = 0; i < 52; i++) {
+        meteors.push(createMeteor());
+    }
+    
+    drawMeteors();
+}
+
+function createMeteor() {
+    const canvas = meteorCanvas;
+    return {
+        x: Math.random() * canvas.width * 0.8,
+        y: Math.random() * canvas.height * 0.3,
+        length: Math.random() * 80 + 40,
+        speed: Math.random() * 4 + 3,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.6 + 0.3,
+        life: Math.random() * 120 + 80,
+        maxLife: 200,
+        delay: Math.random() * 200
+    };
+}
+
+function drawMeteors() {
+    if (!meteorCtx || !meteorCanvas) return;
+    const ctx = meteorCtx;
+    const canvas = meteorCanvas;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    meteors.forEach(meteor => {
+        // 延迟
+        if (meteor.delay > 0) {
+            meteor.delay--;
+            return;
+        }
+        
+        // 更新位置
+        meteor.x += Math.cos(meteor.angle) * meteor.speed;
+        meteor.y += Math.sin(meteor.angle) * meteor.speed;
+        meteor.life--;
+        
+        // 透明度渐变（尾部渐隐）
+        const lifeRatio = meteor.life / meteor.maxLife;
+        const alpha = meteor.opacity * Math.min(1, lifeRatio * 2);
+        
+        // 画流星尾巴
+        const tailLength = meteor.length * lifeRatio;
+        const gradient = ctx.createLinearGradient(
+            meteor.x, meteor.y,
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+        gradient.addColorStop(0.3, `rgba(255, 240, 220, ${alpha * 0.6})`);
+        gradient.addColorStop(1, `rgba(255, 220, 200, 0)`);
+        
+        ctx.beginPath();
+        ctx.moveTo(meteor.x, meteor.y);
+        ctx.lineTo(
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // 流星头部光晕
+        const glow = ctx.createRadialGradient(meteor.x, meteor.y, 0, meteor.x, meteor.y, 6);
+        glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.8})`);
+        glow.addColorStop(1, `rgba(255, 255, 255, 0)`);
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(meteor.x, meteor.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // 重置
+        if (meteor.life <= 0) {
+            Object.assign(meteor, createMeteor());
+            meteor.x = Math.random() * canvas.width * 0.8;
+            meteor.y = Math.random() * canvas.height * 0.2;
+            meteor.delay = Math.random() * 100 + 50;
+        }
+    });
+    
+    meteorAnimationId = requestAnimationFrame(drawMeteors);
+}
+
+function startMeteors() {
+    const canvas = document.getElementById('meteorCanvas');
+    if (canvas) {
+        // 等页面渲染完再初始化
+        setTimeout(() => {
+            initMeteorCanvas();
+            // 窗口变化时重置尺寸
+            window.addEventListener('resize', () => {
+                const rect = document.body.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            });
+        }, 300);
+    }
+}
+
+function stopMeteors() {
+    if (meteorAnimationId) {
+        cancelAnimationFrame(meteorAnimationId);
+        meteorAnimationId = null;
+    }
+}
+
+// 启动流星雨
+document.addEventListener('DOMContentLoaded', function() {
+    startMeteors();
+});
+    // ===== 音乐控制 =====
+    document.addEventListener('DOMContentLoaded', function() {
+        // 歌名显示调大
+        var label = document.getElementById('musicLabel');
+        if (label) {
+            label.style.fontSize = '0.8rem';
+            label.style.color = 'rgba(255,255,255,0.5)';
+        }
+    });
+</script>
+
+</body>
+</html>
