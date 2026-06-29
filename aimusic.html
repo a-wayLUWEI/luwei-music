@@ -6,269 +6,416 @@
     <title>芦苇音乐 · AI音乐排行榜</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: linear-gradient(145deg, #1a3a2a 0%, #0e2a1f 100%);
-            font-family: system-ui, 'Segoe UI', sans-serif;
-            padding: 20px;
-            color: #e8e9f0;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .hero {
-            text-align: center;
-            padding: 30px 20px;
-            background: rgba(15, 40, 29, 0.6);
-            border-radius: 48px;
-            margin-bottom: 30px;
-            border: 1px solid #F2C94C;
-        }
-        .hero h1 {
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, #FFD966, #E69A2E);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .hero p {
-            margin-top: 8px;
-            opacity: 0.9;
-        }
-        /* 原上传区域默认隐藏，用悬浮按钮代替 */
-        .upload-section {
-            display: none;
-        }
-        .footer {
-            text-align: center;
-            font-size: 0.7rem;
-            margin-top: 40px;
-            color: #b8aa78;
-        }
-        audio {
-            width: 100%;
-            margin: 10px 0;
-            border-radius: 30px;
-        }
-        .rank-card {
-            background: rgba(31, 62, 46, 0.7);
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(2px);
-            transition: 0.2s;
-            border: 1px solid rgba(242, 201, 76, 0.3);
-        }
-        .rank-card:hover {
-            border-color: #F2C94C;
-        }
-        .rank-number {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #FFD966;
-        }
-        .song-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin: 10px 0 5px;
-        }
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .tab-btn {
-            background: rgba(31, 62, 46, 0.6);
-            border: 1px solid #F2C94C;
-            padding: 10px 16px;
-            border-radius: 40px;
-            cursor: pointer;
-            text-align: center;
-            flex: 1;
-            transition: 0.2s;
-            font-weight: 500;
-        }
-        .tab-btn.active {
-            background: #E69A2E;
-            color: #2D1E0C;
-            border-color: #E69A2E;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .action-btn {
-            background: transparent;
-            border: 1px solid #E69A2E;
-            padding: 6px 14px;
-            border-radius: 40px;
-            cursor: pointer;
-            margin-right: 10px;
-            width: auto;
-            color: #FFD966;
-            font-weight: normal;
-        }
-        .action-btn:hover {
-            background: #E69A2E;
-            color: #2D1E0C;
-        }
-        .demo-badge {
-            background: #E69A2E;
-            color: #2D1E0C;
-            font-size: 0.7rem;
-            padding: 2px 10px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-left: 8px;
-            font-weight: bold;
-        }
-        .loading-text {
-            text-align: center;
-            padding: 40px;
-            color: #FFD966;
-        }
-        /* ========== 悬浮上传按钮样式 ========== */
-        .floating-upload-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 20px;
-            background: #E69A2E;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 999;
-            transition: 0.2s;
-        }
-        .floating-upload-btn:hover {
-            transform: scale(1.05);
-            background: #FFB347;
-        }
-        .floating-upload-btn span {
-            font-size: 30px;
-            font-weight: bold;
-            color: #2D1E0C;
-        }
-        /* ========== 弹窗样式 ========== */
-        .upload-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .upload-modal.active {
-            display: flex;
-        }
-        .upload-modal-content {
-            background: #1a3a2a;
-            max-width: 500px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            border-radius: 28px;
-            padding: 20px;
-            border: 1px solid #F2C94C;
-            position: relative;
-        }
-        .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 32px;
-            cursor: pointer;
-            color: #F2C94C;
-            z-index: 10;
-        }
-        .close-modal:hover {
-            color: #E69A2E;
-        }
-        /* 弹窗内的表单样式 */
-        .upload-modal-content input,
-        .upload-modal-content select,
-        .upload-modal-content textarea {
-            width: 100%;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            border-radius: 40px;
-            border: 1px solid #F2C94C;
-            background: #2a4a3a;
-            color: #e8e9f0;
-            font-size: 0.95rem;
-            outline: none;
-        }
-        .upload-modal-content button {
-            background: #E69A2E;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-            color: #2D1E0C;
-        }
-        .upload-modal-content .promise-box {
-            background: rgba(230, 154, 46, 0.1);
-            padding: 16px;
-            border-radius: 16px;
-            margin: 16px 0;
-        }
-        .upload-modal-content h3 {
-            color: #FFD966;
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #2a2a4a, #1a3a2a, #2a2a4a, #1a1a2e);
+    background-size: 400% 400%;
+    color: #e8e9f0;
+    padding: 20px 20px 100px;
+    animation: bodyGradientFlow 12s ease-in-out infinite alternate;
+    min-height: 100vh;
+}
+
+@keyframes bodyGradientFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.container { max-width: 1000px; margin: 0 auto; }
+
+/* ===== Hero 区域 ===== */
+.hero {
+    text-align: center;
+    padding: 30px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 48px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(212, 184, 150, 0.15);
+    backdrop-filter: blur(10px);
+}
+.hero h1 {
+    font-size: 2rem;
+    background: linear-gradient(135deg, #d4b896, #f0e0c8, #b8a0c8, #d4b896);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: heroTitleFlow 6s ease-in-out infinite alternate;
+}
+@keyframes heroTitleFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+.hero p {
+    margin-top: 8px;
+    opacity: 0.5;
+    color: #d4b896;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+/* ===== Tab 按钮 ===== */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.tab-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(212, 184, 150, 0.15);
+    padding: 10px 16px;
+    border-radius: 40px;
+    cursor: pointer;
+    text-align: center;
+    flex: 1;
+    transition: 0.3s;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(4px);
+}
+.tab-btn:hover {
+    border-color: rgba(212, 184, 150, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+}
+.tab-btn.active {
+    background: linear-gradient(135deg, rgba(212, 184, 150, 0.2), rgba(184, 160, 200, 0.2));
+    color: #d4b896;
+    border-color: rgba(212, 184, 150, 0.4);
+    box-shadow: 0 0 30px rgba(212, 184, 150, 0.05);
+}
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
+/* ===== 排行榜卡片（参考 VIP 黑金卡风格） ===== */
+.rank-card {
+    position: relative;
+    background: linear-gradient(145deg, rgba(26, 26, 46, 0.7), rgba(42, 42, 74, 0.5), rgba(26, 58, 42, 0.6));
+    background-size: 300% 100%;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 184, 150, 0.08);
+    transition: 0.4s;
+    overflow: hidden;
+    animation: cardFlow 8s ease-in-out infinite alternate;
+}
+@keyframes cardFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+.rank-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212, 184, 150, 0.2), transparent);
+    opacity: 0;
+    transition: 0.4s;
+}
+.rank-card:hover {
+    border-color: rgba(212, 184, 150, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+}
+.rank-card:hover::before {
+    opacity: 1;
+}
+
+/* ===== 排名数字 ===== */
+.rank-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+}
+
+/* ===== 歌曲标题（渐变流动，参考 lwmusic） ===== */
+.song-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 8px 0 4px;
+    background: linear-gradient(90deg, 
+        #d4b896 0%, 
+        #f0e0c8 25%, 
+        #b8a0c8 50%, 
+        #f0e0c8 75%, 
+        #d4b896 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: titleFlow 6s ease-in-out infinite alternate;
+}
+@keyframes titleFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* ===== 歌手信息 ===== */
+.song-artist {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.9rem;
+}
+.song-artist span {
+    color: rgba(212, 184, 150, 0.5);
+}
+
+/* ===== Demo 标签 ===== */
+.demo-badge {
+    background: linear-gradient(135deg, rgba(212, 184, 150, 0.2), rgba(184, 160, 200, 0.2));
+    color: #d4b896;
+    font-size: 0.6rem;
+    padding: 2px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-left: 8px;
+    font-weight: 600;
+    border: 1px solid rgba(212, 184, 150, 0.15);
+    vertical-align: middle;
+}
+
+/* ===== 音频播放器 ===== */
+audio {
+    width: 100%;
+    margin: 10px 0;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.03);
+}
+audio::-webkit-media-controls-panel {
+    background: rgba(26, 26, 46, 0.6);
+}
+
+/* ===== 操作按钮 ===== */
+.action-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(212, 184, 150, 0.15);
+    padding: 6px 18px;
+    border-radius: 40px;
+    cursor: pointer;
+    margin-right: 10px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 400;
+    transition: 0.3s;
+    font-size: 0.85rem;
+}
+.action-btn:hover {
+    background: rgba(212, 184, 150, 0.1);
+    border-color: rgba(212, 184, 150, 0.3);
+    color: #d4b896;
+}
+
+/* ===== 创作信息 ===== */
+.extra-info {
+    font-size: 0.8rem;
+    opacity: 0.4;
+    margin: 5px 0;
+    color: #b8a0c8;
+}
+
+/* ===== 悬浮上传按钮 ===== */
+.floating-upload-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    background: linear-gradient(135deg, #d4b896, #b8a0c8);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 30px rgba(184, 160, 200, 0.3);
+    z-index: 999;
+    transition: 0.3s;
+}
+.floating-upload-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 50px rgba(184, 160, 200, 0.4);
+}
+.floating-upload-btn span {
+    font-size: 32px;
+    font-weight: 300;
+    color: #1a1a2e;
+}
+
+/* ===== 弹窗 ===== */
+.upload-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+.upload-modal.active {
+    display: flex;
+}
+.upload-modal-content {
+    background: linear-gradient(145deg, #1a1a2e, #2a2a4a);
+    max-width: 500px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    border-radius: 28px;
+    padding: 24px;
+    border: 1px solid rgba(212, 184, 150, 0.1);
+}
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 32px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.2);
+    z-index: 10;
+}
+.close-modal:hover {
+    color: rgba(212, 184, 150, 0.5);
+}
+.upload-modal-content input,
+.upload-modal-content select,
+.upload-modal-content textarea {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    border-radius: 40px;
+    border: 1px solid rgba(212, 184, 150, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: #e8e9f0;
+    font-size: 0.95rem;
+    outline: none;
+    transition: 0.3s;
+}
+.upload-modal-content input:focus,
+.upload-modal-content select:focus {
+    border-color: rgba(212, 184, 150, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+}
+.upload-modal-content button {
+    background: linear-gradient(135deg, #d4b896, #b8a0c8);
+    border: none;
+    padding: 14px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    color: #1a1a2e;
+    transition: 0.3s;
+}
+.upload-modal-content button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.upload-modal-content button:hover:not(:disabled) {
+    transform: scale(1.02);
+    box-shadow: 0 4px 30px rgba(184, 160, 200, 0.2);
+}
+.upload-modal-content .promise-box {
+    background: rgba(212, 184, 150, 0.05);
+    padding: 16px;
+    border-radius: 16px;
+    margin: 16px 0;
+}
+.upload-modal-content h3 {
+    color: #d4b896;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+.upload-progress {
+    display: none;
+    margin: 10px 0;
+}
+.upload-progress .progress-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 40px;
+    height: 4px;
+    overflow: hidden;
+}
+.upload-progress .progress-bar {
+    background: linear-gradient(90deg, #d4b896, #b8a0c8);
+    width: 0%;
+    height: 100%;
+    transition: width 0.3s;
+}
+.upload-progress .progress-text {
+    text-align: center;
+    margin-top: 8px;
+    color: rgba(212, 184, 150, 0.5);
+    font-size: 0.85rem;
+}
+.contact-note {
+    text-align: center;
+    margin-top: 12px;
+    color: rgba(255, 255, 255, 0.2);
+    font-size: 0.8rem;
+}
+.footer {
+    text-align: center;
+    font-size: 0.7rem;
+    margin-top: 40px;
+    color: rgba(255, 255, 255, 0.15);
+}
+.upload-section {
+    display: none;
+}
+
+/* 空状态 */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: rgba(255, 255, 255, 0.15);
+    font-size: 0.95rem;
+}
     </style>
 </head>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="checkAuth.js"></script>
 <div class="container">
     <div class="hero">
-        <h1> 芦苇音乐 · AI音乐排行榜</h1>
-        <p>上传你的音乐 · 点赞打榜 · 预留合作</p>
+        <h1>🎵 芦苇音乐 · AI音乐排行榜</h1>
+<p style="letter-spacing: 2px;">在芦苇深处，治愈自己的思念。</p >
     </div>
-    <!-- 四个榜单选项卡 -->
     <div class="tabs">
         <div class="tab-btn active" onclick="window.switchTab('ai', this)">🤖 纯AI作品榜</div>
         <div class="tab-btn" onclick="window.switchTab('hybrid', this)">🤝 人机共创榜</div>
         <div class="tab-btn" onclick="window.switchTab('original', this)">✍️ 原创作品榜</div>
-        <div class="tab-btn" onclick="window.switchTab('demo', this)"> Demo精选</div>
+        <div class="tab-btn" onclick="window.switchTab('demo', this)">Demo精选</div>
     </div>
-    <!-- 四个榜单容器 -->
-    <div id="tab-ai" class="tab-content active">
-        <div id="ai-list"></div>
-    </div>
-    <div id="tab-hybrid" class="tab-content">
-        <div id="hybrid-list"></div>
-    </div>
-    <div id="tab-original" class="tab-content">
-        <div id="original-list"></div>
-    </div>
-    <div id="tab-demo" class="tab-content">
-        <div id="demo-list"></div>
-    </div>
-    <!-- 原上传区域（隐藏，被克隆到弹窗中） -->
-    <div class="upload-section">
-        <h3> 上传你的作品</h3>
+    <div id="tab-ai" class="tab-content active"><div id="ai-list"></div></div>
+    <div id="tab-hybrid" class="tab-content"><div id="hybrid-list"></div></div>
+    <div id="tab-original" class="tab-content"><div id="original-list"></div></div>
+    <div id="tab-demo" class="tab-content"><div id="demo-list"></div></div>
+    
+    <!-- 隐藏的原始表单 -->
+    <div class="upload-section" id="originalForm">
+        <h3>上传你的作品</h3>
         <select id="category">
             <option value="ai">🤖 纯AI作品榜</option>
             <option value="hybrid">🤝 人机共创榜</option>
@@ -280,7 +427,7 @@
         <input type="file" id="audioFile" accept="audio/*">
         <input type="text" id="contactInfo" placeholder="联系方式（微信/邮箱）人机共创/原创必填">
         <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
-            <input type="checkbox" id="isDemo" style="width: 20px; margin: 0;">  标记为Demo版本（未正式发行）
+            <input type="checkbox" id="isDemo" style="width: 20px; margin: 0;"> 标记为Demo版本（未正式发行）
         </label>
         <div id="hybridFields" style="display: none;">
             <input type="text" id="melodyBy" placeholder="旋律创作 (你的艺名 / AI)">
@@ -289,370 +436,465 @@
         </div>
         <div class="promise-box">
             <label style="display: flex; align-items: center; gap: 8px;">
-                <input type="checkbox" id="promise" style="width: 18px; margin: 0;">  本人承诺信息真实有效，作品无版权争议，否则承担法律责任。
+                <input type="checkbox" id="promise" style="width: 18px; margin: 0;"> 本人承诺信息真实有效，作品无版权争议，否则承担法律责任。
             </label>
         </div>
-        <button id="submitBtn">✨ 提交审核 ✨</button>
-        <div class="contact-note" style="text-align: center; margin-top: 12px;">
-            ⭐ 审核通过后将在榜单展示，点赞越多排名越前
+        <!-- 进度条 -->
+        <div class="upload-progress" id="uploadProgress">
+            <div class="progress-track">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">⏳ 正在上传音频...</div>
         </div>
+        <button id="submitBtn">✨ 提交审核 ✨</button>
+        <div class="contact-note">⭐ 审核通过后将在榜单展示，点赞越多排名越前</div>
     </div>
-    <div class="footer">
-        © 芦苇音乐 · 侵权/合作请联系微信: jianjiayinyue
-    </div>
+    
+    <div class="footer">© 芦苇音乐 · 侵权/合作请联系微信: jianjiayinyue</div>
 </div>
+
 <!-- 悬浮按钮 -->
 <div class="floating-upload-btn" id="floatingUploadBtn">
     <span>+</span>
 </div>
+
 <!-- 弹窗 -->
 <div class="upload-modal" id="uploadModal">
     <div class="upload-modal-content">
         <span class="close-modal" id="closeModalBtn">&times;</span>
-        <div id="modalUploadForm">
-            <!-- 表单会被克隆到这里 -->
-        </div>
+        <div id="modalUploadForm"></div>
     </div>
 </div>
+
 <script>
-    // ==================== 1. Tab 切换函数 ====================
-    window.switchTab = function(tabId, btnElement) {
-        var allBtns = document.querySelectorAll('.tab-btn');
-        for (var i = 0; i < allBtns.length; i++) {
-            allBtns[i].classList.remove('active');
-        }
-        btnElement.classList.add('active');
-        var allContents = document.querySelectorAll('.tab-content');
-        for (var i = 0; i < allContents.length; i++) {
-            allContents[i].classList.remove('active');
-        }
-        var targetId = 'tab-' + tabId;
-        var targetContent = document.getElementById(targetId);
-        if (targetContent) {
-            targetContent.classList.add('active');
-        }
-    };
-// ==================== Supabase 配置 ====================
+// ==================== 1. Supabase 初始化 ====================
 const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
 
-// 创建 Supabase 客户端（兼容多种加载方式）
 let supabaseClient = null;
+let isSupabaseReady = false;
 
-// 方法1：直接使用全局 supabase
-if (typeof supabase !== 'undefined' && supabase.createClient) {
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log('✅ Supabase 客户端已创建 (全局 supabase)');
-}
-// 方法2：使用 window.supabase
-else if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log('✅ Supabase 客户端已创建 (window.supabase)');
-}
-// 方法3：手动加载（备用）
-else {
-    console.warn('⚠️ Supabase 未加载，尝试动态加载...');
-    // 如果还没加载，尝试用 script 加载
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-    script.onload = function() {
-        if (typeof supabase !== 'undefined') {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('✅ Supabase 客户端已创建 (动态加载)');
-            loadSongs(); // 重新加载
-        }
-    };
-    script.onerror = function() {
-        console.error('❌ Supabase 加载失败，请检查网络');
-        // 使用备用空对象防止页面崩溃
-        supabaseClient = createFallbackClient();
-    };
-    document.head.appendChild(script);
-}
-
-// 如果 supabaseClient 仍然为 null，使用备用
-if (!supabaseClient) {
-    supabaseClient = createFallbackClient();
-}
-
-function createFallbackClient() {
-    console.warn('⚠️ 使用备用 Supabase 客户端（仅演示）');
-    return {
-        from: function(table) {
-            return {
-                select: function() {
-                    return {
-                        eq: function() {
-                            return Promise.resolve({ data: [], error: null });
-                        }
-                    };
-                },
-                insert: function() {
-                    return Promise.resolve({ error: null });
-                },
-                update: function() {
-                    return {
-                        eq: function() {
-                            return Promise.resolve({ error: null });
-                        }
-                    };
-                }
-            };
-        },
-        storage: {
-            from: function() {
-                return {
-                    upload: function() {
-                        return Promise.resolve({ error: null });
-                    },
-                    getPublicUrl: function() {
-                        return { publicUrl: '' };
-                    }
-                };
-            }
-        }
-    };
-}
-
-let allSongs = { ai: [], hybrid: [], original: [] };
-
-    // ==================== 3. 加载和渲染 ====================
-async function loadSongs() {
-    // 检查 supabaseClient 是否可用
-    if (!supabaseClient || !supabaseClient.from) {
-        console.error('❌ supabaseClient 不可用，请刷新页面');
-        for (let cat of ['ai', 'hybrid', 'original']) {
-            const container = document.getElementById(`${cat}-list`);
-            if (container) {
-                container.innerHTML = '<div class="rank-card" style="text-align:center;">⚠️ 数据库连接失败，请刷新页面重试</div>';
-            }
-        }
-        return;
-    }
-
-    for (let cat of ['ai', 'hybrid', 'original']) {
-        try {
-            const { data, error } = await supabaseClient
-                .from('songs')
-                .select('*')
-                .eq('category', cat)
-                .eq('status', 'active');
-            if (error) {
-                console.error('加载失败:', error);
-                allSongs[cat] = [];
-            } else {
-                allSongs[cat] = data || [];
-            }
-        } catch(e) {
-            console.error('加载异常:', e);
-            allSongs[cat] = [];
-        }
-    }
-    renderAll();
-}
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-    function renderAll() {
-        for (let cat of ['ai', 'hybrid', 'original']) {
-            const container = document.getElementById(`${cat}-list`);
-            if (!container) continue;
-            const songs = allSongs[cat] || [];
-            songs.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-            if (songs.length === 0) {
-                container.innerHTML = '<div class="rank-card" style="text-align:center;">✨ 暂无作品，快来上传第一首吧 ✨</div>';
-                continue;
-            }
-            container.innerHTML = songs.map((s, idx) => {
-                let extraInfo = '';
-                if (cat === 'hybrid' || cat === 'original') {
-                    const parts = [];
-                    if (s.melody_by) parts.push(` 旋律: ${escapeHtml(s.melody_by)}`);
-                    if (s.lyrics_by) parts.push(` 词: ${escapeHtml(s.lyrics_by)}`);
-                    if (s.arrangement_by) parts.push(` 编曲: ${escapeHtml(s.arrangement_by)}`);
-                    if (parts.length) extraInfo = `<div style="font-size:0.8rem; opacity:0.8; margin: 5px 0;">${parts.join(' · ')}</div>`;
-                }
-                const demoBadge = s.is_demo ? '<span class="demo-badge">Demo</span>' : '';
-                return `
-                    <div class="rank-card">
-                        <div class="rank-number">#${idx + 1}</div>
-                        <div class="song-title">${escapeHtml(s.title)} ${demoBadge}</div>
-                        <div> ${escapeHtml(s.artist)} | ${s.genre || '未分类'} |  ${s.likes || 0} 票</div>
-                        ${extraInfo}
-                        ${s.audio_url ? `<audio controls src="${s.audio_url}" preload="metadata"></audio>` : '<div style="color:#ffaa66;">⚠️ 音频链接失效</div>'}
-                        <div style="margin-top: 12px;">
-                            <button class="action-btn" onclick="window.likeSong('${s.id}', '${cat}')"> 点赞</button>
-                            <button class="action-btn" onclick="window.interest('${escapeHtml(s.title)}', '${escapeHtml(s.artist)}')"> 预留/合作</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-        const demos = [
-            ...(allSongs.hybrid || []),
-            ...(allSongs.original || [])
-        ].filter(s => s.is_demo === true);
-        demos.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-        const demoContainer = document.getElementById('demo-list');
-        if (demoContainer) {
-            if (demos.length === 0) {
-                demoContainer.innerHTML = '<div class="rank-card" style="text-align:center;"> 暂无Demo作品，标记Demo版本会在这里出现~</div>';
-            } else {
-                demoContainer.innerHTML = demos.map((s, idx) => {
-                    let catLabel = s.category === 'hybrid' ? '🤝人机共创' : '✍️原创';
-                    return `
-                        <div class="rank-card">
-                            <div class="rank-number">#${idx + 1}</div>
-                            <div class="song-title">${escapeHtml(s.title)} <span class="demo-badge">Demo</span></div>
-                            <div> ${escapeHtml(s.artist)} | ${catLabel} |  ${s.likes || 0} 票</div>
-                            ${s.audio_url ? `<audio controls src="${s.audio_url}" preload="metadata"></audio>` : ''}
-                            <div style="margin-top: 12px;">
-                                <button class="action-btn" onclick="window.likeSong('${s.id}', '${s.category}')"> 点赞</button>
-                                <button class="action-btn" onclick="window.interest('${escapeHtml(s.title)}', '${escapeHtml(s.artist)}')"> 预留/合作</button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-        }
-    }
-    window.likeSong = async (id, cat) => {
-        const song = allSongs[cat]?.find(s => s.id === id);
-        if (!song) return;
-        const newLikes = (song.likes || 0) + 1;
-        await supabaseClient.from('songs').update({ likes: newLikes }).eq('id', id);
-        song.likes = newLikes;
-        renderAll();
-    };
-    window.interest = (title, artist) => {
-        alert(` 对《${title}》- ${artist} 感兴趣？\n 请添加芦苇老师微信：jianjiayinyue 协助对接版权/演出/发行。`);
-    };
-    // ==================== 4. 悬浮弹窗逻辑 ====================
-    function initFloatingButton() {
-        const floatingBtn = document.getElementById('floatingUploadBtn');
-        const modal = document.getElementById('uploadModal');
-        const closeBtn = document.getElementById('closeModalBtn');
-        if (!floatingBtn || !modal) {
-            console.error('找不到悬浮按钮或弹窗');
+function initSupabase() {
+    return new Promise((resolve, reject) => {
+        if (isSupabaseReady && supabaseClient) {
+            resolve(supabaseClient);
             return;
         }
-        // 打开弹窗
-        floatingBtn.onclick = function() {
-            modal.classList.add('active');
-        };
-        // 关闭弹窗（X按钮）
-        if (closeBtn) {
-            closeBtn.onclick = function() {
-                modal.classList.remove('active');
-            };
+        if (typeof supabase !== 'undefined' && supabase.createClient) {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            isSupabaseReady = true;
+            console.log('✅ Supabase 客户端已初始化');
+            resolve(supabaseClient);
+            return;
         }
-        // 点击遮罩关闭
-        modal.onclick = function(e) {
-            if (e.target === modal) {
-                modal.classList.remove('active');
+        if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            isSupabaseReady = true;
+            console.log('✅ Supabase 客户端已初始化 (window)');
+            resolve(supabaseClient);
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        script.onload = function() {
+            if (typeof supabase !== 'undefined') {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                isSupabaseReady = true;
+                console.log('✅ Supabase 客户端已初始化 (动态加载)');
+                resolve(supabaseClient);
+            } else {
+                reject(new Error('Supabase 加载失败'));
             }
         };
-        // 把原表单克隆到弹窗里
-        const originalForm = document.querySelector('.upload-section');
-        const modalFormContainer = document.getElementById('modalUploadForm');
-        if (originalForm && modalFormContainer) {
-            const clone = originalForm.cloneNode(true);
-            clone.style.display = 'block';
-            modalFormContainer.innerHTML = '';
-            modalFormContainer.appendChild(clone);
-            // 重新绑定弹窗内表单的提交事件和联动逻辑
-            rebindModalFormEvents(modalFormContainer, modal);
-        }
+        script.onerror = function() {
+            reject(new Error('Supabase CDN 加载失败'));
+        };
+        document.head.appendChild(script);
+    });
+}
+
+async function ensureSupabase() {
+    if (isSupabaseReady && supabaseClient) {
+        return supabaseClient;
     }
-    function rebindModalFormEvents(container, modal) {
-        // 重新绑定分类切换显示字段
-        const categorySelect = container.querySelector('#category');
-        const hybridFields = container.querySelector('#hybridFields');
-        if (categorySelect && hybridFields) {
-            function toggleFields() {
-                hybridFields.style.display = (categorySelect.value === 'hybrid' || categorySelect.value === 'original') ? 'block' : 'none';
+    return await initSupabase();
+}
+
+// ==================== 2. Tab 切换 ====================
+window.switchTab = function(tabId, btnElement) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+};
+
+// ==================== 3. 数据管理 ====================
+let allSongs = { ai: [], hybrid: [], original: [] };
+
+async function loadSongs(retryCount = 0) {
+    try {
+        const client = await ensureSupabase();
+        for (let cat of ['ai', 'hybrid', 'original']) {
+            try {
+                const { data, error } = await client
+                    .from('songs')
+                    .select('*')
+                    .eq('category', cat)
+                    .eq('status', 'active');
+                if (error) {
+                    console.error('加载失败:', error);
+                    allSongs[cat] = [];
+                } else {
+                    allSongs[cat] = data || [];
+                }
+            } catch(e) {
+                console.error('加载异常:', e);
+                allSongs[cat] = [];
             }
-            categorySelect.addEventListener('change', toggleFields);
-            toggleFields();
         }
-        // 重新绑定提交按钮
-        const submitBtn = container.querySelector('#submitBtn');
-        if (submitBtn) {
-            submitBtn.onclick = async function() {
-                // 从弹窗内获取数据
-                const category = container.querySelector('#category').value;
-                const artist = container.querySelector('#artistName').value.trim();
-                const title = container.querySelector('#songTitle').value.trim();
-                const audioFile = container.querySelector('#audioFile').files[0];
-                const genre = container.querySelector('#genre').value.trim();
-                const contactInfo = container.querySelector('#contactInfo').value.trim();
-                const isDemoChecked = container.querySelector('#isDemo').checked;
-                const promiseChecked = container.querySelector('#promise').checked;
-                if (!artist) { alert('请填写艺名'); return; }
-                if (!title) { alert('请填写歌名'); return; }
-                if (!audioFile) { alert('请选择音频文件'); return; }
-                if (!promiseChecked) { alert('请勾选承诺书'); return; }
-                if ((category === 'hybrid' || category === 'original') && !contactInfo) {
-                    alert('人机共创榜 / 原创作品榜 必须填写联系方式');
-                    return;
+        renderAll();
+    } catch (error) {
+        console.error('❌ 加载榜单失败:', error);
+        if (retryCount < 3) {
+            console.log('⏳ 重试加载... (' + (retryCount + 1) + '/3)');
+            setTimeout(() => loadSongs(retryCount + 1), 1000);
+        } else {
+            for (let cat of ['ai', 'hybrid', 'original']) {
+                const container = document.getElementById(cat + '-list');
+                if (container) {
+                    container.innerHTML = '<div class="rank-card" style="text-align:center; color:rgba(255,255,255,0.2);">⚠️ 数据库连接失败，请刷新页面重试</div>';
                 }
-                const fileExt = audioFile.name.split('.').pop();
-                const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-                const { error: uploadError } = await supabaseClient.storage.from('audio').upload(fileName, audioFile);
-                if (uploadError) {
-                    alert('音频上传失败: ' + uploadError.message);
-                    return;
-                }
-                const { data: publicUrlData } = supabaseClient.storage.from('audio').getPublicUrl(fileName);
-                const audioUrl = publicUrlData.publicUrl;
-                const newSong = {
-                    id: Date.now().toString() + '_' + Math.random().toString(36).substring(2, 6),
-                    category: category,
-                    title: title,
-                    artist: artist,
-                    genre: genre || '未分类',
-                    audio_url: audioUrl,
-                    contact: contactInfo || '',
-                    is_demo: isDemoChecked,
-                    likes: 0,
-                    status: 'pending',
-                    melody_by: container.querySelector('#melodyBy')?.value || '',
-                    lyrics_by: container.querySelector('#lyricsBy')?.value || '',
-                    arrangement_by: container.querySelector('#arrangementBy')?.value || ''
-                };
-                const { error: insertError } = await supabaseClient.from('songs').insert([newSong]);
-                if (insertError) {
-                    alert('提交失败: ' + insertError.message);
-                    return;
-                }
-                alert('✅ 提交成功！审核通过后会立刻展示在对应榜单。');
-                // 清空弹窗内的表单
-                container.querySelector('#artistName').value = '';
-                container.querySelector('#songTitle').value = '';
-                container.querySelector('#genre').value = '';
-                container.querySelector('#audioFile').value = '';
-                container.querySelector('#contactInfo').value = '';
-                container.querySelector('#isDemo').checked = false;
-                if (container.querySelector('#melodyBy')) container.querySelector('#melodyBy').value = '';
-                if (container.querySelector('#lyricsBy')) container.querySelector('#lyricsBy').value = '';
-                if (container.querySelector('#arrangementBy')) container.querySelector('#arrangementBy').value = '';
-                container.querySelector('#promise').checked = false;
-                // 关闭弹窗并刷新榜单
-                modal.classList.remove('active');
-                await loadSongs();
-            };
+            }
         }
     }
-    // ==================== 5. 启动 ====================
-    loadSongs();
-    initFloatingButton();
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+function renderAll() {
+    for (let cat of ['ai', 'hybrid', 'original']) {
+        const container = document.getElementById(cat + '-list');
+        if (!container) continue;
+        const songs = allSongs[cat] || [];
+        songs.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+        if (songs.length === 0) {
+            container.innerHTML = '<div class="rank-card" style="text-align:center; color:rgba(255,255,255,0.15);">✨ 暂无作品，快来上传第一首吧 ✨</div>';
+            continue;
+        }
+        container.innerHTML = songs.map((s, idx) => {
+            let extraInfo = '';
+            if (cat === 'hybrid' || cat === 'original') {
+                const parts = [];
+                if (s.melody_by) parts.push('旋律: ' + escapeHtml(s.melody_by));
+                if (s.lyrics_by) parts.push('词: ' + escapeHtml(s.lyrics_by));
+                if (s.arrangement_by) parts.push('编曲: ' + escapeHtml(s.arrangement_by));
+                if (parts.length) extraInfo = '<div class="extra-info">' + parts.join(' · ') + '</div>';
+            }
+            const demoBadge = s.is_demo ? '<span class="demo-badge">Demo</span>' : '';
+            return '<div class="rank-card">' +
+                '<div class="rank-number">#' + (idx + 1) + '</div>' +
+                '<div class="song-title">' + escapeHtml(s.title) + ' ' + demoBadge + '</div>' +
+                '<div class="song-artist">' + escapeHtml(s.artist) + ' <span>·</span> ' + (s.genre || '未分类') + ' <span>·</span> ' + (s.likes || 0) + ' 票</div>' +
+                extraInfo +
+                (s.audio_url ? '<audio controls src="' + s.audio_url + '" preload="metadata"></audio>' : '<div style="color:rgba(255,255,255,0.2);font-size:0.8rem;">⚠️ 音频链接失效</div>') +
+                '<div style="margin-top: 12px;">' +
+                '<button class="action-btn" onclick="window.likeSong(\'' + s.id + '\', \'' + cat + '\')">❤️ 点赞</button>' +
+                '<button class="action-btn" onclick="window.interest(\'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')"> 预留/合作</button>' +
+                '</div></div>';
+        }).join('');
+    }
+    renderDemo();
+}
+
+function renderDemo() {
+    const demos = [
+        ...(allSongs.hybrid || []),
+        ...(allSongs.original || [])
+    ].filter(s => s.is_demo === true);
+    demos.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+    const demoContainer = document.getElementById('demo-list');
+    if (demoContainer) {
+        if (demos.length === 0) {
+            demoContainer.innerHTML = '<div class="rank-card" style="text-align:center; color:rgba(255,255,255,0.15);"> 暂无Demo作品，标记Demo版本会在这里出现~</div>';
+        } else {
+            demoContainer.innerHTML = demos.map((s, idx) => {
+                let catLabel = s.category === 'hybrid' ? '🤝人机共创' : '✍️原创';
+                return '<div class="rank-card">' +
+                    '<div class="rank-number">#' + (idx + 1) + '</div>' +
+                    '<div class="song-title">' + escapeHtml(s.title) + ' <span class="demo-badge">Demo</span></div>' +
+                    '<div class="song-artist">' + escapeHtml(s.artist) + ' <span>·</span> ' + catLabel + ' <span>·</span> ' + (s.likes || 0) + ' 票</div>' +
+                    (s.audio_url ? '<audio controls src="' + s.audio_url + '" preload="metadata"></audio>' : '') +
+                    '<div style="margin-top: 12px;">' +
+                    '<button class="action-btn" onclick="window.likeSong(\'' + s.id + '\', \'' + s.category + '\')">❤️ 点赞</button>' +
+                    '<button class="action-btn" onclick="window.interest(\'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')"> 预留/合作</button>' +
+                    '</div></div>';
+            }).join('');
+        }
+    }
+}
+
+// ==================== 4. 点赞功能（防刷） ====================
+window.likeSong = async (id, cat) => {
+    const song = allSongs[cat]?.find(s => s.id === id);
+    if (!song) return;
+    
+    let userId = localStorage.getItem('userId');
+    if (!userId) {
+        userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+        localStorage.setItem('userId', userId);
+    }
+    
+    try {
+        const client = await ensureSupabase();
+        const { data: existing } = await client
+            .from('likes')
+            .select('*')
+            .eq('work_id', id)
+            .eq('user_id', userId);
+        
+        if (existing && existing.length > 0) {
+            alert('⏰ 你已经点过赞啦！每首歌只能点赞一次哦~');
+            return;
+        }
+        
+        await client.from('likes').insert([{ user_id: userId, work_id: id }]);
+        
+        const newLikes = (song.likes || 0) + 1;
+        await client.from('songs').update({ likes: newLikes }).eq('id', id);
+        song.likes = newLikes;
+        renderAll();
+        console.log('❤️ 点赞成功！');
+    } catch (e) {
+        console.error('点赞失败:', e);
+        alert('点赞失败，请稍后重试');
+    }
+};
+
+window.interest = (title, artist) => {
+    alert('对《' + title + '》- ' + artist + ' 感兴趣？\n请添加芦苇老师微信：jianjiayinyue 协助对接版权/演出/发行。');
+};
+
+// ==================== 5. 上传功能 ====================
+async function handleUpload(container, modal) {
+    if (!container) {
+        console.error('❌ container 为空');
+        alert('页面加载异常，请刷新重试');
+        return;
+    }
+    
+    const submitBtn = container.querySelector('#submitBtn');
+    if (!submitBtn) {
+        console.error('❌ 找不到提交按钮');
+        alert('页面加载异常，请刷新重试');
+        return;
+    }
+    
+    const category = container.querySelector('#category')?.value || 'ai';
+    const artist = container.querySelector('#artistName')?.value?.trim() || '';
+    const title = container.querySelector('#songTitle')?.value?.trim() || '';
+    const audioFile = container.querySelector('#audioFile')?.files?.[0];
+    const genre = container.querySelector('#genre')?.value?.trim() || '';
+    const contactInfo = container.querySelector('#contactInfo')?.value?.trim() || '';
+    const isDemoChecked = container.querySelector('#isDemo')?.checked || false;
+    const promiseChecked = container.querySelector('#promise')?.checked || false;
+    
+    if (!artist) { alert('请填写艺名'); return; }
+    if (!title) { alert('请填写歌名'); return; }
+    if (!audioFile) { alert('请选择音频文件'); return; }
+    if (!promiseChecked) { alert('请勾选承诺书'); return; }
+    if ((category === 'hybrid' || category === 'original') && !contactInfo) {
+        alert('人机共创榜 / 原创作品榜 必须填写联系方式');
+        return;
+    }
+    
+    const progressDiv = container.querySelector('#uploadProgress');
+    const progressBar = container.querySelector('#progressBar');
+    const progressText = container.querySelector('#progressText');
+    const originalText = submitBtn.textContent;
+    
+    if (progressDiv) progressDiv.style.display = 'block';
+    if (progressBar) progressBar.style.width = '0%';
+    if (progressText) progressText.textContent = '⏳ 准备上传...';
+    submitBtn.textContent = '⏳ 上传中...';
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.6';
+    
+    try {
+        const client = await ensureSupabase();
+        
+        if (progressBar) progressBar.style.width = '20%';
+        if (progressText) progressText.textContent = '⏳ 正在上传音频... 20%';
+        
+        const fileExt = audioFile.name.split('.').pop();
+        const fileName = Date.now() + '_' + Math.random().toString(36).substring(2, 8) + '.' + fileExt;
+        
+        const { error: uploadError } = await client.storage.from('audio').upload(fileName, audioFile);
+        if (uploadError) {
+            alert('音频上传失败: ' + uploadError.message);
+            resetBtn();
+            return;
+        }
+        
+        if (progressBar) progressBar.style.width = '60%';
+        if (progressText) progressText.textContent = '⏳ 正在保存歌曲信息... 60%';
+        
+        const { data: publicUrlData } = client.storage.from('audio').getPublicUrl(fileName);
+        const audioUrl = publicUrlData.publicUrl;
+        
+        const newSong = {
+            id: Date.now().toString() + '_' + Math.random().toString(36).substring(2, 6),
+            category: category,
+            title: title,
+            artist: artist,
+            genre: genre || '未分类',
+            audio_url: audioUrl,
+            contact: contactInfo || '',
+            is_demo: isDemoChecked,
+            likes: 0,
+            status: 'pending',
+            melody_by: container.querySelector('#melodyBy')?.value || '',
+            lyrics_by: container.querySelector('#lyricsBy')?.value || '',
+            arrangement_by: container.querySelector('#arrangementBy')?.value || ''
+        };
+        
+        if (progressBar) progressBar.style.width = '80%';
+        if (progressText) progressText.textContent = '⏳ 正在提交审核... 80%';
+        
+        const { error: insertError } = await client.from('songs').insert([newSong]);
+        if (insertError) {
+            alert('提交失败: ' + insertError.message);
+            resetBtn();
+            return;
+        }
+        
+        if (progressBar) progressBar.style.width = '100%';
+        if (progressText) {
+            progressText.textContent = '✅ 提交成功！';
+            progressText.style.color = '#4CAF50';
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        alert('✅ 提交成功！审核通过后会立刻展示在对应榜单。');
+        
+        container.querySelector('#artistName').value = '';
+        container.querySelector('#songTitle').value = '';
+        container.querySelector('#genre').value = '';
+        container.querySelector('#audioFile').value = '';
+        container.querySelector('#contactInfo').value = '';
+        container.querySelector('#isDemo').checked = false;
+        if (container.querySelector('#melodyBy')) container.querySelector('#melodyBy').value = '';
+        if (container.querySelector('#lyricsBy')) container.querySelector('#lyricsBy').value = '';
+        if (container.querySelector('#arrangementBy')) container.querySelector('#arrangementBy').value = '';
+        container.querySelector('#promise').checked = false;
+        
+        modal.classList.remove('active');
+        resetBtn();
+        await loadSongs();
+        
+    } catch (error) {
+        console.error('上传失败:', error);
+        alert('上传失败，请检查网络后重试');
+        resetBtn();
+    }
+    
+    function resetBtn() {
+        submitBtn.textContent = originalText || '✨ 提交审核 ✨';
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        if (progressDiv) {
+            setTimeout(() => {
+                progressDiv.style.display = 'none';
+                if (progressBar) progressBar.style.width = '0%';
+                if (progressText) {
+                    progressText.textContent = '⏳ 正在上传音频...';
+                    progressText.style.color = '#FFD966';
+                }
+            }, 2000);
+        }
+    }
+}
+
+// ==================== 6. 弹窗逻辑 ====================
+function setupModalForm(modal) {
+    const originalForm = document.getElementById('originalForm');
+    const modalFormContainer = document.getElementById('modalUploadForm');
+    
+    if (!originalForm || !modalFormContainer) {
+        console.error('找不到表单元素');
+        return;
+    }
+    
+    const clone = originalForm.cloneNode(true);
+    clone.style.display = 'block';
+    modalFormContainer.innerHTML = '';
+    modalFormContainer.appendChild(clone);
+    
+    const categorySelect = clone.querySelector('#category');
+    const hybridFields = clone.querySelector('#hybridFields');
+    if (categorySelect && hybridFields) {
+        categorySelect.onchange = function() {
+            hybridFields.style.display = (this.value === 'hybrid' || this.value === 'original') ? 'block' : 'none';
+        };
+        hybridFields.style.display = (categorySelect.value === 'hybrid' || categorySelect.value === 'original') ? 'block' : 'none';
+    }
+    
+    const submitBtn = clone.querySelector('#submitBtn');
+    if (submitBtn) {
+        submitBtn.onclick = function(e) {
+            e.preventDefault();
+            handleUpload(clone, modal);
+        };
+    }
+}
+
+function initFloatingButton() {
+    const floatingBtn = document.getElementById('floatingUploadBtn');
+    const modal = document.getElementById('uploadModal');
+    const closeBtn = document.getElementById('closeModalBtn');
+    
+    if (!floatingBtn || !modal) {
+        console.error('找不到悬浮按钮或弹窗');
+        return;
+    }
+    
+    floatingBtn.onclick = function() {
+        modal.classList.add('active');
+        setupModalForm(modal);
+    };
+    
+    if (closeBtn) {
+        closeBtn.onclick = function() {
+            modal.classList.remove('active');
+        };
+    }
+    
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    };
+}
+
+// ==================== 7. 启动 ====================
+(async function init() {
+    try {
+        await initSupabase();
+        await loadSongs();
+        initFloatingButton();
+        console.log('✅ 页面初始化完成');
+    } catch (error) {
+        console.error('❌ 初始化失败:', error);
+    }
+})();
 </script>
 </body>
 </html>
-
