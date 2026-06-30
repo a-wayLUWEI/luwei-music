@@ -393,7 +393,21 @@
     <div class="top-right">
         <span class="icon-btn" onclick="openMyBottlesAndSwitch('received')" title="漂流瓶" style="position:relative;">
     🧴
-    <span id="bottleBadge" style="...">0</span>
+    <span id="bottleBadge" style="
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ff3b3b;
+    color: white;
+    border-radius: 50%;
+    padding: 1px 6px;
+    font-size: 0.6rem;
+    font-weight: bold;
+    display: none;
+    min-width: 18px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(255, 59, 59, 0.3);
+">0</span>
 </span>
         <a href="xuyuanchi.html">✨ 许愿池</a>
         <a href="youjiyuanwang.html"> 月光邮局</a>
@@ -462,6 +476,28 @@
         <button onclick="toggleMusic()" id="musicBtn" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:1rem;cursor:pointer;">▶</button>
         <button onclick="nextSong()" id="nextBtn" style="background:none;border:none;color:rgba(255,255,255,0.2);font-size:0.7rem;cursor:pointer;">⏭</button>
     </div>
+
+<!-- ===== 捞瓶子按钮（左下角） ===== -->
+<button onclick="fetchBottle()" style="
+    position: fixed;
+    bottom: 20px;
+    left: 24px;
+    z-index: 999;
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 40px;
+    padding: 10px 22px;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: inherit;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+" onmouseover="this.style.background='rgba(255,255,255,0.06)';this.style.color='rgba(255,255,255,0.6)';this.style.borderColor='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='rgba(255,255,255,0.3)';this.style.borderColor='rgba(255,255,255,0.06)'">
+    🌊 捞一个瓶子
+</button>
 
     <script src="music.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -763,7 +799,7 @@ ctx.restore();
 
             // ===== 15个瓶子不规则飘动 =====
             const bottleTime4 = Date.now() * 0.0003;
-            const bottleEmojis = ['🧴', '🧴', '🧴', '🧴', '🧴', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾'];
+            const bottleEmojis = ['🧴', '🧴', '🧴', '🧴', '🧴', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾', '🧴'];
             for (let i = 0; i < 15; i++) {
                 const emoji = bottleEmojis[i % bottleEmojis.length];
                 const phase = i * 2.1 + 0.5;
@@ -965,9 +1001,34 @@ for (let i = 0; i < 10; i++) {
             }
 
             document.getElementById('wishContent').value = '';
-            document.getElementById('recipientName').value = '';
-            closeWriteModal();
-            showToast(' 瓶子已扔进星海！它会在星海里漂流，等待有缘人捞起。');
+document.getElementById('recipientName').value = '';
+closeWriteModal();
+
+// ===== 水波纹闪光 =====
+const flash = document.createElement('div');
+flash.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    background: radial-gradient(ellipse at 50% 70%, rgba(180, 210, 255, 0.15), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+`;
+document.body.appendChild(flash);
+
+requestAnimationFrame(() => {
+    flash.style.opacity = '1';
+    setTimeout(() => {
+        flash.style.opacity = '0';
+        setTimeout(() => flash.remove(), 400);
+    }, 400);
+});
+
+showToast(' 瓶子已扔进星海！它会在星海里漂流，等待有缘人捞起。');
         }
 
         // ============================================================
@@ -1062,7 +1123,7 @@ for (let i = 0; i < 10; i++) {
                 list.innerHTML = `
                     <div style="text-align:center;padding:40px 0;color:rgba(255,255,255,0.3);">
                         <div style="font-size:3rem;opacity:0.2;">🧴</div>
-                        <div style="font-size:0.85rem;letter-spacing:2px;margin-top:8px;">你还没有扔过瓶子</div>
+                        <div style="font-size:0.65rem;color:rgba(255,255,255,0.06);margin-top:4px;">去写一封告白吧，会有人捞到的</div>
                     </div>
                 `;
             } else {
@@ -1247,8 +1308,8 @@ async function loadBottleInbox() {
     if (data.length === 0) {
         list.innerHTML = `<div style="text-align:center;padding:40px 0;color:rgba(255,255,255,0.15);">
             <div style="font-size:3rem;opacity:0.2;">🧴</div>
-            <div style="font-size:0.85rem;letter-spacing:2px;">还没有人捞到你的瓶子</div>
-            <div style="font-size:0.65rem;color:rgba(255,255,255,0.06);margin-top:4px;">瓶子还在星海里漂流</div>
+            <div style="font-size:0.85rem;letter-spacing:2px;">还没有漂来陌生人的瓶子</div>
+            <div style="font-size:0.65rem;color:rgba(255,255,255,0.06);margin-top:4px;">星海里暂时没有漂来的瓶子</div>
         </div>`;
     } else {
         list.innerHTML = data.map(w => {
