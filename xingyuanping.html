@@ -1032,7 +1032,7 @@ if (users && users.length > 0) {
 }
             const { error } = await supabase.from('wishes').insert({
                 sender_id: userId,
-                receiver_id: receiverID,
+                receiver_id: receiverId,
                 content: fullContent,
                 is_reply: false,
                 is_public: true,
