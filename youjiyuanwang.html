@@ -902,6 +902,7 @@ async function recycleWish() {
         .select('id, content, sender_id, anonymous_name')
         .eq('is_public', true)
         .eq('is_reply', false)
+        .eq('type', 'wish')
         .is('reply_to_id', null)
         .neq('sender_id', userId)
         .order('created_at', { ascending: false })
@@ -954,6 +955,7 @@ async function openWishBox() {
         .select('id, content, anonymous_name, created_at, is_read, sender_id')
         .eq('receiver_id', userId)
         .eq('is_reply', false)
+        .eq('type', 'wish')
         .order('created_at', { ascending: false });
 
     if (error) { alert('加载失败'); return; }
@@ -1112,6 +1114,7 @@ async function checkWishBox() {
         .eq('receiver_id', userId)
         .eq('is_read', false)
         .eq('is_reply', false);
+        .eq('type', 'wish')
 
     if (error) {
         console.log('❌ 查询失败:', error);
