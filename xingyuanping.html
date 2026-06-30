@@ -1018,10 +1018,21 @@ for (let i = 0; i < 10; i++) {
             const recipient = document.getElementById('recipientName').value.trim() || '随缘漂向任何人';
 
             const fullContent = ` 收件人：${recipient}\n 寄件人：${sender}\n\n${content}`;
+// 随机选一个其他用户
+let receiverId = null;
+const { data: users } = await supabase
+    .from('user_profiles')
+    .select('id')
+    .neq('id', userId)
+    .limit(100);
 
+if (users && users.length > 0) {
+    const randomUser = users[Math.floor(Math.random() * users.length)];
+    receiverId = randomUser.id;
+}
             const { error } = await supabase.from('wishes').insert({
                 sender_id: userId,
-                receiver_id: null,
+                receiver_id: receiverID,
                 content: fullContent,
                 is_reply: false,
                 is_public: true,
