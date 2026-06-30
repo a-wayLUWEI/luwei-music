@@ -13,19 +13,38 @@
 }
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #1a1a2e, #2a2a4a, #1a3a2a, #2a2a4a, #1a1a2e);
-    background-size: 400% 400%;
+    background: linear-gradient(
+        135deg,
+        #050505 0%,
+        #0a0a0a 12%,
+        #111111 24%,
+        #1a1a1a 36%,
+        #1a1a3a 46%,
+        #4a4a8a 52%,
+        #6a5a9a 56%,
+        #4a4a8a 60%,
+        #1a1a3a 66%,
+        #1a1a1a 74%,
+        #2a2a2a 82%,
+        #4a4a4a 88%,
+        #2a2a2a 94%,
+        #1a1a1a 100%
+    );
+    background-size: 600% 600%;
     color: #e8e9f0;
     padding: 20px 20px 100px;
-    animation: bodyGradientFlow 12s ease-in-out infinite alternate;
+    animation: bodyGradientFlow 14s ease-in-out infinite alternate;
     min-height: 100vh;
 }
 
 @keyframes bodyGradientFlow {
     0% { background-position: 0% 50%; }
-    25% { background-position: 25% 50%; }
-    50% { background-position: 50% 50%; }
-    75% { background-position: 75% 50%; }
+    14% { background-position: 14% 50%; }
+    28% { background-position: 28% 50%; }
+    42% { background-position: 42% 50%; }
+    57% { background-position: 57% 50%; }
+    71% { background-position: 71% 50%; }
+    85% { background-position: 85% 50%; }
     100% { background-position: 100% 50%; }
 }
 
@@ -35,11 +54,62 @@ body {
 .hero {
     text-align: center;
     padding: 30px 20px;
-    background: rgba(255, 255, 255, 0.03);
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(200, 180, 230, 0.12) 25%,
+        rgba(160, 140, 210, 0.15) 45%,
+        rgba(120, 100, 190, 0.12) 60%,
+        rgba(160, 140, 210, 0.15) 75%,
+        rgba(200, 180, 230, 0.12) 85%,
+        rgba(255, 255, 255, 0.08) 100%
+    );
+    background-size: 400% 400%;
     border-radius: 48px;
     margin-bottom: 30px;
-    border: 1px solid rgba(212, 184, 150, 0.15);
+    border: 1px solid rgba(200, 180, 230, 0.15);
     backdrop-filter: blur(10px);
+    animation: heroCardFlow 8s ease-in-out infinite alternate;
+}
+
+@keyframes heroCardFlow {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.hero h1 {
+    font-size: 2rem;
+    background: linear-gradient(
+        135deg,
+        #e8e0f0 0%,
+        #c8b8e0 30%,
+        #a894d0 55%,
+        #8878b8 70%,
+        #a894d0 85%,
+        #c8b8e0 100%
+    );
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: heroTitleFlow 6s ease-in-out infinite alternate;
+}
+
+@keyframes heroTitleFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 50% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.hero p {
+    margin-top: 8px;
+    opacity: 0.5;
+    color: #c8b8e0;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
 }
 .hero h1 {
     font-size: 2rem;
@@ -99,11 +169,24 @@ body {
     display: block;
 }
 
-/* ===== 排行榜卡片（参考 VIP 黑金卡风格） ===== */
+/* ===== 排行榜卡片 ===== */
+/* ===== 排行榜卡片 ===== */
 .rank-card {
     position: relative;
-    background: linear-gradient(145deg, rgba(26, 26, 46, 0.7), rgba(42, 42, 74, 0.5), rgba(26, 58, 42, 0.6));
-    background-size: 300% 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(212, 184, 150, 0.10) 0%,
+        rgba(245, 230, 200, 0.06) 8%,
+        rgba(26, 58, 42, 0.20) 25%,
+        rgba(10, 30, 20, 0.30) 40%,
+        rgba(0, 0, 0, 0.35) 50%,
+        rgba(10, 30, 20, 0.30) 60%,
+        rgba(26, 58, 42, 0.20) 75%,
+        rgba(245, 230, 200, 0.06) 88%,
+        rgba(212, 184, 150, 0.10) 94%,
+        rgba(160, 140, 210, 0.12) 100%
+    );
+    background-size: 500% 500%;
     border-radius: 20px;
     padding: 20px;
     margin-bottom: 16px;
@@ -111,12 +194,131 @@ body {
     border: 1px solid rgba(212, 184, 150, 0.08);
     transition: 0.4s;
     overflow: hidden;
-    animation: cardFlow 8s ease-in-out infinite alternate;
+    animation: cardGradientFlow 10s ease-in-out infinite alternate;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
+
+/* ===== 背景流动动画（新增） ===== */
+@keyframes cardGradientFlow {
+    0% { background-position: 0% 50%; }
+    20% { background-position: 20% 50%; }
+    40% { background-position: 40% 50%; }
+    60% { background-position: 60% 50%; }
+    80% { background-position: 80% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* ===== 卡片背景微纹理（不单调） ===== */
+.rank-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(212, 184, 150, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(184, 160, 200, 0.03) 0%, transparent 50%),
+        repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.005) 2px, rgba(255,255,255,0.005) 4px);
+    pointer-events: none;
+    z-index: 0;
+    border-radius: 20px;
+}
+
+/* ===== 底部光晕（高级感） ===== */
+.rank-card::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(212, 184, 150, 0.06), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    transition: 0.6s;
+}
+
+.rank-card:hover::after {
+    width: 250px;
+    height: 250px;
+    opacity: 1;
+}
+
+/* ===== 悬停流光扫过 ===== */
+.rank-card .shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+    transform: skewX(-25deg);
+    transition: 0.8s;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.rank-card:hover .shimmer {
+    left: 150%;
+}
+
+/* ===== 卡片内容层级 ===== */
+.rank-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* ===== TOP 3 奖牌 ===== */
+.rank-medal {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-size: 1.6rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+    animation: medalPulse 2s ease-in-out infinite;
+}
+
+@keyframes medalPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ===== 音符装饰 ===== */
+.rank-note {
+    position: absolute;
+    bottom: 12px;
+    right: 18px;
+    font-size: 1.4rem;
+    color: rgba(255, 255, 255, 0.03);
+    pointer-events: none;
+    z-index: 1;
+    transition: 0.4s;
+    font-family: serif;
+}
+
+.rank-card:hover .rank-note {
+    color: rgba(255, 255, 255, 0.06);
+    transform: rotate(10deg) scale(1.1);
+}
+
+/* ===== 卡片悬停 ===== */
+.rank-card:hover {
+    border-color: rgba(212, 184, 150, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(212, 184, 150, 0.05);
+}
+
 @keyframes cardFlow {
     0% { background-position: 0% 50%; }
     100% { background-position: 100% 50%; }
 }
+
+@keyframes cardFlow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* ===== 顶部金色细线（亮金色） ===== */
 .rank-card::before {
     content: '';
     position: absolute;
@@ -124,28 +326,163 @@ body {
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212, 184, 150, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(245, 230, 200, 0.5), transparent);
     opacity: 0;
     transition: 0.4s;
 }
-.rank-card:hover {
-    border-color: rgba(212, 184, 150, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
-}
+
 .rank-card:hover::before {
     opacity: 1;
 }
 
-/* ===== 排名数字 ===== */
+/* ===== 金色折角（加大版） ===== */
+.rank-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 70px 70px;
+    border-color: transparent transparent rgba(212, 184, 150, 0.2) transparent;
+    pointer-events: none;
+    transition: 0.4s;
+}
+
+.rank-card:hover::after {
+    border-color: transparent transparent rgba(212, 184, 150, 0.5) transparent;
+}
+
+.rank-card:hover {
+    border-color: rgba(212, 184, 150, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(212, 184, 150, 0.05);
+}
+
+.rank-card:hover::before {
+    opacity: 1;
+}
+
+.rank-card:hover::after {
+    border-color: transparent transparent rgba(212, 184, 150, 0.5) transparent;
+}
+
+/* ===== CD 唱片排名 ===== */
 .rank-number {
-    font-size: 1.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    font-size: 1.4rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #d4b896, #b8a0c8);
+    font-feature-settings: "tnum";
+    /* CD 光盘：白色 → 黑色 → 白色 渐变 */
+    background: radial-gradient(
+        circle at 40% 40%,
+        #e8e8e8 0%,
+        #b8b8b8 20%,
+        #666666 40%,
+        #222222 55%,
+        #666666 70%,
+        #b8b8b8 85%,
+        #e8e8e8 100%
+    );
+    border-radius: 50%;
+    border: 2px solid rgba(212, 184, 150, 0.2);
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    box-shadow: 
+        inset 0 0 30px rgba(0,0,0,0.4),
+        0 0 40px rgba(212, 184, 150, 0.04);
+    transition: 0.4s;
+    flex-shrink: 0;
+    margin-right: 14px;
+    position: relative;
+    /* 金色数字 */
+    background-image: radial-gradient(
+        circle at 40% 40%,
+        #e8e8e8 0%,
+        #b8b8b8 20%,
+        #666666 40%,
+        #222222 55%,
+        #666666 70%,
+        #b8b8b8 85%,
+        #e8e8e8 100%
+    );
+}
+
+/* ===== 数字用金色渐变覆盖 ===== */
+.rank-number {
+    background: radial-gradient(
+        circle at 40% 40%,
+        #e8e8e8 0%,
+        #b8b8b8 20%,
+        #666666 40%,
+        #222222 55%,
+        #666666 70%,
+        #b8b8b8 85%,
+        #e8e8e8 100%
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    display: inline-block;
+    text-shadow: 0 0 30px rgba(212, 184, 150, 0.05);
+}
+
+/* ===== 金色数字（独立叠加） ===== */
+.rank-number .num {
+    background: linear-gradient(135deg, #f5e6c8, #d4b896, #f5e6c8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(212, 184, 150, 0.1);
+}
+
+/* ===== CD 光盘光泽 ===== */
+.rank-number::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: radial-gradient(
+        ellipse at 35% 30%,
+        rgba(255,255,255,0.15) 0%,
+        transparent 50%
+    );
+    pointer-events: none;
+}
+
+/* ===== CD 中心小孔 ===== */
+.rank-number::after {
+    content: '';
+    position: absolute;
+    inset: 50%;
+    width: 8px;
+    height: 8px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,0,0,0.6), rgba(255,255,255,0.1));
+    border: 1px solid rgba(255,255,255,0.05);
+    pointer-events: none;
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.3);
+}
+
+/* ===== 悬停旋转 ===== */
+.rank-card:hover .rank-number {
+    animation: cdSpin 6s linear infinite;
+    border-color: rgba(212, 184, 150, 0.35);
+    box-shadow: 
+        inset 0 0 30px rgba(0,0,0,0.4),
+        0 0 60px rgba(212, 184, 150, 0.08);
+}
+
+@keyframes cdSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* ===== 歌曲标题（渐变流动，参考 lwmusic） ===== */
@@ -393,6 +730,45 @@ audio::-webkit-media-controls-panel {
     color: rgba(255, 255, 255, 0.15);
     font-size: 0.95rem;
 }
+
+/* ===== 均衡器 ===== */
+.equalizer.active {
+    display: flex !important;
+}
+.equalizer {
+    height: 60px !important;
+    gap: 3px !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.eq-bar {
+    width: 4px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #aaffaa 0%, #44dd44 30%, #22aa22 60%, #0a5a0a 100%);
+    transition: height 0.06s ease;
+    min-height: 3px;
+    max-height: 55px;
+    box-shadow: 0 0 15px rgba(68, 221, 68, 0.25);
+}
+
+/* ===== 播放状态 ===== */
+.rank-card.playing {
+    border-color: rgba(68, 221, 68, 0.3) !important;
+    box-shadow: 0 0 60px rgba(68, 221, 68, 0.06), 0 8px 40px rgba(0, 0, 0, 0.3) !important;
+}
+
+.play-btn.playing {
+    color: #66ff66 !important;
+    border-color: rgba(68, 221, 68, 0.4) !important;
+    background: rgba(68, 221, 68, 0.08) !important;
+    box-shadow: 0 0 20px rgba(68, 221, 68, 0.1) !important;
+}
+
+@keyframes medalPulse {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(5deg); }
+}
     </style>
 </head>
 <body>
@@ -589,6 +965,7 @@ function renderAll() {
             container.innerHTML = '<div class="rank-card" style="text-align:center; color:rgba(255,255,255,0.15);">✨ 暂无作品，快来上传第一首吧 ✨</div>';
             continue;
         }
+        
         container.innerHTML = songs.map((s, idx) => {
             let extraInfo = '';
             if (cat === 'hybrid' || cat === 'original') {
@@ -599,16 +976,30 @@ function renderAll() {
                 if (parts.length) extraInfo = '<div class="extra-info">' + parts.join(' · ') + '</div>';
             }
             const demoBadge = s.is_demo ? '<span class="demo-badge">Demo</span>' : '';
-            return '<div class="rank-card">' +
-                '<div class="rank-number">#' + (idx + 1) + '</div>' +
+            
+            let eqBars = '';
+            for (let i = 0; i < 30; i++) {
+                const h = 10 + Math.random() * 25;
+                eqBars += '<div class="eq-bar" style="height:' + h + 'px;"></div>';
+            }
+            
+            return '<div class="rank-card" data-song-id="' + s.id + '">' +
+                '<div class="shimmer"></div>' +
+                '<div class="rank-note">♩</div>' +
+                (idx === 0 ? '<div class="rank-medal">🥇</div>' : '') +
+                (idx === 1 ? '<div class="rank-medal">🥈</div>' : '') +
+                (idx === 2 ? '<div class="rank-medal">🥉</div>' : '') +
+              '<div class="rank-number"><span class="num">' + (idx + 1) + '</span></div>' +
                 '<div class="song-title">' + escapeHtml(s.title) + ' ' + demoBadge + '</div>' +
                 '<div class="song-artist">' + escapeHtml(s.artist) + ' <span>·</span> ' + (s.genre || '未分类') + ' <span>·</span> ' + (s.likes || 0) + ' 票</div>' +
                 extraInfo +
-                (s.audio_url ? '<audio controls src="' + s.audio_url + '" preload="metadata"></audio>' : '<div style="color:rgba(255,255,255,0.2);font-size:0.8rem;">⚠️ 音频链接失效</div>') +
-                '<div style="margin-top: 12px;">' +
-                '<button class="action-btn" onclick="window.likeSong(\'' + s.id + '\', \'' + cat + '\')">❤️ 点赞</button>' +
-                '<button class="action-btn" onclick="window.interest(\'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')"> 预留/合作</button>' +
-                '</div></div>';
+                '<div class="equalizer" id="equalizer-' + s.id + '" style="display:none; align-items:center; justify-content:center; gap:3px; height:60px; margin:10px 0;">' + eqBars + '</div>' +
+                '<div style="margin-top: 12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">' +
+                '   <button class="action-btn play-btn" data-song-id="' + s.id + '" onclick="togglePlay(\'' + s.id + '\', \'' + s.audio_url + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')">▶️ 播放</button>' +
+                '   <button class="action-btn" onclick="window.likeSong(\'' + s.id + '\', \'' + cat + '\')">❤️ 点赞</button>' +
+                '   <button class="action-btn" onclick="window.interest(\'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')">💎 预留/合作</button>' +
+                '</div>' +
+                '</div>';
         }).join('');
     }
     renderDemo();
@@ -623,19 +1014,25 @@ function renderDemo() {
     const demoContainer = document.getElementById('demo-list');
     if (demoContainer) {
         if (demos.length === 0) {
-            demoContainer.innerHTML = '<div class="rank-card" style="text-align:center; color:rgba(255,255,255,0.15);"> 暂无Demo作品，标记Demo版本会在这里出现~</div>';
+            demoContainer.innerHTML = '<div class="rank-card" style="text-align:center; color:rgba(255,255,255,0.15);">🎧 暂无Demo作品，标记Demo版本会在这里出现~</div>';
         } else {
             demoContainer.innerHTML = demos.map((s, idx) => {
                 let catLabel = s.category === 'hybrid' ? '🤝人机共创' : '✍️原创';
-                return '<div class="rank-card">' +
-                    '<div class="rank-number">#' + (idx + 1) + '</div>' +
+                let eqBars = '';
+                for (let i = 0; i < 12; i++) {
+                    eqBars += '<div class="eq-bar" style="height:' + (8 + Math.random() * 12) + 'px;"></div>';
+                }
+                return '<div class="rank-card" data-song-id="' + s.id + '">' +
+                   '<div class="rank-number"><span class="num">' + (idx + 1) + '</span></div>' +
                     '<div class="song-title">' + escapeHtml(s.title) + ' <span class="demo-badge">Demo</span></div>' +
                     '<div class="song-artist">' + escapeHtml(s.artist) + ' <span>·</span> ' + catLabel + ' <span>·</span> ' + (s.likes || 0) + ' 票</div>' +
-                    (s.audio_url ? '<audio controls src="' + s.audio_url + '" preload="metadata"></audio>' : '') +
-                    '<div style="margin-top: 12px;">' +
-                    '<button class="action-btn" onclick="window.likeSong(\'' + s.id + '\', \'' + s.category + '\')">❤️ 点赞</button>' +
-                    '<button class="action-btn" onclick="window.interest(\'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')"> 预留/合作</button>' +
-                    '</div></div>';
+                    '<div class="equalizer" id="equalizer-' + s.id + '" style="display:none; align-items:center; justify-content:center; gap:4px; height:40px; margin:10px 0;">' + eqBars + '</div>' +
+                    '<div style="margin-top: 12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">' +
+                    '   <button class="action-btn play-btn" data-song-id="' + s.id + '" onclick="togglePlay(\'' + s.id + '\', \'' + s.audio_url + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')">▶️ 播放</button>' +
+                    '   <button class="action-btn" onclick="window.likeSong(\'' + s.id + '\', \'' + s.category + '\')">❤️ 点赞</button>' +
+                    '   <button class="action-btn" onclick="window.interest(\'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')">💎 预留/合作</button>' +
+                    '</div>' +
+                    '</div>';
             }).join('');
         }
     }
@@ -681,6 +1078,119 @@ window.likeSong = async (id, cat) => {
 window.interest = (title, artist) => {
     alert('对《' + title + '》- ' + artist + ' 感兴趣？\n请添加芦苇老师微信：jianjiayinyue 协助对接版权/演出/发行。');
 };
+
+// ==================== 播放控制 + 均衡器 ====================
+let currentSongId = null;
+let eqAnimationId = null;
+
+function togglePlay(songId, audioUrl, title, artist) {
+    let player = document.getElementById('global-audio');
+    if (!player) {
+        player = document.createElement('audio');
+        player.id = 'global-audio';
+        player.style.display = 'none';
+        document.body.appendChild(player);
+    }
+    
+    const playBtn = document.querySelector('.play-btn[data-song-id="' + songId + '"]');
+    const eqContainer = document.getElementById('equalizer-' + songId);
+    const card = document.querySelector('.rank-card[data-song-id="' + songId + '"]');
+    
+    if (currentSongId === songId) {
+        if (!player.paused) {
+            player.pause();
+            stopEqualizer(songId);
+            if (playBtn) {
+                playBtn.textContent = '▶️ 播放';
+                playBtn.classList.remove('playing');
+            }
+            if (card) card.classList.remove('playing');
+            return;
+        } else {
+            player.play();
+            if (playBtn) {
+                playBtn.textContent = '⏸ 暂停';
+                playBtn.classList.add('playing');
+            }
+            if (card) card.classList.add('playing');
+            startEqualizer(songId);
+            return;
+        }
+    }
+    
+    if (currentSongId) {
+        stopEqualizer(currentSongId);
+        const oldBtn = document.querySelector('.play-btn[data-song-id="' + currentSongId + '"]');
+        if (oldBtn) {
+            oldBtn.textContent = '▶️ 播放';
+            oldBtn.classList.remove('playing');
+        }
+        const oldCard = document.querySelector('.rank-card[data-song-id="' + currentSongId + '"]');
+        if (oldCard) oldCard.classList.remove('playing');
+    }
+    
+    currentSongId = songId;
+    player.src = audioUrl;
+    player.load();
+    player.play();
+    
+    if (playBtn) {
+        playBtn.textContent = '⏸ 暂停';
+        playBtn.classList.add('playing');
+    }
+    if (card) card.classList.add('playing');
+    if (eqContainer) {
+        eqContainer.style.display = 'flex';
+        eqContainer.classList.add('active');
+    }
+    
+    startEqualizer(songId);
+    
+    player.onended = function() {
+        stopEqualizer(songId);
+        if (playBtn) {
+            playBtn.textContent = '▶️ 播放';
+            playBtn.classList.remove('playing');
+        }
+        if (card) card.classList.remove('playing');
+        currentSongId = null;
+    };
+}
+
+function startEqualizer(songId) {
+    const bars = document.querySelectorAll('#equalizer-' + songId + ' .eq-bar');
+    if (!bars.length) return;
+    
+    function animateEqualizer() {
+        bars.forEach(function(bar, index) {
+            const base = 8 + Math.random() * 35;
+            const waveOffset = Math.sin(Date.now() / 300 + index * 0.3) * 5;
+            let height = base + waveOffset;
+            height = Math.max(4, Math.min(55, height));
+            bar.style.height = height + 'px';
+        });
+        eqAnimationId = requestAnimationFrame(animateEqualizer);
+    }
+    
+    if (eqAnimationId) cancelAnimationFrame(eqAnimationId);
+    animateEqualizer();
+}
+
+function stopEqualizer(songId) {
+    if (eqAnimationId) {
+        cancelAnimationFrame(eqAnimationId);
+        eqAnimationId = null;
+    }
+    const eqContainer = document.getElementById('equalizer-' + songId);
+    if (eqContainer) {
+        eqContainer.style.display = 'none';
+        eqContainer.classList.remove('active');
+    }
+    const bars = document.querySelectorAll('#equalizer-' + songId + ' .eq-bar');
+    bars.forEach(function(bar) {
+        bar.style.height = (8 + Math.random() * 12) + 'px';
+    });
+}
 
 // ==================== 5. 上传功能 ====================
 async function handleUpload(container, modal) {
