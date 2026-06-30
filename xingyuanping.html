@@ -1017,29 +1017,34 @@ for (let i = 0; i < 10; i++) {
             const sender = document.getElementById('senderName').value.trim() || '匿名';
             const recipient = document.getElementById('recipientName').value.trim() || '随缘漂向任何人';
 
-            const fullContent = ` 收件人：${recipient}\n 寄件人：${sender}\n\n${content}`;
-// 随机选一个其他用户
-let receiverId = null;
+           const fullContent = ` 收件人：${recipient}\n 寄件人：${sender}\n\n${content}`;
+
+// 从 lyric_submissions 表找其他投稿用户（和邮寄愿望一样）
 const { data: users } = await supabase
-    .from('user_profiles')
-    .select('id')
-    .neq('id', userId)
+    .from('lyric_submissions')
+    .select('user_id')
+    .neq('user_id', userId)
     .limit(100);
 
+let receiverId = null;
 if (users && users.length > 0) {
     const randomUser = users[Math.floor(Math.random() * users.length)];
-    receiverId = randomUser.id;
+    receiverId = randomUser.user_id;
+    console.log('🎯 瓶子漂给了:', receiverId);
+} else {
+    console.log('❌ 没有找到其他用户，瓶子进入公共星海');
 }
-            const { error } = await supabase.from('wishes').insert({
-                sender_id: userId,
-                receiver_id: receiverId,
-                content: fullContent,
-                is_reply: false,
-                is_public: true,
-                anonymous_name: sender,
-                is_read: false,
-                type: 'bottle'
-            });
+
+const { error } = await supabase.from('wishes').insert({
+    sender_id: userId,
+    receiver_id: receiverId,
+    content: fullContent,
+    is_reply: false,
+    is_public: receiverId ? false : true,
+    anonymous_name: sender,
+    is_read: false,
+    type: 'bottle'
+});
 
             if (error) {
                 showToast('扔瓶子失败，请重试 ');
