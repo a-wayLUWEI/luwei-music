@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>星愿瓶 · 告白版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a1a;
+            overflow: hidden;
+            height: 100vh;
+            font-family: 'Georgia', 'Songti SC', serif;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        #starCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .top-right {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 50;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .top-right a {
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    transition: 0.3s;
+    padding: 6px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+.top-right a:hover {
+    color: rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+}
+        .top-right a:hover {
+            color: rgba(255, 255, 255, 0.7);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .top-right .icon-btn {
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.35);
+    transition: 0.3s;
+    padding: 4px 8px;
+    border-radius: 50%;
+}
+.top-right .icon-btn:hover {
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+        .bottle-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+        .bottle-container.hidden {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.6);
+            pointer-events: none;
+        }
+        .bottle-emoji {
+    font-size: 120px;
+    opacity: 0.35;  /* 从 0.25 调高到 0.35 */
+    filter: grayscale(1) brightness(1.8);
+    transition: opacity 0.4s ease;
+    display: inline-block;
+    line-height: 1.2;
+}
+.bottle-emoji:hover {
+    opacity: 0.6;  /* 从 0.5 调高到 0.6 */
+}
+       .bottle-label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    letter-spacing: 8px;
+    margin-top: 4px;
+    font-weight: 300;
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.08), 0 0 80px rgba(255, 255, 255, 0.04);
+}
+        .click-hint {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    margin-top: 16px;
+    animation: pulseHint 4s ease-in-out infinite;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
+}
+        @keyframes pulseHint {
+            0%,
+            100% { opacity: 0.2; }
+            50% { opacity: 0.7; }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 20, 0.7);
+            backdrop-filter: blur(14px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+
+        .modal-card {
+            background: rgba(10, 12, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 40px;
+            padding: 40px 36px 32px;
+            max-width: 460px;
+            width: 92%;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+            position: relative;
+            animation: modalIn 0.5s ease;
+        }
+        @keyframes modalIn {
+            0% { transform: scale(0.92); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-card .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .modal-card .close-btn:hover {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .modal-card h2 {
+            font-size: 1.6rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 6px;
+        }
+        .modal-card .sub {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+        }
+
+        .modal-card label {
+            display: block;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.2);
+            margin-bottom: 4px;
+        }
+        .modal-card input,
+        .modal-card textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.3s;
+            font-family: inherit;
+            margin-bottom: 14px;
+        }
+        .modal-card input:focus,
+        .modal-card textarea:focus {
+            border-color: rgba(180, 200, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .modal-card textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-card .btn-send {
+            width: 100%;
+            padding: 14px;
+            background: rgba(180, 200, 255, 0.04);
+            border: 1px solid rgba(180, 200, 255, 0.08);
+            border-radius: 30px;
+            color: rgba(180, 200, 255, 0.4);
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .modal-card .btn-send:hover {
+            background: rgba(180, 200, 255, 0.08);
+            color: rgba(180, 200, 255, 0.7);
+        }
+
+        .modal-card .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 30px;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+            margin-top: 8px;
+        }
+        .modal-card .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .bottle-result {
+            text-align: center;
+            padding: 10px 0 4px;
+        }
+        .bottle-result .bottle-icon {
+            font-size: 3.6rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .bottle-result .from {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+        .bottle-result .msg {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+            padding: 8px 0;
+            white-space: pre-wrap;
+        }
+        .bottle-result .empty {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            padding: 20px 0;
+        }
+
+        .my-bottle-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .my-bottle-item .status {
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+        }
+        .my-bottle-item .preview {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin-top: 4px;
+            white-space: pre-wrap;
+        }
+        .my-bottle-item .time {
+            color: rgba(255, 255, 255, 0.06);
+            font-size: 0.55rem;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .modal-card ::-webkit-scrollbar { display: none; }
+        .modal-card { scrollbar-width: none; }
+
+        @media (max-width: 480px) {
+            .bottle-emoji { font-size: 70px; }
+            .modal-card { padding: 28px 20px 24px; }
+            .modal-card h2 { font-size: 1.2rem; }
+            .top-right { top: 16px; right: 16px; gap: 10px; }
+            .top-right a { font-size: 0.65rem; padding: 4px 10px; }
+        }
+
+        .global-music {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 999;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.34);
+            border-radius: 40px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+        .global-music:hover {
+            background: rgba(255,255,255,0.36);
+            border-color: rgba(255,255,255,0.28);
+        }
+        .global-music button {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .global-music button:hover { color: rgba(255,255,255,0.6); }
+        .global-music .label {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            min-width: 60px;
+            text-align: left;
+        }
+
+        @media (max-width: 480px) {
+            .global-music { bottom: 16px; right: 16px; padding: 6px 14px; }
+            .global-music button { font-size: 0.7rem; }
+            .global-music .label { font-size: 0.45rem; min-width: 40px; }
+        }
+
+        @keyframes toastFade {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+/* ===== 漂流瓶收件箱弹窗（复用 modal-card 样式） ===== */
+#bottleInboxModal {
+    background: rgba(10, 12, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 40px;
+    padding: 36px 32px 32px;
+    max-width: 460px;
+    width: 92%;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+    max-height: 80vh;
+    overflow-y: auto;
+    backdrop-filter: blur(20px);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    z-index: 1001;
+    display: none;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+#bottleInboxModal.show {
+    display: block;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+    </style>
+</head>
+<body>
+
+    <canvas id="starCanvas"></canvas>
+
+    <div class="top-right">
+        <span class="icon-btn" onclick="openMyBottlesAndSwitch('received')" title="漂流瓶" style="position:relative;">
+    🧴
+    <span id="bottleBadge" style="...">0</span>
+</span>
+        <a href="xuyuanchi.html">✨ 许愿池</a>
+        <a href="youjiyuanwang.html"> 月光邮局</a>
+    </div>
+
+    <div class="bottle-container" id="bottleContainer">
+        <span class="bottle-emoji" id="bottleEmoji"></span>
+        <div class="bottle-label">✦ 星 愿 瓶 ✦ 她/他 在 等 你 ✦</div>
+        <div class="click-hint">✦ 点击上方 · 写一封告白 · 不要错过那个最爱你的人 ✦</div>
+    </div>
+
+    <div class="modal-overlay" id="writeModal">
+        <div class="modal-card">
+            <button class="close-btn" onclick="closeWriteModal()">✕</button>
+            <h2>✦ 星愿瓶 ✦</h2>
+            <div class="sub">写一封告白，扔进星海</div>
+            <label> 你的署名（可选）</label>
+            <input id="senderName" placeholder="匿名 或 你的名字" value="匿名">
+            <label> 收件人（可留空，随缘漂向任何人）</label>
+            <input id="recipientName" placeholder="例如：✨ 星光旅人 #413">
+            <label> 告白内容</label>
+            <textarea id="wishContent" placeholder="写你想说的话…"></textarea>
+            <button class="btn-send" onclick="throwBottle()"> 扔进星海</button>
+            <button class="btn-secondary" onclick="closeWriteModal()">稍后再写</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal-card">
+            <button class="close-btn" onclick="closeResultModal()">✕</button>
+            <div class="bottle-result" id="resultContent">
+                <span class="bottle-icon">🧴</span>
+                <div class="from">来自星海深处</div>
+                <div class="msg">正在捞取瓶子…</div>
+            </div>
+            <button class="btn-secondary" onclick="closeResultModal()">合上瓶子</button>
+            <button class="btn-secondary" onclick="fetchBottle()" style="margin-top:6px;"> 再捞一个</button>
+        </div>
+    </div>
+
+<!-- ===== 我的瓶子 + 漂流瓶收件箱（合并弹窗） ===== -->
+<div class="modal-overlay" id="myBottlesModal">
+    <div class="modal-card" style="max-height:80vh;overflow-y:auto;">
+        <button class="close-btn" onclick="closeMyBottles()">✕</button>
+        
+        <!-- Tab 切换 -->
+        <div style="display:flex; gap:20px; justify-content:center; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.04); padding-bottom:12px;">
+            <span id="tabSent" onclick="switchBottleTab('sent')" style="cursor:pointer; color:rgba(255,255,255,0.8); letter-spacing:2px; font-size:0.85rem; transition:0.3s; border-bottom:2px solid rgba(255,215,0,0.3); padding-bottom:8px;">
+                📤 我扔的
+            </span>
+            <span id="tabReceived" onclick="switchBottleTab('received')" style="cursor:pointer; color:rgba(255,255,255,0.45); letter-spacing:2px; font-size:0.85rem; transition:0.3s; border-bottom:2px solid transparent; padding-bottom:8px;">
+                🧴 漂来的
+            </span>
+        </div>
+
+        <!-- 我扔的瓶子 -->
+        <div id="myBottlesList"></div>
+        <!-- 漂来的瓶子 -->
+        <div id="bottleInboxList" style="display:none;"></div>
+    </div>
+</div>
+
+    <div class="global-music">
+        <span class="label" id="musicLabel" style="color:rgba(255,255,255,0.15);font-size:0.5rem;letter-spacing:1px;min-width:50px;">加载中...</span>
+        <button onclick="prevSong()" id="prevBtn" style="background:none;border:none;color:rgba(255,255,255,0.2);font-size:0.7rem;cursor:pointer;">⏮</button>
+        <button onclick="toggleMusic()" id="musicBtn" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:1rem;cursor:pointer;">▶</button>
+        <button onclick="nextSong()" id="nextBtn" style="background:none;border:none;color:rgba(255,255,255,0.2);font-size:0.7rem;cursor:pointer;">⏭</button>
+    </div>
+
+    <script src="music.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="checkAuth.js"></script>
+
+    <script>
+        // ============================================================
+        // 1. Supabase 配置
+        // ============================================================
+        const supabaseUrl = "https://alzbseigpxxtlqqseczx.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4";
+supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+        // ============================================================
+        // 2. 星海 Canvas
+        // ============================================================
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, centerX, centerY;
+        let mouseX = -9999, mouseY = -9999;
+        let mouseTrail = [];
+        let stars = [];
+        let burstParticles = [];
+        let nebulaOffset = 0;
+        const STAR_COUNT = 380;
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            centerX = W / 2;
+            centerY = H / 2;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < STAR_COUNT; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const radius = Math.random() * Math.max(W, H) * 0.45;
+                stars.push({
+                    angle,
+                    radius,
+                    baseRadius: radius,
+                    speed: (Math.random() - 0.5) * 0.018 + 0.006,
+                    size: Math.random() * 5 + 1,
+                    breathOffset: Math.random() * Math.PI * 2,
+                    breathSpeed: Math.random() * 0.008 + 0.003,
+                    alpha: Math.random() * 0.5 + 0.3,
+                    hue: Math.random() * 30 - 10
+                });
+            }
+        }
+        initStars();
+
+        document.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            mouseTrail.push({ x: mouseX, y: mouseY, life: 1 });
+            if (mouseTrail.length > 50) mouseTrail.shift();
+        });
+
+        function draw() {
+            // ===== 极光背景 =====
+            const time2 = Date.now() * 0.0216;
+            const hue1 = 220 + Math.sin(time2 * 0.3) * 30;
+            const hue2 = 140 + Math.sin(time2 * 0.4 + 1.5) * 35;
+            const hue3 = 280 + Math.sin(time2 * 0.25 + 3) * 25;
+            const hue4 = 260 + Math.sin(time2 * 0.35 + 2) * 20;
+            const hue5 = 0 + Math.sin(time2 * 0.2 + 4) * 10;
+
+            const cx1 = W * 0.3 + Math.cos(time2 * 0.2) * 200;
+            const cy1 = H * 0.2 + Math.sin(time2 * 0.2) * 150;
+            const cx2 = W * 0.7 + Math.cos(time2 * 0.22 + 1) * 220;
+            const cy2 = H * 0.8 + Math.sin(time2 * 0.22 + 2) * 160;
+            const cx3 = W * 0.5 + Math.cos(time2 * 0.25 + 3) * 180;
+            const cy3 = H * 0.4 + Math.sin(time2 * 0.25 + 4) * 140;
+            const cx4 = W * 0.2 + Math.cos(time2 * 0.28 + 5) * 160;
+            const cy4 = H * 0.6 + Math.sin(time2 * 0.28 + 6) * 130;
+            const cx5 = W * 0.9 + Math.cos(time2 * 0.18 + 7) * 150;
+            const cy5 = H * 0.3 + Math.sin(time2 * 0.18 + 8) * 120;
+
+            ctx.fillStyle = '#0a0a1a';
+            ctx.fillRect(0, 0, W, H);
+
+            const bgGrad1 = ctx.createRadialGradient(cx1, cy1, 50, cx1, cy1, Math.max(W, H) * 0.7);
+            bgGrad1.addColorStop(0, `hsla(${hue1}, 65%, 18%, 0.9)`);
+            bgGrad1.addColorStop(0.5, `hsla(${hue1 + 20}, 55%, 12%, 0.6)`);
+            bgGrad1.addColorStop(1, `hsla(${hue1}, 40%, 6%, 0)`);
+            ctx.fillStyle = bgGrad1;
+            ctx.fillRect(0, 0, W, H);
+
+            const bgGrad2 = ctx.createRadialGradient(cx2, cy2, 80, cx2, cy2, Math.max(W, H) * 0.6);
+            bgGrad2.addColorStop(0, `hsla(${hue2}, 55%, 16%, 0.8)`);
+            bgGrad2.addColorStop(0.5, `hsla(${hue2 + 30}, 45%, 10%, 0.5)`);
+            bgGrad2.addColorStop(1, `hsla(${hue2}, 35%, 5%, 0)`);
+            ctx.fillStyle = bgGrad2;
+            ctx.fillRect(0, 0, W, H);
+
+            const bgGrad3 = ctx.createRadialGradient(cx3, cy3, 60, cx3, cy3, Math.max(W, H) * 0.5);
+            bgGrad3.addColorStop(0, `hsla(${hue3}, 60%, 16%, 0.7)`);
+            bgGrad3.addColorStop(0.6, `hsla(${hue3 + 20}, 50%, 10%, 0.4)`);
+            bgGrad3.addColorStop(1, `hsla(${hue3}, 40%, 5%, 0)`);
+            ctx.fillStyle = bgGrad3;
+            ctx.fillRect(0, 0, W, H);
+
+            const bgGrad4 = ctx.createRadialGradient(cx4, cy4, 70, cx4, cy4, Math.max(W, H) * 0.55);
+            bgGrad4.addColorStop(0, `hsla(${hue4}, 70%, 20%, 0.7)`);
+            bgGrad4.addColorStop(0.5, `hsla(${hue4 + 15}, 60%, 14%, 0.4)`);
+            bgGrad4.addColorStop(1, `hsla(${hue4}, 50%, 8%, 0)`);
+            ctx.fillStyle = bgGrad4;
+            ctx.fillRect(0, 0, W, H);
+
+            const bgGrad5 = ctx.createRadialGradient(cx5, cy5, 90, cx5, cy5, Math.max(W, H) * 0.6);
+            bgGrad5.addColorStop(0, `hsla(${hue5 + 220}, 15%, 22%, 0.5)`);
+            bgGrad5.addColorStop(0.5, `hsla(${hue5 + 230}, 10%, 16%, 0.3)`);
+            bgGrad5.addColorStop(1, `hsla(${hue5 + 240}, 5%, 8%, 0)`);
+            ctx.fillStyle = bgGrad5;
+            ctx.fillRect(0, 0, W, H);
+
+// ===== 地球 + 月亮（左上角） =====
+const earthX = 120;
+const earthY = 120;
+const earthRadius = 45;
+const moonRadius = 14;
+const orbitRadius = 85;
+const orbitAngle = Date.now() * 0.0005;
+
+// ---- 画轨道 ----
+ctx.beginPath();
+ctx.arc(earthX, earthY, orbitRadius, 0, Math.PI * 2);
+ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+ctx.lineWidth = 0.5;
+ctx.stroke();
+
+// ---- 画地球 ----
+ctx.save();
+ctx.translate(earthX, earthY);
+
+const earthGrad = ctx.createRadialGradient(-10, -10, 5, 0, 0, earthRadius);
+earthGrad.addColorStop(0, 'rgba(210, 225, 235, 0.9)');   // 亮蓝白
+earthGrad.addColorStop(0.3, 'rgba(170, 200, 215, 0.9)'); // 淡蓝
+earthGrad.addColorStop(0.6, 'rgba(130, 170, 195, 0.9)'); // 灰蓝
+earthGrad.addColorStop(0.85, 'rgba(90, 130, 160, 0.9)'); // 深蓝灰
+earthGrad.addColorStop(1, 'rgba(60, 80, 110, 0.9)');     // 暗蓝
+ctx.beginPath();
+ctx.arc(0, 0, earthRadius, 0, Math.PI * 2);
+ctx.fillStyle = earthGrad;
+ctx.fill();
+
+// 纹理
+ctx.globalAlpha = 0.15;
+for (let i = 0; i < 30; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = Math.random() * earthRadius * 0.85;
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+    const size = Math.random() * 6 + 2;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(200, 200, 210, ${Math.random() * 0.5 + 0.2})`;
+    ctx.fill();
+}
+ctx.globalAlpha = 1;
+
+// 高光
+const highlight = ctx.createRadialGradient(-15, -15, 2, -10, -10, 25);
+highlight.addColorStop(0, 'rgba(255,255,255,0.15)');
+highlight.addColorStop(1, 'rgba(255,255,255,0)');
+ctx.beginPath();
+ctx.arc(0, 0, earthRadius, 0, Math.PI * 2);
+ctx.fillStyle = highlight;
+ctx.fill();
+
+ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+ctx.lineWidth = 1;
+ctx.stroke();
+ctx.restore();
+
+// ---- 画月亮 ----
+const moonX = earthX + Math.cos(orbitAngle) * orbitRadius;
+const moonY = earthY + Math.sin(orbitAngle) * orbitRadius;
+
+ctx.save();
+ctx.translate(moonX, moonY);
+
+const moonGrad = ctx.createRadialGradient(-3, -3, 2, 0, 0, moonRadius);
+moonGrad.addColorStop(0, 'rgba(210, 210, 215, 0.7)');
+moonGrad.addColorStop(0.5, 'rgba(180, 180, 190, 0.7)');
+moonGrad.addColorStop(1, 'rgba(140, 140, 155, 0.7)');
+ctx.beginPath();
+ctx.arc(0, 0, moonRadius, 0, Math.PI * 2);
+ctx.fillStyle = moonGrad;
+ctx.fill();
+
+// 月亮纹理
+ctx.globalAlpha = 0.1;
+for (let i = 0; i < 12; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = Math.random() * moonRadius * 0.8;
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+    const size = Math.random() * 3 + 1;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(200,200,210,0.6)';
+    ctx.fill();
+}
+ctx.globalAlpha = 1;
+
+ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+ctx.lineWidth = 0.5;
+ctx.stroke();
+ctx.restore();
+
+            // ===== 星云 =====
+            nebulaOffset += 0.008;
+            const offset1X = Math.sin(nebulaOffset * 1.5) * 250;
+            const offset1Y = Math.cos(nebulaOffset * 1.2) * 200;
+            const offset2X = Math.cos(nebulaOffset * 1.3) * 280;
+            const offset2Y = Math.sin(nebulaOffset * 1.0) * 220;
+            const grad = ctx.createRadialGradient(
+                W * 0.3 + offset1X, H * 0.2 + offset1Y, 50,
+                W * 0.7 + offset2X, H * 0.8 + offset2Y, 600
+            );
+            grad.addColorStop(0, `hsla(280, 70%, 60%, 0.20)`);
+            grad.addColorStop(0.3, `hsla(320, 60%, 50%, 0.29)`);
+            grad.addColorStop(0.6, `hsla(220, 70%, 60%, 0.38)`);
+            grad.addColorStop(1, `hsla(200, 50%, 40%, 0)`);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, W, H);
+
+            const offset3X = Math.sin(nebulaOffset * 0.9 + 1) * 180;
+            const offset3Y = Math.cos(nebulaOffset * 0.7 + 2) * 120;
+            const offset4X = Math.cos(nebulaOffset * 0.8 + 3) * 160;
+            const offset4Y = Math.sin(nebulaOffset * 0.6 + 4) * 110;
+            const grad2 = ctx.createRadialGradient(
+                W * 0.7 + offset3X, H * 0.3 + offset3Y, 100,
+                W * 0.3 + offset4X, H * 0.7 + offset4Y, 500
+            );
+            grad2.addColorStop(0, `hsla(230, 80%, 70%, 0.18)`);
+            grad2.addColorStop(0.5, `hsla(290, 60%, 50%, 0.36)`);
+            grad2.addColorStop(1, `hsla(200, 50%, 40%, 0)`);
+            ctx.fillStyle = grad2;
+            ctx.fillRect(0, 0, W, H);
+
+            // ===== 星星 =====
+            const time = Date.now() * 0.0003;
+            stars.forEach(star => {
+                star.angle += star.speed;
+                const breath = Math.sin(time * star.breathSpeed + star.breathOffset);
+                const currentRadius = star.baseRadius + breath * 6;
+                const x = centerX + Math.cos(star.angle) * currentRadius;
+                const y = centerY + Math.sin(star.angle) * currentRadius;
+                const size = star.size * (0.8 + 0.3 * Math.sin(time * star.breathSpeed * 0.7 + star.breathOffset));
+                const alpha = star.alpha * (0.6 + 0.4 * Math.sin(time * star.breathSpeed * 0.5 + star.breathOffset));
+                const hue = 220 + star.hue + Math.sin(time * 0.2 + star.breathOffset) * 8;
+
+                ctx.beginPath();
+                ctx.arc(x, y, Math.max(0.1, size), 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${hue}, 80%, 80%, ${alpha * 0.7})`;
+                ctx.fill();
+
+                if (size > 1.5) {
+                    const glow = ctx.createRadialGradient(x, y, 0, x, y, Math.max(0.1, size * 8));
+                    glow.addColorStop(0, `hsla(${hue}, 80%, 95%, ${alpha * 0.2})`);
+                    glow.addColorStop(0.5, `hsla(${hue}, 70%, 90%, ${alpha * 0.1})`);
+                    glow.addColorStop(1, `hsla(${hue}, 60%, 85%, 0)`);
+                    ctx.fillStyle = glow;
+                    ctx.beginPath();
+                    ctx.arc(x, y, size * 8, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            // ===== 水波纹 =====
+            const waveTime = Date.now() * 0.0008;
+            const waveCount = 15;
+            for (let i = 0; i < waveCount; i++) {
+                const progress = i / waveCount;
+                const yBase = H * 0.45 + progress * H * 0.5;
+                const alpha = 0.04;
+                const lineWidth = 3.0 - progress * 0.8;
+                const amp = 18 - progress * 6;
+                const freq = 0.025 + progress * 0.01;
+                const speed = 0.6 + progress * 0.3;
+
+                ctx.beginPath();
+                for (let x = 0; x < W; x += 2) {
+                    const y = yBase + Math.sin(x * freq + waveTime * speed + i * 0.8) * amp
+                                + Math.sin(x * freq * 1.7 + waveTime * speed * 0.6 + i * 1.2) * amp * 0.4;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.strokeStyle = `rgba(180, 210, 255, ${alpha})`;
+                ctx.lineWidth = Math.max(0.5, lineWidth);
+                ctx.stroke();
+            }
+
+            // ===== 15个瓶子不规则飘动 =====
+            const bottleTime4 = Date.now() * 0.0003;
+            const bottleEmojis = ['🧴', '🧴', '🧴', '🧴', '🧴', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾', '🍾'];
+            for (let i = 0; i < 15; i++) {
+                const emoji = bottleEmojis[i % bottleEmojis.length];
+                const phase = i * 2.1 + 0.5;
+                const phase2 = i * 2.5 + 1.3;
+
+                const driftX = Math.sin(bottleTime4 * 0.5 + phase) * 70 + Math.sin(bottleTime4 * 0.25 + phase2) * 45;
+                const baseX = W * 0.05 + i * (W * 0.9 / 14);
+                const x = baseX + driftX;
+
+                const driftY = Math.sin(bottleTime4 * 0.45 + phase * 1.2) * 28 + Math.sin(bottleTime4 * 0.65 + phase2 * 0.9) * 18;
+                const baseY = H * 0.65 + i * 2.0 + Math.sin(i * 0.8) * 18;
+                const y = baseY + driftY;
+
+                const scale = 0.45 + (1 - i / 14) * 0.55 + Math.sin(bottleTime4 * 0.2 + i) * 0.05;
+                const rotation = Math.sin(bottleTime4 * 0.35 + i * 0.7) * 0.08;
+
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.scale(scale, scale);
+                ctx.rotate(rotation);
+
+                ctx.font = '38px "Segoe UI Emoji", "Apple Color Emoji", system-ui, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.filter = 'grayscale(1) brightness(1.8)';
+                ctx.shadowColor = 'rgba(255,255,255,0.05)';
+                ctx.shadowBlur = 10;
+                ctx.fillStyle = 'rgba(255,255,255,0.2)';
+                ctx.fillText(emoji, 0, 0);
+                ctx.filter = 'none';
+                ctx.shadowBlur = 0;
+                ctx.restore();
+            }
+
+// ===== 额外 10 个横漂瓶子（🧴） =====
+const bottleTime3 = Date.now() * 0.0003;
+for (let i = 0; i < 10; i++) {
+    const phase = i * 1.9 + 0.7;
+    const phase2 = i * 2.3 + 1.2;
+
+    const driftX = Math.sin(bottleTime3 * 0.6 + phase) * 60 + Math.sin(bottleTime3 * 0.3 + phase2) * 40;
+    const baseX = W * 0.08 + i * (W * 0.84 / 9);
+    const x = baseX + driftX;
+
+    const driftY = Math.sin(bottleTime3 * 0.5 + phase * 1.3) * 25 + Math.sin(bottleTime3 * 0.7 + phase2 * 0.8) * 15;
+    const baseY = H * 0.68 + i * 2.5 + Math.sin(i * 0.9) * 15;
+    const y = baseY + driftY;
+
+    const scale = 0.5 + (1 - i / 9) * 0.55 + Math.sin(bottleTime3 * 0.2 + i) * 0.05;
+    const rotation = Math.sin(bottleTime3 * 0.4 + i * 0.8) * 0.08;
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+    ctx.rotate(rotation);
+
+    // 横过来
+    ctx.rotate(-Math.PI / 2);
+
+    ctx.font = '38px "Segoe UI Emoji", "Apple Color Emoji", system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.filter = 'grayscale(1) brightness(1.8)';
+    ctx.shadowColor = 'rgba(255,255,255,0.05)';
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.fillText('🧴', 0, 0);
+    ctx.filter = 'none';
+    ctx.shadowBlur = 0;
+
+    ctx.restore();
+}
+
+            // ===== 光晕拖尾 =====
+            mouseTrail.forEach((p, i) => {
+                const alpha = p.life * 0.3;
+                const radius = (1 - p.life) * 30 + 3;
+                const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
+                grad.addColorStop(0, `rgba(200, 230, 255, ${alpha})`);
+                grad.addColorStop(0.5, `rgba(180, 200, 255, ${alpha * 0.4})`);
+                grad.addColorStop(1, `rgba(150, 180, 255, 0)`);
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                ctx.fill();
+                p.life *= 0.985;
+            });
+            mouseTrail = mouseTrail.filter(p => p.life > 0.01);
+
+            if (mouseX > 0 && mouseY > 0) {
+                const grad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 60);
+                grad.addColorStop(0, `rgba(200, 230, 255, 0.06)`);
+                grad.addColorStop(0.5, `rgba(180, 210, 255, 0.03)`);
+                grad.addColorStop(1, `rgba(150, 180, 255, 0)`);
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, 60, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // ===== 点击星光散落 =====
+            burstParticles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.03;
+                p.life -= p.decay;
+                const alpha = p.life * 0.9;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, Math.max(0.1, p.size * p.life), 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${p.hue}, 90%, 80%, ${alpha})`;
+                ctx.fill();
+                const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, Math.max(0.1, p.size * 4 * p.life));
+                glow.addColorStop(0, `hsla(${p.hue}, 90%, 90%, ${alpha * 0.2})`);
+                glow.addColorStop(1, `hsla(${p.hue}, 90%, 90%, 0)`);
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, Math.max(0.1, p.size * 4 * p.life), 0, Math.PI * 2);
+                ctx.fill();
+            });
+            burstParticles = burstParticles.filter(p => p.life > 0.01);
+
+            requestAnimationFrame(draw);
+        }
+        draw();
+
+        // ============================================================
+        // 3. 瓶子交互
+        // ============================================================
+        function openWriteModal() {
+            document.getElementById('writeModal').classList.add('show');
+            document.getElementById('bottleContainer').classList.add('hidden');
+            const user = getCurrentAuthUser();
+            if (user && user.anonymous_name) {
+                document.getElementById('senderName').value = user.anonymous_name;
+            }
+        }
+
+        function closeWriteModal() {
+            document.getElementById('writeModal').classList.remove('show');
+            document.getElementById('bottleContainer').classList.remove('hidden');
+        }
+
+        document.getElementById('bottleContainer').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            for (let i = 0; i < 80; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 6 + 2;
+                burstParticles.push({
+                    x: cx, y: cy,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 1,
+                    size: Math.random() * 6 + 2,
+                    life: 1,
+                    decay: Math.random() * 0.012 + 0.006,
+                    hue: Math.random() * 60 + 280
+                });
+            }
+            openWriteModal();
+        });
+
+        // ============================================================
+        // 4. 扔瓶子
+        // ============================================================
+        async function throwBottle() {
+            const content = document.getElementById('wishContent').value.trim();
+            if (!content) {
+                showToast(' 写一段告白再扔进星海吧');
+                return;
+            }
+
+            const currentUser = getCurrentAuthUser();
+            if (!currentUser) {
+                showToast('请先登录 ✨');
+                return;
+            }
+            const userId = currentUser.user_id;
+            const sender = document.getElementById('senderName').value.trim() || '匿名';
+            const recipient = document.getElementById('recipientName').value.trim() || '随缘漂向任何人';
+
+            const fullContent = ` 收件人：${recipient}\n 寄件人：${sender}\n\n${content}`;
+
+            const { error } = await supabase.from('wishes').insert({
+                sender_id: userId,
+                receiver_id: null,
+                content: fullContent,
+                is_reply: false,
+                is_public: true,
+                anonymous_name: sender,
+                is_read: false,
+                type: 'bottle'
+            });
+
+            if (error) {
+                showToast('扔瓶子失败，请重试 ');
+                console.error(error);
+                return;
+            }
+
+            document.getElementById('wishContent').value = '';
+            document.getElementById('recipientName').value = '';
+            closeWriteModal();
+            showToast(' 瓶子已扔进星海！它会在星海里漂流，等待有缘人捞起。');
+        }
+
+        // ============================================================
+        // 5. 捞瓶子
+        // ============================================================
+        async function fetchBottle() {
+            const currentUser = getCurrentAuthUser();
+            if (!currentUser) {
+                showToast('请先登录 ✨');
+                return;
+            }
+            const userId = currentUser.user_id;
+
+            const { data, error } = await supabase
+                .from('wishes')
+                .select('id, content, anonymous_name, created_at, sender_id')
+                .eq('type', 'bottle')
+                .eq('is_public', true)
+                .eq('is_read', false)
+                .neq('sender_id', userId)
+                .order('created_at', { ascending: false })
+                .limit(50);
+
+            if (error) {
+                showToast('捞瓶子失败 ');
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                document.getElementById('resultContent').innerHTML = `
+                    <span class="bottle-icon">🧴</span>
+                    <div class="empty">星海里暂时没有漂流瓶</div>
+                    <div style="color:rgba(255,255,255,0.08);font-size:0.7rem;letter-spacing:2px;margin-top:8px;">
+                        去扔一个瓶子吧，会有人捞到的
+                    </div>
+                `;
+                document.getElementById('resultModal').classList.add('show');
+                return;
+            }
+
+            const randomBottle = data[Math.floor(Math.random() * data.length)];
+            await supabase.from('wishes').update({ 
+    is_read: true, 
+    receiver_id: userId 
+}).eq('id', randomBottle.id);
+
+            const lines = randomBottle.content.split('\n');
+            const fromLine = lines.find(l => l.includes('寄件人')) || '来自星海深处';
+            const msgLines = lines.filter(l => !l.includes('寄件人') && !l.includes('收件人'));
+            const msg = msgLines.join('\n');
+
+            document.getElementById('resultContent').innerHTML = `
+                <span class="bottle-icon">🧴</span>
+                <div class="from">${fromLine}</div>
+                <div class="msg">${msg}</div>
+                <div style="color:rgba(255,255,255,0.06);font-size:0.55rem;margin-top:8px;">
+                     ${new Date(randomBottle.created_at).toLocaleString()}
+                </div>
+            `;
+            document.getElementById('resultModal').classList.add('show');
+        }
+
+        function closeResultModal() {
+            document.getElementById('resultModal').classList.remove('show');
+        }
+
+        // ============================================================
+        // 6. 我的瓶子
+        // ============================================================
+        async function openMyBottles() {
+            const currentUser = getCurrentAuthUser();
+            if (!currentUser) {
+                showToast('请先登录 ✨');
+                return;
+            }
+            const userId = currentUser.user_id;
+
+            const { data, error } = await supabase
+                .from('wishes')
+                .select('id, content, created_at, is_read, receiver_id')
+                .eq('type', 'bottle')
+                .eq('sender_id', userId)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                showToast('加载失败');
+                return;
+            }
+
+            const list = document.getElementById('myBottlesList');
+            if (data.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align:center;padding:40px 0;color:rgba(255,255,255,0.3);">
+                        <div style="font-size:3rem;opacity:0.2;">🧴</div>
+                        <div style="font-size:0.85rem;letter-spacing:2px;margin-top:8px;">你还没有扔过瓶子</div>
+                    </div>
+                `;
+            } else {
+                list.innerHTML = data.map(w => {
+                    const preview = w.content.length > 40 ? w.content.substring(0, 40) + '...' : w.content;
+                    const status = w.is_read ? '✅ 已被捞起' : '⏳ 仍在星海漂流';const statusColor = w.is_read ? 'rgba(100,220,180,0.4)' : 'rgba(255,215,0,0.2)';
+                    return `
+                        <div class="my-bottle-item">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <span style="color:rgba(255,255,255,0.15);font-size:0.6rem;letter-spacing:2px;">🧴 星愿瓶</span>
+                                <span class="status" style="color:${statusColor};">${status}</span>
+                            </div>
+                            <div class="preview">${preview}</div>
+                            <div class="time"> ${new Date(w.created_at).toLocaleString()}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('myBottlesModal').classList.add('show');
+        }
+
+        function closeMyBottles() {
+            document.getElementById('myBottlesModal').classList.remove('show');
+        }
+
+// ===== 打开漂流瓶收件箱 =====
+async function openBottleInbox() {
+    const currentUser = getCurrentAuthUser();
+    if (!currentUser) { showToast('请先登录'); return; }
+    const userId = currentUser.user_id;
+
+    const { data, error } = await supabase
+        .from('wishes')
+        .select('id, content, anonymous_name, created_at, is_read')
+        .eq('type', 'bottle')
+        .eq('receiver_id', userId)
+        .order('created_at', { ascending: false });
+
+    if (error) { showToast('加载失败'); return; }
+
+    const modal = document.getElementById('bottleInboxModal');
+    const list = document.getElementById('bottleInboxList');  // ← 加上这行
+    document.getElementById('bottleInboxOverlay').style.display = 'block';
+    modal.style.display = 'block';
+
+    if (data.length === 0) {
+        list.innerHTML = `<div style="text-align:center;padding:40px 0;color:rgba(255,255,255,0.15);">
+            <div style="font-size:3rem;opacity:0.2;">🧴</div>
+            <div style="font-size:0.85rem;letter-spacing:2px;color:rgba(255,255,255,0.3);">还没有人捞到你的瓶子</div>
+            <div style="font-size:0.65rem;color:rgba(255,255,255,0.06);margin-top:4px;">瓶子还在星海里漂流</div>
+        </div>`;
+    } else {
+        list.innerHTML = data.map(w => {
+            const lines = w.content.split('\n');
+            const fromLine = lines.find(l => l.includes('寄件人')) || '匿名';
+            const msg = lines.filter(l => !l.includes('寄件人') && !l.includes('收件人')).join('\n');
+            return `
+                <div style="background:rgba(255,255,255,0.02);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03);">
+                    <div style="color:rgba(255,255,255,0.2);font-size:0.65rem;letter-spacing:1px;margin-bottom:4px;">${fromLine}</div>
+                    <div style="color:rgba(255,255,255,0.7);font-size:0.9rem;line-height:1.8;white-space:pre-wrap;">${msg}</div>
+                    <div style="color:rgba(255,255,255,0.06);font-size:0.55rem;text-align:right;margin-top:4px;">🌊 ${new Date(w.created_at).toLocaleString()}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    document.getElementById('bottleBadge').style.display = 'none';
+}
+
+function closeBottleInbox() {
+    const modal = document.getElementById('bottleInboxModal');
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        document.getElementById('bottleInboxOverlay').style.display = 'none';
+    }, 300);
+}
+
+        // ============================================================
+        // 7. Toast
+        // ============================================================
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.textContent = msg;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30%;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(10, 12, 30, 0.7);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(255,255,255,0.06);
+                border-radius: 20px;
+                padding: 16px 28px;
+                color: rgba(255,255,255,0.7);
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+                z-index: 9999;
+                max-width: 90%;
+                text-align: center;
+                animation: toastFade 0.4s ease;
+                font-family: 'Georgia', 'Songti SC', serif;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.8s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 800);
+            }, 3000);
+        }
+
+// ===== 检查漂流瓶红点 =====
+async function checkBottleRedDot() {
+    const currentUser = getCurrentAuthUser();
+    if (!currentUser) return;
+    const userId = currentUser.user_id;
+
+    const { data, error } = await supabase
+        .from('wishes')
+        .select('id')
+        .eq('type', 'bottle')
+        .eq('receiver_id', userId)
+        .eq('is_read', false);
+
+    if (error) return;
+    const count = data ? data.length : 0;
+    const badge = document.getElementById('bottleBadge');
+    if (badge) {
+        if (count > 0) {
+            badge.style.display = 'block';
+            badge.textContent = count > 99 ? '99+' : count;
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+}
+
+// ===== Tab 切换 =====
+function switchBottleTab(tab) {
+    const sentList = document.getElementById('myBottlesList');
+    const receivedList = document.getElementById('bottleInboxList');
+    const tabSent = document.getElementById('tabSent');
+    const tabReceived = document.getElementById('tabReceived');
+
+    if (tab === 'sent') {
+        sentList.style.display = 'block';
+        receivedList.style.display = 'none';
+        tabSent.style.color = 'rgba(255,255,255,0.4)';
+        tabSent.style.borderBottomColor = 'rgba(255,215,0,0.3)';
+        tabReceived.style.color = 'rgba(255,255,255,0.15)';
+        tabReceived.style.borderBottomColor = 'transparent';
+    } else {
+        sentList.style.display = 'none';
+        receivedList.style.display = 'block';
+        tabReceived.style.color = 'rgba(255,255,255,0.4)';
+        tabReceived.style.borderBottomColor = 'rgba(255,215,0,0.3)';
+        tabSent.style.color = 'rgba(255,255,255,0.15)';
+        tabSent.style.borderBottomColor = 'transparent';
+        // 切换到漂流瓶时加载数据
+        loadBottleInbox();
+    }
+}
+
+// ===== 加载漂流瓶收件箱 =====
+async function loadBottleInbox() {
+    const currentUser = getCurrentAuthUser();
+    if (!currentUser) return;
+    const userId = currentUser.user_id;
+
+    const { data, error } = await supabase
+        .from('wishes')
+        .select('id, content, anonymous_name, created_at, is_read')
+        .eq('type', 'bottle')
+        .eq('receiver_id', userId)
+        .order('created_at', { ascending: false });
+
+    if (error) return;
+
+    const list = document.getElementById('bottleInboxList');
+    if (data.length === 0) {
+        list.innerHTML = `<div style="text-align:center;padding:40px 0;color:rgba(255,255,255,0.15);">
+            <div style="font-size:3rem;opacity:0.2;">🧴</div>
+            <div style="font-size:0.85rem;letter-spacing:2px;">还没有人捞到你的瓶子</div>
+            <div style="font-size:0.65rem;color:rgba(255,255,255,0.06);margin-top:4px;">瓶子还在星海里漂流</div>
+        </div>`;
+    } else {
+        list.innerHTML = data.map(w => {
+            const lines = w.content.split('\n');
+            const fromLine = lines.find(l => l.includes('寄件人')) || '匿名';
+            const msg = lines.filter(l => !l.includes('寄件人') && !l.includes('收件人')).join('\n');
+            return `
+                <div style="background:rgba(255,255,255,0.02);border-radius:16px;padding:14px 16px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.03);">
+                    <div style="color:rgba(255,255,255,0.2);font-size:0.65rem;letter-spacing:1px;margin-bottom:4px;">${fromLine}</div>
+                    <div style="color:rgba(255,255,255,0.6);font-size:0.85rem;line-height:1.6;white-space:pre-wrap;">${msg}</div>
+                    <div style="color:rgba(255,255,255,0.06);font-size:0.55rem;text-align:right;margin-top:4px;">🌊 ${new Date(w.created_at).toLocaleString()}</div>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+function openMyBottlesAndSwitch(tab) {
+    openMyBottles();
+    setTimeout(() => {
+        switchBottleTab(tab);
+    }, 300);
+}
+
+        // ============================================================
+        // 8. 初始化
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            checkBottleRedDot(); 
+            var label = document.getElementById('musicLabel');
+            if (label) {
+                label.style.fontSize = '0.8rem';
+                label.style.color = 'rgba(255,255,255,0.5)';
+            }
+        });
+
+        // 暴露全局
+        window.openWriteModal = openWriteModal;
+        window.closeWriteModal = closeWriteModal;
+        window.throwBottle = throwBottle;
+        window.fetchBottle = fetchBottle;
+        window.closeResultModal = closeResultModal;
+        window.openMyBottles = openMyBottles;
+        window.closeMyBottles = closeMyBottles;
+        window.showToast = showToast;
+        window.openBottleInbox = openBottleInbox;
+        window.closeBottleInbox = closeBottleInbox;
+        window.checkBottleRedDot = checkBottleRedDot;
+    </script>
+</body>
+</html>
