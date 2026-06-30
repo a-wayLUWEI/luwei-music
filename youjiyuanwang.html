@@ -951,12 +951,11 @@ async function openWishBox() {
     const userId = currentUser.user_id;
 
     const { data, error } = await supabase
-        .from('wishes')
-        .select('id, content, anonymous_name, created_at, is_read, sender_id')
-        .eq('receiver_id', userId)
-        .eq('is_reply', false)
-        .eq('type', 'wish')
-        .order('created_at', { ascending: false });
+    .from('wishes')
+    .select('id, receiver_id, content, anonymous_name, created_at, is_read, is_public')
+    .eq('sender_id', userId)
+    .eq('type', 'wish')
+    .order('created_at', { ascending: false });
 
     if (error) { alert('加载失败'); return; }
 
