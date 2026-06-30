@@ -1109,12 +1109,12 @@ async function checkWishBox() {
     console.log('✅ 当前用户ID:', userId);
 
     const { data, error } = await supabase
-        .from('wishes')
-        .select('id')
-        .eq('receiver_id', userId)
-        .eq('is_read', false)
-        .eq('is_reply', false);
-        .eq('type', 'wish')
+    .from('wishes')
+    .select('id')
+    .eq('receiver_id', userId)
+    .eq('is_read', false)
+    .eq('is_reply', false)
+    .eq('type', 'wish')
 
     if (error) {
         console.log('❌ 查询失败:', error);
