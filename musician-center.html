@@ -181,6 +181,8 @@
         .btn-outline:hover { background: #f5f5f5; }
         .btn-danger { background: #e53935; color: white; }
         .btn-danger:hover { background: #c62828; }
+        .btn-secondary { background: #9C27B0; color: white; }
+        .btn-secondary:hover { background: #7B1FA2; }
 
         /* ========== 作品列表 ========== */
         .section-title {
@@ -196,15 +198,17 @@
             background: white;
             border-radius: 12px;
             padding: 16px 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            transition: 0.2s;
+        }
+        .work-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .work-item .work-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-            transition: 0.2s;
             flex-wrap: wrap;
             gap: 10px;
         }
-        .work-item:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
         .work-item .work-info {
             display: flex;
             align-items: center;
@@ -251,7 +255,108 @@
             font-size: 16px;
             transition: 0.2s;
         }
+        .work-item .work-actions .edit-btn { color: #9C27B0; }
+        .work-item .work-actions .edit-btn:hover { color: #7B1FA2; }
         .work-item .work-actions .delete-btn:hover { color: #e53935; }
+
+        /* ========== 歌词编辑区（展开） ========== */
+        .lyrics-edit-area {
+            display: none;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #eee;
+        }
+        .lyrics-edit-area.open { display: block; }
+        .lyrics-edit-area textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            min-height: 120px;
+        }
+        .lyrics-edit-area textarea:focus { outline: none; border-color: #4CAF50; }
+        .lyrics-edit-area .edit-tools {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lyrics-edit-area .edit-tools button {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .lyrics-edit-area .edit-tools .btn-preview {
+            background: #1a73e8;
+            color: white;
+        }
+        .lyrics-edit-area .edit-tools .btn-preview:hover {
+            background: #1557b0;
+        }
+        .lyrics-edit-area .edit-tools .btn-preview.active {
+            background: #e53935;
+        }
+        .lyrics-edit-area .edit-tools .btn-shift-back { background: #E69A2E; color: #2D1E0C; }
+        .lyrics-edit-area .edit-tools .btn-shift-back:hover { background: #FFD966; }
+        .lyrics-edit-area .edit-tools .btn-shift-forward { background: #E69A2E; color: #2D1E0C; }
+        .lyrics-edit-area .edit-tools .btn-shift-forward:hover { background: #FFD966; }
+        .lyrics-edit-area .edit-tools .btn-clear-timestamps { background: #e53935; color: white; }
+        .lyrics-edit-area .edit-tools .btn-clear-timestamps:hover { background: #c62828; }
+        .lyrics-edit-area .edit-tools .btn-save-lyrics { background: #4CAF50; color: white; }
+        .lyrics-edit-area .edit-tools .btn-save-lyrics:hover { background: #388E3C; }
+        .lyrics-edit-area .edit-tools .btn-cancel-edit { background: #f0f0f0; color: #333; }
+        .lyrics-edit-area .edit-tools .btn-cancel-edit:hover { background: #e0e0e0; }
+
+        /* ========== 预览区域 ========== */
+        .preview-area {
+            display: none;
+            margin-top: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .preview-area.open { display: block; }
+        .preview-area .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .preview-area .preview-header span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+        .preview-area .preview-header button {
+            background: #e53935;
+            border: none;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .preview-area .preview-header button:hover { background: #c62828; }
+        .preview-area .preview-line {
+            padding: 2px 8px;
+            border-radius: 4px;
+            transition: all 0.15s;
+            color: #666;
+        }
+        .preview-area .preview-line.highlight {
+            background: #FFD966;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
 
         /* ========== 空状态 ========== */
         .empty-state {
@@ -324,6 +429,7 @@
             gap: 12px;
             justify-content: flex-end;
             margin-top: 16px;
+            flex-wrap: wrap;
         }
         .modal .modal-actions button {
             padding: 10px 24px;
@@ -343,6 +449,11 @@
             color: white;
         }
         .modal .modal-actions .btn-submit:hover { background: #388E3C; }
+        .modal .modal-actions .btn-lrc-gen {
+            background: #9C27B0;
+            color: white;
+        }
+        .modal .modal-actions .btn-lrc-gen:hover { background: #7B1FA2; }
 
         /* ========== Toast ========== */
         .toast {
@@ -369,11 +480,13 @@
         @media (max-width: 600px) {
             .profile-card { padding: 20px; }
             .profile-card .avatar-wrapper img { width: 90px; height: 90px; }
-            .work-item { flex-direction: column; align-items: stretch; }
+            .work-item .work-header { flex-direction: column; align-items: stretch; }
             .work-item .work-actions { text-align: right; }
             .toolbar button { flex: 1; text-align: center; }
             .nav-bar { flex-direction: column; align-items: stretch; text-align: center; }
             .nav-bar .nav-links { justify-content: center; flex-wrap: wrap; }
+            .modal .modal-actions button { flex: 1; text-align: center; }
+            .lyrics-edit-area .edit-tools button { flex: 1; text-align: center; }
         }
     </style>
 </head>
@@ -432,25 +545,25 @@
         <form id="workForm">
             <div class="form-group">
                 <label>作品名称 *</label>
-<div class="form-group">
-    <label>专辑</label>
-    <div style="display:flex; gap:8px; align-items:center;">
-        <select id="albumSelect" style="flex:1; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px; background:white;">
-            <option value="">单曲（无专辑）</option>
-        </select>
-        <button type="button" onclick="showNewAlbumModal()" style="
-            padding:10px 16px;
-            background:linear-gradient(135deg, #d4b896, #b8a0c8);
-            border:none;
-            border-radius:8px;
-            color:#1a1a2e;
-            font-weight:600;
-            cursor:pointer;
-            white-space:nowrap;
-        ">+ 新建</button>
-    </div>
-</div>
                 <input type="text" id="workTitleInput" placeholder="请输入作品名称" required>
+            </div>
+            <div class="form-group">
+                <label>专辑</label>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <select id="albumSelect" style="flex:1; padding:10px 12px; border:1px solid #ddd; border-radius:8px; font-size:14px; background:white;">
+                        <option value="">单曲（无专辑）</option>
+                    </select>
+                    <button type="button" onclick="showNewAlbumModal()" style="
+                        padding:10px 16px;
+                        background:linear-gradient(135deg, #d4b896, #b8a0c8);
+                        border:none;
+                        border-radius:8px;
+                        color:#1a1a2e;
+                        font-weight:600;
+                        cursor:pointer;
+                        white-space:nowrap;
+                    ">+ 新建</button>
+                </div>
             </div>
             <div class="form-group">
                 <label>音频文件 *</label>
@@ -458,21 +571,24 @@
                 <div class="progress-bar" id="uploadProgress">
                     <div class="fill" id="progressFill"></div>
                 </div>
-            </div>
+      </div>
             <div class="form-group">
                 <label>歌词</label>
-                <textarea id="lyricsInput" rows="4" placeholder="填写歌词，纯音乐请写'纯音乐'"></textarea>
+                <textarea id="lyricsInput" rows="4" placeholder="填写歌词，纯音乐请写'纯音乐'。点击下方按钮可自动生成时间戳"></textarea>
             </div>
             <div class="modal-actions">
+                <button type="button" class="btn-lrc-gen" onclick="generateLRC()"> 自动生成动态歌词</button>
                 <button type="button" class="btn-cancel" onclick="closeUploadModal()">取消</button>
                 <button type="submit" class="btn-submit">发布作品</button>
             </div>
         </form>
     </div>
+</div>
+
 <!-- ===== 新建专辑弹窗 ===== -->
 <div class="modal-overlay" id="newAlbumModal">
     <div class="modal" style="max-width:400px;">
-        <h3>📀 新建专辑</h3>
+        <h3> 新建专辑</h3>
         <div class="form-group">
             <label>专辑名称 *</label>
             <input type="text" id="newAlbumTitle" placeholder="输入专辑名称">
@@ -490,7 +606,6 @@
             <button class="btn-submit" onclick="createAlbum()">创建专辑</button>
         </div>
     </div>
-</div>
 </div>
 
 <!-- ===== Toast ===== -->
@@ -531,17 +646,39 @@ function formatDate(str) {
     return new Date(str).toLocaleDateString('zh-CN');
 }
 
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    const millis = Math.floor((seconds % 1) * 1000);
+    return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0') + '.' + String(millis).padStart(3, '0');
+}
+
+// ============================================================
+// 存储当前生成的歌词时间数据
+// ============================================================
+let currentLRCData = [];
+
+// ============================================================
+// 预览相关全局变量
+// ============================================================
+let previewAudio = null;
+let previewTimer = null;
+let previewData = [];
+
 // ============================================================
 // 初始化
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     loadMusicianData();
     loadWorks();
- loadAlbumsForSelect();
+    loadAlbumsForSelect();
     document.getElementById('avatarInput').addEventListener('change', uploadAvatar);
     document.getElementById('workForm').addEventListener('submit', submitWork);
     document.getElementById('uploadModal').addEventListener('click', function(e) {
         if (e.target === this) closeUploadModal();
+    });
+    document.getElementById('newAlbumModal').addEventListener('click', function(e) {
+        if (e.target === this) closeNewAlbumModal();
     });
 });
 
@@ -611,6 +748,9 @@ async function loadWorks() {
     }
 }
 
+// ============================================================
+// 渲染作品列表（含预览功能）
+// ============================================================
 function renderWorks(works) {
     const container = document.getElementById('workList');
     if (!works || works.length === 0) {
@@ -626,29 +766,521 @@ function renderWorks(works) {
     container.innerHTML = works.map(work => {
         const statusMap = {
             'approved': '✅ 已通过',
-    'pending': '⏳ 审核中',
+            'pending': '⏳ 审核中',
             'rejected': '❌ 已下架'
         };
         const statusClass = work.status || 'pending';
+        const hasLyrics = work.lyrics && work.lyrics.trim() !== '' && work.lyrics.trim() !== '纯音乐';
+        const lyricsPreview = hasLyrics ? work.lyrics.substring(0, 60) + (work.lyrics.length > 60 ? '...' : '') : '暂无歌词';
+        const pureLyrics = hasLyrics ? work.lyrics.replace(/\[\d{2}:\d{2}\.\d{2}\]/g, '').trim() : '暂无歌词';
+        
         return `
         <div class="work-item" data-id="${work.id}">
-            <div class="work-info">
-                <button class="play-btn" onclick="playAudio('${work.audio_url}')">▶</button>
-                <div>
-                    <div class="title">${work.title || '未命名'}</div>
-<div class="meta">
-    ❤️ ${work.likes || 0}
-    ${work.album_id ? `<span style="color:#b8a0c8;font-size:11px;">📀 专辑</span>` : ''}
-    <span class="status-tag ${statusClass}">${statusMap[statusClass] || '⏳ 审核中'}</span>
-    ${work.created_at ? formatDate(work.created_at) : ''}
+            <div class="work-header">
+                <div class="work-info">
+                    <button class="play-btn" onclick="playAudio('${work.audio_url}')">▶</button>
+                    <div>
+                        <div class="title">${work.title || '未命名'}</div>
+                        <div class="meta">
+                            ❤️ ${work.likes || 0}
+                            ${work.album_id ? `<span style="color:#b8a0c8;font-size:11px;"> 专辑</span>` : ''}
+                            <span class="status-tag ${statusClass}">${statusMap[statusClass] || '⏳ 审核中'}</span>
+                            ${work.created_at ? formatDate(work.created_at) : ''}
+                            <span style="font-size:11px;color:#999;cursor:default;" title="${lyricsPreview}">${hasLyrics ? ' 有歌词' : ' 无歌词'}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="work-actions">
+                    <button class="edit-btn" onclick="toggleLyricsEdit('${work.id}')" title="编辑歌词">✏️</button>
+                    <button class="delete-btn" onclick="deleteWork('${work.id}')" title="删除">️</button>
+                </div>
+            </div>
+            <div class="lyrics-edit-area" id="lyricsEdit_${work.id}">
+                <textarea id="lyricsTextarea_${work.id}" rows="6">${work.lyrics || '纯音乐'}</textarea>
+                <div class="edit-tools">
+                    <button class="btn-preview" onclick="previewLyrics('${work.id}', '${work.audio_url}')">▶ 预览</button>
+    <button class="btn-shift-back" onclick="batchShiftEditor('lyricsTextarea_${work.id}', -0.5)">⏪ 提前0.5秒</button>
+    <button class="btn-shift-forward" onclick="batchShiftEditor('lyricsTextarea_${work.id}', 0.5)">⏩ 延后0.5秒</button>
+    <input type="number" id="shiftAmount_${work.id}" value="0.5" step="0.1" style="width:60px; padding:4px 6px; border:1px solid #ddd; border-radius:4px; font-size:12px;">
+    <button onclick="customShiftEditor('lyricsTextarea_${work.id}', 'shiftAmount_${work.id}')" style="padding:6px 14px; border:none; border-radius:6px; background:#9C27B0; color:white; cursor:pointer; font-size:12px; font-weight:500;">⏩ 自定义偏移</button>
+    <button class="btn-clear-timestamps" onclick="clearTimestamps('lyricsTextarea_${work.id}')">🗑️ 清除时间戳</button>
+    <button class="btn-save-lyrics" onclick="saveLyricsInline('${work.id}')">💾 保存</button>
+    <button class="btn-cancel-edit" onclick="toggleLyricsEdit('${work.id}')">取消</button>
 </div>
-            </div>
-            </div>
-            <div class="work-actions">
-                <button class="delete-btn" onclick="deleteWork('${work.id}')" title="删除">️</button>
+                <!-- 预览区域 -->
+                <div class="preview-area" id="previewArea_${work.id}">
+                    <div class="preview-header">
+                        <span> 预览中...</span>
+                        <button onclick="stopPreview('${work.id}')">停止</button>
+                    </div>
+                    <div id="previewLyrics_${work.id}">
+                        ${pureLyrics.split('\n').filter(line => line.trim()).map(line => `
+                            <div class="preview-line">${line}</div>
+                        `).join('')}
+                    </div>
+                </div>
             </div>
         </div>
     `}).join('');
+}
+
+// ============================================================
+// 切换歌词编辑区展开/收起
+// ============================================================
+function toggleLyricsEdit(workId) {
+    const area = document.getElementById('lyricsEdit_' + workId);
+    if (area) {
+        if (area.classList.contains('open')) {
+            stopPreview(workId);
+        }
+        area.classList.toggle('open');
+    }
+}
+
+// ============================================================
+// 批量偏移编辑器里的时间戳（支持小数秒）
+// ============================================================
+function batchShiftEditor(textareaId, seconds) {
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) return;
+    let text = textarea.value;
+    
+    const regex = /\[(\d{2}):(\d{2})\.(\d{3})\]/g;
+    
+    const result = text.replace(regex, function(match, mins, secs, millis) {
+        let totalSeconds = parseInt(mins) * 60 + parseInt(secs) + parseInt(millis) / 1000;
+        totalSeconds = Math.max(totalSeconds + seconds, 0);
+        const newTime = formatTime(totalSeconds);
+        return '[' + newTime + ']';
+    });
+
+    if (result === text) {
+        showToast('⚠️ 没有检测到时间戳', 'error');
+        return;
+    }
+
+    textarea.value = result;
+    
+    const matches = text.match(/\[\d{2}:\d{2}\.\d{3}\]/g) || [];
+    showToast(`⏪ ${seconds > 0 ? '延后' : '提前'} ${Math.abs(seconds)} 秒，共调整 ${matches.length} 句`, 'success');
+}
+
+// ============================================================
+// 保存歌词
+// ============================================================
+async function saveLyricsInline(workId) {
+    const textarea = document.getElementById('lyricsTextarea_' + workId);
+    if (!textarea) return;
+    const newLyrics = textarea.value.trim();
+
+    if (!newLyrics) {
+        showToast('歌词不能为空', 'error');
+        return;
+    }
+
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/works?id=eq.${workId}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ lyrics: newLyrics })
+            }
+        );
+
+        if (resp.ok) {
+            showToast('✅ 歌词已更新！', 'success');
+            const area = document.getElementById('lyricsEdit_' + workId);
+            if (area) area.classList.remove('open');
+            loadWorks();
+        } else {
+            throw new Error('保存失败');
+        }
+    } catch (e) {
+        console.error(e);
+        showToast('❌ 保存失败: ' + e.message, 'error');
+    }
+}
+
+// ============================================================
+// ========== 动态歌词预览核心函数 ==========
+// ============================================================
+
+function previewLyrics(workId, audioUrl) {
+    const previewArea = document.getElementById('previewArea_' + workId);
+    const previewContainer = document.getElementById('previewLyrics_' + workId);
+    const textarea = document.getElementById('lyricsTextarea_' + workId);
+    
+    if (!previewArea || !textarea) return;
+
+    // 如果已经在预览同一首，停止
+    if (previewAudio && previewAudio._workId === workId && !previewAudio.paused) {
+        stopPreview(workId);
+        return;
+    }
+    
+    // 如果预览其他歌曲，先停止
+    if (previewAudio) {
+        stopPreview(previewAudio._workId);
+    }
+
+    // 解析歌词时间戳
+    const lyricsText = textarea.value;
+    const parsed = parseExistingLRC(lyricsText);
+    
+    if (parsed.length === 0) {
+        showToast('⚠️ 没有检测到时间戳，请先生成或手动添加', 'error');
+        return;
+    }
+
+    previewData = parsed;
+    
+    // 显示预览区域
+    previewArea.classList.add('open');
+    
+    // 渲染歌词
+    previewContainer.innerHTML = parsed.map((item, index) => `
+        <div class="preview-line" data-index="${index}" data-time="${item.time}">
+            ${item.lyric}
+        </div>
+    `).join('');
+
+    // 创建音频播放器
+    previewAudio = new Audio(audioUrl);
+    previewAudio._workId = workId;
+    
+    previewAudio.play();
+    showToast('▶ 预览中，歌词会随播放高亮', 'success');
+    
+    // 更新按钮状态
+    const previewBtn = document.querySelector(`#lyricsEdit_${workId} .btn-preview`);
+    if (previewBtn) {
+        previewBtn.textContent = '⏹ 停止';
+        previewBtn.classList.add('active');
+    }
+
+    // 启动时间同步
+    if (previewTimer) clearInterval(previewTimer);
+    previewTimer = setInterval(() => {
+        if (!previewAudio || previewAudio.paused || previewAudio.ended) {
+            return;
+        }
+        const currentTime = previewAudio.currentTime;
+        updatePreviewHighlight(workId, currentTime);
+    }, 100);
+
+    previewAudio.onended = function() {
+        stopPreview(workId);
+        showToast('✅ 预览结束', 'success');
+    };
+    
+    previewAudio.onerror = function() {
+        showToast('❌ 音频加载失败', 'error');
+        stopPreview(workId);
+    };
+}
+
+function updatePreviewHighlight(workId, currentTime) {
+    const container = document.getElementById('previewLyrics_' + workId);
+    if (!container) return;
+
+    const lines = container.querySelectorAll('.preview-line');
+    let activeIndex = -1;
+
+    for (let i = 0; i < previewData.length; i++) {
+        if (previewData[i].time <= currentTime) {
+            activeIndex = i;
+        }
+    }
+
+    lines.forEach((line, index) => {
+        line.classList.remove('highlight');
+        if (index === activeIndex) {
+            line.classList.add('highlight');
+            line.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+    });
+}
+
+function stopPreview(workId) {
+    if (previewAudio) {
+        previewAudio.pause();
+        previewAudio = null;
+    }
+    if (previewTimer) {
+        clearInterval(previewTimer);
+        previewTimer = null;
+    }
+
+    // 恢复按钮状态
+    const previewBtn = document.querySelector(`#lyricsEdit_${workId} .btn-preview`);
+    if (previewBtn) {
+        previewBtn.textContent = '▶ 预览';
+        previewBtn.classList.remove('active');
+    }
+
+// 清除高亮
+    const container = document.getElementById('previewLyrics_' + workId);
+    if (container) {
+        container.querySelectorAll('.preview-line').forEach(line => {
+            line.classList.remove('highlight');
+        });
+    }
+}
+
+// ============================================================
+// 解析已有时间戳的歌词（支持三位毫秒）
+// ============================================================
+function parseExistingLRC(text) {
+    const lines = text.split('\n').filter(line => line.trim() !== '');
+    const result = [];
+    // 支持 [mm:ss.cc] 和 [mm:ss.ccc]
+    const regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+
+    for (const line of lines) {
+        const match = line.match(regex);
+        if (match) {
+            const mins = parseInt(match[1]);
+            const secs = parseInt(match[2]);
+            const millis = parseInt(match[3]);
+            const time = mins * 60 + secs + millis / 1000;
+            const lyric = match[4].trim();
+            result.push({ time, lyric });
+        }
+    }
+    return result;
+}
+
+// ============================================================
+// 动态歌词生成
+// ============================================================
+function generateLRC() {
+    const lyricsText = document.getElementById('lyricsInput');
+    const audioInput = document.getElementById('audioFileInput');
+
+    if (!audioInput || !audioInput.files || audioInput.files.length === 0) {
+        showToast('请先选择音频文件', 'error');
+        return;
+    }
+
+    const text = lyricsText.value.trim();
+    if (!text) {
+        showToast('请先填写歌词', 'error');
+        return;
+    }
+
+    const file = audioInput.files[0];
+    const audio = new Audio();
+    audio.src = URL.createObjectURL(file);
+
+    showToast('⏳ 正在分析音频时长...');
+
+    audio.onloadedmetadata = function() {
+        const duration = audio.duration;
+        const hasTimestamp = /\[\d{2}:\d{2}\.\d{2}\]/.test(text);
+        let lines = [];
+
+        if (hasTimestamp) {
+            lines = parseExistingLRC(text);
+            if (lines.length === 0) {
+                showToast('⚠️ 无法解析现有时间戳，请手动调整', 'error');
+                return;
+            }
+            showCorrectionDialog(lines, duration);
+        } else {
+            lines = text.split('\n').filter(line => line.trim() !== '');
+            if (lines.length === 0) {
+                showToast('歌词内容为空', 'error');
+                return;
+            }
+            const offset = prompt('前奏空白秒数（默认8秒）：', '8');
+            const offsetNum = parseFloat(offset) || 8;
+            const tailPadding = 3;
+            const lrcData = autoGenerateLRC(lines, duration, offsetNum, tailPadding);
+            currentLRCData = lrcData;
+            lyricsText.value = formatLRCToString(lrcData);
+            showToast('✅ 动态歌词已生成！共 ' + lines.length + ' 句，可手动微调', 'success');
+        }
+
+        URL.revokeObjectURL(audio.src);
+    };
+
+    audio.onerror = function() {
+        showToast('❌ 音频文件加载失败，请检查文件是否有效', 'error');
+        URL.revokeObjectURL(audio.src);
+    };
+}
+
+function autoGenerateLRC(lines, duration, offset, tailPadding) {
+    const result = [];
+    const totalLyricsTime = Math.max(duration - offset - tailPadding, 1);
+    const interval = totalLyricsTime / lines.length;
+
+    lines.forEach((line, index) => {
+        const time = Math.min(offset + index * interval, duration - 0.5);
+        result.push({ time, lyric: line.trim() });
+    });
+    return result;
+}
+
+function formatLRCToString(data) {
+    return data.map(item => {
+        const timeStr = formatTime(item.time);
+        return '[' + timeStr + ']' + item.lyric;
+    }).join('\n');
+}
+
+function showCorrectionDialog(lines, duration) {
+    const lastTime = lines[lines.length - 1]?.time || 0;
+    const gap = duration - lastTime;
+
+    const action = confirm(
+        ' 检测到歌词已有时间戳\n\n' +
+        '当前最后一句时间：' + formatTime(lastTime) + '\n' +
+        '音频总时长：' + formatTime(duration) + '\n' +
+        '尾部空白：' + gap.toFixed(2) + ' 秒\n\n' +
+        '点击「确定」→ 整体偏移对齐音频\n' +
+        '点击「取消」→ 进入手动微调模式'
+    );
+
+    if (action) {
+        const firstTime = lines[0]?.time || 0;
+        let offsetAmount = 0;
+
+        if (firstTime < 0.5) {
+            const userOffset = prompt('第一句在0秒，请输入前奏偏移秒数（默认8秒）：', '8');
+            offsetAmount = parseFloat(userOffset) || 8;
+        } else {
+            const userOffset = prompt('整体偏移秒数（正数=延后，负数=提前）：', '0');
+            offsetAmount = parseFloat(userOffset) || 0;
+        }
+
+        const corrected = lines.map(item => ({
+            time: Math.min(Math.max(item.time + offsetAmount, 0), duration - 0.5),
+            lyric: item.lyric
+        }));
+
+        currentLRCData = corrected;
+        document.getElementById('lyricsInput').value = formatLRCToString(corrected);
+        showToast('✅ 时间戳已校正！整体偏移 ' + offsetAmount.toFixed(1) + ' 秒', 'success');
+
+    } else {
+        openFineTuneModal(lines, duration);
+    }
+}
+
+function openFineTuneModal(lines, duration) {
+    const overlay = document.createElement('div');
+    overlay.id = 'fineTuneOverlay';
+    overlay.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+        z-index: 20000; display: flex; align-items: center; justify-content: center;
+        padding: 20px;
+    `;
+
+    let itemsHtml = lines.map((item, index) => `
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:6px; background:rgba(255,255,255,0.05); padding:6px 10px; border-radius:8px;">
+            <span style="color:#AAD4B0; font-size:0.7rem; min-width:24px;">${index+1}</span>
+            <input type="number" id="timeInput_${index}" value="${item.time.toFixed(2)}" step="0.1" style="width:70px; padding:4px 6px; border-radius:6px; border:1px solid #F2C94C; background:#1a3a2a; color:#FFD966; font-size:0.7rem;">
+            <span style="color:#AAD4B0; font-size:0.65rem;">秒</span>
+            <input type="text" id="lyricInput_${index}" value="${item.lyric}" style="flex:1; padding:4px 8px; border-radius:6px; border:1px solid #F2C94C; background:#1a3a2a; color:white; font-size:0.75rem; background:rgba(255,255,255,0.05);">
+        </div>
+    `).join('');
+
+    overlay.innerHTML = `
+        <div style="background: linear-gradient(145deg, #0f281dcc, #1a3a2a); border: 2px solid #F2C94C; border-radius: 32px; padding: 28px 24px; max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 0 60px rgba(230,154,46,0.25);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="color:#FFD966; font-size:1.1rem;">✏️ 手动微调时间戳</h3>
+                <button onclick="this.closest('#fineTuneOverlay').remove()" style="background:none; border:none; color:#AAD4B0; font-size:1.2rem; cursor:pointer;">✕</button>
+            </div>
+            <p style="color:#AAD4B0; font-size:0.65rem; margin-bottom:12px;">调整每句歌词的时间（秒），点击「应用」保存</p>
+            <div style="max-height:300px; overflow-y:auto; margin-bottom:12px;">
+                ${itemsHtml}
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+    <button onclick="batchShiftFineTune(${duration}, -0.5)" style="background:#E69A2E; border:none; padding:6px 14px; border-radius:8px; color:#2D1E0C; font-weight:bold; cursor:pointer; font-size:0.7rem;">⏪ 提前0.5秒</button>
+    <button onclick="batchShiftFineTune(${duration}, 0.5)" style="background:#E69A2E; border:none; padding:6px 14px; border-radius:8px; color:#2D1E0C; font-weight:bold; cursor:pointer; font-size:0.7rem;">⏩ 延后0.5秒</button>
+    <input type="number" id="fineTuneShiftAmount" value="0.5" step="0.1" style="width:60px; padding:4px 6px; border-radius:6px; border:1px solid #F2C94C; background:#1a3a2a; color:#FFD966; font-size:0.7rem;">
+    <button onclick="customFineTuneShift(${duration})" style="background:#9C27B0; border:none; padding:6px 14px; border-radius:8px; color:white; font-weight:bold; cursor:pointer; font-size:0.7rem;">⏩ 自定义偏移</button>
+    <button onclick="applyFineTune(${duration})" style="background:#4CAF50; border:none; padding:6px 20px; border-radius:8px; color:white; font-weight:bold; cursor:pointer; font-size:0.7rem;">✅ 应用</button>
+</div>           
+    `;
+
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', function(e) {
+        if (e.target === this) this.remove();
+    });
+}
+
+// ============================================================
+// 批量偏移（支持任意秒数）
+// ============================================================
+function batchShiftFineTune(duration, seconds) {
+    const inputs = document.querySelectorAll('[id^="timeInput_"]');
+    let count = 0;
+    inputs.forEach(input => {
+        let val = parseFloat(input.value) + seconds;
+        val = Math.max(val, 0);
+        val = Math.min(val, duration - 0.5);
+        input.value = val.toFixed(2);
+        count++;
+    });
+    showToast(`⏪ ${seconds > 0 ? '延后' : '提前'} ${Math.abs(seconds)} 秒，共调整 ${count} 句`, 'success');
+}
+
+// ============================================================
+// 自定义偏移（微调弹窗里）
+// ============================================================
+function customFineTuneShift(duration) {
+    const input = document.getElementById('fineTuneShiftAmount');
+    if (!input) return;
+    const seconds = parseFloat(input.value);
+    if (isNaN(seconds) || seconds === 0) {
+        showToast('请输入有效的秒数', 'error');
+        return;
+    }
+    batchShiftFineTune(duration, seconds);
+}
+
+// ============================================================
+// 批量偏移（延后）- 修复版
+// ============================================================
+function batchShiftFineTuneDelay(duration) {
+    const inputs = document.querySelectorAll('[id^="timeInput_"]');
+    let count = 0;
+    inputs.forEach(input => {
+        let val = parseFloat(input.value) + 1;
+        val = Math.min(val, duration - 0.5);
+        input.value = val.toFixed(2);
+        count++;
+    });
+    showToast(`⏩ 全部延后1秒，共调整 ${count} 句`, 'success');
+}
+
+function applyFineTune(duration) {
+    const inputs = document.querySelectorAll('[id^="timeInput_"]');
+    const lyricInputs = document.querySelectorAll('[id^="lyricInput_"]');
+    const result = [];
+
+    inputs.forEach((input, index) => {
+        const time = Math.min(Math.max(parseFloat(input.value) || 0, 0), duration - 0.5);
+        const lyric = lyricInputs[index]?.value || '';
+        result.push({ time, lyric });
+    });
+
+    currentLRCData = result;
+    document.getElementById('lyricsInput').value = formatLRCToString(result);
+
+    const overlay = document.getElementById('fineTuneOverlay');
+    if (overlay) overlay.remove();
+
+    showToast('✅ 时间戳已应用！共 ' + result.length + ' 句', 'success');
 }
 
 // ============================================================
@@ -895,11 +1527,10 @@ function logout() {
         window.location.href = 'login.html';
     }
 }
+
 // ============================================================
 // 专辑相关
 // ============================================================
-
-// 加载专辑列表到下拉框
 async function loadAlbumsForSelect() {
     try {
         const resp = await fetch(
@@ -908,7 +1539,6 @@ async function loadAlbumsForSelect() {
         );
         const albums = await resp.json();
         const select = document.getElementById('albumSelect');
-        // 保留第一个选项（单曲）
         select.innerHTML = '<option value="">单曲（无专辑）</option>';
         albums.forEach(a => {
             const opt = document.createElement('option');
@@ -921,12 +1551,10 @@ async function loadAlbumsForSelect() {
     }
 }
 
-// 显示新建专辑弹窗
 function showNewAlbumModal() {
     document.getElementById('newAlbumModal').classList.add('show');
 }
 
-// 关闭新建专辑弹窗
 function closeNewAlbumModal() {
     document.getElementById('newAlbumModal').classList.remove('show');
     document.getElementById('newAlbumTitle').value = '';
@@ -934,7 +1562,6 @@ function closeNewAlbumModal() {
     document.getElementById('newAlbumDesc').value = '';
 }
 
-// 创建专辑
 async function createAlbum() {
     const title = document.getElementById('newAlbumTitle').value.trim();
     if (!title) {
@@ -943,7 +1570,6 @@ async function createAlbum() {
     }
 
     try {
-        // 如果有封面，上传封面
         let coverUrl = null;
         const coverFileInput = document.getElementById('newAlbumCover');
         const coverFile = coverFileInput ? coverFileInput.files[0] : null;
@@ -962,12 +1588,9 @@ async function createAlbum() {
                 );
                 if (uploadResp.ok) {
                     coverUrl = `${SUPABASE_URL}/storage/v1/object/public/album_covers/${fileName}`;
-                } else {
-                    console.warn('封面上传失败，继续创建专辑');
                 }
             } catch (e) {
                 console.warn('封面上传失败:', e);
-                // 封面失败不影响专辑创建
             }
         }
 
@@ -996,7 +1619,6 @@ async function createAlbum() {
             showToast('✅ 专辑创建成功', 'success');
             closeNewAlbumModal();
             await loadAlbumsForSelect();
-            // 自动选中新专辑
             const newAlbum = await resp.json();
             if (newAlbum && newAlbum[0]) {
                 document.getElementById('albumSelect').value = newAlbum[0].id;
@@ -1011,6 +1633,36 @@ async function createAlbum() {
         showToast('❌ ' + e.message, 'error');
     }
 }
+// ============================================================
+// 自定义偏移（支持任意秒数，正数=延后，负数=提前）
+// ============================================================
+function customShiftEditor(textareaId, inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const seconds = parseFloat(input.value);
+    if (isNaN(seconds) || seconds === 0) {
+        showToast('请输入有效的秒数（正数=延后，负数=提前）', 'error');
+        return;
+    }
+    batchShiftEditor(textareaId, seconds);
+}
+// ============================================================
+// 清除所有时间戳（只保留纯歌词文本）
+// ============================================================
+function clearTimestamps(textareaId) {
+    if (!confirm('确定要清除所有时间戳吗？只保留纯歌词文本。')) return;
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) return;
+    const pureLyrics = textarea.value.replace(/\[\d{2}:\d{2}\.\d{3}\]/g, '').trim();
+    if (pureLyrics === textarea.value.trim()) {
+        showToast('⚠️ 没有检测到时间戳', 'error');
+        return;
+    }
+    textarea.value = pureLyrics;
+    showToast('✅ 已清除所有时间戳', 'success');
+}
 </script>
 </body>
 </html>
+
+
