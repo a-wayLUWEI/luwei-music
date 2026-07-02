@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>申请 VIP 音乐人 · 芦苇音乐</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8e8e8 0%, #8a8a8a 15%, #1a1a1a 30%, #d4a843 45%, #6a5a9a 60%, #2a4a3a 75%, #6a5a9a 85%, #3a3a4a 100%);
+            background-size: 400% 400%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: bgFlow 14s ease-in-out infinite alternate;
+        }
+        @keyframes bgFlow {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 50% 100%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 0%; }
+            100% { background-position: 0% 100%; }
+        }
+
+        .container {
+            max-width: 520px;
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 36px 28px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .back-link {
+            color: rgba(255,255,255,0.12);
+            text-decoration: none;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+        .back-link:hover { color: rgba(255,255,255,0.3); }
+
+        .header {
+            text-align: center;
+            padding: 10px 0 6px;
+        }
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 200;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 6px;
+        }
+        .header .sub {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.12);
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        .divider { width: 40px; height: 1px; background: rgba(255,255,255,0.06); margin: 16px auto 22px; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .form-group label .required {
+            color: rgba(255,150,150,0.3);
+            margin-left: 2px;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255,255,255,0.06);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .form-group select option {
+            background: #1a1a2e;
+            color: #ddd;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.2);
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+        .radio-group input[type="radio"] {
+            width: 14px;
+            height: 14px;
+            accent-color: #d4b896;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 40px;
+            color: rgba(255,255,255,0.2);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 4px;
+            font-weight: 300;
+            margin-top: 4px;
+        }
+        .submit-btn:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.4);
+        }
+
+        .message {
+            display: none;
+            margin-top: 16px;
+            font-size: 0.8rem;
+            text-align: center;
+            letter-spacing: 1px;
+            padding: 12px;
+            border-radius: 12px;
+        }
+        .message.success {
+            display: block;
+            color: rgba(100,200,150,0.6);
+            background: rgba(100,200,150,0.04);
+            border: 1px solid rgba(100,200,150,0.06);
+        }
+        .message.error {
+            display: block;
+            color: rgba(255,150,150,0.5);
+            background: rgba(255,150,150,0.04);
+            border: 1px solid rgba(255,150,150,0.06);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.5rem;
+            color: rgba(255,255,255,0.03);
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 24px 16px; }
+            .header h1 { font-size: 1.3rem; letter-spacing: 4px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<a href="vip_services.html" class="back-link">← 返回</a >
+
+    <div class="header">
+        <h1>✦ 申请 VIP</h1>
+        <div class="sub">成为芦苇音乐 · VIP 音乐人</div>
+        <div class="divider"></div>
+    </div>
+
+    <form id="vipForm">
+        <div class="form-group">
+            <label>你的名字 <span class="required">*</span></label>
+            <input type="text" id="name" placeholder="输入你的名字或艺名" required>
+        </div>
+
+        <div class="form-group">
+            <label>角色 <span class="required">*</span></label>
+            <select id="role" required>
+                <option value="">请选择你的角色</option>
+                <option value="歌手">🎤 歌手</option>
+                <option value="作词人">✍️ 作词人</option>
+                <option value="作曲人">🎵 作曲人</option>
+                <option value="编曲师">🎧 编曲师</option>
+                <option value="混音师">🎛️ 混音师</option>
+                <option value="制作人">🎚️ 制作人</option>
+                <option value="其他">其他</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>联系方式 <span class="required">*</span></label>
+            <input type="text" id="contact" placeholder="微信 / 手机号 / 邮箱" required>
+        </div>
+
+        <div class="form-group">
+            <label>音乐人简介</label>
+            <textarea id="bio" placeholder="简单介绍一下你的音乐经历、风格或作品…"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>作品链接（选填）</label>
+            <input type="text" id="workLink" placeholder="网易云 / QQ音乐 / 个人主页链接">
+        </div>
+
+        <div class="form-group">
+            <label>你想要的定制风格 <span class="required">*</span></label>
+            <div class="radio-group">
+                <label><input type="radio" name="style" value="文艺感"> 文艺感</label>
+                <label><input type="radio" name="style" value="科技感"> 科技感</label>
+                <label><input type="radio" name="style" value="氛围感"> 氛围感</label>
+                <label><input type="radio" name="style" value="其他"> 其他</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>其他需求</label>
+            <textarea id="note" placeholder="你想告诉我们的任何想法…"></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">✦ 提交申请 ✦</button>
+    </form>
+
+    <div class="message" id="message"></div>
+<div class="footer" style="color: rgba(212,184,150,0.3); letter-spacing: 3px;">
+    🌾 芦苇音乐 · <span style="color: rgba(212,184,150,0.6);">让好音乐被看见</span>
+</div>
+
+<script>
+
+// ===== 显示消息 =====
+function showMsg(text, type) {
+    const el = document.getElementById('message');
+    el.innerHTML = text;
+    el.className = 'message ' + type;
+}
+
+    document.getElementById('vipForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const role = document.getElementById('role').value;
+    const contact = document.getElementById('contact').value.trim();
+    const style = document.querySelector('input[name="style"]:checked');
+
+    if (!name) { showMsg('请输入你的名字', 'error'); return; }
+    if (!role) { showMsg('请选择你的角色', 'error'); return; }
+    if (!contact) { showMsg('请填写联系方式', 'error'); return; }
+    if (!style) { showMsg('请选择你想要的定制风格', 'error'); return; }
+
+    showMsg(`
+        ✅ 申请已收到！<br><br>
+        请添加芦苇老师微信沟通细节：<br><br>
+        <strong style="color:#d4b896;font-size:1.2rem;letter-spacing:2px;">jianjiayinyue</strong>
+        <br><br>
+        <button onclick="navigator.clipboard.writeText('jianjiayinyue')" style="
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.06);
+            border-radius:20px;
+            padding:6px 20px;
+            color:rgba(255,255,255,0.2);
+            cursor:pointer;
+            font-size:0.7rem;
+            letter-spacing:1px;
+        ">📋 复制微信号</button>
+    `, 'success');
+
+    document.getElementById('vipForm').reset();
+});
+</script>
+
+</body>
+</html>
