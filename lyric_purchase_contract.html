@@ -93,7 +93,6 @@
             min-width: 24px;
         }
 
-        /* 签约区域 */
         .sign-area {
             background: rgba(255,255,255,0.03);
             border-radius: 20px;
@@ -159,7 +158,6 @@
             font-size: 0.7rem;
         }
 
-        /* 作词人信息 */
         .lyricist-info {
             background: rgba(255,255,255,0.02);
             border-radius: 16px;
@@ -175,7 +173,6 @@
             text-transform: uppercase;
         }
 
-        /* 签名 */
         .signature-area {
             display: flex;
             flex-wrap: wrap;
@@ -215,7 +212,6 @@
             letter-spacing: 1px;
         }
 
-        /* 勾选 */
         .agree-row {
             display: flex;
             align-items: flex-start;
@@ -244,7 +240,6 @@
             color: rgba(212,184,150,0.4);
         }
 
-        /* 上传 */
         .upload-area {
             background: rgba(255,255,255,0.02);
             border-radius: 16px;
@@ -364,6 +359,14 @@
             color: rgba(255,255,255,0.4);
         }
 
+        .error-msg {
+            color: rgba(229,57,53,0.5);
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 8px;
+            display: none;
+        }
+
         @media (max-width: 600px) {
             .contract-wrapper { padding: 24px 18px; }
             .contract-body { max-height: 280px; }
@@ -381,7 +384,6 @@
         <div class="sub">星海之见 · 芦苇清冷音乐工作室</div>
     </div>
 
-    <!-- ===== 合同正文 ===== -->
     <div class="contract-body">
         <h2>一、合同双方</h2>
         <div class="section">
@@ -423,10 +425,7 @@
         </div>
     </div>
 
-    <!-- ===== 签约区域 ===== -->
     <div class="sign-area">
-
-        <!-- 歌词信息 -->
         <div class="row">
             <label>歌词名称</label>
             <input type="text" id="lyricTitle" placeholder="输入歌词名称" oninput="document.getElementById('displayLyricTitle').textContent = this.value || '（由下方填写）'">
@@ -436,7 +435,6 @@
             <textarea id="lyricContent" placeholder="粘贴歌词全文，或简要描述歌词主题"></textarea>
         </div>
 
-        <!-- 价格 -->
         <div class="row">
             <label>购买价格</label>
             <div class="price-input">
@@ -446,7 +444,6 @@
             </div>
         </div>
 
-        <!-- 作词人信息 -->
         <div class="lyricist-info">
             <div class="title">✍️ 作词人信息</div>
             <div class="row" style="margin-bottom:10px;">
@@ -463,7 +460,6 @@
             </div>
         </div>
 
-        <!-- 签名 -->
         <div class="signature-area">
             <div class="sig-group">
                 <label>✍️ 作词人签名（艺名）</label>
@@ -477,7 +473,6 @@
             </div>
         </div>
 
-        <!-- 勾选 -->
         <div class="agree-row">
             <input type="checkbox" id="agreeCheckLyric">
             <label for="agreeCheckLyric">
@@ -486,7 +481,6 @@
             </label>
         </div>
 
-        <!-- 上传 -->
         <div class="upload-area">
             <div class="upload-title"> 附属材料</div>
             <div class="file-row">
@@ -499,11 +493,11 @@
         </div>
     </div>
 
+    <div class="error-msg" id="errorMsg">提交失败，请重试</div>
     <button class="submit-btn" id="submitBtnLyric" onclick="submitLyricContract()">✦ 提交签约申请 ✦</button>
 
 </div>
 
-<!-- ===== 成功弹窗 ===== -->
 <div class="success-overlay" id="successOverlayLyric">
     <div class="success-modal">
         <div class="icon"></div>
@@ -512,13 +506,15 @@
             你的歌词购买合同已成功提交。<br>
             芦苇老师将在 <span style="color:rgba(212,184,150,0.4);">1-3 个工作日</span> 内审核。<br>
             审核通过后，将安排付款并签署正式合同。
-        </p>
-        <button class="btn-close" onclick="closeSuccessLyric()">我知道了</button>
+        </p >
+        <button class="btn-close" onclick="closeSuccess()">我知道了</button>
     </div>
 </div>
 
 <script>
-// ===== 文件上传状态 =====
+const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
 document.getElementById('idUploadLyric').addEventListener('change', function(e) {
     const file = e.target.files[0];
     const status = document.getElementById('fileStatusLyric');
@@ -531,8 +527,27 @@ document.getElementById('idUploadLyric').addEventListener('change', function(e) 
     }
 });
 
+// ===== 将文件转为 Base64 =====
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// ===== 关闭成功弹窗 =====
+function closeSuccess() {
+    document.getElementById('successOverlayLyric').classList.remove('show');
+    document.getElementById('submitBtnLyric').disabled = false;
+    document.getElementById('submitBtnLyric').textContent = '✦ 提交签约申请 ✦';
+}
+
 // ===== 提交 =====
-function submitLyricContract() {
+async function submitLyricContract() {
+    const btn = document.getElementById('submitBtnLyric');
+
     const title = document.getElementById('lyricTitle').value.trim();
     const content = document.getElementById('lyricContent').value.trim();
     const price = document.getElementById('price').value.trim();
@@ -555,23 +570,58 @@ function submitLyricContract() {
     if (!agree) { alert('请阅读并同意合同条款'); return; }
     if (!file) { alert('请上传身份证正反面文档'); return; }
 
-    console.log({
-        title, content, price,
-        name, real, phone,
-        sigArtist, sigReal,
-        fileName: file.name,
-        submittedAt: new Date().toISOString()
-    });
+    btn.disabled = true;
+    btn.textContent = '✦ 提交中...';
 
-    document.getElementById('successOverlayLyric').classList.add('show');
-    document.getElementById('submitBtnLyric').disabled = true;
-    document.getElementById('submitBtnLyric').textContent = '✦ 提交中...';
-}
+    try {
+        // 将文件转为 Base64
+        const fileBase64 = await fileToBase64(file);
 
-function closeSuccessLyric() {
-    document.getElementById('successOverlayLyric').classList.remove('show');
-    document.getElementById('submitBtnLyric').disabled = false;
-    document.getElementById('submitBtnLyric').textContent = '✦ 提交签约申请 ✦';
+        // 构造数据
+        const payload = {
+            lyric_title: title,
+            lyric_content: content,
+            price: parseFloat(price),
+            lyricist_name: name,
+            lyricist_real: real,
+            lyricist_phone: phone,
+            sig_artist: sigArtist,
+            sig_real: sigReal,
+            id_file_name: file.name,
+            id_file_url: fileBase64,
+            status: 'pending'
+        };
+
+        console.log('提交数据:', JSON.stringify(payload, null, 2));
+
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/lyric_purchases`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const responseText = await response.text();
+        console.log('响应状态:', response.status);
+        console.log('响应内容:', responseText);
+
+        if (response.ok) {
+            document.getElementById('successOverlayLyric').classList.add('show');
+            btn.textContent = '✦ 已提交 ✦';
+        } else {
+            alert('提交失败: ' + responseText);
+            btn.disabled = false;
+            btn.textContent = '✦ 提交签约申请 ✦';
+        }
+    } catch (e) {
+        console.error('提交错误:', e);
+        alert('提交失败: ' + e.message);
+        btn.disabled = false;
+        btn.textContent = '✦ 提交签约申请 ✦';
+    }
 }
 </script>
 
