@@ -638,6 +638,92 @@ audio::-webkit-media-controls-panel {
         padding: 8px 12px !important;
     }
 }
+
+/* ===== 搜索框样式 ===== */
+.search-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,184,150,0.1);
+    border-radius: 40px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: 0.3s;
+}
+.search-box:focus-within {
+    border-color: rgba(212,184,150,0.3);
+    box-shadow: 0 0 30px rgba(212,184,150,0.05);
+}
+.search-box input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #e8e9f0;
+    font-size: 0.9rem;
+    padding: 4px 0;
+}
+.search-box input::placeholder {
+    color: rgba(255,255,255,0.15);
+}
+.search-box button {
+    background: linear-gradient(135deg, #d4b896, #b8a0c8);
+    border: none;
+    padding: 6px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    color: #1a1a2e;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+.search-box button:hover {
+    transform: scale(1.05);
+}
+
+/* ===== 定位提示条 ===== */
+.location-tip {
+    background: rgba(255,215,0,0.08);
+    border: 1px solid rgba(255,215,0,0.15);
+    border-radius: 16px;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    animation: fadeInUp 0.4s ease;
+}
+.location-tip.show {
+    display: flex;
+}
+.location-tip .icon {
+    font-size: 1.5rem;
+}
+.location-tip .text {
+    flex: 1;
+    color: rgba(255,215,0,0.7);
+    font-size: 0.85rem;
+}
+.location-tip .text strong {
+    color: #ffd700;
+}
+.location-tip .btn-locate {
+    background: linear-gradient(135deg, #ffd700, #f0a500);
+    border: none;
+    padding: 6px 18px;
+    border-radius: 30px;
+    font-weight: 600;
+    color: #1a1a2e;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+.location-tip .btn-locate:hover {
+    transform: scale(1.05);
+}
     </style>
 </head>
 <body>
@@ -690,6 +776,20 @@ audio::-webkit-media-controls-panel {
     <div class="hero">
         <h1> 芦苇音乐 · AI音乐排行榜</h1>
 <p style="letter-spacing: 2px;">在芦苇深处，治愈自己的思念。</p >
+<!-- ===== 搜索框 ===== -->
+    <div class="search-box" style="margin-top: 16px;">
+        <span style="font-size:1.1rem;">🔍</span>
+        <input type="text" id="searchInput" placeholder="粘贴歌曲名、艺名、或分享ID..." />
+        <button onclick="searchSong()">搜索</button>
+    </div>
+    
+    <!-- ===== 定位提示条 ===== -->
+    <div class="location-tip" id="locationTip">
+        <span class="icon">📍</span>
+        <span class="text" id="locationText">检测到分享的歌曲：<strong id="shareSongName">加载中...</strong></span>
+        <button class="btn-locate" onclick="locateSharedSong()">立即定位</button>
+    </div>
+</div>
     </div>
     <div class="tabs">
         <div class="tab-btn active" onclick="window.switchTab('ai', this)">🤖 纯AI作品榜</div>
@@ -873,6 +973,10 @@ async function loadSongs(retryCount = 0) {
             }
         }
         renderAll();
+// ===== 加载完成后检测分享歌曲 =====
+        setTimeout(() => {
+            detectSharedSong();
+        }, 500);
     } catch (error) {
         console.error('❌ 加载榜单失败:', error);
         if (retryCount < 3) {
@@ -1719,6 +1823,209 @@ function showToast(msg) {
         console.error('❌ 初始化失败:', error);
     }
 })();
+
+// ==========================================
+// ===== 搜索 & 定位功能 =====
+// ==========================================
+
+// 全局变量（只声明一次）
+let currentSongTitle = '';
+
+// 1. 搜索歌曲
+function searchSong() {
+    const input = document.getElementById('searchInput');
+    const keyword = input.value.trim();
+    if (!keyword) {
+        showToast('请输入歌曲名、艺名或 ID');
+        return;
+    }
+    
+    // 搜索所有榜单
+    let found = null;
+    for (let cat of ['ai', 'hybrid', 'original']) {
+        const songs = allSongs[cat] || [];
+        for (let song of songs) {
+            if (song.id === keyword || 
+                song.title.toLowerCase().includes(keyword.toLowerCase()) ||
+                song.artist.toLowerCase().includes(keyword.toLowerCase())) {
+                found = song;
+                break;
+            }
+        }
+        if (found) break;
+    }
+    
+    if (found) {
+        currentSongId = found.id;
+        currentSongTitle = found.title;
+        locateAndHighlight(found.id);
+        showToast('✅ 找到歌曲：' + found.title + ' - ' + found.artist);
+    } else {
+        showToast('❌ 没找到 "' + keyword + '"，试试其他关键词');
+    }
+}
+
+// 2. 定位并高亮
+function locateAndHighlight(songId) {
+    const card = document.querySelector('.rank-card[data-song-id="' + songId + '"]');
+    if (!card) {
+        showToast('⚠️ 歌曲存在，但还没有加载到页面，请刷新重试');
+        return;
+    }
+    
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    card.style.transition = 'all 0.6s ease';
+    card.style.border = '4px solid #ffd700';
+    card.style.boxShadow = '0 0 80px rgba(255,215,0,0.4), 0 0 160px rgba(255,215,0,0.1)';
+    card.style.transform = 'scale(1.03)';
+    card.style.zIndex = '10';
+    card.style.position = 'relative';
+    card.style.background = 'rgba(255,215,0,0.08)';
+    
+    setTimeout(() => {
+        card.style.border = '';
+        card.style.boxShadow = '';
+        card.style.transform = '';
+        card.style.zIndex = '';
+        card.style.position = '';
+        card.style.background = '';
+    }, 4000);
+    
+    let blinkCount = 0;
+    const blinkInterval = setInterval(() => {
+        if (blinkCount > 4) {
+            clearInterval(blinkInterval);
+            return;
+        }
+        if (blinkCount % 2 === 0) {
+            card.style.border = '4px solid #ff6b6b';
+            card.style.boxShadow = '0 0 100px rgba(255,100,100,0.3)';
+        } else {
+            card.style.border = '4px solid #ffd700';
+            card.style.boxShadow = '0 0 80px rgba(255,215,0,0.4)';
+        }
+        blinkCount++;
+    }, 400);
+    
+    if (navigator.vibrate) {
+        navigator.vibrate(30);
+    }
+    
+    document.getElementById('locationTip').classList.remove('show');
+}
+
+// 3. 定位分享的歌曲（从 URL 参数）
+function locateSharedSong() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const songId = urlParams.get('song');
+    if (!songId) {
+        showToast('⚠️ 没有检测到分享的歌曲');
+        return;
+    }
+    
+    let found = false;
+    for (let cat of ['ai', 'hybrid', 'original']) {
+        const songs = allSongs[cat] || [];
+        for (let song of songs) {
+            if (song.id === songId) {
+                found = true;
+                currentSongId = songId;
+                currentSongTitle = song.title;
+                break;
+            }
+        }
+        if (found) break;
+    }
+    
+    if (found) {
+        locateAndHighlight(songId);
+    } else {
+        showToast('⚠️ 歌曲还未加载，请稍后重试');
+        setTimeout(() => {
+            locateAndHighlight(songId);
+        }, 2000);
+    }
+}
+
+// 4. 检测 URL 参数 + 剪贴板（自动识别）
+function detectSharedSong() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const songId = urlParams.get('song');
+    
+    if (songId) {
+        const tip = document.getElementById('locationTip');
+        const text = document.getElementById('shareSongName');
+        
+        let songName = '加载中...';
+        for (let cat of ['ai', 'hybrid', 'original']) {
+            const songs = allSongs[cat] || [];
+            for (let song of songs) {
+                if (song.id === songId) {
+                    songName = song.title + ' - ' + song.artist;
+                    currentSongTitle = song.title;
+                    break;
+                }
+            }
+            if (songName !== '加载中...') break;
+        }
+        
+        text.textContent = songName;
+        tip.classList.add('show');
+        
+        setTimeout(() => {
+            locateSharedSong();
+        }, 2000);
+    }
+    
+    // 尝试读取剪贴板
+    try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+            navigator.clipboard.readText().then(text => {
+                const trimmed = text.trim();
+                const idMatch = trimmed.match(/[a-zA-Z0-9_]{10,}/);
+                if (idMatch) {
+                    const potentialId = idMatch[0];
+                    let found = false;
+                    for (let cat of ['ai', 'hybrid', 'original']) {
+                        const songs = allSongs[cat] || [];
+                        for (let song of songs) {
+                            if (song.id === potentialId) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found) break;
+                    }
+                    
+                    if (found && !songId) {
+                        document.getElementById('searchInput').value = potentialId;
+                        showToast('🔍 检测到剪贴板有歌曲 ID，自动搜索...');
+                        setTimeout(() => {
+                            searchSong();
+                        }, 500);
+                    }
+                }
+            }).catch(() => {
+                console.log('📋 无法读取剪贴板');
+            });
+        }
+    } catch (e) {
+        console.log('📋 剪贴板 API 不支持');
+    }
+}
+
+// 5. 回车搜索
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('searchInput');
+    if (input) {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                searchSong();
+            }
+        });
+    }
+});
 
 // ==========================================
 // ===== 微信专用：分享歌曲定位 =====
