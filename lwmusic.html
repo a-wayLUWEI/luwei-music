@@ -516,6 +516,7 @@ a:hover {
 </span>
     </div>
 <a href="vip_services.html">✦ VIP 音乐人定制</a >
+<a href="artists.html">✦ 芦苇音乐 旗下艺人</a >
 
     <button class="back-btn" id="backBtn" onclick="showArtists()">← 返回歌手列表</button>
 
@@ -593,11 +594,11 @@ async function loadArtists() {
 // ===== 按角色分组 =====
 const roleMap = {
     '歌手': ' 歌手',
+    '制作人': '️ 制作人',
     '作词人': '✍️ 作词人',
     '作曲人': ' 作曲人',
     '编曲师': ' 编曲师',
-    '混音师': '️ 混音师',
-    '制作人': '️ 制作人'
+    '混音师': '️ 混音师'    
 };
 
 // 按角色分组
@@ -610,7 +611,7 @@ allArtists.forEach(a => {
 });
 
 // ===== 定义展示顺序：歌手排最前面 =====
-const order = [' 歌手', '✍️ 作词人', ' 作曲人', ' 编曲师', '️ 混音师', '️ 制作人'];
+const order = [' 歌手', '️ 制作人', '✍️ 作词人', ' 作曲人', ' 编曲师', '️ 混音师'];
 
 let html = '';
 
@@ -690,11 +691,11 @@ function renderArtistCard(a, count, followedMap) {
     // ===== 角色默认颜色（每个人可以单独覆盖） =====
     const roleDefaultColor = {
         '歌手': 'gold',
+        '制作人': 'ceramic',
         '作词人': 'rosegold',
         '作曲人': 'purple',
         '编曲师': 'silver',
-        '混音师': 'spacegray',
-        '制作人': 'ceramic'
+        '混音师': 'spacegray'        
     };
 
     // 优先使用个人颜色，没有则用角色默认颜色，再没有则用 gold
