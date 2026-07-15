@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芦苇音乐 · 旗下艺人</title>
+    <style>
+        /* ===== 重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f7f5f0;
+            font-family: 'Georgia', 'Times New Roman', '宋体', serif;
+            color: #2a2a2a;
+            padding: 40px 20px 80px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* ===== 导航 ===== */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .nav-bar .logo {
+            font-size: 20px;
+            font-weight: 400;
+            color: #2a2a2a;
+            letter-spacing: 6px;
+        }
+        .nav-bar .logo span {
+            font-weight: 300;
+            color: rgba(0, 0, 0, 0.12);
+            font-size: 12px;
+            letter-spacing: 3px;
+            margin-left: 10px;
+        }
+        .nav-bar .back-link {
+            color: rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            padding: 6px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: 30px;
+        }
+        .nav-bar .back-link:hover {
+            color: rgba(0, 0, 0, 0.25);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+
+        /* ===== 厂牌介绍 ===== */
+        .intro {
+            text-align: center;
+            padding: 30px 20px 50px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            margin-bottom: 50px;
+        }
+        .intro .label {
+            font-size: 10px;
+            letter-spacing: 6px;
+            color: rgba(0, 0, 0, 0.06);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .intro h1 {
+            font-size: 34px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: #2a2a2a;
+            margin-bottom: 12px;
+        }
+        .intro p {
+            font-size: 15px;
+            color: rgba(0, 0, 0, 0.12);
+            letter-spacing: 2px;
+            font-weight: 300;
+            line-height: 2.2;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* ===== 艺人网格 ===== */
+        .artist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 28px 24px;
+            margin-bottom: 50px;
+        }
+
+        .artist-card {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            border-radius: 12px;
+            padding: 24px 18px 20px;
+            text-align: center;
+            transition: 0.4s ease;
+        }
+        .artist-card:hover {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0, 0, 0, 0.04);
+            transform: translateY(-4px);
+        }
+
+        .artist-card .avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: rgba(0, 0, 0, 0.04);
+        }
+
+        .artist-card .name {
+            font-size: 18px;
+            font-weight: 400;
+            color: #2a2a2a;
+            letter-spacing: 4px;
+            margin-bottom: 4px;
+        }
+
+        .artist-card .role {
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.1);
+            letter-spacing: 3px;
+            margin-bottom: 6px;
+        }
+
+        .artist-card .tags {
+            font-size: 10px;
+            color: rgba(0, 0, 0, 0.06);
+            letter-spacing: 2px;
+            line-height: 1.8;
+            margin-bottom: 8px;
+        }
+
+        .artist-card .divider {
+            width: 24px;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.04);
+            margin: 8px auto 10px;
+        }
+
+        .artist-card .songs {
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.05);
+            letter-spacing: 1px;
+        }
+
+        /* ===== 特殊：周田 ===== */
+        .artist-card.featured {
+            background: rgba(250, 248, 244, 0.6);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            position: relative;
+        }
+        .artist-card.featured .name {
+            color: #1a1a1a;
+            letter-spacing: 6px;
+        }
+        .artist-card.featured .role {
+            color: rgba(0, 0, 0, 0.08);
+        }
+        .artist-card.featured .tags {
+            color: rgba(0, 0, 0, 0.06);
+        }
+
+        /* ===== 底部 ===== */
+        .footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 0, 0, 0.03);
+            margin-top: 10px;
+        }
+        .footer p {
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.04);
+            letter-spacing: 3px;
+        }
+        .footer .count {
+            font-size: 10px;
+            color: rgba(0, 0, 0, 0.02);
+            letter-spacing: 4px;
+            margin-top: 4px;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 640px) {
+            .artist-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 16px;
+            }
+            .intro h1 {
+                font-size: 24px;
+                letter-spacing: 4px;
+            }
+            .intro p {
+                font-size: 13px;
+            }
+            .artist-card {
+                padding: 18px 12px 16px;
+            }
+            .artist-card .name {
+                font-size: 15px;
+                letter-spacing: 2px;
+            }
+            .artist-card .avatar {
+                width: 56px;
+                height: 56px;
+                font-size: 24px;
+            }
+            .nav-bar .logo {
+                font-size: 16px;
+                letter-spacing: 4px;
+            }
+            .nav-bar .logo span {
+                font-size: 10px;
+                letter-spacing: 2px;
+                margin-left: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ===== 导航 ===== -->
+    <nav class="nav-bar">
+        <div class="logo">
+            芦苇音乐
+            <span>· 旗下艺人</span>
+        </div>
+        <a href="lwmusic.html" class="back-link">← 返回</a>
+    </nav>
+
+    <!-- ===== 厂牌介绍 ===== -->
+    <div class="intro">
+        <div class="label">✦ 清冷文艺 · 安静治愈 ✦</div>
+        <h1>芦苇音乐</h1>
+        <p>
+            不是造星工厂。<br>
+            是文艺灵魂的聚集地。<br>
+            七个人，七种安静的方式。
+        </p>
+    </div>
+
+    <!-- ===== 艺人列表 ===== -->
+    <div class="artist-grid">
+
+        <!-- 周田 · 清冷文艺 · 灵魂女声 -->
+        <div class="artist-card featured">
+            <div class="avatar"></div>
+            <div class="name">周田</div>
+            <div class="role">歌手 · 词作者</div>
+            <div class="tags">清冷文艺 · 灵魂女声 · 山谷里的风</div>
+            <div class="divider"></div>
+            <div class="songs">《芦苇与风》《上游的寂静》《风止于光》</div>
+        </div>
+
+        <!-- 林墨染 · 温暖治愈 · 作曲家 -->
+        <div class="artist-card">
+            <div class="avatar"></div>
+            <div class="name">林墨染</div>
+            <div class="role">作曲家 · 制作人</div>
+            <div class="tags">温暖治愈 · 书卷气 · 钢琴诗人</div>
+            <div class="divider"></div>
+            <div class="songs">《渡口》《晨光与旧信笺》《星空与海岸线》</div>
+        </div>
+
+        <!-- 李木木 · 慵懒文艺 · 独立女声 -->
+        <div class="artist-card">
+            <div class="avatar"></div>
+            <div class="name">李木木</div>
+            <div class="role">歌手 · 独立</div>
+            <div class="tags">慵懒文艺 · 旧书店 · 下午三点</div>
+            <div class="divider"></div>
+            <div class="songs">《猫》《旧书店的下午》《晚安信》</div>
+        </div>
+
+        <!-- 刘若心 · 诗意叙事 · 民谣女声 -->
+        <div class="artist-card">
+            <div class="avatar">✉️</div>
+            <div class="name">刘若心</div>
+            <div class="role">歌手 · 民谣</div>
+            <div class="tags">诗意叙事 · 城市民谣 · 故事感</div>
+            <div class="divider"></div>
+            <div class="songs">《旧信箱》《晚风》《南方的信》</div>
+        </div>
+
+        <!-- 蓝樱 · 空灵飘渺 · 氛围女声 -->
+        <div class="artist-card">
+            <div class="avatar"></div>
+            <div class="name">蓝樱</div>
+            <div class="role">歌手 · 氛围</div>
+            <div class="tags">空灵飘渺 · 海雾 · 深蓝</div>
+            <div class="divider"></div>
+            <div class="songs">《蓝》《极光》《深海的夜》</div>
+        </div>
+
+        <!-- 季染雪 · 国风文艺 · 古意女声 -->
+        <div class="artist-card">
+            <div class="avatar">❄️</div>
+            <div class="name">季染雪</div>
+            <div class="role">歌手 · 国风</div>
+            <div class="tags">国风文艺 · 雪落 · 素衣</div>
+            <div class="divider"></div>
+            <div class="songs">《旧词》《雪落无声》《素衣》</div>
+        </div>
+
+        <!-- 芦苇 · 厂牌主理人 -->
+        <div class="artist-card" style="opacity:0.35;">
+            <div class="avatar"></div>
+            <div class="name">芦苇</div>
+            <div class="role">主理人 · 词作者</div>
+            <div class="tags">不露面 · 不解释 · 只管写词</div>
+            <div class="divider"></div>
+            <div class="songs">——</div>
+        </div>
+
+    </div>
+
+    <!-- ===== 底部 ===== -->
+    <div class="footer">
+        <p>芦苇音乐 · 清冷文艺 · 安静治愈</p>
+        <div class="count">✦ 七个人 · 七种安静的方式 ✦</div>
+    </div>
+
+</div>
+
+</body>
+</html>

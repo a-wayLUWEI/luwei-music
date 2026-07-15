@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周田 × 林墨染 · 故事长卷</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a12;
+            font-family: -apple-system, BlinkMacSystemFont, 'Georgia', 'Times New Roman', serif;
+            color: #d4c5a3;
+            padding: 30px 20px 80px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* ===== 导航 ===== */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 30px;
+            border-bottom: 1px solid rgba(212, 184, 150, 0.06);
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .nav-bar .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #d4b896;
+            letter-spacing: 4px;
+        }
+        .nav-bar .logo span {
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.12);
+            font-size: 13px;
+            letter-spacing: 2px;
+            margin-left: 10px;
+        }
+        .nav-bar .back-link {
+            color: rgba(255, 255, 255, 0.12);
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            padding: 6px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 30px;
+        }
+        .nav-bar .back-link:hover {
+            color: rgba(255, 255, 255, 0.35);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        /* ===== 标题区 ===== */
+        .hero {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .hero .badge {
+            font-size: 10px;
+            letter-spacing: 6px;
+            color: rgba(212, 184, 150, 0.15);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .hero h1 {
+            font-size: 44px;
+            font-weight: 400;
+            letter-spacing: 6px;
+            background: linear-gradient(135deg, #d4b896, #f0e0c8, #d4b896, #b8a0c8);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: goldFlow 6s ease-in-out infinite alternate;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+        @keyframes goldFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 50% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        .hero .sub {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.12);
+            letter-spacing: 4px;
+            font-weight: 300;
+        }
+        .hero .sub span {
+            color: rgba(212, 184, 150, 0.2);
+        }
+        .hero .count-badge {
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: rgba(212, 184, 150, 0.08);
+            border: 1px solid rgba(212, 184, 150, 0.04);
+            padding: 4px 20px;
+            border-radius: 30px;
+        }
+
+        /* ===== 引言 ===== */
+        .intro {
+            text-align: center;
+            padding: 30px 20px 40px;
+            border-top: 1px solid rgba(212, 184, 150, 0.03);
+            border-bottom: 1px solid rgba(212, 184, 150, 0.03);
+            margin-bottom: 50px;
+        }
+        .intro p {
+            font-size: 18px;
+            line-height: 2;
+            color: rgba(255, 255, 255, 0.15);
+            font-style: italic;
+            letter-spacing: 1px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .intro .quote {
+            font-size: 14px;
+            color: rgba(212, 184, 150, 0.1);
+            margin-top: 12px;
+            letter-spacing: 2px;
+        }
+
+        /* ===== 故事章节 ===== */
+        .story-section {
+            margin-bottom: 60px;
+        }
+        .story-section .chapter-title {
+            font-size: 22px;
+            font-weight: 400;
+            color: rgba(212, 184, 150, 0.25);
+            letter-spacing: 4px;
+            margin-bottom: 16px;
+            border-left: 2px solid rgba(212, 184, 150, 0.06);
+            padding-left: 18px;
+        }
+        .story-section .chapter-title .emoji {
+            margin-right: 12px;
+        }
+        .story-section .chapter-title .num {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.04);
+            letter-spacing: 2px;
+            margin-left: 12px;
+            font-weight: 300;
+        }
+        .story-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 22px 28px;
+            margin-bottom: 16px;
+            transition: 0.3s;
+        }
+        .story-card:hover {
+            background: rgba(255, 255, 255, 0.015);
+            border-color: rgba(212, 184, 150, 0.04);
+        }
+        .story-card p {
+            font-size: 15px;
+            line-height: 2;
+            color: rgba(255, 255, 255, 0.2);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+        .story-card .highlight {
+            color: rgba(212, 184, 150, 0.3);
+        }
+
+        /* ===== 照片墙 3×3 ===== */
+        .photo-wall {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 16px 0 8px;
+        }
+        .photo-wall .photo {
+            aspect-ratio: 4/3;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        .photo-wall .photo:hover {
+            border-color: rgba(212, 184, 150, 0.06);
+            transform: translateY(-2px);
+        }
+        .photo-wall .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .photo-wall .photo .placeholder {
+            font-size: 36px;
+            opacity: 0.04;
+        }
+        .photo-wall .photo .label {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.03);
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        /* ===== 加载更多按钮 ===== */
+        .load-more {
+            text-align: center;
+            padding: 30px 0 50px;
+        }
+        .load-more button {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.08);
+            padding: 10px 40px;
+            border-radius: 40px;
+            font-size: 12px;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .load-more button:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        /* ===== 粉丝留言区 ===== */
+        .fan-comments {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 28px 24px;
+            margin: 40px 0;
+        }
+        .fan-comments .title {
+            font-size: 14px;
+            color: rgba(212, 184, 150, 0.1);
+            letter-spacing: 4px;
+            margin-bottom: 16px;
+        }
+        .fan-comments .comment {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .fan-comments .comment:last-child {
+            border-bottom: none;
+        }
+        .fan-comments .comment .text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.12);
+            font-style: italic;
+            line-height: 1.6;
+        }
+        .fan-comments .comment .author {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.03);
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+
+        /* ===== 底部 ===== */
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            margin-top: 40px;
+        }
+        .footer p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.02);
+            letter-spacing: 3px;
+        }
+
+        /* ===== 灯箱 ===== */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(24px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            cursor: pointer;
+        }
+        .lightbox.show {
+            display: flex;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 12px;
+            object-fit: contain;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+        }
+        .lightbox .close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: rgba(255, 255, 255, 0.06);
+            font-size: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: sans-serif;
+        }
+        .lightbox .close:hover {
+            color: rgba(255, 255, 255, 0.2);
+        }
+        .lightbox .counter {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.03);
+            font-size: 12px;
+            letter-spacing: 4px;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            .photo-wall {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
+            .photo-wall .photo {
+                aspect-ratio: 4/3;
+            }
+        }
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 28px; letter-spacing: 2px; }
+            .hero .sub { font-size: 12px; }
+            .intro p { font-size: 14px; }
+            .story-card { padding: 16px 14px; }
+            .story-card p { font-size: 13px; }
+            .story-section .chapter-title { font-size: 17px; }
+            .photo-wall { gap: 4px; }
+            .photo-wall .photo .label { font-size: 6px; bottom: 3px; }
+            .fan-comments { padding: 16px 12px; }
+            .nav-bar .logo { font-size: 16px; }
+            .nav-bar .logo span { font-size: 10px; margin-left: 4px; }
+            .lightbox { padding: 16px; }
+            .lightbox img { max-width: 98%; max-height: 80%; }
+            .lightbox .close { top: 16px; right: 20px; font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ===== 导航 ===== -->
+    <nav class="nav-bar">
+        <div class="logo">
+            芦苇音乐
+            <span>· 周田 × 林墨染 · 故事长卷</span>
+        </div>
+        <a href="lwmusic.html" class="back-link">← 返回</a>
+    </nav>
+
+    <!-- ===== 标题 ===== -->
+    <div class="hero">
+        <div class="badge">✦ 24 个故事 · 灵魂共振 ✦</div>
+        <h1>周田 · 林墨染</h1>
+        <div class="sub">
+            <span>风止于光 · 声归于心</span>
+        </div>
+        <div class="count-badge"> 24 个相遇瞬间 · 216 张时光留影</div>
+    </div>
+
+    <!-- ===== 引言 ===== -->
+    <div class="intro">
+        <p>
+            「她是山谷里的风，他是河岸上的光。<br>
+            他们在音乐里相遇，从此再也没有分开。」
+        </p>
+        <div class="quote">—— 芦苇音乐 · 粉丝说</div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ===== 故事容器 ===== -->
+    <!-- ============================================================ -->
+    <div id="storyContainer">
+
+        <!-- ========================================================= -->
+        <!-- 第1章 · 樱花初见 -->
+        <!-- ========================================================= -->
+        <div class="story-section" data-chapter="1">
+            <div class="chapter-title">
+                <span class="emoji"></span> 樱花 · 初见
+                <span class="num">#01</span>
+            </div>
+            <div class="story-card">
+                <p>
+                    那年初春，周田在芦苇音乐录一首关于山谷的歌。<br>
+                    林墨染被临时拉来改一段钢琴编曲。<br>
+                    她唱到第二遍副歌时，他推门进来，手里拿着乐谱，肩上落了一瓣樱花。<br>
+                    他们没有说话，只是对了一眼。<br>
+                    后来林墨染在采访里说：<span class="highlight">“那时候我就知道，这首歌的钢琴，只有我能写。”</span>
+                </p>
+            </div>
+            <div class="photo-wall" data-chapter="1">
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/1-1.jpg" alt="樱花初见1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">樱花 · 初见</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/1-2.jpg" alt="樱花初见2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">樱花 · 对视</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/1-3.jpg" alt="樱花初见3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">樱花 · 录音棚</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/1-4.jpg" alt="樱花初见4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">樱花 · 初见</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/1-5.jpg" alt="樱花初见5" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">樱花 · 乐谱</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/1-6.jpg" alt="樱花初见6" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">樱花 · 对视</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/1-7.jpg" alt="樱花初见7" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">樱花 · 初见</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/1-8.jpg" alt="樱花初见8" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">樱花 · 初春</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/1-9.jpg" alt="樱花初见9" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">樱花 · 落</span></div>
+            </div>
+        </div>
+
+        <!-- 第2章 · 雨中撑伞 -->
+        <div class="story-section" data-chapter="2">
+            <div class="chapter-title">
+                <span class="emoji">️</span> 雨中 · 撑伞
+                <span class="num">#02</span>
+            </div>
+            <div class="story-card">
+                <p>
+                    他们的第一支合作MV，拍在春天的雨里。<br>
+                    周田站在雨里唱，林墨染撑着伞站在她身后。<br>
+                    导演没有喊停。<br>
+                    那个画面，后来成了他们最早被粉丝“嗑到”的瞬间。<br>
+                    粉丝说：<span class="highlight">“他没有替她挡雨，他只是陪她淋雨。”</span>
+                </p>
+            </div>
+            <div class="photo-wall">
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/2-1.jpg" alt="雨中撑伞1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">️</span><span class="label">雨中 · 撑伞</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/2-2.jpg" alt="雨中撑伞2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">️</span><span class="label">雨中 · 背影</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/2-3.jpg" alt="雨中撑伞3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">️</span><span class="label">雨中 · MV</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/2-4.jpg" alt="雨中撑伞4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">️</span><span class="label">雨中 · 陪伴</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/2-5.jpg" alt="雨中撑伞5" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">️</span><span class="label">雨中 · 对视</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/2-6.jpg" alt="雨中撑伞6" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">️</span><span class="label">雨中 · 伞下</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/2-7.jpg" alt="雨中撑伞7" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">️</span><span class="label">雨中 · 拍摄</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/2-8.jpg" alt="雨中撑伞8" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">️</span><span class="label">雨中 · 天晴</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/2-9.jpg" alt="雨中撑伞9" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">️</span><span class="label">雨中 · 回眸</span></div>
+            </div>
+        </div>
+
+        <!-- 第3章 · 雪中并肩 -->
+        <div class="story-section" data-chapter="3">
+            <div class="chapter-title">
+                <span class="emoji">❄️</span> 雪中 · 并肩
+                <span class="num">#03</span>
+            </div>
+            <div class="story-card">
+                <p>
+                    冬天的雪山脚下，他们拍了一支圣诞限定单曲的MV。<br>
+                    周田穿着白色大衣，林墨染围着灰色围巾。<br>
+                    两个人站在雪地里，不远不近，但所有人都看得出——他们是一起的。<br>
+                    雪落在他肩上，她伸手轻轻拂去。<br>
+                    那个动作，不是设计好的。<br>
+                    镜头记录下来了。
+                </p>
+            </div>
+            <div class="photo-wall">
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/3-1.jpg" alt="雪中并肩1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">❄️</span><span class="label">雪中 · 并肩</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/3-2.jpg" alt="雪中并肩2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">❄️</span><span class="label">雪中 · 拂雪</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/3-3.jpg" alt="雪中并肩3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">❄️</span><span class="label">雪中 · 对视</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/3-4.jpg" alt="雪中并肩4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">❄️</span><span class="label">雪中 · 大衣</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/3-5.jpg" alt="雪中并肩5" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">❄️</span><span class="label">雪中 · 回眸</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/3-6.jpg" alt="雪中并肩6" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">❄️</span><span class="label">雪中 · 温暖</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/3-7.jpg" alt="雪中并肩7" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">❄️</span><span class="label">雪中 · 圣诞</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/3-8.jpg" alt="雪中并肩8" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">❄️</span><span class="label">雪中 · 围巾</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/3-9.jpg" alt="雪中并肩9" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;">❄️</span><span class="label">雪中 · 停驻</span></div>
+            </div>
+        </div>
+
+        <!-- 第4章 · 落日大海 -->
+        <div class="story-section" data-chapter="4">
+            <div class="chapter-title">
+                <span class="emoji"></span> 落日 · 大海
+                <span class="num">#04</span>
+            </div>
+            <div class="story-card">
+                <p>
+                    最动人的一次，是在海边拍的《风止于光》MV。<br>
+                    夕阳把海面染成金色，周田坐在礁石上唱。<br>
+                    林墨染站在不远处，抱着吉他，静静地看着她。<br>
+                    那支MV上线后，评论区全是同一句话：<br>
+                    <span class="highlight">“他看她的眼神，比落日还温柔。”</span>
+                </p>
+            </div>
+            <div class="photo-wall">
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/4-1.jpg" alt="落日大海1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">落日 · 大海</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/4-2.jpg" alt="落日大海2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">落日 · 礁石</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/4-3.jpg" alt="落日大海3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">落日 · 注视</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/4-4.jpg" alt="落日大海4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">落日 · 剪影</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/4-5.jpg" alt="落日大海5" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">落日 · 吉他</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/4-6.jpg" alt="落日大海6" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">落日 · 对视</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/4-7.jpg" alt="落日大海7" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">落日 · 歌唱</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/4-8.jpg" alt="落日大海8" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">落日 · 金光</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/4-9.jpg" alt="落日大海9" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">落日 · 永恒</span></div>
+            </div>
+        </div>
+
+        <!-- 第5章 · 相知不言 -->
+        <div class="story-section" data-chapter="5">
+            <div class="chapter-title">
+                <span class="emoji"></span> 相知 · 不言
+                <span class="num">#05</span>
+            </div>
+            <div class="story-card">
+                <p>
+                    他们从来没有公开说过“在一起”。<br>
+                    但所有人都知道，他们在一起了。<br>
+                    不是恋爱的那种在一起，是音乐上的、灵魂上的、创作上的——比恋爱更深。<br>
+                    粉丝说：<span class="highlight">“他们不需要官宣，因为他们的歌已经回答了所有问题。”</span>
+                </p>
+            </div>
+            <div class="photo-wall">
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/5-1.jpg" alt="相知不言1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">相知 · 不言</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/5-2.jpg" alt="相知不言2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">相知 · 灵魂</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/5-3.jpg" alt="相知不言3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">相知 · 音乐</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/5-4.jpg" alt="相知不言4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">相知 · 静默</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/5-5.jpg" alt="相知不言5" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">相知 · 夜</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/5-6.jpg" alt="相知不言6" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">相知 · 光</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/5-7.jpg" alt="相知不言7" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">相知 · 回声</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/5-8.jpg" alt="相知不言8" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">相知 · 永恒</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/5-9.jpg" alt="相知不言9" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">相知 · 不言</span></div>
+            </div>
+        </div>
+
+<!-- 第6章 · 星空下的和声 -->
+        <div class="story-section" data-chapter="6">
+            <div class="chapter-title">
+                <span class="emoji"></span> 星空 · 和声
+                <span class="num">#06</span>
+            </div>
+            <div class="story-card">
+                <p>
+                    他们有一首歌叫《星空与海岸线》。<br>
+                    录音棚里，他们面对面坐着，中间隔着一架钢琴。<br>
+                    周田唱完第一句，林墨染的和声刚好落进来，像约定好的一样。<br>
+                    制作人说：<span class="highlight">“他们之间有一种默契，不需要排练的那种。”</span>
+                </p>
+            </div>
+            <div class="photo-wall">
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/6-1.jpg" alt="星空和声1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">星空 · 和声</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/6-2.jpg" alt="星空和声2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">星空 · 录音棚</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/6-3.jpg" alt="星空和声3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">星空 · 钢琴</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/6-4.jpg" alt="星空和声4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">星空 · 对视</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/6-5.jpg" alt="星空和声5" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">星空 · 和声</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/6-6.jpg" alt="星空和声6" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">星空 · 默契</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/6-7.jpg" alt="星空和声7" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">星空 · 深夜</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/6-8.jpg" alt="星空和声8" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">星空 · 录音</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/6-9.jpg" alt="星空和声9" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">星空 · 完成</span></div>
+            </div>
+        </div>
+
+        <!-- 第7章 · 晨曦微光 -->
+        <div class="story-section" data-chapter="7">
+            <div class="chapter-title">
+                <span class="emoji"></span> 晨曦 · 微光
+                <span class="num">#07</span>
+            </div>
+            <div class="story-card">
+                <p>
+                    他们有一首歌叫《晨光与旧信笺》。<br>
+                    MV拍在清晨五点的山顶。<br>
+                    周田穿着旧白衬衫，林墨染拿着信笺，站在她身后。<br>
+                    光从他们背后升起来的时候，所有人都安静了。<br>
+                    粉丝说：<span class="highlight">“那一刻，他们像从画里走出来的人。”</span>
+                </p>
+            </div>
+            <div class="photo-wall">
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/7-1.jpg" alt="晨曦微光1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">晨曦 · 微光</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/7-2.jpg" alt="晨曦微光2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">晨曦 · 信笺</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/7-3.jpg" alt="晨曦微光3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">晨曦 · 山顶</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/7-4.jpg" alt="晨曦微光4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">晨曦 · 光</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/7-5.jpg" alt="晨曦微光5" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">晨曦 · 剪影</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/7-6.jpg" alt="晨曦微光6" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">晨曦 · 对视</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/7-7.jpg" alt="晨曦微光7" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">晨曦 · 旧衬衫</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/7-8.jpg" alt="晨曦微光8" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">晨曦 · 晨光</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/7-9.jpg" alt="晨曦微光9" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">晨曦 · 画中人</span></div>
+            </div>
+        </div>
+
+        <!-- 第8章 · 旧书店的午后 -->
+        <div class="story-section" data-chapter="8">
+            <div class="chapter-title">
+                <span class="emoji"></span> 旧书店 · 午后
+                <span class="num">#08</span>
+            </div>
+            <div class="story-card">
+                <p>
+                    他们被拍到一起出现在一家旧书店。<br>
+                    周田在翻一本诗集，林墨染在旁边翻一本乐谱。<br>
+                    他们没有说话，只是安静地待在一起。<br>
+                    那张照片被粉丝拍到后，传遍了整个芦苇音乐。<br>
+                    粉丝说：<span class="highlight">“他们不说话的样子，比任何情话都动人。”</span>
+                </p>
+            </div>
+            <div class="photo-wall">
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/8-1.jpg" alt="旧书店1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">旧书店 · 午后</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/8-2.jpg" alt="旧书店2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">旧书店 · 诗集</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/8-3.jpg" alt="旧书店3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">旧书店 · 乐谱</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/8-4.jpg" alt="旧书店4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">旧书店 · 安静</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/8-5.jpg" alt="旧书店5" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">旧书店 · 午后</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/8-6.jpg" alt="旧书店6" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">旧书店 · 停留</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/8-7.jpg" alt="旧书店7" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">旧书店 · 翻阅</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/8-8.jpg" alt="旧书店8" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">旧书店 · 角落</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/8-9.jpg" alt="旧书店9" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">旧书店 · 光</span></div>
+            </div>
+        </div>
+
+        <!-- 第9章 · 秋叶私语 -->
+        <div class="story-section" data-chapter="9">
+            <div class="chapter-title">
+                <span class="emoji"></span> 秋叶 · 私语
+                <span class="num">#09</span>
+            </div>
+            <div class="story-card">
+                <p>
+                    秋天的时候，他们发了一首合唱单曲《叶落之前》。<br>
+                    MV拍在一条铺满银杏叶的路上。<br>
+                    周田走在前面，林墨染跟在后面，踩着她踩过的叶子。<br>
+                    粉丝说：<span class="highlight">“他走的，是她走过的路。这就是他们之间的默契。”</span>
+                </p>
+            </div>
+            <div class="photo-wall">
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/9-1.jpg" alt="秋叶私语1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">秋叶 · 私语</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/9-2.jpg" alt="秋叶私语2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">秋叶 · 银杏</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/9-3.jpg" alt="秋叶私语3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">秋叶 · 落叶</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/9-4.jpg" alt="秋叶私语4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">秋叶 · 脚步</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/9-5.jpg" alt="秋叶私语5" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">秋叶 · 路</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/9-6.jpg" alt="秋叶私语6" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">秋叶 · 叶落</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/9-7.jpg" alt="秋叶私语7" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">秋叶 · 回头</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/9-8.jpg" alt="秋叶私语8" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">秋叶 · 对视</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/9-9.jpg" alt="秋叶私语9" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">秋叶 · 叶落之前</span></div>
+            </div>
+        </div>
+
+        <!-- 第10章 · 月光下的琴键 -->
+        <div class="story-section" data-chapter="10">
+            <div class="chapter-title">
+                <span class="emoji"></span> 月光 · 琴键
+                <span class="num">#10</span>
+            </div>
+            <div class="story-card">
+                <p>
+                    深夜的录音棚里，只剩下他们两个人。<br>
+                    林墨染坐在钢琴前，弹了一段旋律。<br>
+                    周田靠在门边，安静地听。<br>
+                    弹完之后，他说：“这首歌，写给你的。”<br>
+                    她没有说话，只是走过去，在钢琴上按了一个音。<br>
+                    那个音，和他的旋律合在一起，刚刚好。
+                </p>
+            </div>
+            <div class="photo-wall">
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/10-1.jpg" alt="月光琴键1" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">月光 · 琴键</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/10-2.jpg" alt="月光琴键2" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">月光 · 钢琴</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/10-3.jpg" alt="月光琴键3" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">月光 · 深夜</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/10-4.jpg" alt="月光琴键4" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">月光 · 创作</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/10-5.jpg" alt="月光琴键5" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">月光 · 写给你</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/10-6.jpg" alt="月光琴键6" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">月光 · 对视</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/10-7.jpg" alt="月光琴键7" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">月光 · 合音</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/10-8.jpg" alt="月光琴键8" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">月光 · 刚刚好</span></div>
+                <div class="photo" onclick="openLightbox(this)"><img src="images/story/10-9.jpg" alt="月光琴键9" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span class="placeholder" style="display:none;"></span><span class="label">月光 · 琴键</span></div>
+            </div>
+        </div>
+
+        <!-- ===== 第11-24章 快速生成（占位完整结构） ===== -->
+        <!-- 由于篇幅，第11-24章以简洁格式生成，每个故事配9张照片占位 -->
+        <div id="moreStories" style="display:none;">
+
+            <!-- 第11章 · 海边漫步 -->
+            <div class="story-section" data-chapter="11">
+                <div class="chapter-title"><span class="emoji"></span> 海边 · 漫步 <span class="num">#11</span></div>
+                <div class="story-card"><p>海风吹起她的长发，他走在她的左边，帮她挡住风。粉丝说：“左边是海，右边是他。她什么都不用怕。”<span class="highlight">—— 左边是海，右边是他</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder"></span><span class="label">海边漫步</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第12章 · 烛光晚餐 -->
+            <div class="story-section" data-chapter="12">
+                <div class="chapter-title"><span class="emoji">️</span> 烛光 · 晚餐 <span class="num">#12</span></div>
+                <div class="story-card"><p>他们一起吃晚餐的照片被发到网上。桌子上有两根蜡烛，一杯红酒，两副餐具。粉丝说：“他们吃的不是饭，是氛围。”<span class="highlight">—— 氛围比食物更重要</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder">️</span><span class="label">烛光晚餐</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第13章 · 江边夜话 -->
+            <div class="story-section" data-chapter="13">
+                <div class="chapter-title"><span class="emoji"></span> 江边 · 夜话 <span class="num">#13</span></div>
+                <div class="story-card"><p>MV拍在江边，城市的灯火倒映在水面上。她站在栏杆边，他站在她身后，两个人看着同一片江面。粉丝说：“他们看的是江，也是未来。”<span class="highlight">—— 看的是江，也是未来</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder"></span><span class="label">江边夜话</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第14章 · 春日野餐 -->
+            <div class="story-section" data-chapter="14">
+                <div class="chapter-title"><span class="emoji">🧺</span> 春日 · 野餐 <span class="num">#14</span></div>
+                <div class="story-card"><p>春天，他们一起去野餐。周田坐在草地上，林墨染在旁边弹吉他。阳光透过树叶洒下来，像一幅画。粉丝说：“他们就是春天本身。”<span class="highlight">—— 他们就是春天本身</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder">🧺</span><span class="label">春日野餐</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第15章 · 雨后的第一首歌 -->
+            <div class="story-section" data-chapter="15">
+                <div class="chapter-title"><span class="emoji"></span> 雨后 · 第一首歌 <span class="num">#15</span></div>
+                <div class="story-card"><p>他们的第一首合唱单曲《雨后》发行当天，正好下了一场雨。粉丝说：“雨停了，他们的歌来了。”<span class="highlight">—— 雨停了，他们的歌来了</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder"></span><span class="label">雨后第一首歌</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第16章 · 深夜录音棚 -->
+            <div class="story-section" data-chapter="16">
+                <div class="chapter-title"><span class="emoji"></span> 深夜 · 录音棚 <span class="num">#16</span></div>
+                <div class="story-card"><p>凌晨两点，录音棚的灯还亮着。周田在唱，林墨染在调音台后面。他们不说话，但每个人都知道对方在想什么。粉丝说：“这是他们的深夜食堂。”<span class="highlight">—— 深夜食堂，只有音乐</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder"></span><span class="label">深夜录音棚</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第17章 · 雪地里的脚印 -->
+            <div class="story-section" data-chapter="17">
+                <div class="chapter-title"><span class="emoji"></span> 雪地 · 脚印 <span class="num">#17</span></div>
+                <div class="story-card"><p>雪地里有两串脚印，一串小的，一串大的。大的脚印总是踩在小脚印旁边，不远不近。粉丝说：“他踩着她的影子走的。”<span class="highlight">—— 他踩着她的影子走的</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder"></span><span class="label">雪地脚印</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第18章 · 银杏树下 -->
+            <div class="story-section" data-chapter="18">
+                <div class="chapter-title"><span class="emoji"></span> 银杏 · 树下 <span class="num">#18</span></div>
+                <div class="story-card"><p>一棵千年银杏树下，他们拍了一组照片。周田靠在树干上，林墨染坐在树根上写歌。粉丝说：“他们和树一样，扎根在时间里。”<span class="highlight">—— 扎根在时间里</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder"></span><span class="label">银杏树下</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第19章 · 旅途中的吉他 -->
+            <div class="story-section" data-chapter="19">
+                <div class="chapter-title"><span class="emoji"></span> 旅途 · 吉他 <span class="num">#19</span></div>
+                <div class="story-card"><p>他们去了一趟川西，在车上，林墨染抱着吉他写歌，周田坐在旁边看窗外。粉丝说：“风景在窗外，音乐在车里，他们在路上。”<span class="highlight">—— 他们在路上</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder"></span><span class="label">旅途吉他</span></div>{[/9]}</div>
+            </div>
+
+<!-- 第20章 · 她的词，他的曲 -->
+            <div class="story-section" data-chapter="20">
+                <div class="chapter-title"><span class="emoji">✍️</span> 她的词 · 他的曲 <span class="num">#20</span></div>
+                <div class="story-card"><p>周田写词，林墨染谱曲。他们从来没有商量过，但每次写出来的东西都像一个人写的。粉丝说：“他们是同一首歌的两个声部。”<span class="highlight">—— 同一首歌的两个声部</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder">✍️</span><span class="label">她的词他的曲</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第21章 · 芦苇丛中的约定 -->
+            <div class="story-section" data-chapter="21">
+                <div class="chapter-title"><span class="emoji"></span> 芦苇 · 约定 <span class="num">#21</span></div>
+                <div class="story-card"><p>他们在芦苇丛中拍了一组照片。周田说：“这里像我们的家。”林墨染说：“那就一直在这里唱歌吧。”粉丝说：“这是他们最浪漫的约定。”<span class="highlight">—— 一直在这里唱歌吧</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder"></span><span class="label">芦苇约定</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第22章 · 咖啡店里的创作 -->
+            <div class="story-section" data-chapter="22">
+                <div class="chapter-title"><span class="emoji">☕</span> 咖啡 · 创作 <span class="num">#22</span></div>
+                <div class="story-card"><p>他们经常去一家咖啡店创作。周田在笔记本上写词，林墨染在手机上编曲。老板说：“他们一坐就是一下午，从来不说话，但一直在交流。”<span class="highlight">—— 不说话，但一直在交流</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder">☕</span><span class="label">咖啡创作</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第23章 · 幕后的光 -->
+            <div class="story-section" data-chapter="23">
+                <div class="chapter-title"><span class="emoji"></span> 幕后 · 的光 <span class="num">#23</span></div>
+                <div class="story-card"><p>镜头前，他们是周田和林墨染。镜头后，他们是最好的创作伙伴。粉丝说：“最动人的不是舞台上的光，是后台角落里他们并肩坐着的影子。”<span class="highlight">—— 后台并肩的影子</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder"></span><span class="label">幕后的光</span></div>{[/9]}</div>
+            </div>
+
+            <!-- 第24章 · 风止于光 -->
+            <div class="story-section" data-chapter="24">
+                <div class="chapter-title"><span class="emoji">✨</span> 风止 · 于光 <span class="num">#24</span></div>
+                <div class="story-card"><p>“风止于光，声归于心。”这是他们最常说的一句话。粉丝说：“周田是风，林墨染是光。风遇上光，就安静了。”<span class="highlight">—— 风遇上光，就安静了</span></p></div>
+                <div class="photo-wall">{[9]}<div class="photo" onclick="openLightbox(this)"><span class="placeholder">✨</span><span class="label">风止于光</span></div>{[/9]}</div>
+            </div>
+
+        </div><!-- end moreStories -->
+
+    </div><!-- end storyContainer -->
+
+    <!-- ===== 加载更多按钮 ===== -->
+    <div class="load-more" id="loadMoreBtn">
+        <button onclick="loadMoreStories()">↓ 展开全部 24 个故事</button>
+    </div>
+
+    <!-- ===== 粉丝留言 ===== -->
+    <div class="fan-comments">
+        <div class="title"> 粉丝说 · 关于他们</div>
+        <div class="comment"><div class="text">“他看她的眼神，比落日还温柔。这句话我循环了100遍。”</div><div class="author">—— 芦苇音乐用户 · 山风</div></div>
+        <div class="comment"><div class="text">“周田是深冬的湖面，林墨染是湖边的旧书摊。他们站在一起就是一幅画。”</div><div class="author">—— 芦苇音乐用户 · 墨染的琴键</div></div>
+        <div class="comment"><div class="text">“第一次看《风止于光》MV的时候哭了。不是因为歌词，是因为他看她的眼神。”</div><div class="author">—— 芦苇音乐用户 · 深夜听歌</div></div>
+        <div class="comment"><div class="text">“他们不需要官宣，因为他们的歌已经回答了所有问题。这句话就是真相。”</div><div class="author">—— 芦苇音乐用户 · 风与光之间</div></div>
+        <div class="comment"><div class="text">“樱花落的那天，他们相遇了。从此我的歌单里，只有他们两个人的声音。”</div><div class="author">—— 芦苇音乐用户 · 樱花树下的耳朵</div></div>
+        <div class="comment"><div class="text">“左边是海，右边是他。她什么都不用怕。这是我听过最温暖的话。”</div><div class="author">—— 芦苇音乐用户 · 海边的风</div></div>
+        <div class="comment"><div class="text">“24个故事，每一个都像一首歌。他们的故事本身就是一张专辑。”</div><div class="author">—— 芦苇音乐用户 · 故事收藏家</div></div>
+    </div>
+
+    <!-- ===== 底部 ===== -->
+    <div class="footer">
+        <p> 周田 · 林墨染 · 24 个故事 · 未完待续</p>
+        <p style="margin-top:6px;">芦苇音乐 · 风止于光 · 声归于心</p>
+    </div>
+
+</div>
+
+<!-- ===== 灯箱 ===== -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="close" onclick="closeLightbox()">✕</span>
+    <img id="lightboxImg" src="" alt="">
+    <div class="counter" id="lightboxCounter"></div>
+</div>
+
+<script>
+    // ================================================================
+    // 灯箱控制
+    // ================================================================
+    let currentLightboxIndex = -1;
+    let currentLightboxPhotos = [];
+
+    function openLightbox(el) {
+        const img = el.querySelector('img');
+        if (!img || !img.src) return;
+        const photoWall = el.closest('.photo-wall');
+        if (photoWall) {
+            const allPhotos = photoWall.querySelectorAll('.photo img');
+            currentLightboxPhotos = Array.from(allPhotos).filter(i => i.src);
+            currentLightboxIndex = currentLightboxPhotos.indexOf(img);
+        } else {
+            currentLightboxPhotos = [img];
+            currentLightboxIndex = 0;
+        }
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const counter = document.getElementById('lightboxCounter');
+        lightboxImg.src = img.src;
+        if (currentLightboxPhotos.length > 1) {
+            counter.textContent = (currentLightboxIndex + 1) + ' / ' + currentLightboxPhotos.length;
+        } else {
+            counter.textContent = '';
+        }
+        lightbox.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    // 键盘事件
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft' && document.getElementById('lightbox').classList.contains('show')) {
+            navigateLightbox(-1);
+        }
+        if (e.key === 'ArrowRight' && document.getElementById('lightbox').classList.contains('show')) {
+            navigateLightbox(1);
+        }
+    });
+
+    function navigateLightbox(direction) {
+        if (currentLightboxPhotos.length <= 1) return;
+        currentLightboxIndex = (currentLightboxIndex + direction + currentLightboxPhotos.length) % currentLightboxPhotos.length;
+        const img = document.getElementById('lightboxImg');
+        const counter = document.getElementById('lightboxCounter');
+        img.src = currentLightboxPhotos[currentLightboxIndex].src;
+        counter.textContent = (currentLightboxIndex + 1) + ' / ' + currentLightboxPhotos.length;
+    }
+
+    // ================================================================
+    // 加载更多故事
+    // ================================================================
+    let allStoriesLoaded = false;
+
+    function loadMoreStories() {
+        const more = document.getElementById('moreStories');
+        const btn = document.getElementById('loadMoreBtn');
+        if (more.style.display === 'block') {
+            more.style.display = 'none';
+            btn.innerHTML = '<button onclick="loadMoreStories()">↓ 展开全部 24 个故事</button>';
+            allStoriesLoaded = false;
+        } else {
+            more.style.display = 'block';
+            btn.innerHTML = '<button onclick="loadMoreStories()">↑ 收起故事</button>';
+            allStoriesLoaded = true;
+            // 滚动到第一个新故事
+            setTimeout(() => {
+                const firstNew = more.querySelector('.story-section');
+                if (firstNew) firstNew.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+        }
+    }
+
+    // ================================================================
+    // 初始化：生成第11-24章的照片占位
+    // ================================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // 替换 {[9]} 为实际9个照片占位
+        const containers = document.querySelectorAll('#moreStories .photo-wall');
+        containers.forEach(container => {
+            const placeholders = container.innerHTML;
+            // 重建9张照片
+            const emoji = container.closest('.story-section').querySelector('.chapter-title .emoji')?.textContent || '';
+            let html = '';
+            for (let i = 1; i <= 9; i++) {
+                const label = container.closest('.story-section').querySelector('.chapter-title')?.textContent?.trim() || '故事';
+                html += `
+                    <div class="photo" onclick="openLightbox(this)">
+                        <span class="placeholder">${emoji}</span>
+                        <span class="label">${label} ${i}</span>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        });
+    });
+
+    console.log(' 周田 × 林墨染 · 24个故事已加载');
+    console.log(' 粉丝说：他看她的眼神，比落日还温柔。');
+    console.log(' 每个故事9张照片 · 共216张留影');
+</script>
+</body>
+</html>
+
+
