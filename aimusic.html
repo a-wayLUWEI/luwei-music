@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>芦苇音乐 · AI音乐排行榜</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -559,6 +560,84 @@ audio::-webkit-media-controls-panel {
     background: rgba(68,221,68,0.08) !important;
     box-shadow: 0 0 20px rgba(68,221,68,0.1) !important;
 }
+
+/* ===== 分享弹窗 ===== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(20px);
+    z-index: 1001;
+    justify-content: center;
+    align-items: center;
+}
+.modal-overlay.show {
+    display: flex;
+}
+.modal-overlay .modal {
+    background: linear-gradient(145deg, #1a1a2e, #2a2a4a);
+    max-width: 420px;
+    width: 92%;
+    border-radius: 28px;
+    padding: 28px 24px 24px;
+    border: 1px solid rgba(212,184,150,0.1);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.modal-overlay .modal h3 {
+    color: #d4b896;
+    margin-bottom: 4px;
+    font-size: 1.2rem;
+}
+.modal-overlay .modal p {
+    color: rgba(255,255,255,0.1);
+    font-size: 0.8rem;
+}
+#qrCodeContainer {
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    display: inline-block;
+}
+#qrCodeContainer canvas {
+    display: block;
+}
+/* ===== Toast 动画 ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ===== 手机端优化 ===== */
+@media (max-width: 480px) {
+    .modal-overlay .modal {
+        padding: 20px 16px 20px;
+        width: 94%;
+        border-radius: 20px;
+    }
+    .modal-overlay .modal h3 {
+        font-size: 1rem;
+    }
+    #qrCodeContainer canvas {
+        width: 140px !important;
+        height: 140px !important;
+    }
+    .modal-overlay .modal button {
+        font-size: 0.7rem !important;
+        padding: 8px 12px !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -688,6 +767,28 @@ audio::-webkit-media-controls-panel {
     </div>
 
     <div class="footer">© 芦苇音乐 · 侵权/合作请联系微信: jianjiayinyue</div>
+</div>
+
+<!-- ===== 分享弹窗 ===== -->
+<div class="modal-overlay" id="shareModal">
+    <div class="modal">
+        <h3>📤 分享拉票</h3>
+        <p id="shareSongInfo" style="color: rgba(255,255,255,0.2); font-size: 0.85rem; margin-bottom: 16px;">歌曲名 · 歌手</p >
+        
+        <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+            <div id="qrCodeContainer"></div>
+        </div>
+        
+        <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; margin-bottom: 14px; max-height: 100px; overflow-y: auto;">
+            <p id="shareText" style="color: rgba(255,255,255,0.2); font-size: 0.75rem; line-height: 1.8; white-space: pre-wrap; word-break: break-all;"></p >
+        </div>
+        
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button onclick="copyShareText()" style="flex:1; padding: 10px; border: none; border-radius: 30px; background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.3); cursor: pointer; font-size: 0.8rem; transition: 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">📋 复制文案</button>
+            <button onclick="downloadQR()" style="flex:1; padding: 10px; border: none; border-radius: 30px; background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.3); cursor: pointer; font-size: 0.8rem; transition: 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">⬇️ 二维码</button>
+            <button onclick="closeShareModal()" style="flex:1; padding: 10px; border: none; border-radius: 30px; background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.1); cursor: pointer; font-size: 0.8rem; transition: 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">关闭</button>
+        </div>
+    </div>
 </div>
 
 <div class="floating-upload-btn" id="floatingUploadBtn"><span>+</span></div>
@@ -841,6 +942,7 @@ function renderAll() {
                 '<div style="margin-top: 12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">' +
                 '   <button class="action-btn play-btn" data-song-id="' + s.id + '" onclick="togglePlay(\'' + s.id + '\', \'' + s.audio_url + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')">▶️ 播放</button>' +
                 '   <button class="action-btn" onclick="window.likeSong(\'' + s.id + '\', \'' + cat + '\')">❤️ 点赞</button>' +
+                '   <button class="action-btn" onclick="shareSong(\'' + s.id + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')">📤 分享拉票</button>' +
                 '   <button class="action-btn" onclick="window.interest(\'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')"> 预留/合作</button>' +
                 '</div>' +
                 '</div>';
@@ -1440,15 +1542,253 @@ function initFloatingButton() {
     };
 }
 
+// ===== 分享功能 =====
+let currentShareSongId = null;
+let qrCodeInstance = null;
+
+function shareSong(songId, title, artist) {
+    // 检查登录
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (!currentUser) {
+        alert('请先注册/登录，才可以帮他人拉票投票哦 🌾');
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    currentShareSongId = songId;
+    const shareUrl = 'https://a-wayluwei.github.io/luwei-music/aimusic.html?song=' + songId;
+    const shareText = '🎵 我正在参加芦苇音乐 · AI歌曲打榜大赛！\n歌曲：《' + title + '》\n歌手：' + artist + '\n请帮我点赞投票，让AI生成的美被更多人听见！\n\n点击链接听歌投票：' + shareUrl;
+    
+    // 更新弹窗内容
+    document.getElementById('shareSongInfo').textContent = title + ' · ' + artist;
+    document.getElementById('shareText').textContent = shareText;
+    
+    // 生成二维码
+    const container = document.getElementById('qrCodeContainer');
+    container.innerHTML = '';
+    if (qrCodeInstance) {
+        qrCodeInstance.clear();
+        qrCodeInstance = null;
+    }
+    qrCodeInstance = new QRCode(container, {
+        text: shareUrl,
+        width: 180,
+        height: 180,
+        colorDark: '#1a1a2e',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+    
+    // 显示弹窗
+    document.getElementById('shareModal').classList.add('show');
+}
+
+function closeShareModal() {
+    document.getElementById('shareModal').classList.remove('show');
+}
+
+function copyShareText() {
+    const text = document.getElementById('shareText').textContent;
+    
+    // 优先使用 Clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('✅ 已复制到剪贴板！');
+        }).catch(() => {
+            // 如果 Clipboard API 失败，用备用方案
+            fallbackCopy(text);
+        });
+    } else {
+        // 不支持 Clipboard API 的设备
+        fallbackCopy(text);
+    }
+}
+
+function fallbackCopy(text) {
+    // 使用 input 而不是 textarea，减少键盘弹出
+    const input = document.createElement('input');
+    input.value = text;
+    input.style.position = 'fixed';
+    input.style.left = '-9999px';
+    input.style.top = '-9999px';
+    input.style.opacity = '0';
+    document.body.appendChild(input);
+    input.select();
+    
+    try {
+        document.execCommand('copy');
+        showToast('✅ 已复制到剪贴板！');
+    } catch (e) {
+        // 如果还是失败，提示用户手动复制
+        showToast('⚠️ 请长按文案手动复制');
+    }
+    
+    document.body.removeChild(input);
+}
+
+function downloadQR() {
+    const canvas = document.querySelector('#qrCodeContainer canvas');
+    if (!canvas) {
+        showToast('⚠️ 二维码还未生成，请稍后', 'error');
+        return;
+    }
+    const link = document.createElement('a');
+    link.download = '芦苇音乐_拉票_' + currentShareSongId + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('✅ 二维码已下载', 'success');
+}
+
+// ===== Toast 提示 =====
+function showToast(msg) {
+    const oldToast = document.getElementById('toast');
+    if (oldToast) oldToast.remove();
+    
+    const toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.textContent = msg;
+    toast.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(26,26,46,0.95);
+        color: #d4b896;
+        padding: 14px 28px;
+        border-radius: 40px;
+        border: 1px solid rgba(212,184,150,0.15);
+        backdrop-filter: blur(20px);
+        z-index: 9999;
+        font-size: 0.9rem;
+        animation: fadeInUp 0.3s ease;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+        pointer-events: none;
+        max-width: 80%;
+        text-align: center;
+        font-weight: 500;
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 350);
+    }, 2200);
+}
+
 // ==================== 启动 ====================
 (async function init() {
     try {
         await initSupabase();
-        await loadSongs();
+        await loadSongs();  // ← 等数据加载完
         initFloatingButton();
         console.log('✅ 页面初始化完成');
+        
+        // ===== 检测分享链接，自动定位 =====
+        const urlParams = new URLSearchParams(window.location.search);
+        const shareSongId = urlParams.get('song');
+        
+        if (shareSongId) {
+            console.log('🎯 开始定位:', shareSongId);
+            
+            // 再等一点点时间确保 DOM 完全渲染
+            setTimeout(() => {
+                const card = document.querySelector('.rank-card[data-song-id="' + shareSongId + '"]');
+                console.log('🔍 找到卡片?', card);
+                
+                if (card) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.style.border = '4px solid #ffd700';
+                    card.style.boxShadow = '0 0 60px rgba(255,215,0,0.5)';
+                    card.style.transition = 'all 0.5s';
+                    
+                    // 3秒后恢复
+                    setTimeout(() => {
+                        card.style.border = '';
+                        card.style.boxShadow = '';
+                    }, 3000);
+                    
+                    console.log('✅ 定位成功！');
+                } else {
+                    console.log('❌ 没找到卡片');
+                }
+            }, 500);
+        }
+        
     } catch (error) {
         console.error('❌ 初始化失败:', error);
+    }
+})();
+
+// ==========================================
+// ===== 微信专用：分享歌曲定位 =====
+// ==========================================
+
+(function() {
+    // 检测是否在微信环境
+    const isWechat = /MicroMessenger/i.test(navigator.userAgent);
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const shareSongId = urlParams.get('song');
+    
+    if (!shareSongId) return;
+    
+    console.log('🎯 分享歌曲 ID:', shareSongId);
+    console.log('📱 微信环境:', isWechat);
+    
+    // 微信专用定位函数
+    function locateSong() {
+        const card = document.querySelector('.rank-card[data-song-id="' + shareSongId + '"]');
+        if (card) {
+            console.log('✅ 找到卡片！');
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.style.border = '4px solid #ffd700';
+            card.style.boxShadow = '0 0 60px rgba(255,215,0,0.5)';
+            card.style.transition = 'all 0.5s';
+            
+            // 微信震动
+            if (navigator.vibrate) navigator.vibrate(30);
+            
+            setTimeout(() => {
+                card.style.border = '';
+                card.style.boxShadow = '';
+            }, 4000);
+            return true;
+        }
+        return false;
+    }
+    
+    // 如果是微信，用更长的延迟 + 多次重试
+    if (isWechat) {
+        let attempts = 0;
+        const maxAttempts = 25;
+        
+        function wechatRetry() {
+            attempts++;
+            if (locateSong()) return;
+            
+            if (attempts < maxAttempts) {
+                console.log('⏳ 微信重试', attempts);
+                setTimeout(wechatRetry, 600);
+            } else {
+                console.log('❌ 微信定位失败，显示手动按钮');
+                // 显示手动定位按钮
+                const tip = document.getElementById('shareTip');
+                if (tip) tip.style.display = 'block';
+            }
+        }
+        
+        // 微信多等一会
+        setTimeout(wechatRetry, 2000);
+    } else {
+        // 非微信环境，正常执行
+        setTimeout(() => {
+            if (!locateSong()) {
+                // 失败后显示手动按钮
+                const tip = document.getElementById('shareTip');
+                if (tip) tip.style.display = 'block';
+            }
+        }, 1000);
     }
 })();
 </script>
