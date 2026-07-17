@@ -1979,7 +1979,7 @@ async function handleUpload(container, modal) {
         if (progressText) progressText.textContent = '⏳ 正在保存作品... 40%';
         const newSong = {
     id: Date.now().toString() + '_' + Math.random().toString(36).substring(2, 6),
-    user_id: currentUser?.id || null,   // ← 加上这一行
+    user_id: currentUser?.user_id || null,
     category: category,
     title: title,
             artist: artist,
@@ -2156,13 +2156,18 @@ async function handleUpload(container, modal) {
 function setupModalForm(modal) {
     const originalForm = document.getElementById('originalForm');
     const modalFormContainer = document.getElementById('modalUploadForm');
+    
     if (!originalForm || !modalFormContainer) {
         console.error('找不到表单元素');
         return;
     }
+    
+    // 🔧 先清空容器，防止重复
+    modalFormContainer.innerHTML = '';
+    
+    // 克隆表单
     const clone = originalForm.cloneNode(true);
     clone.style.display = 'block';
-    // modalFormContainer.innerHTML = '';
     modalFormContainer.appendChild(clone);
 
     // 勾选展开入驻信息
@@ -2182,6 +2187,7 @@ function setupModalForm(modal) {
         };
         hybridFields.style.display = (categorySelect.value === 'hybrid' || categorySelect.value === 'original') ? 'block' : 'none';
     }
+    
     const submitBtn = clone.querySelector('#submitBtn');
     if (submitBtn) {
         submitBtn.onclick = function(e) {
@@ -2559,7 +2565,9 @@ function detectSharedSong() {
         }, 2000);
     }
     
-    // 尝试读取剪贴板
+    // 剪贴板读取已禁用（避免权限弹窗）
+    // 如需恢复，取消下方注释即可
+    /*
     try {
         if (navigator.clipboard && navigator.clipboard.readText) {
             navigator.clipboard.readText().then(text => {
@@ -2594,6 +2602,7 @@ function detectSharedSong() {
     } catch (e) {
         console.log('📋 剪贴板 API 不支持');
     }
+    */
 }
 
 // 5. 回车搜索
