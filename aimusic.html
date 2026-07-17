@@ -732,6 +732,323 @@ audio::-webkit-media-controls-panel {
     transform: scale(1.05);
 }
     </style>
+<!-- ===== 新增：follow.js 支持关注功能 ===== -->
+<script src="follow.js"></script>
+
+<style>
+/* ===== 新增样式：比赛筛选器、评论、播放量、关注按钮 ===== */
+
+/* 比赛筛选器 */
+.contest-filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,184,150,0.1);
+    border-radius: 40px;
+    padding: 8px 16px 8px 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.contest-filter label {
+    color: rgba(255,255,255,0.3);
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+.contest-filter select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(212,184,150,0.1);
+    border-radius: 30px;
+    padding: 6px 14px;
+    color: #d4b896;
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+    flex: 1;
+    min-width: 120px;
+}
+.contest-filter select:focus {
+    border-color: rgba(212,184,150,0.3);
+}
+.contest-filter .badge {
+    background: rgba(212,184,150,0.12);
+    color: #d4b896;
+    font-size: 0.6rem;
+    padding: 2px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(212,184,150,0.1);
+}
+
+/* ===== 卡片新增元素 ===== */
+.card-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 6px;
+    color: rgba(255,255,255,0.25);
+    font-size: 0.7rem;
+}
+.card-stats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.card-stats .plays {
+    color: rgba(255,255,255,0.15);
+}
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.card-actions .action-btn {
+    font-size: 0.7rem;
+    padding: 4px 12px;
+}
+.card-actions .follow-btn {
+    font-size: 0.6rem;
+    padding: 3px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(212,184,150,0.1);
+    background: rgba(255,255,255,0.02);
+    color: rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: 0.3s;
+}
+.card-actions .follow-btn:hover {
+    border-color: rgba(212,184,150,0.25);
+    color: rgba(255,255,255,0.5);
+}
+.card-actions .follow-btn.followed {
+    color: #e88a8a;
+    border-color: rgba(232,138,138,0.2);
+}
+
+/* ===== 评论弹窗（复用 player.html 样式） ===== */
+.comment-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(12px);
+    z-index: 1002;
+    justify-content: center;
+    align-items: center;
+}
+.comment-modal-overlay.show {
+    display: flex;
+}
+.comment-modal-box {
+    background: linear-gradient(145deg, #1a1a2e, #2a2a4a);
+    border-radius: 24px;
+    width: 92%;
+    max-width: 600px;
+    max-height: 85vh;
+    padding: 24px 24px 20px;
+    border: 1px solid rgba(212,184,150,0.08);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+}
+.comment-modal-box .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+.comment-modal-box .header h3 {
+    color: #d4b896;
+    font-size: 1rem;
+}
+.comment-modal-box .header .close {
+    background: rgba(255,255,255,0.05);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    color: rgba(255,255,255,0.4);
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+.comment-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 400px;
+    margin-bottom: 12px;
+    padding-right: 4px;
+}
+.comment-item {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.comment-item .meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+.comment-item .meta .name {
+    color: #b8a0c8;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+.comment-item .meta .time {
+    color: rgba(255,255,255,0.2);
+    font-size: 0.6rem;
+}
+.comment-item .content {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    word-break: break-word;
+}
+.comment-item .actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+}
+.comment-item .actions button {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.2);
+    font-size: 0.7rem;
+    cursor: pointer;
+    padding: 2px 4px;
+}
+.comment-item .actions .like-btn.liked {
+    color: #e88a8a;
+}
+.comment-input-row {
+    display: flex;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+}
+.comment-input-row input {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: #fff;
+    font-size: 0.85rem;
+    outline: none;
+}
+.comment-input-row input:focus {
+    border-color: rgba(212,184,150,0.3);
+}
+.comment-input-row button {
+    background: linear-gradient(135deg, #d4b896, #b8a0c8);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 18px;
+    color: #1a1a2e;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.comment-empty {
+    text-align: center;
+    color: rgba(255,255,255,0.2);
+    padding: 30px 0;
+    font-size: 0.85rem;
+}
+
+/* 评论弹窗背景流动 */
+@keyframes commentBgFlow {
+    0% { background-position: 0% 0%; }
+    25% { background-position: 50% 100%; }
+    50% { background-position: 100% 50%; }
+    75% { background-position: 50% 0%; }
+    100% { background-position: 0% 100%; }
+}
+
+/* ===== 播放模式按钮 ===== */
+.play-mode-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,184,150,0.08);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    color: rgba(255,255,255,0.25);
+    font-size: 0.6rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.play-mode-btn:hover {
+    border-color: rgba(212,184,150,0.2);
+    color: rgba(255,255,255,0.5);
+}
+
+/* ===== 进行中的比赛区块 ===== */
+.active-contests {
+    background: rgba(255,215,0,0.04);
+    border: 1px solid rgba(255,215,0,0.08);
+    border-radius: 16px;
+    padding: 12px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.active-contests .label {
+    color: rgba(255,215,0,0.4);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+.active-contests .items {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.active-contests .items a {
+    color: #ffd700;
+    font-size: 0.8rem;
+    text-decoration: none;
+    padding: 2px 12px;
+    border: 1px solid rgba(255,215,0,0.1);
+    border-radius: 20px;
+    transition: 0.3s;
+}
+.active-contests .items a:hover {
+    background: rgba(255,215,0,0.05);
+    border-color: rgba(255,215,0,0.2);
+}
+
+/* ===== 顶部入口按钮组 ===== */
+.top-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+.top-links a {
+    color: rgba(255,255,255,0.3);
+    text-decoration: none;
+    font-size: 0.7rem;
+    padding: 4px 14px;
+    border: 1px solid rgba(212,184,150,0.06);
+    border-radius: 30px;
+    transition: 0.3s;
+    letter-spacing: 0.5px;
+}
+.top-links a:hover {
+    color: rgba(255,255,255,0.5);
+    border-color: rgba(212,184,150,0.15);
+}
+</style>
 </head>
 <body>
 <script src="checkAuth.js"></script>
@@ -765,8 +1082,8 @@ audio::-webkit-media-controls-panel {
     " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 20px rgba(184,160,200,0.25)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 12px rgba(184,160,200,0.15)'">
         🎯 赞助招募
     </a >
-<a href="contestbisai.html" style="
-        color: #1a1a2e;
+<a href="contest-players.html" style="
+    color: #1a1a2e;
         text-decoration: none;
         font-size: 13px;
         letter-spacing: 2px;
@@ -777,8 +1094,21 @@ audio::-webkit-media-controls-panel {
         box-shadow: 0 2px 12px rgba(184,160,200,0.15);
         transition: 0.3s;
     " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 20px rgba(184,160,200,0.25)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 12px rgba(184,160,200,0.15)'">
-        🤖 第一届 · 芦苇音乐 · AI音乐排行榜比赛已正式开启
-    </a >
+    🌾 参赛选手
+</a >
+</div>
+<!-- ===== 顶部入口：我的参赛 + 比赛列表 ===== -->
+<div class="top-links">
+    <a href="my-contests.html">📋 我的参赛记录</a >
+    <a href="contests.html">🏆 比赛列表</a >
+</div>
+
+<!-- ===== 进行中的比赛 ===== -->
+<div class="active-contests" id="activeContests">
+    <span class="label">🔥 进行中</span>
+    <div class="items" id="contestItems">
+        <span style="color:rgba(255,255,255,0.15); font-size:0.7rem;">加载中...</span>
+    </div>
 </div>
     <div class="hero">
         <h1> 芦苇音乐 · AI音乐排行榜</h1>
@@ -822,6 +1152,14 @@ audio::-webkit-media-controls-panel {
         <div class="tab-btn" onclick="window.switchTab('original', this)">✍️ 原创作品榜</div>
         <div class="tab-btn" onclick="window.switchTab('demo', this)">Demo精选</div>
     </div>
+<!-- ===== 比赛筛选器 ===== -->
+<div class="contest-filter">
+    <label>🏷️ 筛选：</label>
+    <select id="contestFilter" onchange="filterByContest()">
+        <option value="">全部作品</option>
+    </select>
+    <span class="badge" id="filterCount">0 首</span>
+</div>
     <div id="tab-ai" class="tab-content active"><div id="ai-list"></div></div>
     <div id="tab-hybrid" class="tab-content"><div id="hybrid-list"></div></div>
     <div id="tab-original" class="tab-content"><div id="original-list"></div></div>
@@ -830,6 +1168,10 @@ audio::-webkit-media-controls-panel {
     <!-- 隐藏的原始表单 -->
     <div class="upload-section" id="originalForm">
         <h3>上传你的作品</h3>
+<!-- 参赛类别（新增） -->
+<select id="contestSelect">
+    <option value="">📌 选择参赛（可选）</option>
+</select>
         <select id="category">
             <option value="ai">🤖 纯AI作品榜</option>
             <option value="hybrid">🤝 人机共创榜</option>
@@ -892,6 +1234,117 @@ audio::-webkit-media-controls-panel {
     </div>
 
     <div class="footer">© 芦苇音乐 · 侵权/合作请联系微信: jianjiayinyue</div>
+</div>
+
+<!-- ===== 评论弹窗 ===== -->
+<div id="commentModal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+">
+<div style="
+    background: linear-gradient(135deg, 
+        #e8e8e8 0%, 
+        #8a8a8a 15%, 
+        #1a1a1a 30%, 
+        #d4a843 45%, 
+        #6a5a9a 60%, 
+        #2a4a3a 75%, 
+        #6a5a9a 85%, 
+        #3a3a4a 100%
+    );
+    background-size: 300% 300%;
+    border-radius: 24px;
+    width: 92%;
+    max-width: 800px;
+    max-height: 90vh;
+    height: 80vh;
+    padding: 28px 28px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    animation: commentBgFlow 10s ease-in-out infinite alternate;
+">
+<div class="modal-box" style="position: relative; overflow: hidden;">
+    <!-- 流星雨 Canvas -->
+    <canvas id="meteorCanvas" style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 24px;
+        pointer-events: none;
+        z-index: 0;
+    "></canvas>
+
+        <!-- 标题 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <span style="color: #fff; font-size: 1rem; font-weight: 600; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">💬 评论 <span id="commentCount" style="color: rgba(255,255,255,0.4); font-weight: 400;">0</span></span>
+            <button onclick="closeCommentModal()" style="
+                background: rgba(255,255,255,0.1);
+                border: none;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                color: rgba(255,255,255,0.6);
+                font-size: 1rem;
+                cursor: pointer;
+                transition: 0.3s;
+            " onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='rgba(255,255,255,0.6)'">✕</button>
+        </div>
+
+<!-- 评论列表 -->
+<div id="commentList" style="
+    flex: 1;
+    overflow-y: auto;
+    max-height: 520px;
+    margin-bottom: 14px;
+    padding-right: 6px;
+">
+            <div style="text-align: center; color: rgba(255,255,255,0.4); padding: 50px 0; font-size: 0.85rem; text-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                💭 还没有评论，说点什么吧～
+            </div>
+        </div>
+
+        <!-- 输入区 -->
+<div style="display: flex; gap: 10px;  padding-top: 170px; margin-top: 100px;">
+            <input id="commentInput" type="text" placeholder="写评论..." style="
+                flex: 1;
+                background: rgba(0,0,0,0.3);
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 20px;
+                padding: 10px 16px;
+                color: #fff;
+                font-size: 0.85rem;
+                outline: none;
+                transition: 0.3s;
+            " onfocus="this.style.borderColor='rgba(212,184,150,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" onkeydown="if(event.key==='Enter') postComment()">
+            <button onclick="postComment()" style="
+                background: linear-gradient(135deg, #d4b896, #b8a0c8);
+                border: none;
+                border-radius: 20px;
+                padding: 10px 18px;
+                color: #1a1a2e;
+                font-weight: 600;
+                font-size: 0.85rem;
+                cursor: pointer;
+                white-space: nowrap;
+                transition: 0.3s;
+                box-shadow: 0 4px 20px rgba(184,160,200,0.2);
+            " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 30px rgba(184,160,200,0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 20px rgba(184,160,200,0.2)'">发送</button>
+        </div>
+    </div>
 </div>
 
 <!-- ===== 分享弹窗 ===== -->
@@ -998,7 +1451,9 @@ async function loadSongs(retryCount = 0) {
             }
         }
         renderAll();
-// ===== 加载完成后检测分享歌曲 =====
+        // 🆕 更新筛选计数
+        updateFilterCount();
+        // ===== 加载完成后检测分享歌曲 =====
         setTimeout(() => {
             detectSharedSong();
         }, 500);
@@ -1021,16 +1476,84 @@ function escapeHtml(str) {
 }
 
 function renderAll() {
+    // ===== 批量查询关注状态和粉丝数（从 lwmusic 抄） =====
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    let followedMap = {};
+    let followerCountMap = {};
+
+    // 收集所有歌曲的 artist
+    let allArtists = [];
+    for (let cat of ['ai', 'hybrid', 'original']) {
+        const songs = getFilteredSongs(cat);
+        songs.forEach(s => {
+            if (s.artist && !allArtists.includes(s.artist)) {
+                allArtists.push(s.artist);
+            }
+        });
+    }
+
+    // 异步查询数据库
+    (async () => {
+        // 查当前用户关注了哪些参赛选手
+        if (user.user_id && allArtists.length > 0) {
+            try {
+                const client = await ensureSupabase();
+                const artistIds = allArtists.map(a => 'artist_' + a);
+                const { data: follows } = await client
+                    .from('follows')
+                    .select('following_id')
+                    .eq('follower_id', user.user_id)
+                    .in('following_id', artistIds);
+                if (follows) {
+                    follows.forEach(f => { followedMap[f.following_id] = true; });
+                }
+            } catch (e) {
+                console.warn('获取关注状态失败:', e);
+            }
+        }
+
+        // 查每个参赛选手的粉丝数
+        if (allArtists.length > 0) {
+            try {
+                const client = await ensureSupabase();
+                const artistIds = allArtists.map(a => 'artist_' + a);
+                const { data: allFollows } = await client
+                    .from('follows')
+                    .select('following_id')
+                    .in('following_id', artistIds);
+                if (allFollows) {
+                    allFollows.forEach(f => {
+                        followerCountMap[f.following_id] = (followerCountMap[f.following_id] || 0) + 1;
+                    });
+                }
+            } catch (e) {
+                console.warn('获取粉丝数失败:', e);
+            }
+        }
+
+        // 渲染卡片
+        renderCardsWithFollow(followedMap, followerCountMap);
+    })();
+}
+
+function renderCardsWithFollow(followedMap, followerCountMap) {
     for (let cat of ['ai', 'hybrid', 'original']) {
         const container = document.getElementById(cat + '-list');
         if (!container) continue;
-        const songs = allSongs[cat] || [];
+
+        const songs = getFilteredSongs(cat);
         songs.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-        if(songs.length === 0) {
+
+        if (songs.length === 0) {
             container.innerHTML = '<div class="rank-card" style="text-align:center; color:rgba(255,255,255,0.15);">✨ 暂无作品，快来上传第一首吧 ✨</div>';
             continue;
         }
+
         container.innerHTML = songs.map((s, idx) => {
+            const targetId = 'artist_' + s.artist;
+            const isFollowed = followedMap[targetId] || false;
+            const followerCount = followerCountMap[targetId] || 0;
+
             let extraInfo = '';
             if (cat === 'hybrid' || cat === 'original') {
                 const parts = [];
@@ -1039,45 +1562,52 @@ function renderAll() {
                 if (s.arrangement_by) parts.push('编曲: ' + escapeHtml(s.arrangement_by));
                 if (parts.length) extraInfo = '<div class="extra-info">' + parts.join(' · ') + '</div>';
             }
-            const demoBadge = '';
+            const demoBadge = s.is_demo ? '<span class="demo-badge">Demo</span>' : '';
             let eqBars = '';
             for (let i = 0; i < 30; i++) {
                 const h = 10 + Math.random() * 25;
                 eqBars += '<div class="eq-bar" style="height:' + h + 'px;"></div>';
             }
+
             return '<div class="rank-card" data-song-id="' + s.id + '">' +
-    '<div class="shimmer"></div>' +
-    '<span class="particle"></span>' +
-    '<span class="particle"></span>' +
-    '<span class="particle"></span>' +
-    '<span class="particle"></span>' +
-    '<span class="particle"></span>' +
-    '<span class="particle"></span>' +
-    '<span class="particle"></span>' +
-    '<span class="particle"></span>' +
-    '<div class="rank-note">♩</div>' +
-    // ... 后面代码不变
+                '<div class="shimmer"></div>' +
+                '<span class="particle"></span>' +
+                '<span class="particle"></span>' +
+                '<span class="particle"></span>' +
+                '<span class="particle"></span>' +
+                '<span class="particle"></span>' +
+                '<span class="particle"></span>' +
+                '<span class="particle"></span>' +
+                '<span class="particle"></span>' +
+                '<div class="rank-note">♩</div>' +
                 (idx === 0 ? '<div class="rank-medal">🥇</div>' : '') +
                 (idx === 1 ? '<div class="rank-medal">🥈</div>' : '') +
                 (idx === 2 ? '<div class="rank-medal">🥉</div>' : '') +
-              '<div class="rank-number"><span class="num">' + (idx + 1) + '</span></div>' +
+                '<div class="rank-number"><span class="num">' + (idx + 1) + '</span></div>' +
                 '<div class="song-title">' + escapeHtml(s.title) + ' ' + demoBadge + '</div>' +
-                '<div class="song-artist">' + escapeHtml(s.artist) + ' <span>·</span> ' + (s.genre || '未分类') + ' <span>·</span> ' + (s.likes || 0) + ' 票</div>' +
+                // 🆕 歌手名 + 粉丝数（像 lwmusic 一样）
+                '<div class="song-artist">' + escapeHtml(s.artist) + ' <span>·</span> ' + (s.genre || '未分类') + ' <span>·</span> ' + (s.likes || 0) + ' 票 <span>·</span> ❤️ ' + followerCount + ' 粉丝</div>' +
+                '<div class="card-stats">' +
+                '   <span class="plays">▶️ ' + formatPlayCount(s.plays || 0) + ' 次播放</span>' +
+                '</div>' +
                 extraInfo +
                 '<div id="lyricsDisplay-' + s.id + '" style="display:none; margin: 8px 0; padding: 8px 12px; background:rgba(255,255,255,0.03); border-radius:8px; min-height:36px;">' +
                 '   <div id="lyricsLine-' + s.id + '" style="color:rgba(255,255,255,0.4); font-size:0.9rem; transition: all 0.3s; text-align:center;"> 播放中...</div>' +
                 '</div>' +
                 '<div class="equalizer" id="equalizer-' + s.id + '" style="display:none; align-items:center; justify-content:center; gap:3px; height:60px; margin:10px 0;">' + eqBars + '</div>' +
                 '<div style="margin-top: 12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">' +
-                '   <button class="action-btn play-btn" data-song-id="' + s.id + '" onclick="togglePlay(\'' + s.id + '\', \'' + s.audio_url + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')">▶️ 播放</button>' +
+                '   <button class="action-btn play-btn" data-song-id="' + s.id + '" onclick="togglePlay(\'' + s.id + '\', \'' + s.audio_url + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\', \'' + (s.musician_id || '') + '\')">▶️ 播放</button>' +
                 '   <button class="action-btn" onclick="window.likeSong(\'' + s.id + '\', \'' + cat + '\')">❤️ 点赞</button>' +
+                '   <button class="action-btn" onclick="openCommentModal(\'' + s.id + '\')">💬 评论</button>' +
                 '   <button class="action-btn" onclick="shareSong(\'' + s.id + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')">📤 分享拉票</button>' +
-                '   <button class="action-btn" onclick="window.interest(\'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')"> 预留/合作</button>' +
+                // 🆕 关注按钮（从 lwmusic 抄，用 artist）
+                '   <button class="action-btn follow-btn ' + (isFollowed ? 'followed' : '') + '" onclick="handleFollow(\'' + escapeHtml(s.artist) + '\', this)">' + (isFollowed ? '❤️ 已关注' : '🤍 关注') + '</button>' +
                 '</div>' +
                 '</div>';
         }).join('');
     }
     renderDemo();
+    updateFilterCount();
 }
 
 function renderDemo() {
@@ -1169,7 +1699,10 @@ let currentSongId = null;
 let eqAnimationId = null;
 let lyricsTimer = null;
 
-function togglePlay(songId, audioUrl, title, artist) {
+function togglePlay(songId, audioUrl, title, artist, musicianId) {
+    // 🆕 增加播放量（每次播放都加1）
+    incrementPlays(songId);
+    
     let player = document.getElementById('global-audio');
     if (!player) {
         player = document.createElement('audio');
@@ -1238,6 +1771,11 @@ function togglePlay(songId, audioUrl, title, artist) {
         if (card) card.classList.remove('playing');
         currentSongId = null;
         hideLyrics(songId);
+        // 🆕 自动播下一首（根据播放模式）
+        const next = getNextSong(songId);
+        if (next) {
+            togglePlay(next.id, next.audio_url, next.title, next.artist, next.musician_id);
+        }
     };
 }
 
@@ -1435,9 +1973,10 @@ async function handleUpload(container, modal) {
         if (progressBar) progressBar.style.width = '40%';
         if (progressText) progressText.textContent = '⏳ 正在保存作品... 40%';
         const newSong = {
-            id: Date.now().toString() + '_' + Math.random().toString(36).substring(2, 6),
-            category: category,
-            title: title,
+    id: Date.now().toString() + '_' + Math.random().toString(36).substring(2, 6),
+    user_id: currentUser?.id || null,   // ← 加上这一行
+    category: category,
+    title: title,
             artist: artist,
             genre: genre || '未分类',
             audio_url: audioUrl,
@@ -2123,6 +2662,700 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000);
     }
 })();
+
+// ============================================================
+// =====  比赛功能 ==========================================
+// ============================================================
+
+// 加载比赛列表（用于筛选器和上传下拉）
+async function loadContests() {
+    try {
+        const client = await ensureSupabase();
+        const { data, error } = await client
+            .from('contests')
+            .select('*')
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        return data || [];
+    } catch (e) {
+        console.error('加载比赛列表失败:', e);
+        return [];
+    }
+}
+
+// 填充比赛筛选器下拉
+async function populateContestFilter() {
+    const contests = await loadContests();
+    const select = document.getElementById('contestFilter');
+    const contestSelect = document.getElementById('contestSelect');
+    const activeContainer = document.getElementById('contestItems');
+    
+    if (!select) return;
+    
+    // 清空并填充筛选器
+    select.innerHTML = '<option value="">全部作品</option>';
+    if (contestSelect) {
+        contestSelect.innerHTML = '<option value=""> 选择参赛（可选）</option>';
+    }
+    
+    let activeHtml = '';
+    let hasActive = false;
+    
+    contests.forEach(c => {
+        // 筛选器下拉
+        const option = document.createElement('option');
+        option.value = c.id;
+        option.textContent = c.title;
+        select.appendChild(option);
+        
+        // 上传弹窗下拉
+        if (contestSelect) {
+            const opt2 = document.createElement('option');
+            opt2.value = c.id;
+            opt2.textContent = c.title;
+            contestSelect.appendChild(opt2);
+        }
+        
+        // 进行中的比赛
+        if (c.status === 'active') {
+            hasActive = true;
+            const now = new Date();
+            const end = new Date(c.end_date);
+            const daysLeft = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+            const label = daysLeft > 0 ? `剩余${daysLeft}天` : '即将结束';
+            activeHtml += `<a href="contest.html?id=${c.id}" title="${c.description || ''}">${c.title} <span style="font-size:0.5rem;opacity:0.5;">${label}</span></a>`;
+        }
+    });
+    
+    // 更新进行中的比赛
+    if (activeContainer) {
+        if (hasActive) {
+            activeContainer.innerHTML = activeHtml;
+        } else {
+            activeContainer.innerHTML = '<span style="color:rgba(255,255,255,0.1);font-size:0.7rem;">暂无进行中的比赛</span>';
+        }
+    }
+    
+    // 更新筛选计数
+    updateFilterCount();
+}
+
+// 按比赛筛选
+let currentContestFilter = '';
+
+function filterByContest() {
+    const select = document.getElementById('contestFilter');
+    currentContestFilter = select ? select.value : '';
+    updateFilterCount();
+    renderAll(); // 重新渲染榜单
+}
+
+function updateFilterCount() {
+    const countEl = document.getElementById('filterCount');
+    if (!countEl) return;
+    
+    let count = 0;
+    for (let cat of ['ai', 'hybrid', 'original']) {
+        const songs = allSongs[cat] || [];
+        if (currentContestFilter) {
+            count += songs.filter(s => s.contest_id === currentContestFilter).length;
+        } else {
+            count += songs.length;
+        }
+    }
+    countEl.textContent = count + ' 首';
+}
+
+// 获取筛选后的歌曲
+function getFilteredSongs(category) {
+    const songs = allSongs[category] || [];
+    if (!currentContestFilter) return songs;
+    return songs.filter(s => s.contest_id === currentContestFilter);
+}
+
+// ============================================================
+// =====  评论功能（完整版，适配 aimusic） =====
+// ============================================================
+
+let currentCommentSongId = null;
+let commentLikedStatus = {};
+
+// 打开评论弹窗
+async function openCommentModal(songId) {
+    if (!songId) {
+        alert('请先选择一首歌');
+        return;
+    }
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!user.user_id) {
+        alert('请先登录再评论 ');
+        window.location.href = 'index.html';
+        return;
+    }
+    currentCommentSongId = songId;
+    const modal = document.getElementById('commentModal');
+    modal.style.display = 'flex';
+    startMeteors();
+    await loadComments(songId);
+}
+
+// 关闭评论弹窗
+function closeCommentModal() {
+    document.getElementById('commentModal').style.display = 'none';
+    stopMeteors();
+}
+
+// 加载评论
+async function loadComments(workId) {
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/comments?work_id=eq.${workId}&order=likes.desc,created_at.desc`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const comments = await resp.json();
+ // 🆕 加这行：如果返回的不是数组，改成空数组
+        if (!Array.isArray(comments)) {
+            console.warn('评论数据格式异常:', comments);
+            renderComments([]);
+            return;
+        }
+        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        commentLikedStatus = {};
+        if (user.user_id && comments && comments.length > 0) {
+            try {
+                const commentIds = comments.map(c => c.id).join(',');
+                const likeResp = await fetch(
+                    `${SUPABASE_URL}/rest/v1/comment_likes?user_id=eq.${user.user_id}&comment_id=in.(${commentIds})`,
+                    { headers: { 'apikey': SUPABASE_KEY } }
+                );
+                if (likeResp.ok) {
+                    const likes = await likeResp.json();
+                    likes.forEach(l => { commentLikedStatus[l.comment_id] = true; });
+                }
+            } catch (e) {
+                console.warn('获取点赞状态失败:', e);
+            }
+        }
+        renderComments(comments);
+    } catch (e) {
+        console.error('加载评论失败:', e);
+    }
+}
+
+// 渲染评论
+function renderComments(comments) {
+    const list = document.getElementById('commentList');
+    const countEl = document.getElementById('commentCount');
+    countEl.textContent = comments.length;
+    if (!comments || comments.length === 0) {
+        list.innerHTML = `<div style="text-align: center; color: rgba(255,255,255,0.25); padding: 50px 0; font-size: 0.85rem;"> 还没有评论，说点什么吧～</div>`;
+        return;
+    }
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    list.innerHTML = comments.map(c => {
+        const isMine = c.user_id === user.user_id;
+        const time = formatTimeAgo(c.created_at);
+        const isLiked = commentLikedStatus[c.id] || false;
+        return `
+            <div style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <span style="color: #b8a0c8; font-size: 0.75rem; font-weight: 500;">${escapeHtml(c.user_name || '匿名用户')}</span>
+                            <span style="color: rgba(255,255,255,0.2); font-size: 0.6rem;">${time}</span>
+                        </div>
+                        <div style="color: rgba(255,255,255,0.85); font-size: 0.85rem; line-height: 1.5; word-break: break-word;">${escapeHtml(c.content)}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 10px;">
+                        ${isMine ? `
+                            <button onclick="deleteComment(${c.id}, '${c.user_id}')" style="
+                                background: none;
+                                border: none;
+                                color: rgba(255,255,255,0.15);
+                                cursor: pointer;
+                                font-size: 0.65rem;
+                                padding: 2px 6px;
+                                border-radius: 4px;
+                            " onmouseover="this.style.color='rgba(255,100,100,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.15)'">删除</button>
+                        ` : ''}
+                        <button onclick="toggleCommentLike(${c.id})" style="
+                            background: none;
+                            border: none;
+                            color: ${isLiked ? '#e88a8a' : 'rgba(255,255,255,0.25)'};
+                            cursor: pointer;
+                            font-size: 0.75rem;
+                            padding: 2px 4px;
+                            border-radius: 4px;
+                            display: flex;
+                            align-items: center;
+                            gap: 2px;
+                            transition: 0.2s;
+                        " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            ${isLiked ? '❤️' : '🤍'} <span style="font-size: 0.6rem;">${c.likes || 0}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// 发布评论
+async function postComment() {
+    const input = document.getElementById('commentInput');
+    const content = input.value.trim();
+    if (!content) {
+        alert('请输入内容');
+        return;
+    }
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!user.user_id) {
+        alert('请先登录');
+        return;
+    }
+    if (!currentCommentSongId) {
+        alert('请先选择一首歌');
+        return;
+    }
+    try {
+        await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                work_id: currentCommentSongId,
+                user_id: user.user_id,
+                user_name: user.nickname || user.username || '用户',
+                content: content
+            })
+        });
+        input.value = '';
+        await loadComments(currentCommentSongId);
+    } catch (e) {
+        console.error('发布失败:', e);
+        alert('发送失败，请重试');
+    }
+}
+
+// 删除评论
+async function deleteComment(commentId, userId) {
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (user.user_id !== userId) {
+        alert('只能删自己的');
+        return;
+    }
+    if (!confirm('确定删除？')) return;
+    try {
+        await fetch(`${SUPABASE_URL}/rest/v1/comments?id=eq.${commentId}`, {
+            method: 'DELETE',
+            headers: { 'apikey': SUPABASE_KEY }
+        });
+        await loadComments(currentCommentSongId);
+    } catch (e) {
+        console.error('删除失败:', e);
+        alert('删除失败');
+    }
+}
+
+// 切换评论点赞
+async function toggleCommentLike(commentId) {
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!user.user_id) {
+        alert('请先登录再点赞');
+        return;
+    }
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/comments?id=eq.${commentId}&select=likes`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const data = await resp.json();
+        const currentLikes = data[0]?.likes || 0;
+        const isLiked = commentLikedStatus[commentId] || false;
+        const newLikes = isLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+        const updateResp = await fetch(
+            `${SUPABASE_URL}/rest/v1/comments?id=eq.${commentId}`,
+            {
+                method: 'PATCH',
+                headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ likes: newLikes })
+            }
+        );
+        if (!updateResp.ok) {
+            console.error('更新 likes 失败:', await updateResp.text());
+            alert('点赞失败，请重试');
+            return;
+        }
+        if (isLiked) {
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/comment_likes?comment_id=eq.${commentId}&user_id=eq.${user.user_id}`,
+                { method: 'DELETE', headers: { 'apikey': SUPABASE_KEY } }
+            );
+        } else {
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/comment_likes`,
+                {
+                    method: 'POST',
+                    headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ comment_id: commentId, user_id: user.user_id })
+                }
+            ).catch(() => {});
+        }
+        commentLikedStatus[commentId] = !isLiked;
+        await loadComments(currentCommentSongId);
+    } catch (e) {
+        console.error('点赞失败:', e);
+        alert('点赞失败，请重试');
+    }
+}
+
+// 时间格式化
+function formatTimeAgo(timestamp) {
+    if (!timestamp) return '刚刚';
+    const now = Date.now();
+    const time = new Date(timestamp).getTime();
+    const diff = Math.floor((now - time) / 1000);
+    if (diff < 60) return '刚刚';
+    if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+    if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+    if (diff < 2592000) return Math.floor(diff / 86400) + '天前';
+    return new Date(timestamp).toLocaleDateString();
+}
+
+// ============================================================
+// ===== 流星雨效果 =====
+// ============================================================
+
+let meteorAnimationId = null;
+let meteors = [];
+let meteorCtx = null;
+let meteorCanvas = null;
+
+function initMeteorCanvas() {
+    meteorCanvas = document.getElementById('meteorCanvas');
+    if (!meteorCanvas) return;
+    meteorCtx = meteorCanvas.getContext('2d');
+    
+    const rect = meteorCanvas.parentElement.getBoundingClientRect();
+    meteorCanvas.width = rect.width;
+    meteorCanvas.height = rect.height;
+    
+    meteors = [];
+    for (let i = 0; i < 19; i++) {
+        meteors.push(createMeteor());
+    }
+    
+    drawMeteors();
+}
+
+function createMeteor() {
+    const canvas = meteorCanvas;
+    return {
+        x: Math.random() * canvas.width * 0.8,
+        y: Math.random() * canvas.height * 0.3,
+        length: Math.random() * 80 + 40,
+        speed: Math.random() * 4 + 3,
+        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.6 + 0.3,
+        life: Math.random() * 120 + 80,
+        maxLife: 200,
+        delay: Math.random() * 200
+    };
+}
+
+function drawMeteors() {
+    if (!meteorCtx || !meteorCanvas) return;
+    const ctx = meteorCtx;
+    const canvas = meteorCanvas;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    meteors.forEach(meteor => {
+        if (meteor.delay > 0) {
+            meteor.delay--;
+            return;
+        }
+        
+        meteor.x += Math.cos(meteor.angle) * meteor.speed;
+        meteor.y += Math.sin(meteor.angle) * meteor.speed;
+        meteor.life--;
+        
+        const lifeRatio = meteor.life / meteor.maxLife;
+        const alpha = meteor.opacity * Math.min(1, lifeRatio * 2);
+        
+        const tailLength = meteor.length * lifeRatio;
+        const gradient = ctx.createLinearGradient(
+            meteor.x, meteor.y,
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+        gradient.addColorStop(0.3, `rgba(255, 240, 220, ${alpha * 0.6})`);
+        gradient.addColorStop(1, `rgba(255, 220, 200, 0)`);
+        
+        ctx.beginPath();
+        ctx.moveTo(meteor.x, meteor.y);
+        ctx.lineTo(
+            meteor.x - Math.cos(meteor.angle) * tailLength,
+            meteor.y - Math.sin(meteor.angle) * tailLength
+        );
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        const glow = ctx.createRadialGradient(meteor.x, meteor.y, 0, meteor.x, meteor.y, 6);
+        glow.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.8})`);
+        glow.addColorStop(1, `rgba(255, 255, 255, 0)`);
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(meteor.x, meteor.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        
+        if (meteor.life <= 0) {
+            Object.assign(meteor, createMeteor());
+            meteor.x = Math.random() * canvas.width * 0.8;
+            meteor.y = Math.random() * canvas.height * 0.2;
+            meteor.delay = Math.random() * 100 + 50;
+        }
+    });
+    
+    meteorAnimationId = requestAnimationFrame(drawMeteors);
+}
+
+function startMeteors() {
+    const canvas = document.getElementById('meteorCanvas');
+    if (canvas) {
+        setTimeout(() => {
+            initMeteorCanvas();
+            window.addEventListener('resize', () => {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            });
+        }, 300);
+    }
+}
+
+function stopMeteors() {
+    if (meteorAnimationId) {
+        cancelAnimationFrame(meteorAnimationId);
+        meteorAnimationId = null;
+    }
+}
+
+// ============================================================
+// =====  播放量功能 ========================================
+// ============================================================
+
+// 增加播放量
+async function incrementPlays(songId) {
+    if (!songId) return;
+    try {
+        const client = await ensureSupabase();
+        const { data } = await client
+            .from('songs')
+            .select('plays')
+            .eq('id', songId)
+            .single();
+        
+        if (data) {
+            const newPlays = (data.plays || 0) + 1;
+            await client
+                .from('songs')
+                .update({ plays: newPlays })
+                .eq('id', songId);
+            
+            // 更新内存
+            for (let cat of ['ai', 'hybrid', 'original']) {
+                const song = allSongs[cat]?.find(s => s.id === songId);
+                if (song) {
+                    song.plays = newPlays;
+                    break;
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('播放量更新失败:', e);
+    }
+}
+
+// 格式化播放量
+function formatPlayCount(num) {
+    if (!num) return '0';
+    if (num >= 100000000) return (num / 100000000).toFixed(1) + '亿';
+    if (num >= 10000) return (num / 10000).toFixed(1) + '万';
+    return num.toString();
+}
+
+// ============================================================
+// =====  单曲循环功能 ======================================
+// ============================================================
+
+let playMode = 'sequential'; // sequential / repeat / shuffle
+
+function togglePlayMode() {
+    const modes = ['sequential', 'repeat', 'shuffle'];
+    const icons = ['', '', ''];
+    let i = (modes.indexOf(playMode) + 1) % modes.length;
+    playMode = modes[i];
+    const btn = document.getElementById('playModeBtn');
+    if (btn) btn.textContent = icons[i];
+    showToast('播放模式：' + (playMode === 'sequential' ? '顺序播放' : playMode === 'repeat' ? '单曲循环' : '随机播放'));
+}
+
+function getNextSong(currentId) {
+    // 收集所有歌曲
+    let all = [];
+    for (let cat of ['ai', 'hybrid', 'original']) {
+        all = all.concat(allSongs[cat] || []);
+    }
+    if (all.length === 0) return null;
+    
+    if (playMode === 'repeat') {
+        return all.find(s => s.id === currentId) || all[0];
+    }
+    if (playMode === 'shuffle') {
+        const filtered = all.filter(s => s.id !== currentId);
+        return filtered.length > 0 ? filtered[Math.floor(Math.random() * filtered.length)] : all[0];
+    }
+    // sequential
+    const idx = all.findIndex(s => s.id === currentId);
+    return all[(idx + 1) % all.length];
+}
+
+// ============================================================
+// =====  关注功能 ==========================================
+// ============================================================
+
+async function handleFollow(artistName, btnElement) {
+    if (!artistName) {
+        showToast('⚠️ 艺名无效');
+        return;
+    }
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!user.user_id) {
+        alert('请先登录再关注 🌾');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    const targetId = 'artist_' + artistName;
+
+    try {
+        const client = await ensureSupabase();
+        const { data: existing } = await client
+            .from('follows')
+            .select('*')
+            .eq('follower_id', user.user_id)
+            .eq('following_id', targetId);
+
+        if (existing && existing.length > 0) {
+            await client
+                .from('follows')
+                .delete()
+                .eq('follower_id', user.user_id)
+                .eq('following_id', targetId);
+            btnElement.textContent = '🤍 关注';
+            btnElement.classList.remove('followed');
+            showToast('已取消关注');
+        } else {
+            await client
+                .from('follows')
+                .insert([{ follower_id: user.user_id, following_id: targetId }]);
+            btnElement.textContent = '❤️ 已关注';
+            btnElement.classList.add('followed');
+            showToast('✅ 已关注 ' + artistName);
+        }
+
+        // 刷新卡片（更新粉丝数和关注状态）
+        renderAll();
+
+    } catch (e) {
+        console.error('关注操作失败:', e);
+        alert('操作失败，请重试');
+    }
+}
+
+// ============================================================
+// =====  渲染卡片时增加新元素 ==============================
+// ============================================================
+
+// 修改 renderAll 中的卡片渲染，增加评论、播放量、关注按钮
+// 在 renderAll 函数里，卡片 HTML 中新增以下内容：
+
+// 在 div.song-artist 下方增加播放量：
+// <div class="card-stats">
+//     <span class="plays">▶️ ${formatPlayCount(s.plays || 0)} 次播放</span>
+// </div>
+
+// 在 card-actions 中增加：
+// <button class="action-btn" onclick="openCommentModal('${s.id}')"> 评论</button>
+// <button class="follow-btn" onclick="handleFollow('${s.musician_id || ''}', this)">🤍 关注</button>
+
+// ============================================================
+// =====  初始化时加载比赛 ==================================
+// ============================================================
+
+// 在页面加载完成后调用
+document.addEventListener('DOMContentLoaded', function() {
+    // 加载比赛列表
+    populateContestFilter();
+});
+
+// 修改 loadSongs 函数，在数据加载完成后更新筛选计数
+// 在 loadSongs 函数的 renderAll() 之后加上：
+// updateFilterCount();
+
+// ============================================================
+// =====  扩展 renderAll 函数 ================================
+// ============================================================
+
+// 注意：由于 renderAll 函数已经存在，你需要找到它并修改卡片渲染部分
+// 下面是修改后的卡片 HTML 模板（替换原有的卡片渲染代码）：
+
+/*
+在 renderAll 函数中，找到卡片渲染的模板字符串部分，替换为：
+
+return '<div class="rank-card" data-song-id="' + s.id + '">' +
+    '<div class="shimmer"></div>' +
+    '<span class="particle"></span>' +
+    '<span class="particle"></span>' +
+    '<span class="particle"></span>' +
+    '<span class="particle"></span>' +
+    '<span class="particle"></span>' +
+    '<span class="particle"></span>' +
+    '<span class="particle"></span>' +
+    '<span class="particle"></span>' +
+    '<div class="rank-note">♩</div>' +
+    (idx === 0 ? '<div class="rank-medal">🥇</div>' : '') +
+    (idx === 1 ? '<div class="rank-medal">🥈</div>' : '') +
+    (idx === 2 ? '<div class="rank-medal">🥉</div>' : '') +
+    '<div class="rank-number"><span class="num">' + (idx + 1) + '</span></div>' +
+    '<div class="song-title">' + escapeHtml(s.title) + ' ' + demoBadge + '</div>' +
+    '<div class="song-artist">' + escapeHtml(s.artist) + ' <span>·</span> ' + (s.genre || '未分类') + ' <span>·</span> ' + (s.likes || 0) + ' 票</div>' +
+    //  播放量
+    '<div class="card-stats">' +
+    '   <span class="plays">▶️ ' + formatPlayCount(s.plays || 0) + ' 次播放</span>' +
+    '</div>' +
+    extraInfo +
+    '<div id="lyricsDisplay-' + s.id + '" style="display:none; margin: 8px 0; padding: 8px 12px; background:rgba(255,255,255,0.03); border-radius:8px; min-height:36px;">' +
+    '   <div id="lyricsLine-' + s.id + '" style="color:rgba(255,255,255,0.4); font-size:0.9rem; transition: all 0.3s; text-align:center;"> 播放中...</div>' +
+    '</div>' +
+    '<div class="equalizer" id="equalizer-' + s.id + '" style="display:none; align-items:center; justify-content:center; gap:3px; height:60px; margin:10px 0;">' + eqBars + '</div>' +
+    //  卡片操作区
+    '<div style="margin-top: 12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">' +
+    '   <button class="action-btn play-btn" data-song-id="' + s.id + '" onclick="togglePlay(\'' + s.id + '\', \'' + s.audio_url + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')">▶️ 播放</button>' +
+    '   <button class="action-btn" onclick="window.likeSong(\'' + s.id + '\', \'' + cat + '\')">❤️ 点赞</button>' +
+    '   <button class="action-btn" onclick="openCommentModal(\'' + s.id + '\')"> 评论</button>' +
+    '   <button class="action-btn" onclick="shareSong(\'' + s.id + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')"> 分享拉票</button>' +
+    '   <button class="follow-btn" onclick="handleFollow(\'' + (s.musician_id || '') + '\', this)">🤍 关注</button>' +
+    '</div>' +
+    '</div>';
+*/
+
 </script>
 </body>
 </html>
