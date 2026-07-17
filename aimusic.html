@@ -1959,6 +1959,7 @@ async function handleUpload(container, modal) {
     try {
         const client = await ensureSupabase();
         const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
         // ===== 1. 上传排行榜音频 =====
         if (progressBar) progressBar.style.width = '20%';
@@ -1979,7 +1980,7 @@ async function handleUpload(container, modal) {
         if (progressText) progressText.textContent = '⏳ 正在保存作品... 40%';
         const newSong = {
     id: Date.now().toString() + '_' + Math.random().toString(36).substring(2, 6),
-    user_id: currentUser?.user_id || null,
+    user_id: user?.user_id || null,   // ✅ 用 user
     category: category,
     title: title,
             artist: artist,
