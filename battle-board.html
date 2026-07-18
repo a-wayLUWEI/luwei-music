@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芦苇音乐 · 对战榜</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a12;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .cover {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #050505 0%, #0a0a0a 12%, #111111 24%, #1a1a1a 36%, #1a1a3a 46%, #4a4a8a 52%, #6a5a9a 56%, #4a4a8a 60%, #1a1a3a 66%, #1a1a1a 74%, #2a2a2a 82%, #4a4a4a 88%, #2a2a2a 94%, #1a1a1a 100%);
+            background-size: 400% 400%;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(212, 184, 150, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 80px rgba(184, 160, 200, 0.04);
+            background-position: 60% 50%;
+            flex-shrink: 0;
+        }
+
+        /* 光晕装饰 */
+        .cover .glow-top {
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(200, 140, 255, 0.18) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .cover .glow-bottom {
+            position: absolute;
+            bottom: -100px;
+            left: -60px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(140, 220, 200, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .cover .glow-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(184, 160, 200, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* 粒子装饰 */
+        .cover .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(200, 150, 255, 0.3);
+            pointer-events: none;
+        }
+        .cover .particle:nth-child(1) { left: 10%; top: 22%; }
+        .cover .particle:nth-child(2) { left: 28%; top: 65%; }
+        .cover .particle:nth-child(3) { left: 55%; top: 18%; }
+        .cover .particle:nth-child(4) { left: 72%; top: 58%; }
+        .cover .particle:nth-child(5) { left: 88%; top: 28%; }
+        .cover .particle:nth-child(6) { left: 42%; top: 78%; }
+        .cover .particle:nth-child(7) { left: 62%; top: 82%; }
+        .cover .particle:nth-child(8) { left: 18%; top: 48%; }
+
+        /* 金色折角 */
+        .cover .corner {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 0 80px 80px;
+            border-color: transparent transparent rgba(212, 184, 150, 0.12) transparent;
+            pointer-events: none;
+        }
+
+        .cover .top-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 184, 150, 0.25), rgba(184, 160, 200, 0.25), transparent);
+            opacity: 1;
+        }
+
+        /* ===== 内容 ===== */
+        .cover-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px 60px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cover-content .badge {
+            display: inline-block;
+            font-size: 12px;
+            letter-spacing: 8px;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 6px 24px;
+            border-radius: 30px;
+            opacity: 0.6;
+        }
+
+        .cover-content h1 {
+            font-size: 56px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            background: linear-gradient(135deg, #d4b896 0%, #f0e0c8 30%, #b8a0c8 55%, #f0e0c8 80%, #d4b896 100%);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+            line-height: 1.1;
+        }
+
+        .cover-content .sub {
+            font-size: 18px;
+            color: #ffffff;
+            letter-spacing: 8px;
+            font-weight: 300;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .cover-content .divider {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            margin: 0 auto 18px;
+        }
+
+        /* ===== 数据行 ===== */
+        .cover-content .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+        .cover-content .stats-row .stat-item {
+            text-align: center;
+        }
+        .cover-content .stats-row .stat-item .number {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d4b896, #f0e0c8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .cover-content .stats-row .stat-item .label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+
+        /* ===== 荣誉榜 ===== */
+        .cover-content .honor-row {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .cover-content .honor-row .honor-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 8px 20px;
+            border-radius: 16px;
+            min-width: 140px;
+        }
+        .cover-content .honor-row .honor-item .icon {
+            font-size: 16px;
+            opacity: 0.5;
+        }
+        .cover-content .honor-row .honor-item .name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #d4b896;
+            margin-top: 2px;
+        }
+        .cover-content .honor-row .honor-item .detail {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ===== 右下角 CTA ===== */
+        .cover .cta {
+            position: absolute;
+            bottom: 36px;
+            right: 44px;
+            z-index: 5;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            padding: 10px 28px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            opacity: 0.9;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .cover .cta:hover {
+            background: rgba(255, 255, 255, 0.08);
+            opacity: 1;
+        }
+        .cover .cta::before {
+            content: '→ ';
+            opacity: 0.3;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 1220px) {
+            .cover {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1200 / 630;
+            }
+            .cover-content h1 { font-size: clamp(28px, 5vw, 56px); letter-spacing: 4px; }
+            .cover-content .sub { font-size: clamp(13px, 1.6vw, 18px); letter-spacing: 6px; }
+            .cover-content { padding: 30px 40px; }
+            .cover-content .badge { font-size: clamp(10px, 1vw, 12px); letter-spacing: 4px; padding: 4px 16px; }
+            .cover-content .stats-row .stat-item .number { font-size: clamp(20px, 2.5vw, 28px); }
+            .cover-content .honor-row .honor-item { min-width: 100px; padding: 6px 14px; }
+            .cover-content .honor-row .honor-item .name { font-size: clamp(12px, 1.2vw, 14px); }
+            .cover .cta { font-size: clamp(12px, 1.4vw, 16px); bottom: clamp(20px, 3vw, 36px); right: clamp(24px, 3.5vw, 44px); padding: 8px 20px; }
+        }
+
+        @media (max-width: 600px) {
+            .cover-content h1 { font-size: 20px; letter-spacing: 2px; }
+            .cover-content .sub { font-size: 10px; letter-spacing: 3px; }
+            .cover-content .badge { font-size: 8px; letter-spacing: 3px; padding: 3px 12px; }
+            .cover-content { padding: 16px 20px; }
+            .cover-content .stats-row { gap: 16px; }
+            .cover-content .stats-row .stat-item .number { font-size: 16px; }
+            .cover-content .stats-row .stat-item .label { font-size: 8px; }
+            .cover-content .honor-row { gap: 12px; }
+            .cover-content .honor-row .honor-item { min-width: 70px; padding: 4px 10px; }
+            .cover-content .honor-row .honor-item .name { font-size: 10px; }
+            .cover-content .honor-row .honor-item .detail { font-size: 8px; }
+            .cover-content .divider { width: 40px; margin: 0 auto 12px; }
+            .cover .corner { border-width: 0 0 40px 40px; }
+            .cover .cta { font-size: 9px; bottom: 12px; right: 14px; padding: 4px 12px; letter-spacing: 2px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cover">
+
+        <!-- 装饰 -->
+        <div class="glow-top"></div>
+        <div class="glow-bottom"></div>
+        <div class="glow-center"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="corner"></div>
+        <div class="top-line"></div>
+
+        <!-- 主内容 -->
+        <div class="cover-content">
+            <div class="badge">✦ 第一届 · 芦苇音乐 ✦ 对战榜</div>
+            <h1 id="battleTitle">AI音乐排行榜 · 对战榜</h1>
+            <div class="sub" id="daysDisplay"> 剩余 -- 天</div>
+            <div class="divider"></div>
+
+            <!-- 数据行 -->
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="number" id="totalSongs">--</div>
+                    <div class="label">参赛作品</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number" id="totalArtists">--</div>
+                    <div class="label">参赛选手</div>
+                </div>
+            </div>
+
+            <!-- 荣誉榜 -->
+            <div class="honor-row">
+                <div class="honor-item">
+                    <div class="icon"></div>
+                    <div class="name" id="mostSongs">--</div>
+                    <div class="detail" id="mostSongsCount">-- 首</div>
+                </div>
+                <div class="honor-item">
+                    <div class="icon">❤️</div>
+                    <div class="name" id="mostLikes">--</div>
+                    <div class="detail" id="mostLikesCount">-- 票</div>
+                </div>
+                <div class="honor-item">
+                    <div class="icon">▶️</div>
+                    <div class="name" id="mostPlays">--</div>
+                    <div class="detail" id="mostPlaysCount">-- 次</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右下角 CTA -->
+        <a href="aimusic.html" class="cta">查看完整榜单</a>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ===== Supabase 配置 =====
+        const SUPABASE_URL = 'https://alzbseigpxxtlqqseczx.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsemJzZWlncHh4dGxxcXNlY3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTUyNzEsImV4cCI6MjA5NTM5MTI3MX0.4jpb-o-dnoqzLli9o1rDA-vcThWZWR7vmAxjzZkIdJ4';
+
+        let supabaseClient = null;
+        let isSupabaseReady = false;
+
+        function initSupabase() {
+            return new Promise((resolve, reject) => {
+                if (isSupabaseReady && supabaseClient) {
+                    resolve(supabaseClient);
+                    return;
+                }
+                if (typeof supabase !== 'undefined' && supabase.createClient) {
+                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    isSupabaseReady = true;
+                    resolve(supabaseClient);
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+                script.onload = function() {
+                    if (typeof supabase !== 'undefined') {
+                        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                        isSupabaseReady = true;
+                        resolve(supabaseClient);
+                    } else {
+                        reject(new Error('Supabase 加载失败'));
+                    }
+                };
+                script.onerror = function() { reject(new Error('Supabase CDN 加载失败')); };
+                document.head.appendChild(script);
+            });
+        }
+
+        async function ensureSupabase() {
+            if (isSupabaseReady && supabaseClient) return supabaseClient;
+            return await initSupabase();
+        }
+
+        // ===== 计算剩余天数 =====
+        function getDaysLeft(endDateStr) {
+            const end = new Date(endDateStr);
+            const now = new Date();
+            const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+            return diff > 0 ? diff : 0;
+        }
+
+        // ===== 加载对战数据 =====
+        async function loadBattleData() {
+            try {
+                const client = await ensureSupabase();
+
+                const { data: songs, error } = await client
+                    .from('songs')
+                    .select('*')
+                    .eq('status', 'active');
+
+                if (error) throw error;
+
+                if (!songs || songs.length === 0) {
+                    document.getElementById('totalSongs').textContent = '0';
+                    document.getElementById('totalArtists').textContent = '0';
+                    document.getElementById('mostSongs').textContent = '暂无';
+                    document.getElementById('mostSongsCount').textContent = '-- 首';
+                    document.getElementById('mostLikes').textContent = '暂无';
+                    document.getElementById('mostLikesCount').textContent = '-- 票';
+                    document.getElementById('mostPlays').textContent = '暂无';
+                    document.getElementById('mostPlaysCount').textContent = '-- 次';
+                    document.getElementById('daysDisplay').textContent = ' 剩余 -- 天';
+                    return;
+                }
+
+                // 总作品数
+                document.getElementById('totalSongs').textContent = songs.length;
+
+                // 总参赛人数
+                const artists = [...new Set(songs.map(s => s.artist).filter(a => a))];
+                document.getElementById('totalArtists').textContent = artists.length;
+
+                // 最多作品
+                const artistCount = {};
+                songs.forEach(s => {
+                    if (s.artist) {
+                        artistCount[s.artist] = (artistCount[s.artist] || 0) + 1;
+                    }
+                });
+                let maxArtist = '';
+                let maxCount = 0;
+                for (const [name, count] of Object.entries(artistCount)) {
+                    if (count > maxCount) {
+                        maxCount = count;
+                        maxArtist = name;
+                    }
+                }
+                document.getElementById('mostSongs').textContent = maxArtist || '暂无';
+                document.getElementById('mostSongsCount').textContent = maxCount > 0 ? maxCount + ' 首' : '-- 首';
+
+                // 最高点赞
+                let maxLikeSong = '';
+                let maxLike = 0;
+                songs.forEach(s => {
+                    const likes = s.likes || 0;
+                    if (likes > maxLike) {
+                        maxLike = likes;
+                        maxLikeSong = s.title + ' · ' + s.artist;
+                    }
+                });
+                document.getElementById('mostLikes').textContent = maxLikeSong || '暂无';
+                document.getElementById('mostLikesCount').textContent = maxLike > 0 ? maxLike + ' 票' : '-- 票';
+
+                // 最高播放
+                let maxPlaySong = '';
+                let maxPlay = 0;
+                songs.forEach(s => {
+                    const plays = s.plays || 0;
+                    if (plays > maxPlay) {
+                        maxPlay = plays;
+                        maxPlaySong = s.title + ' · ' + s.artist;
+                    }
+                });
+                document.getElementById('mostPlays').textContent = maxPlaySong || '暂无';
+                document.getElementById('mostPlaysCount').textContent = maxPlay > 0 ? maxPlay + ' 次' : '-- 次';
+
+                // 剩余天数
+                const contestEndDate = '2026-08-31';
+                const daysLeft = getDaysLeft(contestEndDate);
+                document.getElementById('daysDisplay').textContent = ' 剩余 ' + daysLeft + ' 天';
+
+            } catch (e) {
+                console.error('加载对战数据失败:', e);
+                document.getElementById('daysDisplay').textContent = ' 加载失败';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadBattleData);
+    </script>
+
+</body>
+</html>
