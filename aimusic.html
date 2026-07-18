@@ -1117,24 +1117,56 @@ audio::-webkit-media-controls-panel {
     <div class="hero">
         <h1> 芦苇音乐 · AI音乐排行榜</h1>
 <p style="letter-spacing: 2px;">在芦苇深处，治愈自己的思念。</p >
-<!-- ===== 比赛宣传横幅（微信抓图用） ===== -->
-<a href="contestbisai.html" target="_blank">
-    <img 
-        src="https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/cover.png" 
-        alt="第一届 AI 歌曲打榜大赛"
-        style="
-            width: 100%;
-            border-radius: 20px;
-            display: block;
-            margin: 16px 0 12px;
-            border: 1px solid rgba(212,184,150,0.08);
-            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
-            transition: 0.3s;
-        "
-        onmouseover="this.style.transform='scale(1.01)'; this.style.boxShadow='0 8px 50px rgba(0,0,0,0.4)'"
-        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 30px rgba(0,0,0,0.3)'"
-    />
-</a >
+<!-- ===== 轮播图 ===== -->
+<div class="carousel-container" style="position:relative;width:100%;border-radius:20px;overflow:hidden;margin:16px 0 12px;box-shadow:0 4px 30px rgba(0,0,0,0.3);">
+    <div class="carousel-track" id="carouselTrack" style="display:flex;transition:transform 0.8s ease;">
+        <!-- 由 JS 生成 -->
+    </div>
+    <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:5;" id="carouselDots"></div>
+</div>
+
+<script>
+// ===== 轮播图配置 =====
+const slides = [
+    { img: 'https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/cover.png', link: 'contestbisai.html' },
+    { img: 'https://alzbseigpxxtlqqseczx.supabase.co/storage/v1/object/public/avatars/cover2.png', link: 'contest.html' },
+];
+
+let currentIndex = 0;
+let timer = null;
+
+function renderSlides() {
+    const track = document.getElementById('carouselTrack');
+    const dots = document.getElementById('carouselDots');
+    if (!track || slides.length === 0) return;
+    
+    track.innerHTML = slides.map((s, i) => `
+        <a href="${s.link}" target="_blank" style="flex:0 0 100%;">
+            <img src="${s.img}" style="width:100%;display:block;border-radius:0;">
+        </a>
+    `).join('');
+    
+    dots.innerHTML = slides.map((_, i) => `
+        <span onclick="goTo(${i})" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${i===0?'rgba(212,184,150,0.9)':'rgba(255,255,255,0.3)'};cursor:pointer;transition:0.3s;"></span>
+    `).join('');
+}
+
+function goTo(i) {
+    currentIndex = i;
+    document.getElementById('carouselTrack').style.transform = `translateX(-${i*100}%)`;
+    document.querySelectorAll('#carouselDots span').forEach((d, idx) => {
+        d.style.background = idx === i ? 'rgba(212,184,150,0.9)' : 'rgba(255,255,255,0.3)';
+    });
+}
+
+function next() {
+    goTo((currentIndex + 1) % slides.length);
+}
+
+renderSlides();
+timer = setInterval(next, 4000);
+</script>
+
 <!-- ===== 搜索框 ===== -->
     <div class="search-box" style="margin-top: 16px;">
         <span style="font-size:1.1rem;">🔍</span>
@@ -2750,8 +2782,8 @@ async function populateContestFilter() {
             const now = new Date();
             const end = new Date(c.end_date);
             const daysLeft = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
-            const label = daysLeft > 0 ? `剩余${daysLeft}天` : '即将结束';
-            activeHtml += `<a href="contest.html?id=${c.id}" title="${c.description || ''}">${c.title} <span style="font-size:0.5rem;opacity:0.5;">${label}</span></a>`;
+            const label = daysLeft > 0 ? `<span style="color: #ffd700; font-weight: 700; font-size: 0.7rem; text-shadow: 0 0 20px rgba(255,215,0,0.3);">🔥 剩余${daysLeft}天</span>` : `<span style="color: #ff6b6b; font-weight: 600; font-size: 0.7rem;">即将结束</span>`;
+activeHtml += `<a href="battle-board.html" title="${c.description || ''}" style="color: #d4b896; background: linear-gradient(135deg, #d4b896, #f0e0c8, #b8a0c8, #d4b896); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 300% 300%; text-decoration: none;">${c.title} <span style="font-size:0.65rem; -webkit-text-fill-color: #ffd700; opacity: 1;">${label}</span></a >`;
         }
     });
     
