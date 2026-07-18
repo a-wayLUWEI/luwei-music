@@ -1052,6 +1052,39 @@ audio::-webkit-media-controls-panel {
     border-color: rgba(212,184,150,0.15);
 }
 
+#bottomLyrics::-webkit-scrollbar { width: 3px; }
+#bottomLyrics::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 4px; }
+#bottomLyrics::-webkit-scrollbar-thumb { background: rgba(212,184,150,0.2); border-radius: 4px; }
+
+#bottomLyricsContent::-webkit-scrollbar { width: 2px; }
+#bottomLyricsContent::-webkit-scrollbar-track { background: transparent; }
+#bottomLyricsContent::-webkit-scrollbar-thumb { background: rgba(212,184,150,0.15); border-radius: 4px; }
+
+#bottomLyricsContent .lrc-line {
+    transition: all 0.3s ease;
+    padding: 1px 0;
+    display: inline-block;
+    width: 100%;
+}
+#bottomLyricsContent .lrc-line.past {
+    opacity: 0.2;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.1);
+    filter: blur(0.5px);
+}
+#bottomLyricsContent .lrc-line.active {
+    opacity: 1;
+    font-size: 0.95rem;
+    color: #ffffff;
+    font-weight: 600;
+    text-shadow: 0 0 30px rgba(212,184,150,0.1);
+}
+#bottomLyricsContent .lrc-line.future {
+    opacity: 0.4;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.3);
+}
+
 </style>
 </head>
 <body>
@@ -1105,6 +1138,7 @@ audio::-webkit-media-controls-panel {
 <div class="top-links">
     <a href="my-contests.html">📋 我的参赛记录</a >
     <a href="contests.html">🏆 比赛列表</a >
+    <a href="edit-contest.html">✏️ 修改参赛歌曲信息</a >
 </div>
 
 <!-- ===== 进行中的比赛 ===== -->
@@ -1216,6 +1250,77 @@ timer = setInterval(next, 4000);
         <input type="text" id="artistName" placeholder="艺名 / 乐队名 *">
         <input type="text" id="songTitle" placeholder="歌名 *">
         <input type="text" id="genre" placeholder="风格 (例如: 电子/民谣/说唱)">
+<!-- ===== 新增：歌词输入框 ===== -->
+<div style="margin-top: 12px;">
+    <label style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">
+        🎵 歌词
+    </label>
+    <textarea id="workLyrics" rows="5" placeholder="填写歌词，纯音乐请写'纯音乐'&#10;支持 LRC 格式：[00:00.00] 歌词内容" style="width:100%;padding:10px 14px;border-radius:16px;border:1px solid rgba(212,184,150,0.1);background:rgba(255,255,255,0.03);color:#e8e9f0;font-size:0.85rem;resize:vertical;min-height:80px;font-family:monospace;"></textarea>
+    <div style="color: rgba(255,255,255,0.1); font-size: 0.6rem; margin-top: 4px;">💡 支持 LRC 格式（带时间戳）或纯文本</div>
+</div>
+
+<!-- ===== 新增：歌词工具按钮 ===== -->
+<div style="display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 14px 0;">
+    <button type="button" onclick="generateLRCForRanking()" style="
+        padding:6px 16px;
+        background:linear-gradient(135deg, #d4b896, #b8a0c8);
+        border:none;
+        border-radius:8px;
+        color:#1a1a2e;
+        font-weight:600;
+        cursor:pointer;
+        font-size:0.75rem;
+    ">⚡ 自动生成动态歌词</button>
+    <button type="button" onclick="batchShiftRanking(-0.5)" style="
+        padding:6px 16px;
+        background:#E69A2E;
+        border:none;
+        border-radius:8px;
+        color:#2D1E0C;
+        font-weight:600;
+        cursor:pointer;
+        font-size:0.75rem;
+    ">⏪ 提前0.5秒</button>
+    <button type="button" onclick="batchShiftRanking(0.5)" style="
+        padding:6px 16px;
+        background:#E69A2E;
+        border:none;
+        border-radius:8px;
+        color:#2D1E0C;
+        font-weight:600;
+        cursor:pointer;
+        font-size:0.75rem;
+    ">⏩ 延后0.5秒</button>
+    <input type="number" id="shiftAmountRanking" value="0.5" step="0.1" style="
+        width:60px;
+        padding:4px 6px;
+        border:1px solid rgba(212,184,150,0.2);
+        border-radius:6px;
+        background:rgba(255,255,255,0.03);
+        color:#e8e9f0;
+        font-size:0.75rem;
+    ">
+    <button type="button" onclick="customShiftRanking()" style="
+        padding:6px 16px;
+        background:#9C27B0;
+        border:none;
+        border-radius:8px;
+        color:white;
+        font-weight:600;
+        cursor:pointer;
+        font-size:0.75rem;
+    ">⏩ 自定义偏移</button>
+    <button type="button" onclick="clearTimestampsRanking()" style="
+        padding:6px 16px;
+        background:#e53935;
+        border:none;
+        border-radius:8px;
+        color:white;
+        font-weight:600;
+        cursor:pointer;
+        font-size:0.75rem;
+    ">🗑️ 清除时间戳</button>
+</div>
         <input type="file" id="audioFile" accept="audio/*">
         <input type="text" id="contactInfo" placeholder="联系方式（微信/邮箱）人机共创/原创必填">
         <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
@@ -1272,7 +1377,76 @@ timer = setInterval(next, 4000);
     <div class="footer">© 芦苇音乐 · 侵权/合作请联系微信: jianjiayinyue</div>
 </div>
 
+<!-- ===== 底部毛玻璃歌词框 ===== -->
+<div id="bottomLyrics" style="
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 800px;
+    max-height: 600px;
+    background: rgba(20, 20, 40, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 16px 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    z-index: 99999;
+    display: none;
+    overflow-y: auto;
+    transition: none;  /* ← 去掉过渡动画，拖拽更跟手 */
+">
+    <!-- ===== 拖拽手柄（新增） ===== -->
+    <div id="dragHandle" style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 32px;
+        cursor: grab;
+        border-radius: 20px 20px 0 0;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255,255,255,0.1);
+        font-size: 0.6rem;
+        letter-spacing: 4px;
+    " onmouseover="this.style.color='rgba(255,255,255,0.2)'" onmouseout="this.style.color='rgba(255,255,255,0.1)'">
+        ⋮ 按住拖动 ⋮
+    </div>
+    
+    <!-- 标题 -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; margin-top: 4px;">
+        <span id="bottomLyricsTitle" style="color:rgba(255,255,255,0.4); font-size:0.75rem; letter-spacing:1px;">🎵 正在播放</span>
+        <button onclick="closeBottomLyrics()" style="
+            background:rgba(255,255,255,0.05);
+            border:none;
+            border-radius:50%;
+            width:24px;
+            height:24px;
+            color:rgba(255,255,255,0.3);
+            cursor:pointer;
+            font-size:0.8rem;
+        ">✕</button>
+    </div>
 
+    <!-- 歌词内容 -->
+    <div id="bottomLyricsContent" style="
+        column-count: 3;
+        column-gap: 16px;
+        font-size: 0.75rem;
+        line-height: 1.8;
+        color: rgba(255,255,255,0.7);
+        max-height: 460px;
+        overflow-y: auto;
+        padding-right: 4px;
+    ">
+        <div style="text-align:center; color:rgba(255,255,255,0.2); width:100%;">🎵 加载歌词中...</div>
+    </div>
+</div>
 
 <!-- ===== 分享弹窗 ===== -->
 <div class="modal-overlay" id="shareModal">
@@ -1468,6 +1642,34 @@ window.switchTab = function(tabId, btnElement) {
 // ==================== 数据管理 ====================
 let allSongs = { ai: [], hybrid: [], original: [] };
 
+// ============================================================
+// LRC 解析器（从 player.html 移植）
+// ============================================================
+function parseLrc(text) {
+    if (!text) return [];
+    const lines = text.split('\n');
+    const result = [];
+    // 支持 [mm:ss.cc] 和 [mm:ss.ccc]
+    const regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+    
+    for (const line of lines) {
+        const match = line.match(regex);
+        if (match) {
+            const mins = parseInt(match[1]);
+            const secs = parseInt(match[2]);
+            let millis = parseInt(match[3]);
+            // 如果毫秒只有2位，补成3位（如 .23 → .230）
+            if (millis < 100) millis = millis * 10;
+            const time = mins * 60 + secs + millis / 1000;
+            const text = match[4].trim();
+            if (text) {
+                result.push({ time, text });
+            }
+        }
+    }
+    return result;
+}
+
 async function loadSongs(retryCount = 0) {
     try {
         const client = await ensureSupabase();
@@ -1481,16 +1683,52 @@ async function loadSongs(retryCount = 0) {
                 if (error) {
                     allSongs[cat] = [];
                 } else {
-                    allSongs[cat] = data || [];
+                    // ===== 预处理：获取每个歌曲的 user_id 对应的用户信息 =====
+                    const userIds = [...new Set((data || []).map(s => s.user_id).filter(id => id))];
+                    let userMap = {};
+                    if (userIds.length > 0) {
+                        try {
+                            const { data: users } = await client
+                                .from('users')
+                                .select('id, nickname, avatar_url, bio')
+                                .in('id', userIds);
+                            if (users) {
+                                users.forEach(u => {
+                                    userMap[u.id] = {
+                                        nickname: u.nickname || u.username || '未知用户',
+                                        avatar_url: u.avatar_url,
+                                        bio: u.bio
+                                    };
+                                });
+                            }
+                        } catch (e) {
+                            console.warn('获取用户信息失败:', e);
+                        }
+                    }
+
+                    allSongs[cat] = (data || []).map(s => {
+                        // 用 user_id 查到的昵称覆盖 artist
+                        if (s.user_id && userMap[s.user_id]) {
+                            s.artist = userMap[s.user_id].nickname;
+                            s._userInfo = userMap[s.user_id];
+                        }
+                        // 预处理歌词
+                        if (s.lyrics && /\[\d{2}:\d{2}/.test(s.lyrics)) {
+                            s._lrcData = parseLrc(s.lyrics);
+                            s._lyricsType = 'lrc';
+                        } else {
+                            s._lrcData = null;
+                            s._lyricsType = 'plain';
+                        }
+                        return s;
+                    });
                 }
             } catch(e) {
                 allSongs[cat] = [];
             }
         }
         renderAll();
-        // 🆕 更新筛选计数
         updateFilterCount();
-        // ===== 加载完成后检测分享歌曲 =====
         setTimeout(() => {
             detectSharedSong();
         }, 500);
@@ -1623,7 +1861,13 @@ function renderCardsWithFollow(followedMap, followerCountMap) {
                 '<div class="rank-number"><span class="num">' + (idx + 1) + '</span></div>' +
                 '<div class="song-title">' + escapeHtml(s.title) + ' ' + demoBadge + '</div>' +
                 // 🆕 歌手名 + 粉丝数（像 lwmusic 一样）
-                '<div class="song-artist">' + escapeHtml(s.artist) + ' <span>·</span> ' + (s.genre || '未分类') + ' <span>·</span> ' + (s.likes || 0) + ' 票 <span>·</span> ❤️ ' + followerCount + ' 粉丝</div>' +
+                '<div class="song-artist">' + 
+    (s.avatar_url 
+        ? `<img src="${s.avatar_url}" style="width:20px;height:20px;border-radius:50%;object-fit:cover;margin-right:6px;vertical-align:middle;">` 
+        : `<span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#d4b896,#b8a0c8);text-align:center;line-height:20px;font-size:12px;margin-right:6px;vertical-align:middle;color:#1a1a2e;">🎤</span>`
+    ) +
+    escapeHtml(s.artist) + ' <span>·</span> ' + (s.genre || '未分类') + ' <span>·</span> ' + (s.likes || 0) + ' 票 <span>·</span> ❤️ ' + followerCount + ' 粉丝' +
+'</div>' +
                 '<div class="card-stats">' +
                 '   <span class="plays">▶️ ' + formatPlayCount(s.plays || 0) + ' 次播放</span>' +
                 '</div>' +
@@ -1849,88 +2093,104 @@ function stopEqualizer(songId) {
     });
 }
 
-function parseLyricsWithTimestamps(text) {
-    const lines = text.split('\n').filter(line => line.trim() !== '');
-    const result = [];
-    const regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
-    for (const line of lines) {
-        const match = line.match(regex);
-        if (match) {
-            const mins = parseInt(match[1]);
-            const secs = parseInt(match[2]);
-            const millis = parseInt(match[3]);
-            const time = mins * 60 + secs + millis / 1000;
-            const text = match[4].trim();
-            result.push({ time, text });
-        } else {
-            result.push({ time: 999999, text: line.trim() });
-        }
-    }
-    return result;
+function showLyrics(songId) {
+    showBottomLyrics(songId);
 }
 
-function showLyrics(songId) {
-    document.querySelectorAll('[id^="lyricsDisplay-"]').forEach(el => {
-        if (el.id !== 'lyricsDisplay-' + songId) {
-            el.style.display = 'none';
-        }
-    });
+function hideLyrics(songId) {
+    closeBottomLyrics();
+}
+
+// ===== 从 player.html 完美复刻的歌词同步 =====
+function startLyricsSync(songId) {
     if (lyricsTimer) {
         clearInterval(lyricsTimer);
         lyricsTimer = null;
     }
+
+    const glass = document.getElementById('lyricsGlass-' + songId);
+    if (!glass) return;
+
     let song = null;
     for (let cat of ['ai', 'hybrid', 'original']) {
         const found = allSongs[cat]?.find(s => s.id === songId);
         if (found) { song = found; break; }
     }
     if (!song) return;
-    const display = document.getElementById('lyricsDisplay-' + songId);
-    const lineEl = document.getElementById('lyricsLine-' + songId);
-    if (!display || !lineEl) return;
-    const lyrics = song.lyrics || '纯音乐（无歌词）';
-    const lines = parseLyricsWithTimestamps(lyrics);
-    display.style.display = 'block';
-    if (lines.length === 0 || lines[0].time === undefined || lines[0].time === 999999) {
-        lineEl.textContent = lyrics;
+
+    let lrcData = song._lrcData;
+    if (!lrcData || lrcData.length === 0) {
+        if (song.lyrics && /\[\d{2}:\d{2}/.test(song.lyrics)) {
+            lrcData = parseLrc(song.lyrics);
+            song._lrcData = lrcData;
+        }
+    }
+
+    const lines = glass.querySelectorAll('.lrc-line');
+    if (!lines.length) return;
+
+    if (!lrcData || lrcData.length === 0) {
+        lines.forEach(line => {
+            line.style.opacity = '0.7';
+            line.style.color = 'rgba(255,255,255,0.5)';
+        });
         return;
     }
+
     const audio = document.getElementById('global-audio');
-    if (!audio) { lineEl.textContent = ' 加载中...'; return; }
-    let currentIndex = 0;
-    const currentTime = audio.currentTime || 0;
-    for (let i = 0; i < lines.length; i++) {
-        if (lines[i].time <= currentTime) {
-            currentIndex = i;
-        }
-    }
-    lineEl.textContent = lines[currentIndex]?.text || '';
-    lyricsTimer = setInterval(() => {
+    if (!audio) return;
+
+    let activeIndex = -1;
+
+    function updateLyrics() {
         if (!audio || audio.paused || audio.ended) return;
-        const ct = audio.currentTime;
-        let newIndex = currentIndex;
-        for (let i = 0; i < lines.length; i++) {
-            if (lines[i].time <= ct) {
-                newIndex = i;
+
+        const currentTime = audio.currentTime;
+        let newActiveIndex = -1;
+
+        for (let i = 0; i < lrcData.length; i++) {
+            if (currentTime >= lrcData[i].time) {
+                newActiveIndex = i;
             }
         }
-        if (newIndex !== currentIndex) {
-            currentIndex = newIndex;
-            lineEl.textContent = lines[currentIndex]?.text || '';
-            lineEl.style.opacity = '0.3';
-            setTimeout(() => { lineEl.style.opacity = '1'; }, 30);
+
+        if (newActiveIndex !== activeIndex) {
+            activeIndex = newActiveIndex;
+
+            lines.forEach((line, index) => {
+                line.classList.remove('active', 'past', 'future');
+                line.style.cssText = '';
+
+                if (index < activeIndex) {
+                    line.classList.add('past');
+                } else if (index === activeIndex) {
+                    line.classList.add('active');
+                } else {
+                    line.classList.add('future');
+                }
+            });
+
+            if (activeIndex >= 0) {
+                const activeLine = lines[activeIndex];
+                if (activeLine) {
+                    const lineTop = activeLine.offsetTop;
+                    const containerHeight = glass.clientHeight;
+                    const lineHeight = activeLine.clientHeight;
+                    const targetScroll = lineTop - containerHeight / 2 + lineHeight / 2;
+                    const maxScroll = glass.scrollHeight - containerHeight;
+                    const clampedTarget = Math.max(0, Math.min(targetScroll, maxScroll));
+                    if (Math.abs(glass.scrollTop - clampedTarget) > 5) {
+                        glass.scrollTop = clampedTarget;
+                    }
+                }
+            }
         }
-    }, 200);
+    }
+
+    updateLyrics();
+    lyricsTimer = setInterval(updateLyrics, 200);
 }
 
-function hideLyrics(songId) {
-    const display = document.getElementById('lyricsDisplay-' + songId);
-    if (display) display.style.display = 'none';
-    if (lyricsTimer) {
-        clearInterval(lyricsTimer);
-        lyricsTimer = null;
-    }
-}
 
 // ==================== 上传功能 ====================
 async function handleUpload(container, modal) {
@@ -1950,6 +2210,7 @@ async function handleUpload(container, modal) {
     const title = container.querySelector('#songTitle')?.value?.trim() || '';
     const audioFile = container.querySelector('#audioFile')?.files?.[0];
     const genre = container.querySelector('#genre')?.value?.trim() || '';
+    const lyrics = container.querySelector('#workLyrics')?.value?.trim() || '纯音乐';
     const contactInfo = container.querySelector('#contactInfo')?.value?.trim() || '';
     const isDemoChecked = container.querySelector('#isDemo')?.checked || false;
     const promiseChecked = container.querySelector('#promise')?.checked || false;
@@ -2025,7 +2286,7 @@ async function handleUpload(container, modal) {
             melody_by: container.querySelector('#melodyBy')?.value || '',
             lyrics_by: container.querySelector('#lyricsBy')?.value || '',
             arrangement_by: container.querySelector('#arrangementBy')?.value || '',
-            lyrics: container.querySelector('#lyricsInput')?.value?.trim() || '纯音乐'
+            lyrics: lyrics
         };
         const { error: insertError } = await client.from('songs').insert([newSong]);
         if (insertError) {
@@ -3414,6 +3675,209 @@ return '<div class="rank-card" data-song-id="' + s.id + '">' +
     '</div>' +
     '</div>';
 */
+
+// ===== 底部歌词框控制函数 =====
+function showBottomLyrics(songId) {
+    const container = document.getElementById('bottomLyrics');
+    const content = document.getElementById('bottomLyricsContent');
+    const title = document.getElementById('bottomLyricsTitle');
+    if (!container || !content) return;
+    
+    // 获取歌曲信息
+    let song = null;
+    for (let cat of ['ai', 'hybrid', 'original']) {
+        const found = allSongs[cat]?.find(s => s.id === songId);
+        if (found) { song = found; break; }
+    }
+    if (!song) return;
+    
+    title.textContent = '🎵 ' + song.title + ' · ' + song.artist;
+    container.style.display = 'block';
+    
+    // 生成歌词行
+    let lyricsHtml = '';
+    if (song._lrcData && song._lrcData.length > 0) {
+        lyricsHtml = song._lrcData.map((item, index) =>
+            `<div class="lrc-line" data-time="${item.time}" data-index="${index}">${escapeHtml(item.text)}</div>`
+        ).join('');
+    } else if (song.lyrics && song.lyrics.trim() && song.lyrics.trim() !== '纯音乐') {
+        const plainLines = song.lyrics.split('\n').filter(line => line.trim());
+        lyricsHtml = plainLines.map(line =>
+            `<div class="lrc-line">${escapeHtml(line.trim())}</div>`
+        ).join('');
+    } else {
+        lyricsHtml = `<div style="text-align:center;color:rgba(255,255,255,0.2);width:100%;">🎵 纯音乐 / 暂无歌词</div>`;
+    }
+    content.innerHTML = lyricsHtml;
+    
+    // 开始同步
+    startBottomLyricsSync(songId);
+}
+
+function closeBottomLyrics() {
+    const container = document.getElementById('bottomLyrics');
+    if (container) container.style.display = 'none';
+    if (lyricsTimer) {
+        clearInterval(lyricsTimer);
+        lyricsTimer = null;
+    }
+}
+
+function startBottomLyricsSync(songId) {
+    if (lyricsTimer) {
+        clearInterval(lyricsTimer);
+        lyricsTimer = null;
+    }
+    
+    const content = document.getElementById('bottomLyricsContent');
+    if (!content) return;
+    
+    let song = null;
+    for (let cat of ['ai', 'hybrid', 'original']) {
+        const found = allSongs[cat]?.find(s => s.id === songId);
+        if (found) { song = found; break; }
+    }
+    if (!song) return;
+    
+    const lrcData = song._lrcData;
+    const lines = content.querySelectorAll('.lrc-line');
+    if (!lines.length || !lrcData || lrcData.length === 0) return;
+    
+    const audio = document.getElementById('global-audio');
+    if (!audio) return;
+    
+    let activeIndex = -1;
+    
+    function updateLyrics() {
+        if (!audio || audio.paused || audio.ended) {
+            return;
+        }
+        const currentTime = audio.currentTime;
+        let newActiveIndex = -1;
+        for (let i = 0; i < lrcData.length; i++) {
+            if (currentTime >= lrcData[i].time) {
+                newActiveIndex = i;
+            }
+        }
+        if (newActiveIndex !== activeIndex) {
+            activeIndex = newActiveIndex;
+            lines.forEach((line, index) => {
+                line.classList.remove('active', 'past', 'future');
+                if (index < activeIndex) {
+                    line.classList.add('past');
+                } else if (index === activeIndex) {
+                    line.classList.add('active');
+                } else {
+                    line.classList.add('future');
+                }
+            });
+            // 滚动到当前行
+            if (activeIndex >= 0) {
+                const activeLine = lines[activeIndex];
+                if (activeLine) {
+                    const lineTop = activeLine.offsetTop;
+                    const containerHeight = content.clientHeight;
+                    const lineHeight = activeLine.clientHeight;
+                    const targetScroll = lineTop - containerHeight / 2 + lineHeight / 2;
+                    const maxScroll = content.scrollHeight - containerHeight;
+                    const clampedTarget = Math.max(0, Math.min(targetScroll, maxScroll));
+                    if (Math.abs(content.scrollTop - clampedTarget) > 5) {
+                        content.scrollTop = clampedTarget;
+                    }
+                }
+            }
+        }
+    }
+    
+    updateLyrics();
+    lyricsTimer = setInterval(updateLyrics, 200);
+}
+
+// ===== 歌词框拖拽功能 =====
+(function() {
+    const container = document.getElementById('bottomLyrics');
+    const handle = document.getElementById('dragHandle');
+    if (!container || !handle) return;
+
+    let isDragging = false;
+    let offsetX = 0, offsetY = 0;
+
+    // 鼠标按下开始拖拽
+    handle.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        // 计算鼠标相对于歌词框左上角的偏移
+        const rect = container.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        
+        // 取消 transform，直接用 left/top 定位
+        container.style.transform = 'none';
+        container.style.left = rect.left + 'px';
+        container.style.top = rect.top + 'px';
+        container.style.bottom = 'auto';
+        
+        container.style.cursor = 'grabbing';
+        e.preventDefault();
+    });
+
+    // 鼠标移动
+    document.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        
+        let newX = e.clientX - offsetX;
+        let newY = e.clientY - offsetY;
+        
+        // 边界限制（防止拖出屏幕）
+        const rect = container.getBoundingClientRect();
+        const maxX = window.innerWidth - rect.width;
+        const maxY = window.innerHeight - 30;
+        newX = Math.max(0, Math.min(newX, maxX));
+        newY = Math.max(0, Math.min(newY, maxY));
+        
+        container.style.left = newX + 'px';
+        container.style.top = newY + 'px';
+    });
+
+    // 鼠标松开
+    document.addEventListener('mouseup', function() {
+        if (isDragging) {
+            isDragging = false;
+            container.style.cursor = 'default';
+        }
+    });
+
+    // 触摸支持（手机端）
+    handle.addEventListener('touchstart', function(e) {
+        const touch = e.touches[0];
+        const rect = container.getBoundingClientRect();
+        isDragging = true;
+        offsetX = touch.clientX - rect.left;
+        offsetY = touch.clientY - rect.top;
+        container.style.transform = 'none';
+        container.style.left = rect.left + 'px';
+        container.style.top = rect.top + 'px';
+        container.style.bottom = 'auto';
+    }, { passive: true });
+
+    document.addEventListener('touchmove', function(e) {
+        if (!isDragging) return;
+        const touch = e.touches[0];
+        let newX = touch.clientX - offsetX;
+        let newY = touch.clientY - offsetY;
+        const rect = container.getBoundingClientRect();
+        const maxX = window.innerWidth - rect.width;
+        const maxY = window.innerHeight - 30;
+        newX = Math.max(0, Math.min(newX, maxX));
+        newY = Math.max(0, Math.min(newY, maxY));
+        container.style.left = newX + 'px';
+        container.style.top = newY + 'px';
+    }, { passive: true });
+
+    document.addEventListener('touchend', function() {
+        isDragging = false;
+    });
+})();
+
 </script>
 </body>
 </html>
