@@ -261,26 +261,42 @@ async function loadPlayers() {
     try {
         const client = await ensureSupabase();
 
-        // 1. 从 songs 表按 artist 分组，统计作品数
+        // 1. 从 songs 表读取所有数据
         const { data: songsData, error: songsError } = await client
             .from('songs')
-            .select('artist')
+            .select('artist, user_id, avatar_url')
             .eq('status', 'active');
 
         if (songsError) throw songsError;
 
+        // 2. 按 artist 分组，取最新的 avatar_url
         const artistMap = {};
         songsData.forEach(s => {
             if (s.artist) {
-                artistMap[s.artist] = (artistMap[s.artist] || 0) + 1;
+                if (!artistMap[s.artist]) {
+                    artistMap[s.artist] = { 
+                        count: 0, 
+                        user_id: s.user_id, 
+                        avatar_url: s.avatar_url || null 
+                    };
+                }
+                artistMap[s.artist].count += 1;
+                // 如果当前歌曲有头像，覆盖（取最新的）
+                if (s.avatar_url) {
+                    artistMap[s.artist].avatar_url = s.avatar_url;
+                }
             }
         });
 
+        // 3. 转成数组
         const artists = Object.keys(artistMap).map(name => ({
             name: name,
-            songCount: artistMap[name]
+            songCount: artistMap[name].count,
+            user_id: artistMap[name].user_id,
+            avatar_url: artistMap[name].avatar_url
         }));
 
+        // 按作品数排序
         artists.sort((a, b) => b.songCount - a.songCount);
 
         if (artists.length === 0) {
@@ -288,7 +304,7 @@ async function loadPlayers() {
             return;
         }
 
-        // 2. 🆕 查询每个选手的粉丝数
+        // 4. 查询粉丝数
         const artistIds = artists.map(a => 'artist_' + a.name);
         let followerCountMap = {};
         try {
@@ -305,7 +321,7 @@ async function loadPlayers() {
             console.warn('获取粉丝数失败:', e);
         }
 
-        // 3. 获取当前用户的关注状态
+        // 5. 获取当前用户的关注状态
         const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
         let followedMap = {};
         if (user.user_id && artists.length > 0) {
@@ -323,14 +339,20 @@ async function loadPlayers() {
             }
         }
 
-        // 4. 渲染
+        // 6. 渲染
         grid.innerHTML = artists.map(a => {
             const targetId = 'artist_' + a.name;
             const isFollowed = followedMap[targetId] || false;
             const followerCount = followerCountMap[targetId] || 0;
+
+            // ===== 头像显示逻辑 =====
+            const avatarHtml = a.avatar_url
+                ? `<img src="${a.avatar_url}?t=${Date.now()}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,0.05);">`
+                : `<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#d4b896,#b8a0c8);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#1a1a2e;"></div>`;
+
             return `
                 <div class="player-card" onclick="goToPlayer('${escapeHtml(a.name)}')">
-                    <div class="avatar">🎤</div>
+                    <div class="avatar">${avatarHtml}</div>
                     <div class="name">${escapeHtml(a.name)}</div>
                     <div class="count">${a.songCount} 首参赛作品 · ❤️ ${followerCount} 粉丝</div>
                     <button class="follow-btn ${isFollowed ? 'followed' : ''}" onclick="event.stopPropagation(); handleFollow('${escapeHtml(a.name)}', this)">
@@ -345,59 +367,9 @@ async function loadPlayers() {
         grid.innerHTML = '<div class="empty">加载失败，请刷新重试</div>';
     }
 }
-
 // ===== 跳转到该选手的参赛作品 =====
 function goToPlayer(artistName) {
-    window.location.href = `aimusic.html?artist=${encodeURIComponent(artistName)}`;
-}
-
-// ===== 关注功能（参赛选手版） =====
-async function handleFollow(artistName, btnElement) {
-    if (!artistName) {
-        showToast('⚠️ 艺名无效');
-        return;
-    }
-
-    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (!user.user_id) {
-        alert('请先登录再关注 ');
-        window.location.href = 'index.html';
-        return;
-    }
-
-    const targetId = 'artist_' + artistName;
-
-    try {
-        const client = await ensureSupabase();
-        const { data: existing } = await client
-            .from('follows')
-            .select('*')
-            .eq('follower_id', user.user_id)
-            .eq('following_id', targetId);
-
-        if (existing && existing.length > 0) {
-            // 取消关注
-            await client
-                .from('follows')
-                .delete()
-                .eq('follower_id', user.user_id)
-                .eq('following_id', targetId);
-            btnElement.textContent = '🤍 关注';
-            btnElement.classList.remove('followed');
-            showToast('已取消关注');
-        } else {
-            // 关注
-            await client
-                .from('follows')
-                .insert([{ follower_id: user.user_id, following_id: targetId }]);
-            btnElement.textContent = '❤️ 已关注';
-            btnElement.classList.add('followed');
-            showToast('✅ 已关注 ' + artistName);
-        }
-    } catch (e) {
-        console.error('关注操作失败:', e);
-        alert('操作失败，请重试');
-    }
+    window.location.href = `player-detail.html?artist=${encodeURIComponent(artistName)}`;
 }
 
 // ===== 启动 =====
