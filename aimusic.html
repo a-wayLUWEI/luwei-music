@@ -1559,7 +1559,7 @@ timer = setInterval(next, 4000);
         </div>
 
         <!-- 输入区 -->
-<div style="display: flex; gap: 10px;  padding-top: 170px; margin-top: 100px;">
+<div style="display: flex; gap: 10px;  padding-top: 130px; margin-top: 100px;">
             <input id="commentInput" type="text" placeholder="写评论..." style="
                 flex: 1;
                 background: rgba(0,0,0,0.3);
@@ -1844,6 +1844,9 @@ function renderCardsWithFollow(followedMap, followerCountMap) {
                 eqBars += '<div class="eq-bar" style="height:' + h + 'px;"></div>';
             }
 
+// 在 return 之前，加载评论数
+loadCommentCount(s.id);
+
             return '<div class="rank-card" data-song-id="' + s.id + '">' +
                 '<div class="shimmer"></div>' +
                 '<span class="particle"></span>' +
@@ -1879,7 +1882,16 @@ function renderCardsWithFollow(followedMap, followerCountMap) {
                 '<div style="margin-top: 12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">' +
                 '   <button class="action-btn play-btn" data-song-id="' + s.id + '" onclick="togglePlay(\'' + s.id + '\', \'' + s.audio_url + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\', \'' + (s.musician_id || '') + '\')">▶️ 播放</button>' +
                 '   <button class="action-btn" onclick="window.likeSong(\'' + s.id + '\', \'' + cat + '\')">❤️ 点赞</button>' +
-                '   <button class="action-btn" onclick="openCommentModal(\'' + s.id + '\')">💬 评论</button>' +
+               '<button class="action-btn" onclick="openCommentModal(\'' + s.id + '\')" style="position:relative;">' +
+    '💬 评论' +
+    '<span id="commentBadge_' + s.id + '" style="' +
+        'position:absolute;top:-6px;right:-6px;' +
+        'background:#e88a8a;color:#fff;font-size:0.5rem;font-weight:600;' +
+        'min-width:16px;height:16px;border-radius:10px;' +
+        'display:none;align-items:center;justify-content:center;padding:0 4px;' +
+        'box-shadow:0 2px 8px rgba(232,138,138,0.3);' +
+    '">0</span>' +
+'</button>' +
                 '   <button class="action-btn" onclick="shareSong(\'' + s.id + '\', \'' + escapeHtml(s.title) + '\', \'' + escapeHtml(s.artist) + '\')">📤 分享拉票</button>' +
                 // 🆕 关注按钮（从 lwmusic 抄，用 artist）
                 '   <button class="action-btn follow-btn ' + (isFollowed ? 'followed' : '') + '" onclick="handleFollow(\'' + escapeHtml(s.artist) + '\', this)">' + (isFollowed ? '❤️ 已关注' : '🤍 关注') + '</button>' +
@@ -2268,6 +2280,27 @@ async function handleUpload(container, modal) {
         const { data: publicUrlData } = client.storage.from('audio').getPublicUrl(fileName);
         const audioUrl = publicUrlData.publicUrl;
 
+// ===== 1.5 获取用户已有的头像 =====
+console.log('🔍 开始查询头像，user_id:', user?.user_id);  // ← 加这行
+let existingAvatar = null;
+try {
+    const { data: existingSongs } = await client
+        .from('songs')
+        .select('avatar_url')
+        .eq('user_id', user?.user_id)
+        .not('avatar_url', 'is', null)
+        .limit(1);
+    console.log('🔍 查询结果:', existingSongs);  // ← 加这行
+    if (existingSongs && existingSongs.length > 0) {
+        existingAvatar = existingSongs[0].avatar_url;
+        console.log('✅ 找到头像:', existingAvatar);  // ← 加这行
+    } else {
+        console.log('⚠️ 没有找到头像');  // ← 加这行
+    }
+} catch (e) {
+    console.warn('获取已有头像失败:', e);
+}
+
         // ===== 2. 写入排行榜 songs 表 =====
         if (progressBar) progressBar.style.width = '40%';
         if (progressText) progressText.textContent = '⏳ 正在保存作品... 40%';
@@ -2285,9 +2318,11 @@ async function handleUpload(container, modal) {
             status: 'pending',
             melody_by: container.querySelector('#melodyBy')?.value || '',
             lyrics_by: container.querySelector('#lyricsBy')?.value || '',
-            arrangement_by: container.querySelector('#arrangementBy')?.value || '',
-            lyrics: lyrics
-        };
+    arrangement_by: container.querySelector('#arrangementBy')?.value || '',
+    contest_id: container.querySelector('#contestSelect')?.value || null,  // ← 加上这行
+    avatar_url: existingAvatar || null,
+    lyrics: lyrics
+};
         const { error: insertError } = await client.from('songs').insert([newSong]);
         if (insertError) {
             alert('提交失败: ' + insertError.message);
@@ -3101,8 +3136,30 @@ function getFilteredSongs(category) {
 let currentCommentSongId = null;
 let commentLikedStatus = {};
 
+
+// ===== 获取评论数（按钮角标） =====
+async function loadCommentCount(workId) {
+    try {
+        const resp = await fetch(
+            `${SUPABASE_URL}/rest/v1/comments?work_id=eq.${workId}&select=id`,
+            { headers: { 'apikey': SUPABASE_KEY } }
+        );
+        const comments = await resp.json();
+        const count = comments.length;
+        const badge = document.getElementById('commentBadge_' + workId);
+        if (badge) {
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+    } catch (e) {
+        console.warn('获取评论数失败:', e);
+    }
+}
 // 打开评论弹窗
 async function openCommentModal(songId) {
+ // 隐藏角标
+    const badge = document.getElementById('commentBadge_' + songId);
+    if (badge) badge.style.display = 'none';
     if (!songId) {
         alert('请先选择一首歌');
         return;
