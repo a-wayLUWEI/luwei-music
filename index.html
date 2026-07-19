@@ -565,6 +565,29 @@ body {
             display: inline-block;
             margin: 10px 0;
         }
+
+/* 雅集 · 音会 · 渐变色卡 */
+.gradient-yaji {
+    background: linear-gradient(135deg, 
+        #2C2C2C 0%,      /* 墨色 */
+        #4A3A2A 25%,      /* 浅棕 */
+        #8A7A6A 45%,      /* 中棕 */
+        #C9A96E 60%,      /* 芦苇金 */
+        #E8D5B7 75%,      /* 淡金/浅白 */
+        #B8C8D8 90%,      /* 浅蓝 */
+        #E8E4DD 100%      /* 浅白 */
+    );
+    background-size: 300% 300%;
+    border: 1px solid #C9A96E;
+    animation: gradientFlowYaji 6s ease-in-out infinite alternate;
+}
+
+@keyframes gradientFlowYaji {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 /* 从零学音乐 · 渐变卡片 */
 .gradient-learn {
     background: linear-gradient(135deg, #8a8a8a, #b8a0c8, #1a3a2a);
@@ -1089,6 +1112,17 @@ body {
 
 <!-- ===== 五个板块大卡片 ===== -->
 <div class="modules-container" style="display: flex; flex-direction: column; gap: 16px;">
+
+<!-- 雅集 · 音会 -->
+<a href="index-yajiyinhui.html" class="module-card gradient-yaji" style="display: block; padding: 20px 24px; text-decoration: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <div style="font-size: 1.3rem; font-weight: bold; color: #E8D5B7;">🌾 雅集 · 音会</div>
+            <div style="font-size: 0.75rem; color: #C8E6C9; margin-top: 6px;">中国音乐人的雅集之地 · 以音会友 以乐清谈</div>
+        </div>
+        <div style="color: #C9A96E; font-size: 0.8rem;">点击进入 →</div>
+    </div>
+</a >
 
     <!-- 板块1：从零学音乐 -->
 <a href="learn.html" class="module-card gradient-learn" style="display: block; padding: 20px 24px; text-decoration: none;">
