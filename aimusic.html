@@ -1505,7 +1505,7 @@ timer = setInterval(next, 4000);
     transform: translateX(-50%);
     width: 92%;
     max-width: 600px;
-    max-height: 230px;
+    max-height: 280px;
     padding: 12px;
     background: rgba(0,0,0,0.85);
     backdrop-filter: blur(12px);
@@ -1723,8 +1723,7 @@ function parseLrc(text) {
     if (!text) return [];
     const lines = text.split('\n');
     const result = [];
-    // 支持 [mm:ss.cc] 和 [mm:ss.ccc]
-    const regex = /\[(\d{2}):(\d{2})\.(\d{3})\]/g;
+    const regex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
     
     for (const line of lines) {
         const match = line.match(regex);
@@ -1732,10 +1731,9 @@ function parseLrc(text) {
             const mins = parseInt(match[1]);
             const secs = parseInt(match[2]);
             let millis = parseInt(match[3]);
-            // 如果毫秒只有2位，补成3位（如 .23 → .230）
             if (millis < 100) millis = millis * 10;
             const time = mins * 60 + secs + millis / 1000;
-            const text = match[4].trim();
+            const text = match[4].trim();  // ← 这里是纯歌词，不含时间戳
             if (text) {
                 result.push({ time, text });
             }
@@ -4420,7 +4418,6 @@ function showBottomLyrics(songId) {
     const title = document.getElementById('bottomLyricsTitle');
     if (!container || !content) return;
     
-    // 获取歌曲信息
     let song = null;
     for (let cat of ['ai', 'hybrid', 'original']) {
         const found = allSongs[cat]?.find(s => s.id === songId);
@@ -4431,13 +4428,19 @@ function showBottomLyrics(songId) {
     title.textContent = '🎵 ' + song.title + ' · ' + song.artist;
     container.style.display = 'block';
     
-    // 生成歌词行
+    let lrcData = [];
+    if (song.lyrics && /\[\d{2}:\d{2}/.test(song.lyrics)) {
+        lrcData = parseLrc(song.lyrics);
+    }
+    
     let lyricsHtml = '';
-    if (song._lrcData && song._lrcData.length > 0) {
-        lyricsHtml = song._lrcData.map((item, index) =>
+    if (lrcData && lrcData.length > 0) {
+        // ✅ 只显示纯歌词文字，不显示时间戳
+        lyricsHtml = lrcData.map((item, index) =>
             `<div class="lrc-line" data-time="${item.time}" data-index="${index}">${escapeHtml(item.text)}</div>`
         ).join('');
     } else if (song.lyrics && song.lyrics.trim() && song.lyrics.trim() !== '纯音乐') {
+        // 没有时间戳的纯文本
         const plainLines = song.lyrics.split('\n').filter(line => line.trim());
         lyricsHtml = plainLines.map(line =>
             `<div class="lrc-line">${escapeHtml(line.trim())}</div>`
@@ -4447,8 +4450,7 @@ function showBottomLyrics(songId) {
     }
     content.innerHTML = lyricsHtml;
     
-    // 开始同步
-    startBottomLyricsSync(songId);
+    startBottomLyricsSync(songId, lrcData);
 }
 
 function closeBottomLyrics() {
@@ -4460,7 +4462,7 @@ function closeBottomLyrics() {
     }
 }
 
-function startBottomLyricsSync(songId) {
+function startBottomLyricsSync(songId, lrcData) {
     if (lyricsTimer) {
         clearInterval(lyricsTimer);
         lyricsTimer = null;
@@ -4469,16 +4471,26 @@ function startBottomLyricsSync(songId) {
     const content = document.getElementById('bottomLyricsContent');
     if (!content) return;
     
-    let song = null;
-    for (let cat of ['ai', 'hybrid', 'original']) {
-        const found = allSongs[cat]?.find(s => s.id === songId);
-        if (found) { song = found; break; }
+    // 如果没有传 lrcData，从歌曲里取
+    if (!lrcData) {
+        let song = null;
+        for (let cat of ['ai', 'hybrid', 'original']) {
+            const found = allSongs[cat]?.find(s => s.id === songId);
+            if (found) { song = found; break; }
+        }
+        if (song && song.lyrics && /\[\d{2}:\d{2}/.test(song.lyrics)) {
+            lrcData = parseLrc(song.lyrics);
+        }
     }
-    if (!song) return;
     
-    const lrcData = song._lrcData;
     const lines = content.querySelectorAll('.lrc-line');
-    if (!lines.length || !lrcData || lrcData.length === 0) return;
+    if (!lines.length || !lrcData || lrcData.length === 0) {
+        lines.forEach(line => {
+            line.style.opacity = '0.7';
+            line.style.color = 'rgba(255,255,255,0.5)';
+        });
+        return;
+    }
     
     const audio = document.getElementById('global-audio');
     if (!audio) return;
@@ -4486,9 +4498,7 @@ function startBottomLyricsSync(songId) {
     let activeIndex = -1;
     
     function updateLyrics() {
-        if (!audio || audio.paused || audio.ended) {
-            return;
-        }
+        if (!audio || audio.paused || audio.ended) return;
         const currentTime = audio.currentTime;
         let newActiveIndex = -1;
         for (let i = 0; i < lrcData.length; i++) {
@@ -4508,7 +4518,6 @@ function startBottomLyricsSync(songId) {
                     line.classList.add('future');
                 }
             });
-            // 滚动到当前行
             if (activeIndex >= 0) {
                 const activeLine = lines[activeIndex];
                 if (activeLine) {
