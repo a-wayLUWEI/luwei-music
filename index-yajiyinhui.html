@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> 芦苇·雅集·音会 · 中国音乐人的雅集之地</title>
+    <style>
+        /* ===== 全局重置 & 基础 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #F5F0E8;
+            font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+            min-height: 100vh;
+            padding: 40px 24px 60px;
+            display: flex;
+            justify-content: center;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(201, 169, 110, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(201, 169, 110, 0.06) 0%, transparent 60%);
+        }
+
+        .app {
+            max-width: 1280px;
+            width: 100%;
+        }
+
+        /* ===== 顶部品牌区 ===== */
+        .brand {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 28px;
+            border-bottom: 1px solid rgba(44, 44, 44, 0.06);
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand-left {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .brand-name {
+            font-family: 'STSong', '华文宋体', '思源宋体', serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #2C2C2C;
+            letter-spacing: 6px;
+        }
+
+        .brand-name .gold {
+            color: #C9A96E;
+        }
+
+        .brand-tagline {
+            font-size: 14px;
+            color: #8A8A8A;
+            letter-spacing: 4px;
+            font-weight: 300;
+            padding-left: 4px;
+        }
+
+        .brand-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand-stat {
+            font-size: 14px;
+            color: #6B6B6B;
+            letter-spacing: 1px;
+        }
+
+        .brand-stat strong {
+            color: #C9A96E;
+            font-weight: 600;
+        }
+
+        .btn-entrance {
+            background: transparent;
+            border: 1px solid #C9A96E;
+            color: #C9A96E;
+            padding: 8px 28px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 2px;
+            background: rgba(201, 169, 110, 0.04);
+        }
+
+        .btn-entrance:hover {
+            background: #C9A96E;
+            color: #F5F0E8;
+            box-shadow: 0 4px 20px rgba(201, 169, 110, 0.25);
+        }
+
+        /* ===== 今日雅集横幅 ===== */
+        .today-banner {
+            background: linear-gradient(135deg, #2C2C2C 0%, #4A3A2A 100%);
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border: 1px solid rgba(201, 169, 110, 0.12);
+            box-shadow: 0 8px 32px rgba(44, 44, 44, 0.08);
+        }
+
+        .today-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 4px;
+            font-weight: 300;
+        }
+
+        .today-text {
+            font-size: 18px;
+            color: #FFFFFF;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .today-text .highlight {
+            color: #C9A96E;
+            font-weight: 500;
+        }
+
+        .today-count {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 1px;
+        }
+
+        /* ===== 展廊标题 ===== */
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .gallery-title {
+            font-family: 'STSong', '华文宋体', '思源宋体', serif;
+            font-size: 20px;
+            color: #2C2C2C;
+            letter-spacing: 4px;
+        }
+
+        .gallery-sub {
+            font-size: 13px;
+            color: #A0A0A0;
+            letter-spacing: 2px;
+        }
+
+        /* ===== 房间网格 ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        /* ===== 房间卡片 ===== */
+        .room-card {
+            border-radius: 16px;
+            padding: 24px 20px 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .room-card::after {
+            content: '入席 →';
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0);
+            letter-spacing: 2px;
+            transition: 0.4s ease;
+        }
+
+        .room-card:hover::after {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .room-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 48px rgba(44, 44, 44, 0.10);
+        }
+
+        .room-card .icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .room-card .name {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .room-card .desc {
+            font-size: 13px;
+            letter-spacing: 1px;
+            opacity: 0.75;
+            font-weight: 300;
+        }
+
+        .room-card .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .room-card .online {
+            font-size: 12px;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+
+        .room-card .online strong {
+            font-weight: 600;
+        }
+
+        /* ===== 每个房间的独立配色 ===== */
+
+        /*  古风席 */
+        .room-gufeng {
+            background: linear-gradient(145deg, #F5F0E8 0%, #E8E0D5 100%);
+            border: 1px solid rgba(44, 44, 44, 0.06);
+        }
+        .room-gufeng .name {
+            color: #2C2C2C;
+        }
+        .room-gufeng .desc {
+            color: #6B6B6B;
+        }
+        .room-gufeng .online {
+            color: #6B6B6B;
+        }
+        .room-gufeng .online strong {
+            color: #C9A96E;
+        }
+        .room-gufeng .meta {
+            border-top-color: rgba(44, 44, 44, 0.06);
+        }
+
+        /*  国风席 */
+        .room-guofeng {
+            background: linear-gradient(145deg, #8B1A1A 0%, #5C1010 100%);
+        }
+        .room-guofeng .name {
+            color: #FFD700;
+        }
+        .room-guofeng .desc {
+            color: #E8D5C0;
+        }
+        .room-guofeng .online {
+            color: #E8D5C0;
+        }
+        .room-guofeng .online strong {
+            color: #FFD700;
+        }
+        .room-guofeng .meta {
+            border-top-color: rgba(255, 215, 0, 0.12);
+        }
+
+        /*  民乐席 */
+        .room-minyue {
+            background: linear-gradient(145deg, #6B8E6B 0%, #4A6A4A 100%);
+        }
+        .room-minyue .name {
+            color: #F5F0E8;
+        }
+        .room-minyue .desc {
+            color: #D4E0D4;
+        }
+        .room-minyue .online {
+            color: #D4E0D4;
+        }
+        .room-minyue .online strong {
+            color: #FFD700;
+        }
+        .room-minyue .meta {
+            border-top-color: rgba(255, 255, 255, 0.06);
+        }
+
+        /* ️ 诗词席 */
+        .room-shici {
+            background: linear-gradient(145deg, #F5F0E8 0%, #E5DDD0 100%);
+            border: 1px solid rgba(44, 44, 44, 0.06);
+        }
+        .room-shici .name {
+            color: #2C2C2C;
+        }
+        .room-shici .desc {
+            color: #6B6B6B;
+        }
+        .room-shici .online {
+            color: #6B6B6B;
+        }
+        .room-shici .online strong {
+            color: #C9A96E;
+        }
+        .room-shici .meta {
+            border-top-color: rgba(44, 44, 44, 0.06);
+        }
+
+        /*  流行席 */
+        .room-liuxing {
+            background: linear-gradient(145deg, #1A1A3E 0%, #0D0D2B 100%);
+        }
+        .room-liuxing .name {
+            color: #FFFFFF;
+        }
+        .room-liuxing .desc {
+            color: #B8B8D0;
+        }
+        .room-liuxing .online {
+            color: #B8B8D0;
+        }
+        .room-liuxing .online strong {
+            color: #FFD700;
+        }
+        .room-liuxing .meta {
+            border-top-color: rgba(255, 255, 255, 0.06);
+        }
+
+        /*  民谣席 */
+        .room-minyao {
+            background: linear-gradient(145deg, #6B4A3A 0%, #4A3020 100%);
+        }
+        .room-minyao .name {
+            color: #F5F0E8;
+        }
+        .room-minyao .desc {
+            color: #D4C5B0;
+        }
+        .room-minyao .online {
+            color: #D4C5B0;
+        }
+        .room-minyao .online strong {
+            color: #C9A96E;
+        }
+        .room-minyao .meta {
+            border-top-color: rgba(255, 255, 255, 0.06);
+        }
+
+        /* ⚡ 电子席 */
+        .room-dianzi {
+            background: linear-gradient(145deg, #0D0D2B 0%, #1A0A2E 100%);
+        }
+        .room-dianzi .name {
+            color: #00D4FF;
+        }
+        .room-dianzi .desc {
+            color: #8AB8D4;
+        }
+        .room-dianzi .online {
+            color: #8AB8D4;
+        }
+        .room-dianzi .online strong {
+            color: #00D4FF;
+        }
+        .room-dianzi .meta {
+            border-top-color: rgba(0, 212, 255, 0.08);
+        }
+
+        /*  说唱席 */
+        .room-shuochang {
+            background: linear-gradient(145deg, #0A0A0A 0%, #1A1A1A 100%);
+        }
+        .room-shuochang .name {
+            color: #FFD700;
+        }
+        .room-shuochang .desc {
+            color: #CCCCCC;
+        }
+        .room-shuochang .online {
+            color: #CCCCCC;
+        }
+        .room-shuochang .online strong {
+            color: #FFD700;
+        }
+        .room-shuochang .meta {
+            border-top-color: rgba(255, 215, 0, 0.08);
+        }
+
+        /*  轻音乐席 */
+        .room-qingyinyue {
+            background: linear-gradient(145deg, #FFFFFF 0%, #F0F0F0 100%);
+            border: 1px solid rgba(44, 44, 44, 0.04);
+        }
+        .room-qingyinyue .name {
+            color: #1A1A1A;
+        }
+        .room-qingyinyue .desc {
+            color: #8A8A8A;
+        }
+        .room-qingyinyue .online {
+            color: #8A8A8A;
+        }
+        .room-qingyinyue .online strong {
+            color: #C9A96E;
+        }
+        .room-qingyinyue .meta {
+            border-top-color: rgba(44, 44, 44, 0.06);
+        }
+
+        /*  下沉席 */
+        .room-xiachen {
+            background: linear-gradient(145deg, #F5D6A8 0%, #E8C49A 100%);
+        }
+        .room-xiachen .name {
+            color: #2C1A0A;
+        }
+        .room-xiachen .desc {
+            color: #5A4030;
+        }
+        .room-xiachen .online {
+            color: #5A4030;
+        }
+        .room-xiachen .online strong {
+            color: #8B6B4A;
+        }
+        .room-xiachen .meta {
+            border-top-color: rgba(44, 44, 44, 0.08);
+        }
+
+        /*  游戏配乐席 */
+        .room-youxi {
+            background: linear-gradient(145deg, #0A1628 0%, #162040 100%);
+        }
+        .room-youxi .name {
+            color: #00BFFF;
+        }
+        .room-youxi .desc {
+            color: #8AB8D4;
+        }
+        .room-youxi .online {
+            color: #8AB8D4;
+        }
+        .room-youxi .online strong {
+            color: #00BFFF;
+        }
+        .room-youxi .meta {
+            border-top-color: rgba(0, 191, 255, 0.08);
+        }
+
+        /*  影视配乐席 */
+        .room-yingshi {
+            background: linear-gradient(145deg, #1A0505 0%, #2C0A0A 100%);
+        }
+        .room-yingshi .name {
+            color: #FFD700;
+        }
+        .room-yingshi .desc {
+            color: #D4C5B0;
+        }
+        .room-yingshi .online {
+            color: #D4C5B0;
+        }
+        .room-yingshi .online strong {
+            color: #FFD700;
+        }
+        .room-yingshi .meta {
+            border-top-color: rgba(255, 215, 0, 0.08);
+        }
+
+        /*  氛围席 */
+        .room-fenwei {
+            background: linear-gradient(145deg, #C5D5D5 0%, #D5E5E5 100%);
+        }
+        .room-fenwei .name {
+            color: #1A2A2A;
+        }
+        .room-fenwei .desc {
+            color: #4A5A5A;
+        }
+        .room-fenwei .online {
+            color: #4A5A5A;
+        }
+        .room-fenwei .online strong {
+            color: #6B8A7A;
+        }
+        .room-fenwei .meta {
+            border-top-color: rgba(44, 44, 44, 0.06);
+        }
+
+        /*  Chill 席 */
+        .room-chill {
+            background: linear-gradient(145deg, #E8A87C 0%, #D4946A 100%);
+        }
+        .room-chill .name {
+            color: #2C1A0A;
+        }
+        .room-chill .desc {
+            color: #4A3020;
+        }
+        .room-chill .online {
+            color: #4A3020;
+        }
+        .room-chill .online strong {
+            color: #6B3A1A;
+        }
+        .room-chill .meta {
+            border-top-color: rgba(44, 44, 44, 0.08);
+        }
+
+        /* 🤝 合作席 */
+        .room-hezuo {
+            background: linear-gradient(145deg, #F0EDE8 0%, #E8E4DD 100%);
+            border: 1px solid rgba(44, 44, 44, 0.04);
+        }
+        .room-hezuo .name {
+            color: #1A1A1A;
+        }
+        .room-hezuo .desc {
+            color: #6B6B6B;
+        }
+        .room-hezuo .online {
+            color: #6B6B6B;
+        }
+        .room-hezuo .online strong {
+            color: #C9A96E;
+        }
+        .room-hezuo .meta {
+            border-top-color: rgba(44, 44, 44, 0.06);
+        }
+
+        /*  研习席 */
+        .room-yanxi {
+            background: linear-gradient(145deg, #F5F0E8 0%, #E8E2D8 100%);
+            border: 1px solid rgba(44, 44, 44, 0.04);
+        }
+        .room-yanxi .name {
+            color: #2C2C2C;
+        }
+        .room-yanxi .desc {
+            color: #6B6B6B;
+        }
+        .room-yanxi .online {
+            color: #6B6B6B;
+        }
+        .room-yanxi .online strong {
+            color: #C9A96E;
+        }
+        .room-yanxi .meta {
+            border-top-color: rgba(44, 44, 44, 0.06);
+        }
+
+        /*  赛事席 */
+        .room-saishi {
+            background: linear-gradient(145deg, #1A0A05 0%, #2C1008 100%);
+        }
+        .room-saishi .name {
+            color: #FFD700;
+        }
+        .room-saishi .desc {
+            color: #D4C5B0;
+        }
+        .room-saishi .online {
+            color: #D4C5B0;
+        }
+        .room-saishi .online strong {
+            color: #FFD700;
+        }
+        .room-saishi .meta {
+            border-top-color: rgba(255, 215, 0, 0.08);
+        }
+
+        /*  新声席 */
+        .room-xinsheng {
+            background: linear-gradient(145deg, #E8F5E8 0%, #D5E8D5 100%);
+            border: 1px solid rgba(44, 44, 44, 0.04);
+        }
+        .room-xinsheng .name {
+            color: #1A3A1A;
+        }
+        .room-xinsheng .desc {
+            color: #4A6A4A;
+        }
+        .room-xinsheng .online {
+            color: #4A6A4A;
+        }
+        .room-xinsheng .online strong {
+            color: #6B8A5A;
+        }
+        .room-xinsheng .meta {
+            border-top-color: rgba(44, 44, 44, 0.06);
+        }
+
+        /* ===== 底部 ===== */
+        .footer {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(44, 44, 44, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: #A0A0A0;
+            letter-spacing: 2px;
+        }
+
+        .footer .big {
+            font-family: 'STSong', '华文宋体', '思源宋体', serif;
+            font-size: 16px;
+            color: #6B6B6B;
+            letter-spacing: 4px;
+        }
+
+        .footer .big .gold {
+            color: #C9A96E;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 16px 40px;
+            }
+
+            .brand-name {
+                font-size: 22px;
+                letter-spacing: 4px;
+            }
+
+            .brand-tagline {
+                font-size: 12px;
+                letter-spacing: 2px;
+            }
+
+            .brand-stat {
+                font-size: 12px;
+            }
+
+            .btn-entrance {
+                padding: 6px 20px;
+                font-size: 12px;
+            }
+
+            .today-banner {
+                padding: 18px 20px;
+            }
+
+            .today-text {
+                font-size: 15px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 14px;
+            }
+
+            .room-card {
+                padding: 18px 16px 16px;
+                min-height: 160px;
+            }
+
+            .room-card .icon {
+                font-size: 26px;
+            }
+
+            .room-card .name {
+                font-size: 17px;
+            }
+
+            .room-card .desc {
+                font-size: 12px;
+            }
+
+            .gallery-title {
+                font-size: 17px;
+            }
+
+            .footer {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .room-card {
+                padding: 14px 12px 12px;
+                min-height: 140px;
+            }
+
+            .room-card .icon {
+                font-size: 22px;
+                margin-bottom: 8px;
+            }
+
+            .room-card .name {
+                font-size: 15px;
+            }
+
+            .room-card .desc {
+                font-size: 11px;
+            }
+
+            .room-card .meta {
+                margin-top: 10px;
+                padding-top: 10px;
+            }
+
+            .room-card .online {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+
+        <!-- ===== 顶部品牌区 ===== -->
+        <header class="brand">
+            <div class="brand-left">
+                <span class="brand-name">
+                     芦苇·<span class="gold">雅集</span>·音会
+                </span>
+                <span class="brand-tagline">以音会友 · 以乐清谈</span>
+            </div>
+            <div class="brand-right">
+                <span class="brand-stat">
+                    已有 <strong>10万+</strong> 音乐人雅集
+                </span>
+                <button class="btn-entrance">入 席</button>
+            </div>
+        </header>
+
+        <!-- ===== 今日雅集横幅 ===== -->
+        <div class="today-banner">
+            <span class="today-label">✦ 今日雅集</span>
+            <span class="today-text">
+                 古风席 · 正在雅谈 <span class="highlight">“宋词入乐”</span>
+            </span>
+            <span class="today-count"> 67 人在场</span>
+        </div>
+
+        <!-- ===== 展廊标题 ===== -->
+        <div class="gallery-header">
+            <span class="gallery-title"> 雅集·展廊</span>
+<span class="gallery-sub">择一雅席，以音会友</span>
+        </div>
+
+        <!-- ===== 房间网格 ===== -->
+        <div class="grid">
+
+            <!--  古风席 -->
+            <a class="room-card room-gufeng" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">古风席</div>
+                    <div class="desc">宋词入乐 · 古韵新声</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>67</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  国风席 -->
+            <a class="room-card room-guofeng" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">国风席</div>
+                    <div class="desc">中国风 · 新国潮</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>45</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  民乐席 -->
+            <a class="room-card room-minyue" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">民乐席</div>
+                    <div class="desc">丝竹之声 · 山水之间</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>23</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!-- ️ 诗词席 -->
+            <a class="room-card room-shici" href="#">
+                <span class="icon">️</span>
+                <div>
+                    <div class="name">诗词席</div>
+                    <div class="desc">以诗入乐 · 以词寄情</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>18</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  流行席 -->
+            <a class="room-card room-liuxing" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">流行席</div>
+                    <div class="desc">都市节拍 · 时代之声</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>89</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  民谣席 -->
+            <a class="room-card room-minyao" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">民谣席</div>
+                    <div class="desc">一把吉他 · 一段故事</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>56</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!-- ⚡ 电子席 -->
+            <a class="room-card room-dianzi" href="#">
+                <span class="icon">⚡</span>
+                <div>
+                    <div class="name">电子席</div>
+                    <div class="desc">未来之声 · 电音律动</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>34</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  说唱席 -->
+            <a class="room-card room-shuochang" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">说唱席</div>
+                    <div class="desc">街头精神 · 真实表达</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>28</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  轻音乐席 -->
+            <a class="room-card room-qingyinyue" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">轻音乐席</div>
+                    <div class="desc">纯粹旋律 · 治愈之声</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>42</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  下沉席 -->
+            <a class="room-card room-xiachen" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">下沉席</div>
+                    <div class="desc">深夜旋律 · 灵魂栖息</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>19</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  游戏配乐席 -->
+            <a class="room-card room-youxi" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">游戏配乐席</div>
+                    <div class="desc">沉浸世界 · 冒险之声</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>31</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  影视配乐席 -->
+            <a class="room-card room-yingshi" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">影视配乐席</div>
+                    <div class="desc">银幕之后 · 音乐叙事</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>27</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  氛围席 -->
+            <a class="room-card room-fenwei" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">氛围席</div>
+                    <div class="desc">空灵之境 · 疗愈之音</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>22</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  Chill 席 -->
+            <a class="room-card room-chill" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">Chill 席</div>
+                    <div class="desc">慵懒午后 · 松弛节拍</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>38</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!-- 🤝 合作席 -->
+            <a class="room-card room-hezuo" href="#">
+                <span class="icon">🤝</span>
+                <div>
+                    <div class="name">合作席</div>
+                    <div class="desc">觅词 · 寻律 · 求声 · 问制</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>53</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  研习席 -->
+            <a class="room-card room-yanxi" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">研习席</div>
+                    <div class="desc">论器 · 词话 · 乐理</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>41</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  赛事席 -->
+            <a class="room-card room-saishi" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">赛事席</div>
+                    <div class="desc">以赛会友 · 巅峰对决</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>47</strong> 人在场</span>
+                </div>
+            </a>
+
+            <!--  新声席 -->
+            <a class="room-card room-xinsheng" href="#">
+                <span class="icon"></span>
+                <div>
+                    <div class="name">新声席</div>
+                    <div class="desc">初来乍到 · 请多关照</div>
+                </div>
+                <div class="meta">
+                    <span class="online"><strong>16</strong> 人在场</span>
+                </div>
+            </a>
+
+        </div>
+
+        <!-- ===== 底部 ===== -->
+        <div class="footer">
+            <p>© 芦苇·雅集·音会 · 以音会友 以乐清谈</p>
+            <span class="big"> 已有 <span class="gold">10万+</span> 音乐人雅集</span>
+        </div>
+
+    </div>
+
+</body>
+</html>
