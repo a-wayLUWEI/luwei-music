@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>接单中心 · 芦苇音乐</title>
+    <script src="checkAuth.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0A0A0A;
+            color: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+        .back-link {
+            display: inline-block;
+            color: rgba(255,255,255,0.2);
+            text-decoration: none;
+            margin-bottom: 30px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .back-link:hover { color: rgba(255,255,255,0.5); }
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            color: #FFFFFF;
+        }
+        .sub {
+            color: rgba(255,255,255,0.2);
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+        }
+        .platform-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .platform-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-decoration: none;
+            transition: 0.3s;
+            display: block;
+        }
+        .platform-card:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.08);
+            transform: translateY(-4px);
+        }
+        .platform-card .icon {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .platform-card .name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+        }
+        .platform-card .desc {
+            font-size: 13px;
+            color: rgba(255,255,255,0.2);
+            line-height: 1.5;
+        }
+        .platform-card .tag {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.04);
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+        .footer-note {
+            margin-top: 40px;
+            text-align: center;
+            color: rgba(255,255,255,0.04);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+        @media (max-width: 480px) {
+            .platform-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<a href="career.html" class="back-link">← 返回</a >
+    <h1>🎵 接单中心</h1>
+    <div class="sub">选择平台，发布或承接收歌需求</div>
+
+    <div class="platform-grid">
+        <a href="https://tmejia.tencentmusic.com/maker" target="_blank" class="platform-card">
+            <span class="icon">🎶</span>
+            <div class="name">TME聚星</div>
+            <div class="desc">腾讯音乐制作交易平台</div>
+            <span class="tag">腾讯官方</span>
+        </a >
+        <a href="https://starry.tencentmusic.com" target="_blank" class="platform-card">
+            <span class="icon">⭐</span>
+            <div class="name">启明星</div>
+            <div class="desc">音乐制作与版权交易平台</div>
+            <span class="tag">腾讯官方</span>
+        </a >
+        <a href="https://www.musicbee.cc" target="_blank" class="platform-card">
+            <span class="icon">🐝</span>
+            <div class="name">音乐蜜蜂</div>
+            <div class="desc">版权保护与音乐交易平台</div>
+            <span class="tag">版权交易</span>
+        </a >
+        <a href="https://www.xingtu.com" target="_blank" class="platform-card">
+            <span class="icon">🌟</span>
+            <div class="name">星途网</div>
+            <div class="desc">音乐人交流与交易平台</div>
+            <span class="tag">音乐人社群</span>
+        </a >
+        <a href="https://www.kanjian.com" target="_blank" class="platform-card">
+            <span class="icon">👁️</span>
+            <div class="name">看见音乐</div>
+            <div class="desc">独立音乐人服务平台</div>
+            <span class="tag">发行服务</span>
+        </a >
+        <a href="https://www.iflymusic.com" target="_blank" class="platform-card">
+            <span class="icon">🎤</span>
+            <div class="name">讯飞音乐</div>
+            <div class="desc">音乐发行与推广平台</div>
+            <span class="tag">发行推广</span>
+        </a >
+    </div>
+
+    <div class="footer-note">🌾 芦苇音乐 · 收歌信息导航</div>
+</div>
+</body>
+</html>
